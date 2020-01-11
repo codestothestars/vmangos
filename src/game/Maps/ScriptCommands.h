@@ -146,8 +146,8 @@ enum eScriptCommand
     SCRIPT_COMMAND_MODIFY_THREAT            = 29,           // source = Creature
                                                             // datalong = eModifyThreatTargets
                                                             // x = percent
-    SCRIPT_COMMAND_SEND_TAXI_PATH           = 30,           // source = Player
-                                                            // datalong = taxi_path_id
+    SCRIPT_COMMAND_SEND_TAXI_NODE           = 30,           // source = Player
+                                                            // datalong = taxi_node_id
     SCRIPT_COMMAND_TERMINATE_SCRIPT         = 31,           // source = Any
                                                             // datalong = creature_entry
                                                             // datalong2 = search_distance
@@ -716,10 +716,10 @@ struct ScriptInfo
             uint32 target;                                  // datalong
         } modThreat;
 
-        struct                                              // SCRIPT_COMMAND_SEND_TAXI_PATH (30)
+        struct                                              // SCRIPT_COMMAND_SEND_TAXI_NODE (30)
         {
-            uint32 taxiPathId;                              // datalong
-        } sendTaxiPath;
+            uint32 taxiNodeId;                              // datalong
+        } sendTaxiNode;
 
         struct                                              // SCRIPT_COMMAND_TERMINATE_SCRIPT (31)
         {

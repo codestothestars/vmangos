@@ -792,7 +792,7 @@ class Map : public GridRefManager<NGridType>
         bool ScriptCommand_UpdateEntry(ScriptInfo const& script, WorldObject* source, WorldObject* target);
         bool ScriptCommand_SetStandState(ScriptInfo const& script, WorldObject* source, WorldObject* target);
         bool ScriptCommand_ModifyThreat(ScriptInfo const& script, WorldObject* source, WorldObject* target);
-        bool ScriptCommand_SendTaxiPath(ScriptInfo const& script, WorldObject* source, WorldObject* target);
+        bool ScriptCommand_SendTaxiNode(ScriptInfo const& script, WorldObject* source, WorldObject* target);
         bool ScriptCommand_TerminateScript(ScriptInfo const& script, WorldObject* source, WorldObject* target);
         bool ScriptCommand_TerminateCondition(ScriptInfo const& script, WorldObject* source, WorldObject* target);
         bool ScriptCommand_Evade(ScriptInfo const& script, WorldObject* source, WorldObject* target);
@@ -887,7 +887,7 @@ class Map : public GridRefManager<NGridType>
             &Map::ScriptCommand_UpdateEntry,            // 27
             &Map::ScriptCommand_SetStandState,          // 28
             &Map::ScriptCommand_ModifyThreat,           // 29
-            &Map::ScriptCommand_SendTaxiPath,           // 30
+            &Map::ScriptCommand_SendTaxiNode,           // 30
             &Map::ScriptCommand_TerminateScript,        // 31
             &Map::ScriptCommand_TerminateCondition,     // 32
             &Map::ScriptCommand_Evade,                  // 33
