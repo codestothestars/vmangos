@@ -640,12 +640,6 @@ bool instance_temple_of_ahnqiraj::KillPlayersInStomach()
 {
     for (auto iter = playersInStomach.begin(); iter != playersInStomach.end();) {
         if (Player* p = GetMap()->GetPlayer(iter->first)) {
-            // Not killing people with god on, makes debugging easier
-            if (p->IsGod()) {
-                ++iter;
-                continue;
-            }
-
             if (p->IsAlive()) {
                 p->DealDamage(p, p->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
             }
