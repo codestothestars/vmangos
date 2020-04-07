@@ -83,41 +83,41 @@ struct BattlegroundEntranceTrigger
 
 struct BroadcastText
 {
-    BroadcastText() : Id(0), SoundId(0), Type(0), Language(0), EmoteId0(0), EmoteId1(0), EmoteId2(0),
-        EmoteDelay0(0), EmoteDelay1(0), EmoteDelay2(0)
+    BroadcastText() : entry(0), soundId(0), chatType(0), languageId(0), emoteId1(0), emoteId2(0), emoteId3(0),
+        emoteDelay1(0), emoteDelay2(0), emoteDelay3(0)
     {
-        MaleText.resize(LOCALE_enUS + 1);
-        FemaleText.resize(LOCALE_enUS + 1);
+        maleText.resize(LOCALE_enUS + 1);
+        femaleText.resize(LOCALE_enUS + 1);
     }
 
-    uint32 Id;
-    std::vector<std::string> MaleText;
-    std::vector<std::string> FemaleText;
-    uint32 SoundId;
-    uint8  Type;
-    uint32 Language;
-    uint32 EmoteId0;
-    uint32 EmoteId1;
-    uint32 EmoteId2;
-    uint32 EmoteDelay0;
-    uint32 EmoteDelay1;
-    uint32 EmoteDelay2;
+    uint32 entry;
+    std::vector<std::string> maleText;
+    std::vector<std::string> femaleText;
+    uint8  chatType;
+    uint32 soundId;
+    uint32 languageId;
+    uint32 emoteId1;
+    uint32 emoteId2;
+    uint32 emoteId3;
+    uint32 emoteDelay1;
+    uint32 emoteDelay2;
+    uint32 emoteDelay3;
 
     std::string const& GetText(int locale_index, uint8 gender, bool forceGender) const
     {
-        if ((gender == GENDER_FEMALE || gender == GENDER_NONE) && (forceGender || !FemaleText[LOCALE_enUS].empty()))
+        if ((gender == GENDER_FEMALE || gender == GENDER_NONE) && (forceGender || !femaleText[LOCALE_enUS].empty()))
         {
-            if ((int32)FemaleText.size() > locale_index + 1 && !FemaleText[locale_index + 1].empty())
-                return FemaleText[locale_index + 1];
+            if ((int32)femaleText.size() > locale_index + 1 && !femaleText[locale_index + 1].empty())
+                return femaleText[locale_index + 1];
             else
-                return FemaleText[0];
+                return femaleText[0];
         }
         // else if (gender == GENDER_MALE)
         {
-            if ((int32)MaleText.size() > locale_index + 1 && !MaleText[locale_index + 1].empty())
-                return MaleText[locale_index + 1];
+            if ((int32)maleText.size() > locale_index + 1 && !maleText[locale_index + 1].empty())
+                return maleText[locale_index + 1];
             else
-                return MaleText[0];
+                return maleText[0];
         }
     }
 };
@@ -640,9 +640,8 @@ class ObjectMgr
         GroupMap::iterator GetGroupMapEnd() { return m_GroupMap.end(); }
 
         static CreatureInfo const* GetCreatureTemplate(uint32 id);
-        CreatureModelInfo const* GetCreatureModelInfo(uint32 modelid);
-        CreatureModelInfo const* GetCreatureModelRandomGender(uint32 display_id);
-        uint32 GetCreatureModelOtherTeamModel(uint32 modelId);
+        CreatureDisplayInfoAddon const* GetCreatureDisplayInfoAddon(uint32 display_id);
+        CreatureDisplayInfoAddon const* GetCreatureDisplayInfoRandomGender(uint32 display_id);
 
         EquipmentInfo const* GetEquipmentInfo(uint32 entry);
         static CreatureDataAddon const* GetCreatureAddon(uint32 lowguid)
@@ -835,11 +834,11 @@ class ObjectMgr
         void LoadCreatureLocales();
         void LoadCreatureTemplates();
         void CheckCreatureTemplates();
-        void CorrectCreatureModels(uint32, uint32&);
+        void CorrectCreatureDisplayIds(uint32, uint32&);
 
         void LoadCreatures(bool reload = false);
         void LoadCreatureAddons();
-        void LoadCreatureModelInfo();
+        void LoadCreatureDisplayInfoAddon();
         void LoadCreatureSpells();
         void LoadEquipmentTemplates();
         void LoadGameObjectLocales();
@@ -847,7 +846,7 @@ class ObjectMgr
         void LoadItemPrototypes();
         void FillObtainedItemsList(std::set<uint32>&);
         void CorrectItemEffects(uint32, _ItemSpell&);
-        void CorrectItemModels(uint32, uint32&);
+        void CorrectItemDisplayIds(uint32, uint32&);
         void LoadItemRequiredTarget();
         void LoadItemLocales();
         void LoadQuestLocales();

@@ -344,6 +344,15 @@ enum PlayerFieldByte2Flags
     PLAYER_FIELD_BYTE2_INVISIBILITY_GLOW = 0x40
 };
 
+#if SUPPORTED_CLIENT_BUILD <= CLIENT_BUILD_1_8_4
+enum WhoListPartyStatus
+{
+    WHO_PARTY_STATUS_NOT_IN_PARTY = 0x0,
+    WHO_PARTY_STATUS_IN_PARTY     = 0x1,
+    WHO_PARTY_STATUS_LFG          = 0x2
+};
+#endif
+
 enum ActivateTaxiReplies
 {
     ERR_TAXIOK                      = 0,
@@ -388,7 +397,7 @@ enum PlayerCheatOptions : uint16
     PLAYER_CHEAT_NO_COOLDOWN     = 0x002,
     PLAYER_CHEAT_NO_CAST_TIME    = 0x004,
     PLAYER_CHEAT_NO_POWER        = 0x008,
-    PLAYER_CHEAT_IMMUNE_AURA     = 0x010,
+    PLAYER_CHEAT_DEBUFF_IMMUNITY = 0x010,
     PLAYER_CHEAT_ALWAYS_CRIT     = 0x020,
     PLAYER_CHEAT_NO_CHECK_CAST   = 0x040,
     PLAYER_CHEAT_ALWAYS_PROC     = 0x080,
@@ -551,9 +560,9 @@ enum RestType
 
 enum DuelCompleteType
 {
-    DUEL_INTERUPTED = 0,
-    DUEL_WON        = 1,
-    DUEL_FLED       = 2
+    DUEL_INTERRUPTED = 0,
+    DUEL_WON         = 1,
+    DUEL_FLED        = 2
 };
 
 /// Type of environmental damages
@@ -806,7 +815,7 @@ struct RacialSpells
     uint32 spells[MAX_RACIAL_SPELLS] = { 0 };
 };
 
-class MovementAnticheatInterface;
+class MovementAnticheat;
 
 struct AuraSaveStruct
 {
@@ -909,7 +918,7 @@ class MANGOS_DLL_SPEC Player final: public Unit
         void SetCheatNoCooldown(bool on, bool notify = false);
         void SetCheatInstantCast(bool on, bool notify = false);
         void SetCheatNoPowerCost(bool on, bool notify = false);
-        void SetCheatImmuneToAura(bool on, bool notify = false);
+        void SetCheatDebuffImmunity(bool on, bool notify = false);
         void SetCheatAlwaysCrit(bool on, bool notify = false);
         void SetCheatNoCastCheck(bool on, bool notify = false);
         void SetCheatAlwaysProc(bool on, bool notify = false);
@@ -1913,6 +1922,15 @@ class MANGOS_DLL_SPEC Player final: public Unit
         RestType rest_type;
         void UpdateInnerTime(time_t time) { time_inn_enter = time; }
     public:
+        /**
+        * \brief: compute rest bonus
+        * \param: time_t timePassed > time from last check
+        * \param: bool offline      > is the player was offline?
+        * \param: bool inRestPlace  > if it was offline, is the player was in city/tavern/inn?
+        * \returns: float
+        **/
+        float ComputeRest(time_t timePassed, bool offline = false, bool inRestPlace = false);
+
         float GetRestBonus() const { return m_rest_bonus; }
         void SetRestBonus(float rest_bonus_new);
         RestType GetRestType() const { return rest_type; }
@@ -2065,10 +2083,12 @@ class MANGOS_DLL_SPEC Player final: public Unit
         UnitDismountResult Unmount(bool from_aura = false) override;
 
         bool CanInteractWithQuestGiver(Object* questGiver) const;
+        Creature* FindNearestInteractableNpcWithFlag(uint32 npcFlags) const;
         Creature* GetNPCIfCanInteractWith(ObjectGuid guid, uint32 npcflagmask) const;
-        bool CanInteractWithNPC(Creature* pCreature, uint32 npcflagmask) const;
+        bool CanInteractWithNPC(Creature const* pCreature, uint32 npcflagmask) const;
         GameObject* GetGameObjectIfCanInteractWith(ObjectGuid guid, uint32 gameobject_type = MAX_GAMEOBJECT_TYPE) const;
-        bool CanInteractWithGameObject(GameObject* pGo, uint32 gameobject_type = MAX_GAMEOBJECT_TYPE) const;
+        bool CanInteractWithGameObject(GameObject const* pGo, uint32 gameobject_type = MAX_GAMEOBJECT_TYPE) const;
+        bool CanSeeHealthOf(Unit const* pTarget) const;
 
         ObjectGuid const& GetSelectedGobj() const { return m_selectedGobj; }
         void SetSelectedGobj(ObjectGuid guid) { m_selectedGobj = guid; }
@@ -2358,7 +2378,7 @@ class MANGOS_DLL_SPEC Player final: public Unit
         bool FallGround(uint8 fallMode);
 
         /// Anticheat
-        MovementAnticheatInterface* GetCheatData() const { return m_session->GetCheatData(); }
+        MovementAnticheat* GetCheatData() const { return m_session->GetCheatData(); }
         void OnDisconnected();
         void RelocateToLastClientPosition();
         void GetSafePosition(float &x, float &y, float &z, Transport* onTransport = nullptr) const override;
@@ -2445,6 +2465,10 @@ class MANGOS_DLL_SPEC Player final: public Unit
         void RemoveFromGroup() { RemoveFromGroup(GetGroup(), GetObjectGuid()); }
         void SendUpdateToOutOfRangeGroupMembers();
         void SendDestroyGroupMembers(bool includingSelf = false);
+
+#if SUPPORTED_CLIENT_BUILD <= CLIENT_BUILD_1_8_4
+        uint32 GetWhoListPartyStatus() const;
+#endif
 
         // BattleGround Group System
         void SetBattleGroundRaid(Group* group, int8 subgroup = -1);

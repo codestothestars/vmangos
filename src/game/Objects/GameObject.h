@@ -126,7 +126,7 @@ struct GameObjectInfo
             uint32 spellId;                                 //3
             uint32 charges;                                 //4 need respawn (if > 0)
             uint32 cooldown;                                //5 time in secs
-            uint32 autoCloseTime;                           //6
+            int32 autoCloseTime;                            //6
             uint32 startDelay;                              //7
             uint32 serverOnly;                              //8
             uint32 stealthed;                               //9
@@ -164,12 +164,12 @@ struct GameObjectInfo
         struct
         {
             uint32 lockId;                                  //0 -> Lock.dbc
-            uint32 questId;                                 //1
+            int32  questId;                                 //1
             uint32 eventId;                                 //2
             uint32 autoCloseTime;                           //3
             uint32 customAnim;                              //4
             uint32 consumable;                              //5
-            uint32 cooldown;                                //6
+            int32  cooldown;                                //6
             uint32 pageId;                                  //7
             uint32 language;                                //8
             uint32 pageMaterial;                            //9
@@ -292,6 +292,7 @@ struct GameObjectInfo
             uint32 maxSuccessOpens;                         //3
             uint32 lockId;                                  //4 -> Lock.dbc; possibly 1628 for all?
         } fishinghole;
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_7_1
         //26 GAMEOBJECT_TYPE_FLAGDROP
         struct
         {
@@ -301,11 +302,15 @@ struct GameObjectInfo
             uint32 noDamageImmune;                          //3
             uint32 openTextID;                              //4
         } flagdrop;
+#endif
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_9_4
         //27 GAMEOBJECT_TYPE_MINI_GAME
         struct
         {
             uint32 gameType;                                //0
         } miniGame;
+#endif
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_11_2
         //29 GAMEOBJECT_TYPE_CAPTURE_POINT
         struct
         {
@@ -341,7 +346,7 @@ struct GameObjectInfo
             uint32 conditionID2;                            //5
             uint32 serverOnly;                              //6
         } auraGenerator;
-
+#endif
         // not use for specific field access (only for output with loop by all filed), also this determinate max union size
         struct
         {
@@ -391,7 +396,9 @@ struct GameObjectInfo
             case GAMEOBJECT_TYPE_CAMERA:     return camera.lockId;
             case GAMEOBJECT_TYPE_FLAGSTAND:  return flagstand.lockId;
             case GAMEOBJECT_TYPE_FISHINGHOLE:return fishinghole.lockId;
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_7_1
             case GAMEOBJECT_TYPE_FLAGDROP:   return flagdrop.lockId;
+#endif
             default: return 0;
         }
     }
@@ -405,7 +412,9 @@ struct GameObjectInfo
             case GAMEOBJECT_TYPE_QUESTGIVER: return questgiver.noDamageImmune;
             case GAMEOBJECT_TYPE_GOOBER:     return goober.noDamageImmune;
             case GAMEOBJECT_TYPE_FLAGSTAND:  return flagstand.noDamageImmune;
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_7_1
             case GAMEOBJECT_TYPE_FLAGDROP:   return flagdrop.noDamageImmune;
+#endif
             default: return true;
         }
     }
@@ -420,7 +429,9 @@ struct GameObjectInfo
             case GAMEOBJECT_TYPE_CHEST:      return true;                           // All chests cannot be opened while immune on 3.3.5a
             case GAMEOBJECT_TYPE_GOOBER:     return goober.noDamageImmune != 0;
             case GAMEOBJECT_TYPE_FLAGSTAND:  return flagstand.noDamageImmune != 0;
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_7_1
             case GAMEOBJECT_TYPE_FLAGDROP:   return flagdrop.noDamageImmune != 0;
+#endif
             default: return false;
         }
     }
@@ -494,6 +505,37 @@ struct GameObjectInfo
         }
     }
 
+    bool IsLargeGameObject() const
+    {
+        switch (type)
+        {
+            case GAMEOBJECT_TYPE_BUTTON:            return button.large != 0;
+            case GAMEOBJECT_TYPE_QUESTGIVER:        return questgiver.large != 0;
+            case GAMEOBJECT_TYPE_GENERIC:           return _generic.large != 0;
+            case GAMEOBJECT_TYPE_TRAP:              return trap.large != 0;
+            case GAMEOBJECT_TYPE_SPELL_FOCUS:       return spellFocus.large != 0;
+            case GAMEOBJECT_TYPE_GOOBER:            return goober.large != 0;
+            case GAMEOBJECT_TYPE_SPELLCASTER:       return spellcaster.large != 0;
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_11_2
+            case GAMEOBJECT_TYPE_CAPTURE_POINT:     return capturePoint.large != 0;
+#endif
+            default: return false;
+        }
+    }
+
+    bool IsInfiniteGameObject() const
+    {
+        switch (type)
+        {
+            case GAMEOBJECT_TYPE_DOOR:                  return true;
+            case GAMEOBJECT_TYPE_FLAGSTAND:             return true;
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_7_1
+            case GAMEOBJECT_TYPE_FLAGDROP:              return true;
+#endif
+            default: return false;
+        }
+    }
+
     uint32 GetEventScriptId() const
     {
         switch(type)
@@ -532,11 +574,7 @@ enum GOState
 struct GameObjectData
 {
     uint32 id;                                              // entry in gamobject_template
-    uint32 mapid;
-    float posX;
-    float posY;
-    float posZ;
-    float orientation;
+    WorldLocation position;
     float rotation0;
     float rotation1;
     float rotation2;
@@ -545,8 +583,8 @@ struct GameObjectData
     int32  spawntimesecsmax;
     uint32 animprogress;
     GOState go_state;
-    uint32 spawnFlags;
-    float visibilityModifier;
+    uint32 spawn_flags;
+    float visibility_mod;
 
     uint32 instanciatedContinentInstanceId;
     uint32 ComputeRespawnDelay(uint32 baseDelay) const;

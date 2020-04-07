@@ -268,8 +268,8 @@ bool ChatHandler::HandlePossessCommand(char *args)
 bool ChatHandler::HandleNameAuraCommand(char* args)
 {
     // number or [name] Shift-click form |color|Hspell:spell_id|h[name]|h|r or Htalent form
-    uint32 spellID = ExtractSpellIdFromLink(&args);
-    if (!spellID)
+    uint32 spellId = ExtractSpellIdFromLink(&args);
+    if (!spellId)
         return false;
 
     char* nameStr = ExtractArg(&args);
@@ -282,23 +282,22 @@ bool ChatHandler::HandleNameAuraCommand(char* args)
     // Aura duration in seconds
     int32 duration = 0;
     ExtractInt32(&args, duration);
-    return HandleAuraHelper(spellID, duration, target);
+    return HandleAuraHelper(spellId, duration, target);
 }
 
-bool ChatHandler::HandleAuraHelper(uint32 spellID, int32 duration, Unit* unit)
+bool ChatHandler::HandleAuraHelper(uint32 spellId, int32 duration, Unit* unit)
 {
-    SpellEntry const* spellInfo = sSpellMgr.GetSpellEntry(spellID);
+    SpellEntry const* spellInfo = sSpellMgr.GetSpellEntry(spellId);
     if (!spellInfo)
         return false;
 
     if (!spellInfo->IsSpellAppliesAura((1 << EFFECT_INDEX_0) | (1 << EFFECT_INDEX_1) | (1 << EFFECT_INDEX_2)) &&
         !spellInfo->HasEffect(SPELL_EFFECT_PERSISTENT_AREA_AURA))
     {
-        PSendSysMessage(LANG_SPELL_NO_HAVE_AURAS, spellID);
+        PSendSysMessage(LANG_SPELL_NO_HAVE_AURAS, spellId);
         SetSentErrorMessage(true);
         return false;
     }
-
 
     SpellAuraHolder* holder = CreateSpellAuraHolder(spellInfo, unit, m_session->GetPlayer(), m_session->GetPlayer());
 
@@ -334,12 +333,12 @@ bool ChatHandler::HandleAuraCommand(char* args)
     }
 
     // number or [name] Shift-click form |color|Hspell:spell_id|h[name]|h|r or Htalent form
-    uint32 spellID = ExtractSpellIdFromLink(&args);
+    uint32 spellId = ExtractSpellIdFromLink(&args);
     // Aura duration in seconds
     int32 duration = 0;
     ExtractInt32(&args, duration);
 
-    return HandleAuraHelper(spellID, duration, target);
+    return HandleAuraHelper(spellId, duration, target);
 }
 
 bool ChatHandler::HandleUnAuraCommand(char* args)
@@ -360,11 +359,11 @@ bool ChatHandler::HandleUnAuraCommand(char* args)
     }
 
     // number or [name] Shift-click form |color|Hspell:spell_id|h[name]|h|r or Htalent form
-    uint32 spellID = ExtractSpellIdFromLink(&args);
-    if (!spellID)
+    uint32 spellId = ExtractSpellIdFromLink(&args);
+    if (!spellId)
         return false;
 
-    target->RemoveAurasDueToSpell(spellID);
+    target->RemoveAurasDueToSpell(spellId);
 
     return true;
 }
@@ -1288,7 +1287,12 @@ bool ChatHandler::HandleModifyMorphCommand(char* args)
     if (!*args)
         return false;
 
-    uint16 display_id = (uint16)atoi(args);
+    uint32 display_id = (uint32)atoi(args);
+    if (!sCreatureDisplayInfoStore.LookupEntry(display_id))
+    {
+        PSendSysMessage("Display Id %u does not exist.", display_id);
+        return false;
+    }
 
     Unit* target = GetSelectedUnit();
     if (!target)
@@ -1577,8 +1581,9 @@ bool ChatHandler::HandleDamageCommand(char* args)
         return false;
 
     Unit* target = GetSelectedUnit();
+    Player* player = m_session->GetPlayer();
 
-    if (!target || !m_session->GetPlayer()->GetSelectionGuid())
+    if (!target || !player->GetSelectionGuid())
     {
         SendSysMessage(LANG_SELECT_CHAR_OR_CREATURE);
         SetSentErrorMessage(true);
@@ -1600,9 +1605,9 @@ bool ChatHandler::HandleDamageCommand(char* args)
     // flat melee damage without resistence/etc reduction
     if (!*args)
     {
-        m_session->GetPlayer()->DealDamage(target, damage, nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-        if (target != m_session->GetPlayer())
-            m_session->GetPlayer()->SendAttackStateUpdate(HITINFO_NORMALSWING2, target, 1, SPELL_SCHOOL_MASK_NORMAL, damage, 0, 0, VICTIMSTATE_NORMAL, 0);
+        player->DealDamage(target, damage, nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+        if (target != player)
+            player->SendAttackStateUpdate(HITINFO_NORMALSWING2, target, 1, SPELL_SCHOOL_MASK_NORMAL, damage, 0, 0, VICTIMSTATE_NORMAL, 0);
         return true;
     }
 
@@ -1616,7 +1621,7 @@ bool ChatHandler::HandleDamageCommand(char* args)
     SpellSchoolMask schoolmask = GetSchoolMask(school);
 
     if (schoolmask & SPELL_SCHOOL_MASK_NORMAL)
-        damage = m_session->GetPlayer()->CalcArmorReducedDamage(target, damage);
+        damage = player->CalcArmorReducedDamage(target, damage);
 
     // melee damage by specific school
     if (!*args)
@@ -1624,7 +1629,7 @@ bool ChatHandler::HandleDamageCommand(char* args)
         uint32 absorb = 0;
         int32 resist = 0;
 
-        target->CalculateDamageAbsorbAndResist(m_session->GetPlayer(), schoolmask, SPELL_DIRECT_DAMAGE, damage, &absorb, &resist, nullptr);
+        target->CalculateDamageAbsorbAndResist(player, schoolmask, SPELL_DIRECT_DAMAGE, damage, &absorb, &resist, nullptr);
 
         uint32 const bonus = (resist < 0 ? uint32(std::abs(resist)) : 0);
         damage += bonus;
@@ -1635,9 +1640,9 @@ bool ChatHandler::HandleDamageCommand(char* args)
 
         damage -= malus;
 
-        m_session->GetPlayer()->DealDamageMods(target, damage, &absorb);
-        m_session->GetPlayer()->DealDamage(target, damage, nullptr, DIRECT_DAMAGE, schoolmask, nullptr, false);
-        m_session->GetPlayer()->SendAttackStateUpdate(HITINFO_NORMALSWING2, target, 1, schoolmask, damage, absorb, resist, VICTIMSTATE_NORMAL, 0);
+        player->DealDamageMods(target, damage, &absorb);
+        player->DealDamage(target, damage, nullptr, DIRECT_DAMAGE, schoolmask, nullptr, false);
+        player->SendAttackStateUpdate(HITINFO_NORMALSWING2, target, 1, schoolmask, damage, absorb, resist, VICTIMSTATE_NORMAL, 0);
         return true;
     }
 
@@ -1648,7 +1653,7 @@ bool ChatHandler::HandleDamageCommand(char* args)
     if (!spellid || !sSpellMgr.GetSpellEntry(spellid))
         return false;
 
-    m_session->GetPlayer()->SpellNonMeleeDamageLog(target, spellid, damage);
+    player->SpellNonMeleeDamageLog(target, spellid, damage);
     return true;
 }
 
@@ -1866,49 +1871,63 @@ bool ChatHandler::HandleDieHelper(Unit* target)
     return true;
 }
 
-bool ChatHandler::HandleFearCommand(char* /*args*/)
+bool ChatHandler::HandleFearCommand(char* args)
 {
     Unit* target = GetSelectedUnit();
 
-    if (!target || !m_session->GetPlayer()->GetSelectionGuid())
+    if (!target)
     {
         SendSysMessage(LANG_SELECT_CHAR_OR_CREATURE);
         SetSentErrorMessage(true);
         return false;
     }
 
-    uint32 const fearID = 26641;
+    uint32 spellId = 0;
 
-    SpellEntry const* spellInfo = sSpellMgr.GetSpellEntry(fearID);
-    if (!spellInfo)
-        return false;
-
-    if (!spellInfo->IsSpellAppliesAura((1 << EFFECT_INDEX_0) | (1 << EFFECT_INDEX_1) | (1 << EFFECT_INDEX_2)) &&
-        !spellInfo->HasEffect(SPELL_EFFECT_PERSISTENT_AREA_AURA))
+    for (uint32 i = 0; i < sSpellMgr.GetMaxSpellId(); i++)
     {
-        PSendSysMessage(LANG_SPELL_NO_HAVE_AURAS, fearID);
+        SpellEntry const* pSpellInfo = sSpellMgr.GetSpellEntry(i);
+        if (!pSpellInfo)
+            continue;
+
+        if ((pSpellInfo->Effect[0] == SPELL_EFFECT_APPLY_AURA) &&
+            (pSpellInfo->EffectApplyAuraName[0] == SPELL_AURA_MOD_FEAR) &&
+            (pSpellInfo->Effect[1] == SPELL_EFFECT_NONE) &&
+            (!pSpellInfo->HasAttribute(SPELL_ATTR_PASSIVE)))
+        {
+            spellId = i;
+            break;
+        }
+    }
+
+    int32 duration = 0;
+    ExtractInt32(&args, duration);
+
+    if (spellId)
+        HandleAuraHelper(spellId, duration, target);
+
+    return true;
+}
+
+bool ChatHandler::HandleKnockBackCommand(char* args)
+{
+    Unit* target = GetSelectedUnit();
+
+    if (!target)
+    {
+        SendSysMessage(LANG_SELECT_CHAR_OR_CREATURE);
         SetSentErrorMessage(true);
         return false;
     }
 
-    SpellAuraHolder* holder = CreateSpellAuraHolder(spellInfo, target, m_session->GetPlayer(), m_session->GetPlayer());
+    Player* player = GetSession()->GetPlayer();
+    
+    float horizontalSpeed = 10.0f;
+    ExtractFloat(&args, horizontalSpeed);
+    float verticalSpeed = 10.0f;
+    ExtractFloat(&args, verticalSpeed);
 
-    for (uint32 i = 0; i < MAX_EFFECT_INDEX; ++i)
-    {
-        uint8 eff = spellInfo->Effect[i];
-        if (eff >= TOTAL_SPELL_EFFECTS)
-            continue;
-        if (Spells::IsAreaAuraEffect(eff) ||
-            eff == SPELL_EFFECT_APPLY_AURA ||
-            eff == SPELL_EFFECT_PERSISTENT_AREA_AURA)
-        {
-            Aura* aur = CreateAura(spellInfo, SpellEffectIndex(i), nullptr, holder, target);
-            holder->AddAura(aur, SpellEffectIndex(i));
-        }
-    }
-
-    if (!target->AddSpellAuraHolder(holder))
-        holder = nullptr;
+    target->KnockBackFrom(player, horizontalSpeed, verticalSpeed);
 
     return true;
 }

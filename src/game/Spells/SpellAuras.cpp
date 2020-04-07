@@ -394,7 +394,7 @@ Aura::~Aura()
 }
 
 AreaAura::AreaAura(SpellEntry const* spellproto, SpellEffectIndex eff, int32 *currentBasePoints, SpellAuraHolder* holder, Unit* target,
-                   Unit* caster, Item* castItem) : Aura(spellproto, eff, currentBasePoints, holder, target, caster, castItem)
+                   Unit* caster, Item* castItem, uint32 originalRankSpellId) : Aura(spellproto, eff, currentBasePoints, holder, target, caster, castItem), m_originalRankSpellId(originalRankSpellId)
 {
     m_isAreaAura = true;
 
@@ -664,9 +664,17 @@ void AreaAura::Update(uint32 diff)
                 // false if an area aura of the same spellid exists on the target
                 bool apply = true;
 
+                SpellEntry const* actualSpellInfo;
+                if (GetCasterGuid() == target->GetObjectGuid()) // if caster is same as target then no need to change rank of the spell
+                    actualSpellInfo = GetSpellProto();
+                else
+                    actualSpellInfo = sSpellMgr.SelectAuraRankForLevel(GetSpellProto(), target->GetLevel()); // use spell id according level of the target
+                if (!actualSpellInfo)
+                    continue;
+
+                Unit::SpellAuraHolderBounds spair = target->GetSpellAuraHolderBounds(actualSpellInfo->Id);
                 // we need to ignore present caster self applied area auras sometimes
                 // in cases where this is the only aura applied for this spell effect
-                Unit::SpellAuraHolderBounds spair = target->GetSpellAuraHolderBounds(GetId());
                 for (Unit::SpellAuraHolderMap::const_iterator i = spair.first; i != spair.second; ++i)
                 {
                     if (i->second->IsDeleted())
@@ -696,57 +704,54 @@ void AreaAura::Update(uint32 diff)
                     continue;
 
                 // Skip some targets (TODO: Might require better checks, also unclear how the actual caster must/can be handled)
-                if (GetSpellProto()->AttributesEx3 & SPELL_ATTR_EX3_TARGET_ONLY_PLAYER && target->GetTypeId() != TYPEID_PLAYER)
+                if (actualSpellInfo->AttributesEx3 & SPELL_ATTR_EX3_TARGET_ONLY_PLAYER && target->GetTypeId() != TYPEID_PLAYER)
                     continue;
+                
+                int32 actualBasePoints = m_currentBasePoints;
+                // recalculate basepoints for lower rank (all AreaAura spell not use custom basepoints?)
+                if (actualSpellInfo != GetSpellProto())
+                    actualBasePoints = actualSpellInfo->CalculateSimpleValue(m_effIndex);
 
-                if (SpellEntry const* actualSpellInfo = sSpellMgr.SelectAuraRankForLevel(GetSpellProto(), target->GetLevel()))
+                SpellAuraHolder* holder = target->GetSpellAuraHolder(actualSpellInfo->Id, GetCasterGuid());
+
+                bool addedToExisting = true;
+                if (!holder)
                 {
-                    int32 actualBasePoints = m_currentBasePoints;
-                    // recalculate basepoints for lower rank (all AreaAura spell not use custom basepoints?)
-                    if (actualSpellInfo != GetSpellProto())
-                        actualBasePoints = actualSpellInfo->CalculateSimpleValue(m_effIndex);
+                    holder = CreateSpellAuraHolder(actualSpellInfo, target, caster, caster);
+                    addedToExisting = false;
+                }
 
-                    SpellAuraHolder* holder = target->GetSpellAuraHolder(actualSpellInfo->Id, GetCasterGuid());
+                AreaAura* aur = new AreaAura(actualSpellInfo, m_effIndex, &actualBasePoints, holder, target, caster, nullptr, GetSpellProto()->Id);
+                holder->AddAura(aur, m_effIndex);
 
-                    bool addedToExisting = true;
-                    if (!holder)
+                if (!holder->IsPassive() && !holder->IsPermanent())
+                {
+                    // Aura duration has already been decremented in caster holder update, so re-add
+                    // for the target's holder or it will be one diff in the future
+                    holder->SetAuraDuration(GetAuraDuration() + diff);
+                }
+
+                // Caster's aura will tick at the end of this method, so subtract now to remain synced
+                holder->RefreshAuraPeriodicTimers(m_periodicTimer - diff);
+
+                if (addedToExisting)
+                {
+                    target->AddAuraToModList(aur);
+                    holder->SetInUse(true);
+                    aur->ApplyModifier(true, true);
+                    holder->SetInUse(false);
+                }
+                else if (!target->AddSpellAuraHolder(holder))
+                    holder = nullptr;
+
+                DETAIL_LOG("Added aura %u to holder for spell %u on %s", m_effIndex, GetId(), target->GetName());
+
+                // Add holder to spell if it's channeled so the updates are synced
+                if (holder && IsChanneled() && !addedToExisting)
+                {
+                    if (Spell* spell = caster->GetCurrentSpell(CURRENT_CHANNELED_SPELL))
                     {
-                        holder = CreateSpellAuraHolder(actualSpellInfo, target, caster, caster);
-                        addedToExisting = false;
-                    }
-
-                    AreaAura *aur = new AreaAura(actualSpellInfo, m_effIndex, &actualBasePoints, holder, target, caster, nullptr);
-                    holder->AddAura(aur, m_effIndex);
-
-                    if (!holder->IsPassive() && !holder->IsPermanent())
-                    {
-                        // Aura duration has already been decremented in caster holder update, so re-add
-                        // for the target's holder or it will be one diff in the future
-                        holder->SetAuraDuration(GetAuraDuration() + diff);
-                    }
-
-                    // Caster's aura will tick at the end of this method, so subtract now to remain synced
-                    holder->RefreshAuraPeriodicTimers(m_periodicTimer - diff);
-
-                    if (addedToExisting)
-                    {
-                        target->AddAuraToModList(aur);
-                        holder->SetInUse(true);
-                        aur->ApplyModifier(true, true);
-                        holder->SetInUse(false);
-                    }
-                    else if (!target->AddSpellAuraHolder(holder))
-                        holder = nullptr;
-
-                    DETAIL_LOG("Added aura %u to holder for spell %u on %s", m_effIndex, GetId(), target->GetName());
-
-                    // Add holder to spell if it's channeled so the updates are synced
-                    if (holder && IsChanneled() && !addedToExisting)
-                    {
-                        if (Spell* spell = caster->GetCurrentSpell(CURRENT_CHANNELED_SPELL))
-                        {
-                            spell->AddChanneledAuraHolder(holder);
-                        }
+                        spell->AddChanneledAuraHolder(holder);
                     }
                 }
             }
@@ -757,6 +762,7 @@ void AreaAura::Update(uint32 diff)
     {
         Unit* caster = GetCaster();
         Unit* target = GetTarget();
+        uint32 originalRankSpellId = m_originalRankSpellId ? m_originalRankSpellId : GetId(); // caster may have different spell id if target has lower level
 
         // Aura updates in caster update, see above
         //Aura::Update(diff);
@@ -766,10 +772,11 @@ void AreaAura::Update(uint32 diff)
         // or caster is isolated or caster no longer has the aura
         // or caster is (no longer) friendly
         bool needFriendly = (m_areaAuraType != AREA_AURA_ENEMY);
-        if (!caster || caster->HasUnitState(UNIT_STAT_ISOLATED) ||
-                !caster->IsWithinDistInMap(target, m_radius) ||
-                !caster->HasAura(GetId(), GetEffIndex()) ||
-                caster->IsFriendlyTo(target) != needFriendly
+        if (!caster || 
+            caster->HasUnitState(UNIT_STAT_ISOLATED) ||
+            !caster->HasAura(originalRankSpellId, GetEffIndex()) ||
+            !caster->IsWithinDistInMap(target, m_radius) ||
+            caster->IsFriendlyTo(target) != needFriendly
             )
         {
             target->RemoveSingleAuraFromSpellAuraHolder(GetId(), GetEffIndex(), GetCasterGuid(), AURA_REMOVE_BY_RANGE);
@@ -2114,7 +2121,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
         return;
     }
 
-    if (GetEffIndex() == EFFECT_INDEX_0 && target->GetTypeId() == TYPEID_PLAYER)
+    if (target->GetTypeId() == TYPEID_PLAYER)
     {
         SpellAreaForAreaMapBounds saBounds = sSpellMgr.GetSpellAreaForAuraMapBounds(GetId());
         if (saBounds.first != saBounds.second)
@@ -2122,18 +2129,30 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
             uint32 zone, area;
             target->GetZoneAndAreaId(zone, area);
 
+            std::set<uint32> spellsToCast;
+            std::set<uint32> spellsToRemove;
+
             for (SpellAreaForAreaMap::const_iterator itr = saBounds.first; itr != saBounds.second; ++itr)
             {
                 // some auras remove at aura remove
                 if (!itr->second->IsFitToRequirements((Player*)target, zone, area))
-                    target->RemoveAurasDueToSpell(itr->second->spellId);
+                {
+                    spellsToRemove.insert(itr->second->spellId);
+                }
                 // some auras applied at aura apply
                 else if (itr->second->autocast)
                 {
                     if (!target->HasAura(itr->second->spellId, EFFECT_INDEX_0))
-                        target->CastSpell(target, itr->second->spellId, true);
+                        spellsToCast.insert(itr->second->spellId);
                 }
             }
+
+            for (auto i : spellsToRemove)
+                if (spellsToCast.find(i) == spellsToCast.end())
+                    target->RemoveAurasDueToSpell(i);
+
+            for (auto i : spellsToCast)
+                target->CastSpell(target, i, true);
         }
     }
 
@@ -2155,14 +2174,14 @@ void Aura::HandleAuraMounted(bool apply, bool Real)
         CreatureInfo const* ci = ObjectMgr::GetCreatureTemplate(m_modifier.m_miscvalue);
         if (!ci)
         {
-            sLog.outErrorDb("AuraMounted: `creature_template`='%u' not found in database (only need it modelid)", m_modifier.m_miscvalue);
+            sLog.outErrorDb("AuraMounted: `creature_template`='%u' not found in database (only need its display_id)", m_modifier.m_miscvalue);
             return;
         }
 
         uint32 display_id = Creature::ChooseDisplayId(ci);
-        CreatureModelInfo const* minfo = sObjectMgr.GetCreatureModelRandomGender(display_id);
+        CreatureDisplayInfoAddon const* minfo = sObjectMgr.GetCreatureDisplayInfoRandomGender(display_id);
         if (minfo)
-            display_id = minfo->modelid;
+            display_id = minfo->display_id;
 
         target->Mount(display_id, GetId());
     }
@@ -2204,8 +2223,8 @@ void Aura::HandleWaterBreathing(bool /*apply*/, bool /*Real*/)
         ((Player*)GetTarget())->UpdateMirrorTimers();
 }
 
-std::pair<unsigned int, float> getShapeshiftModelInfo(ShapeshiftForm form, Unit* target){
-    unsigned int modelid = 0;
+std::pair<unsigned int, float> GetShapeshiftDisplayInfo(ShapeshiftForm form, Unit* target){
+    unsigned int display_id = 0;
     float mod = 1;
     switch (form)
     {
@@ -2214,20 +2233,20 @@ std::pair<unsigned int, float> getShapeshiftModelInfo(ShapeshiftForm form, Unit*
         if (target->IsPlayer())
         {
             if (Player::TeamForRace(target->GetRace()) == ALLIANCE)
-                modelid = 892;
+                display_id = 892;
             else
-                modelid = 8571;
+                display_id = 8571;
         }
         else
-            modelid = 892;
+            display_id = 892;
         mod = 0.80f;
         break;
     case FORM_TRAVEL:
-        modelid = 632;
+        display_id = 632;
         mod = 0.80f;
         break;
     case FORM_AQUA:
-        modelid = 2428;
+        display_id = 2428;
         mod = 0.80f;
         break;
     case FORM_BEAR:
@@ -2235,40 +2254,40 @@ std::pair<unsigned int, float> getShapeshiftModelInfo(ShapeshiftForm form, Unit*
         if (target->IsPlayer())
         {
             if (Player::TeamForRace(target->GetRace()) == ALLIANCE)
-                modelid = 2281;
+                display_id = 2281;
             else
-                modelid = 2289;
+                display_id = 2289;
         }
         else
-            modelid = 2281;
+            display_id = 2281;
         break;
     case FORM_GHOUL:
         if (Player::TeamForRace(target->GetRace()) == ALLIANCE)
-            modelid = 10045;
+            display_id = 10045;
         break;
     case FORM_CREATUREBEAR:
-        modelid = 902;
+        display_id = 902;
         break;
     case FORM_GHOSTWOLF:
-        modelid = 4613;
+        display_id = 4613;
         mod = 0.80f;
         break;
     case FORM_MOONKIN:
         if (target->IsPlayer())
         {
             if (Player::TeamForRace(target->GetRace()) == ALLIANCE)
-                modelid = 15374;
+                display_id = 15374;
             else
-                modelid = 15375;
+                display_id = 15375;
         }
         else
-            modelid = 15374;
+            display_id = 15374;
         break;
     case FORM_TREE:
-        modelid = 864;
+        display_id = 864;
         break;
     case FORM_SPIRITOFREDEMPTION:
-        modelid = 16031;
+        display_id = 16031;
         break;
     /*case FORM_BATTLESTANCE:
     case FORM_BERSERKERSTANCE:
@@ -2279,7 +2298,7 @@ std::pair<unsigned int, float> getShapeshiftModelInfo(ShapeshiftForm form, Unit*
     default:
         break;
     }
-    return {modelid,mod};
+    return {display_id,mod};
 }
 
 void Aura::HandleAuraModShapeshift(bool apply, bool Real)
@@ -2325,14 +2344,14 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
             break;
     }
 
-    std::pair<unsigned int, float> info = getShapeshiftModelInfo(form, target);
-    unsigned int modelid = info.first;
-    if (modelid > 0 && !target->GetTransForm())
+    std::pair<uint32, float> info = GetShapeshiftDisplayInfo(form, target);
+    uint32 display_id = info.first;
+    if (display_id > 0 && !target->GetTransForm())
     {
         if (apply)
         {
             target->SetTransformScale(info.second);
-            target->SetDisplayId(modelid);
+            target->SetDisplayId(display_id);
         }
         else
         {
@@ -2488,7 +2507,7 @@ void Aura::HandleAuraTransform(bool apply, bool Real)
     if (apply)
     {
         float mod_x = 1;
-        uint32 model_id = 0;
+        uint32 display_id = 0;
 
         // Discombobulate removes mount auras.
         if (GetId() == 4060 && Real)
@@ -2504,13 +2523,13 @@ void Aura::HandleAuraTransform(bool apply, bool Real)
                 switch (rand)
                 {
                     case 0:
-                        model_id = 1060;
+                        display_id = 1060;
                         break;
                     case 1:
-                        model_id = 4473;
+                        display_id = 4473;
                         break;
                     case 2:
-                        model_id = 7898;
+                        display_id = 7898;
                         break;
                 }
             }
@@ -2520,63 +2539,63 @@ void Aura::HandleAuraTransform(bool apply, bool Real)
                 {
                     case 16739:                                 // Orb of Deception
                     {
-                        uint8 gender = sObjectMgr.GetCreatureModelInfo(target->GetDisplayId())->gender;
+                        uint8 gender = sObjectMgr.GetCreatureDisplayInfoAddon(target->GetDisplayId())->gender;
                         switch (target->GetRace())
                         {
-                        case RACE_TROLL:
-                            model_id = gender == GENDER_MALE ?
-                                        10135 :
-                                        10134 ;
-                            break;
-                        case RACE_TAUREN:
-                            model_id = gender == GENDER_MALE ?
-                                        10136 :
-                                        10147 ;
-                            break;
-                        case RACE_HUMAN:
-                            model_id = gender == GENDER_MALE ?
-                                        10137 :
-                                        10138 ;
-                            break;
-                        case RACE_ORC:
-                            model_id = gender == GENDER_MALE ?
-                                        10139 :
-                                        10140 ;
-                            break;
-                        case RACE_DWARF:
-                            model_id = gender == GENDER_MALE ?
-                                        10141 :
-                                        10142 ;
-                            break;
-                        case RACE_NIGHTELF:
-                            model_id = gender == GENDER_MALE ?
-                                        10143 :
-                                        10144 ;
-                            break;
-                        case RACE_UNDEAD:
-                            model_id = gender == GENDER_MALE ?
-                                        10146 :
-                                        10145 ;
-                            break;
-                        case RACE_GNOME:
-                            if (gender == GENDER_MALE)
-                            {
-                                model_id = 10148;
-                                mod_x = DEFAULT_TAUREN_MALE_SCALE;
-                            }
-                            else
-                            {
-                                model_id = 10149;
-                                mod_x = DEFAULT_TAUREN_FEMALE_SCALE;
-                            }
-                            break;
-                        default:
-                            break;
+                            case RACE_TROLL:
+                                display_id = gender == GENDER_MALE ?
+                                            10135 :
+                                            10134 ;
+                                break;
+                            case RACE_TAUREN:
+                                display_id = gender == GENDER_MALE ?
+                                            10136 :
+                                            10147 ;
+                                break;
+                            case RACE_HUMAN:
+                                display_id = gender == GENDER_MALE ?
+                                            10137 :
+                                            10138 ;
+                                break;
+                            case RACE_ORC:
+                                display_id = gender == GENDER_MALE ?
+                                            10139 :
+                                            10140 ;
+                                break;
+                            case RACE_DWARF:
+                                display_id = gender == GENDER_MALE ?
+                                            10141 :
+                                            10142 ;
+                                break;
+                            case RACE_NIGHTELF:
+                                display_id = gender == GENDER_MALE ?
+                                            10143 :
+                                            10144 ;
+                                break;
+                            case RACE_UNDEAD:
+                                display_id = gender == GENDER_MALE ?
+                                            10146 :
+                                            10145 ;
+                                break;
+                            case RACE_GNOME:
+                                if (gender == GENDER_MALE)
+                                {
+                                    display_id = 10148;
+                                    mod_x = DEFAULT_TAUREN_MALE_SCALE;
+                                }
+                                else
+                                {
+                                    display_id = 10149;
+                                    mod_x = DEFAULT_TAUREN_FEMALE_SCALE;
+                                }
+                                break;
+                            default:
+                                break;
                         }
                         break;
                     }
                     default:
-                        sLog.outError("Aura::HandleAuraTransform, spell %u does not have creature entry defined, need custom defined model.", GetId());
+                        sLog.outError("Aura::HandleAuraTransform, spell %u does not have creature entry defined, need custom defined display id.", GetId());
                         break;
                 }
             }
@@ -2585,11 +2604,11 @@ void Aura::HandleAuraTransform(bool apply, bool Real)
                 CreatureInfo const* ci = ObjectMgr::GetCreatureTemplate(m_modifier.m_miscvalue);
                 if (!ci)
                 {
-                    model_id = 16358;                           // pig pink ^_^
-                    sLog.outError("Auras: unknown creature id = %d (only need its modelid) Form Spell Aura Transform in Spell ID = %d", m_modifier.m_miscvalue, GetId());
+                    display_id = 16358;                           // pig pink ^_^
+                    sLog.outError("Auras: unknown creature id = %d (only need its display_id) Form Spell Aura Transform in Spell ID = %d", m_modifier.m_miscvalue, GetId());
                 }
                 else
-                    model_id = Creature::ChooseDisplayId(ci);   // Will use the default model here
+                    display_id = Creature::ChooseDisplayId(ci);   // Will use the default display id here
 
                 // creature case, need to update equipment
                 if (ci && target->GetTypeId() == TYPEID_UNIT)
@@ -2600,9 +2619,9 @@ void Aura::HandleAuraTransform(bool apply, bool Real)
                     
             }
 
-            if (model_id)
+            if (display_id)
             {
-                target->SetDisplayId(model_id);
+                target->SetDisplayId(display_id);
                 target->SetTransformScale(mod_x);
             }
             target->SetTransForm(GetId());
@@ -2641,7 +2660,7 @@ void Aura::HandleAuraTransform(bool apply, bool Real)
             }
             else //reapply shapeshifting, there should be only one.
             {
-                std::pair<unsigned int, float> info = getShapeshiftModelInfo(target->GetShapeshiftForm(), target);
+                std::pair<unsigned int, float> info = GetShapeshiftDisplayInfo(target->GetShapeshiftForm(), target);
                 if (info.first)
                 {
                     target->SetDisplayId(info.first);
@@ -5183,6 +5202,7 @@ void Aura::HandleModOffhandDamagePercent(bool apply, bool Real)
 
 void Aura::HandleModPowerCostPCT(bool apply, bool Real)
 {
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_6_1
     // spells required only Real aura add/remove
     if (!Real)
         return;
@@ -5191,10 +5211,12 @@ void Aura::HandleModPowerCostPCT(bool apply, bool Real)
     for (int i = 0; i < MAX_SPELL_SCHOOL; ++i)
         if (m_modifier.m_miscvalue & (1 << i))
             GetTarget()->ApplyModSignedFloatValue(UNIT_FIELD_POWER_COST_MULTIPLIER + i, amount, apply);
+#endif
 }
 
 void Aura::HandleModPowerCost(bool apply, bool Real)
 {
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_6_1
     // spells required only Real aura add/remove
     if (!Real)
         return;
@@ -5202,6 +5224,7 @@ void Aura::HandleModPowerCost(bool apply, bool Real)
     for (int i = 0; i < MAX_SPELL_SCHOOL; ++i)
         if (m_modifier.m_miscvalue & (1 << i))
             GetTarget()->ApplyModInt32Value(UNIT_FIELD_POWER_COST_MODIFIER + i, m_modifier.m_amount, apply);
+#endif
 }
 
 /*********************************************************/
@@ -5353,12 +5376,16 @@ void Aura::HandleShapeshiftBoosts(bool apply)
 
 void Aura::HandleAuraEmpathy(bool apply, bool /*Real*/)
 {
-    if (GetTarget()->GetTypeId() != TYPEID_UNIT)
+    Unit* target = GetTarget();
+    if (target->GetTypeId() != TYPEID_UNIT)
         return;
 
-    CreatureInfo const* ci = ObjectMgr::GetCreatureTemplate(GetTarget()->GetEntry());
+    CreatureInfo const* ci = ObjectMgr::GetCreatureTemplate(target->GetEntry());
     if (ci && ci->type == CREATURE_TYPE_BEAST)
-        GetTarget()->ApplyModUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_SPECIALINFO, apply);
+        target->ApplyModUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_SPECIALINFO, apply);
+
+    target->ForceValuesUpdateAtIndex(UNIT_FIELD_HEALTH);
+    target->ForceValuesUpdateAtIndex(UNIT_FIELD_MAXHEALTH);
 }
 
 void Aura::HandleAuraUntrackable(bool apply, bool /*Real*/)
@@ -7178,11 +7205,22 @@ void SpellAuraHolder::SetAuraFlag(uint32 slot, bool add)
     uint32 index    = slot >> 3;
     uint32 byte     = (slot & 7) << 2;
     uint32 val      = m_target->GetUInt32Value(UNIT_FIELD_AURAFLAGS + index);
+    val &= ~(uint32(AFLAG_MASK_ALL) << byte);
     if (add)
-        val |= ((uint32)AFLAG_MASK << byte);
-    else
-        val &= ~((uint32)AFLAG_MASK << byte);
+    {
+        uint32 flags = AFLAG_NONE;
 
+        if (IsPositive())
+        {
+            if (!m_spellProto->HasAttribute(SPELL_ATTR_CANT_CANCEL))
+                flags |= AFLAG_CANCELABLE;
+            flags |= AFLAG_UNK3;
+        }
+        else
+            flags |= AFLAG_UNK4;
+
+        val |= (flags << byte);
+    }
     m_target->SetUInt32Value(UNIT_FIELD_AURAFLAGS + index, val);
 }
 

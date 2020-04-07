@@ -40,8 +40,10 @@ void AddItemsSetItem(Player* player, Item* item)
         return;
     }
 
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_6_1
     if (set->required_skill_id && player->GetSkillValue(set->required_skill_id) < set->required_skill_value)
         return;
+#endif
 
     ItemSetEffect* eff = nullptr;
 
@@ -216,8 +218,9 @@ Item::Item() : loot(nullptr)
 {
     m_objectType |= TYPEMASK_ITEM;
     m_objectTypeId = TYPEID_ITEM;
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_8_4
     m_updateFlag = UPDATEFLAG_ALL;
-
+#endif
     m_valuesCount = ITEM_END;
     m_slot = 0;
     uState = ITEM_NEW;

@@ -128,7 +128,7 @@ bool Guild::Create(Player* leader, std::string gname)
         return false;
 
     // Check guild name (use whisper type - 6)
-    if (AntispamInterface *a = sAnticheatLib->GetAntispam())
+    if (AntispamInterface *a = sAnticheatMgr->GetAntispam())
     {
         if (a->filterMessage(gname))
         {
@@ -339,9 +339,12 @@ bool Guild::CheckGuildStructure()
         SetLeader(m_LeaderGuid);
 
     // Allow only 1 guildmaster, set other to officer
-    for (auto& member : members)
-        if (member.second.RankId == GR_GUILDMASTER && m_LeaderGuid != member.second.guid)
-            member.second.ChangeRank(GR_OFFICER);
+    for (auto& itr : members)
+    {
+        MemberSlot& member = itr.second;
+        if (member.RankId == GR_GUILDMASTER && m_LeaderGuid != member.guid)
+            member.ChangeRank(GR_OFFICER);
+    }
 
     return true;
 }

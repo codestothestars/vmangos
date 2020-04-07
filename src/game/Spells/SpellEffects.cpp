@@ -278,27 +278,27 @@ void Spell::EffectInstaKill(SpellEffectIndex /*eff_idx*/)
     if (m_spellInfo->Id == 18788 && unitTarget->IsCreature() && m_casterUnit)
     {
         uint32 entry = unitTarget->GetEntry();
-        uint32 spellID;
+        uint32 spellId;
         switch (entry)
         {
             case   416:
-                spellID = 18789;
+                spellId = 18789;
                 break;               //imp
             case   417:
-                spellID = 18792;
+                spellId = 18792;
                 break;               //fellhunter
             case  1860:
-                spellID = 18790;
+                spellId = 18790;
                 break;               //void
             case  1863:
-                spellID = 18791;
+                spellId = 18791;
                 break;               //succubus
             default:
                 sLog.outError("EffectInstaKill: Unhandled creature entry (%u) case.", entry);
                 return;
         }
 
-        m_casterUnit->CastSpell(m_casterUnit, spellID, true);
+        m_casterUnit->CastSpell(m_casterUnit, spellId, true);
     }
 
     if (m_caster == unitTarget)                             // prevent interrupt message
@@ -548,6 +548,36 @@ void Spell::EffectDummy(SpellEffectIndex eff_idx)
         {
             switch (m_spellInfo->Id)
             {
+                case 23383: // Alliance Flag Click
+                case 23384: // Horde Flag Click
+                {
+                    if (!m_casterGo)
+                        return;
+
+                    Player* pPlayer = ToPlayer(unitTarget);
+                    if (!pPlayer || !pPlayer->CanUseBattleGroundObject())
+                        return;
+
+                    BattleGround* bg = pPlayer->GetBattleGround();
+                    if (!bg)
+                        return;
+
+                    switch (m_casterGo->GetEntry())
+                    {
+                        case 179785:    // Silverwing Flag
+                        case 179786:    // Warsong Flag
+                            if (bg->GetTypeID() == BATTLEGROUND_WS)
+                                bg->EventPlayerClickedOnFlag(pPlayer, m_casterGo);
+                            break;
+                        default:
+                            return;
+                    }
+
+                    pPlayer->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
+                    pPlayer->RemoveSpellsCausingAura(SPELL_AURA_MOD_INVISIBILITY);
+                    m_casterGo->Delete();
+                    return;
+                }
                 case 6700: // Dimensional Portal (Used by Arugal)
                 {
                     if (unitTarget->GetTypeId() == TYPEID_UNIT)
@@ -666,8 +696,8 @@ void Spell::EffectDummy(SpellEffectIndex eff_idx)
                         Make every attacking enemy smaller
                         Give shield-wielding enemies "Improved Blocking" for 30 seconds (this shows no visible effect other than target is hit by the ray)
                         13003 - Shrink Ray (single target)
-                        13010 - Shrink (TARGET_ALL_PARTY_AROUND_CASTER)
-                        13004 - Grow  (TARGET_ALL_PARTY_AROUND_CASTER)
+                        13010 - Shrink (TARGET_ENUM_UNITS_PARTY_WITHIN_CASTER_RANGE)
+                        13004 - Grow  (TARGET_ENUM_UNITS_PARTY_WITHIN_CASTER_RANGE)
                      */
                     uint32 r = urand(0, 99);
                     // Normal behavior
@@ -1455,7 +1485,7 @@ void Spell::EffectDummy(SpellEffectIndex eff_idx)
                 {
                     if (unitTarget && unitTarget->GetTypeId() == TYPEID_PLAYER)
                         // Naxxramas Entry Flag Effect DND
-                        m_caster->CastSpell(unitTarget, 29294, true);
+                        m_caster->CastSpell(unitTarget, 29296, true);
 
                     return;
                 }
@@ -2198,7 +2228,7 @@ void Spell::EffectTeleportUnits(SpellEffectIndex eff_idx)
 
     switch (m_spellInfo->EffectImplicitTargetB[eff_idx])
     {
-        case TARGET_INNKEEPER_COORDINATES:
+        case TARGET_LOCATION_CASTER_HOME_BIND:
         {
             // Only players can teleport to innkeeper
             if (unitTarget->GetTypeId() != TYPEID_PLAYER)
@@ -2208,8 +2238,8 @@ void Spell::EffectTeleportUnits(SpellEffectIndex eff_idx)
             ((Player*)unitTarget)->TeleportToHomebind(unitTarget == m_caster ? TELE_TO_SPELL : 0, hearthCooldown);
             return;
         }
-        case TARGET_AREAEFFECT_INSTANT:                     // in all cases first TARGET_TABLE_X_Y_Z_COORDINATES
-        case TARGET_TABLE_X_Y_Z_COORDINATES:
+        case TARGET_ENUM_UNITS_SCRIPT_AOE_AT_SRC_LOC:                     // in all cases first TARGET_LOCATION_DATABASE
+        case TARGET_LOCATION_DATABASE:
         {
             SpellTargetPosition const* st = sSpellMgr.GetSpellTargetPosition(m_spellInfo->Id);
             if (!st)
@@ -2224,7 +2254,7 @@ void Spell::EffectTeleportUnits(SpellEffectIndex eff_idx)
                 ((Player*)unitTarget)->TeleportTo(*st, unitTarget == m_caster ? TELE_TO_SPELL : 0);
             break;
         }
-        case TARGET_EFFECT_SELECT:
+        case TARGET_LOCATION_CASTER_DEST:
         {
             if (!m_casterUnit)
                 return;
@@ -2257,7 +2287,7 @@ void Spell::EffectTeleportUnits(SpellEffectIndex eff_idx)
         }
     }
 
-    // post effects for TARGET_TABLE_X_Y_Z_COORDINATES
+    // post effects for TARGET_LOCATION_DATABASE
     if (m_spellInfo->Id == 23442 && m_casterUnit)
     {
         int32 r = irand(0, 119);
@@ -4429,7 +4459,11 @@ void Spell::EffectSummonObjectWild(SpellEffectIndex eff_idx)
     // Wild object not have owner and check clickable by players
     map->Add(pGameObj);
 
-    if (pGameObj->GetGoType() == GAMEOBJECT_TYPE_FLAGDROP && m_caster->GetTypeId() == TYPEID_PLAYER)
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_7_1
+    if (pGameObj->GetGoType() == GAMEOBJECT_TYPE_FLAGDROP && m_caster->IsPlayer())
+#else
+    if ((pGameObj->GetEntry() == 179785 || pGameObj->GetEntry() == 179786) && m_caster->IsPlayer())
+#endif
     {
         Player* pl = (Player*)m_caster;
         BattleGround* bg = ((Player*)m_caster)->GetBattleGround();
@@ -5319,7 +5353,7 @@ void Spell::EffectDuel(SpellEffectIndex eff_idx)
         if (caster->duel->startTime)
             caster->DuelComplete(DUEL_WON);
         else
-            caster->DuelComplete(DUEL_INTERUPTED);
+            caster->DuelComplete(DUEL_INTERRUPTED);
 
        delete caster->duel;
        delete target->duel;
@@ -6135,7 +6169,7 @@ void Spell::EffectSummonCritter(SpellEffectIndex eff_idx)
     if (old_critter)
         player->RemoveMiniPet();
 
-    CreatureCreatePos pos(m_caster, m_caster->GetOrientation(), PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
+    CreatureCreatePos pos(m_caster, m_caster->GetOrientation(), PET_FOLLOW_DIST, MINI_PET_SUMMON_ANGLE);
     if (!(m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION))
         pos = CreatureCreatePos(m_caster, m_caster->GetOrientation());
 
@@ -6153,7 +6187,6 @@ void Spell::EffectSummonCritter(SpellEffectIndex eff_idx)
 
     critter->SetSummonPoint(pos);
 
-    //critter->SetName("");                                 // generated by client
     critter->SetOwnerGuid(m_caster->GetObjectGuid());
     critter->SetCreatorGuid(m_caster->GetObjectGuid());
     critter->SetFactionTemplateId(m_caster->GetFactionTemplateId());
@@ -6161,7 +6194,7 @@ void Spell::EffectSummonCritter(SpellEffectIndex eff_idx)
 
     critter->AIM_Initialize();
     critter->InitPetCreateSpells();                         // e.g. disgusting oozeling has a create spell as critter...
-    critter->SelectLevel(critter->GetCreatureInfo());       // some summoned creaters have different from 1 DB data for level/hp
+    critter->SelectLevel(critter->GetCreatureInfo());       // some summoned creatures have different from 1 DB data for level/hp
     critter->SetUInt32Value(UNIT_NPC_FLAGS, critter->GetCreatureInfo()->npc_flags);
     // some mini-pets have quests
 
@@ -6173,6 +6206,7 @@ void Spell::EffectSummonCritter(SpellEffectIndex eff_idx)
     player->_SetMiniPet(critter);
 
     map->Add((Creature*)critter);
+    critter->SetFacingToObject(player);
 
     // Notify Summoner
     if (m_caster->GetTypeId() == TYPEID_UNIT && ((Creature*)m_caster)->AI())

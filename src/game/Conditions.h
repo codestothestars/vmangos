@@ -112,6 +112,8 @@ enum ConditionType
                                                             // Requirement: WorldObject Target
                                                             // Value1: creature_id
                                                             // Value2: search_radius
+                                                            // Value3: dead
+                                                            // Value4: not_self
     CONDITION_NEARBY_GAMEOBJECT     = 21,                   // Checks if there is a gameobject nearby with the given id.
                                                             // Requirement: WorldObject Target
                                                             // Value1: gobject_id
@@ -216,6 +218,9 @@ enum ConditionType
                                                             // Requirement: Player Target
                                                             // Value1: rank
                                                             // Value2: 0, 1 or 2 (0: equal to, 1: equal or higher than, 2: equal or less than)
+    CONDITION_DB_GUID               = 52,                   // Checks source object's db guid.
+                                                            // Requirement: WorldObject Source
+                                                            // Value1: guid
 };
 
 enum ConditionFlags

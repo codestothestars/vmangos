@@ -111,8 +111,9 @@ Unit::Unit()
 {
     m_objectType |= TYPEMASK_UNIT;
     m_objectTypeId = TYPEID_UNIT;
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_8_4
     m_updateFlag = (UPDATEFLAG_ALL | UPDATEFLAG_LIVING | UPDATEFLAG_HAS_POSITION);
-
+#endif
     m_attackTimer[BASE_ATTACK]   = 0;
     m_attackTimer[OFF_ATTACK]    = 0;
     m_attackTimer[RANGED_ATTACK] = 0;
@@ -505,13 +506,16 @@ bool Unit::HaveOffhandWeapon() const
 
 void Unit::SendHeartBeat(bool includingSelf)
 {
-    //m_movementInfo.ChangePosition(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+    SendMovementPacket(MSG_MOVE_HEARTBEAT, includingSelf);
+}
+
+void Unit::SendMovementPacket(uint16 opcode, bool includingSelf)
+{
     m_movementInfo.UpdateTime(WorldTimer::getMSTime());
+    WorldPacket data(opcode);
 #if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_8_4
-    WorldPacket data(MSG_MOVE_HEARTBEAT, 31);
     data << GetPackGUID();
 #else
-    WorldPacket data(MSG_MOVE_HEARTBEAT);
     data << GetGUID();
 #endif
     data << m_movementInfo;
@@ -816,7 +820,7 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
             he->duel->opponent->CombatStopWithPets(true);
             he->CombatStopWithPets(true);
 
-            he->DuelComplete(DUEL_INTERUPTED);
+            he->DuelComplete(DUEL_INTERRUPTED);
         }
     }
     else                                                    // if (health <= damage)
@@ -1288,20 +1292,10 @@ void Unit::CastStop(uint32 except_spellid)
                 InterruptSpell(CurrentSpellTypes(i), false);
 }
 
-
-
-
-
-
-
-
-
-
-
 // Obsolete func need remove, here only for comotability vs another patches
-uint32 Unit::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage)
+uint32 Unit::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellId, uint32 damage)
 {
-    SpellEntry const* spellInfo = sSpellMgr.GetSpellEntry(spellID);
+    SpellEntry const* spellInfo = sSpellMgr.GetSpellEntry(spellId);
     SpellNonMeleeDamage damageInfo(this, pVictim, spellInfo->Id, SpellSchools(spellInfo->School));
     CalculateSpellDamage(&damageInfo, damage, spellInfo);
     damageInfo.target->CalculateAbsorbResistBlock(this, &damageInfo, spellInfo);
@@ -7732,8 +7726,8 @@ CharmInfo* Unit::InitCharmInfo(Unit* charm)
 
 CharmInfo::CharmInfo(Unit* unit)
     : m_unit(unit), m_originalFactionTemplate(nullptr), m_CommandState(COMMAND_FOLLOW), m_reactState(REACT_PASSIVE), m_petnumber(0),
-      _isCommandAttack(false), _isCommandFollow(false), _isAtStay(false), _isFollowing(false), _isReturning(false),
-      _stayX(0.0f), _stayY(0.0f), _stayZ(0.0f)
+      m_isCommandAttack(false), m_isCommandFollow(false), m_isAtStay(false), m_isFollowing(false), m_isReturning(false),
+      m_stayX(0.0f), m_stayY(0.0f), m_stayZ(0.0f)
 {
     for (auto& itr : m_charmspells)
         itr.SetActionAndType(0, ACT_DISABLED);
@@ -7834,7 +7828,7 @@ void CharmInfo::InitCharmCreateSpells()
 
             for (uint32 i = 0; i < 3 && onlyselfcast; ++i)  //nonexistent spell will not make any problems as onlyselfcast would be false -> break right away
             {
-                if (pSpellEntry->EffectImplicitTargetA[i] != TARGET_SELF && pSpellEntry->EffectImplicitTargetA[i] != 0)
+                if (pSpellEntry->EffectImplicitTargetA[i] != TARGET_UNIT_CASTER && pSpellEntry->EffectImplicitTargetA[i] != 0)
                     onlyselfcast = false;
             }
 
@@ -7961,73 +7955,73 @@ void CharmInfo::SetSpellAutocast(uint32 spell_id, bool state)
 
 void CharmInfo::SetIsCommandAttack(bool val)
 {
-    _isCommandAttack = val;
+    m_isCommandAttack = val;
 }
 
 bool CharmInfo::IsCommandAttack()
 {
-    return _isCommandAttack;
+    return m_isCommandAttack;
 }
 
 void CharmInfo::SetIsCommandFollow(bool val)
 {
-    _isCommandFollow = val;
+    m_isCommandFollow = val;
 }
 
 bool CharmInfo::IsCommandFollow()
 {
-    return _isCommandFollow;
+    return m_isCommandFollow;
 }
 
 void CharmInfo::SaveStayPosition()
 {
     // No Unit::StopMoving while possessed
     if (m_unit->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_POSSESSED))
-        m_unit->GetPosition(_stayX, _stayY, _stayZ);
+        m_unit->GetPosition(m_stayX, m_stayY, m_stayZ);
     else //! At this point a new spline destination is enabled because of Unit::StopMoving()
     {
         G3D::Vector3 stayPos = m_unit->movespline->FinalDestination();
-        _stayX = stayPos.x;
-        _stayY = stayPos.y;
-        _stayZ = stayPos.z;
+        m_stayX = stayPos.x;
+        m_stayY = stayPos.y;
+        m_stayZ = stayPos.z;
     }
 }
 
 void CharmInfo::GetStayPosition(float &x, float &y, float &z)
 {
-    x = _stayX;
-    y = _stayY;
-    z = _stayZ;
+    x = m_stayX;
+    y = m_stayY;
+    z = m_stayZ;
 }
 
 void CharmInfo::SetIsAtStay(bool val)
 {
-    _isAtStay = val;
+    m_isAtStay = val;
 }
 
 bool CharmInfo::IsAtStay()
 {
-    return _isAtStay;
+    return m_isAtStay;
 }
 
 void CharmInfo::SetIsFollowing(bool val)
 {
-    _isFollowing = val;
+    m_isFollowing = val;
 }
 
 bool CharmInfo::IsFollowing()
 {
-    return _isFollowing;
+    return m_isFollowing;
 }
 
 void CharmInfo::SetIsReturning(bool val)
 {
-    _isReturning = val;
+    m_isReturning = val;
 }
 
 bool CharmInfo::IsReturning()
 {
-    return _isReturning;
+    return m_isReturning;
 }
 
 uint32 createProcExtendMask(SpellNonMeleeDamage* damageInfo, SpellMissInfo missCondition)
@@ -8292,28 +8286,28 @@ void Unit::StopMoving(bool force)
     DisableSpline();
 }
 
-void Unit::SetFleeing(bool apply, ObjectGuid casterGuid, uint32 spellID, uint32 time)
+void Unit::SetFleeing(bool apply, ObjectGuid casterGuid, uint32 spellId, uint32 time)
 {
     if (apply && HasAuraType(SPELL_AURA_PREVENTS_FLEEING))
         return;
 
-    ModConfuseSpell(apply, casterGuid, spellID, MOV_MOD_FLEE_FOR_ASSISTANCE, time);
+    ModConfuseSpell(apply, casterGuid, spellId, MOV_MOD_FLEE_FOR_ASSISTANCE, time);
 }
 
-void Unit::SetFeared(bool apply, ObjectGuid casterGuid, uint32 spellID, uint32 time)
+void Unit::SetFeared(bool apply, ObjectGuid casterGuid, uint32 spellId, uint32 time)
 {
     if (apply && HasAuraType(SPELL_AURA_PREVENTS_FLEEING))
         return;
 
-    ModConfuseSpell(apply, casterGuid, spellID, MOV_MOD_FLEE_IN_FEAR, time);
+    ModConfuseSpell(apply, casterGuid, spellId, MOV_MOD_FLEE_IN_FEAR, time);
 }
 
-void Unit::SetConfused(bool apply, ObjectGuid casterGuid, uint32 spellID)
+void Unit::SetConfused(bool apply, ObjectGuid casterGuid, uint32 spellId)
 {
-    ModConfuseSpell(apply, casterGuid, spellID, MOV_MOD_CONFUSED, 0);
+    ModConfuseSpell(apply, casterGuid, spellId, MOV_MOD_CONFUSED, 0);
 }
 
-void Unit::ModConfuseSpell(bool apply, ObjectGuid casterGuid, uint32 spellID, MovementModType modType, uint32 time)
+void Unit::ModConfuseSpell(bool apply, ObjectGuid casterGuid, uint32 spellId, MovementModType modType, uint32 time)
 {
     if (Creature* pCreature = ToCreature())
         if (pCreature->IsTotem())
@@ -8341,7 +8335,7 @@ void Unit::ModConfuseSpell(bool apply, ObjectGuid casterGuid, uint32 spellID, Mo
 
     if (apply)
     {
-        CastStop(GetObjectGuid() == casterGuid ? spellID : 0);
+        CastStop(GetObjectGuid() == casterGuid ? spellId : 0);
 
         switch (modType)
         {
@@ -8387,9 +8381,9 @@ void Unit::ModConfuseSpell(bool apply, ObjectGuid casterGuid, uint32 spellID, Mo
             }
         }
 
-        // If spellID = 0, it is to interrupt (eg Curse of Recklessness - 704)
+        // If spellId = 0, it is to interrupt (eg Curse of Recklessness - 704)
         // So we remove the effects even if we still have an aura of fear.
-        if (!controlFinished && spellID)
+        if (!controlFinished && spellId)
             return;
 
         if (!IsPlayer() && IsAlive())
@@ -8513,9 +8507,10 @@ bool Unit::IsAttackReady(WeaponAttackType type) const
 {
     return m_attackTimer[type] == 0;
 }
-void Unit::SetDisplayId(uint32 modelId)
+
+void Unit::SetDisplayId(uint32 displayId)
 {
-    SetUInt32Value(UNIT_FIELD_DISPLAYID, modelId);
+    SetUInt32Value(UNIT_FIELD_DISPLAYID, displayId);
 
     UpdateModelData();
 
@@ -8529,11 +8524,11 @@ void Unit::SetDisplayId(uint32 modelId)
 void Unit::UpdateModelData()
 {
     CreatureDisplayInfoEntry const* displayEntry = sCreatureDisplayInfoStore.LookupEntry(GetDisplayId());
-    CreatureModelInfo const* modelInfo = sObjectMgr.GetCreatureModelInfo(GetDisplayId());
-    if (modelInfo && displayEntry && modelInfo->bounding_radius && modelInfo->combat_reach && displayEntry->scale)
+    CreatureDisplayInfoAddon const* displayAddon = sObjectMgr.GetCreatureDisplayInfoAddon(GetDisplayId());
+    if (displayAddon && displayEntry && displayAddon->bounding_radius && displayEntry->scale)
     {
         // we expect values in database to be relative to scale = 1.0
-        SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, (GetObjectScale() / displayEntry->scale) * modelInfo->bounding_radius);
+        SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, (GetObjectScale() / displayEntry->scale) * displayAddon->bounding_radius);
 
         // never actually update combat_reach for player, it's always the same. Below player case is for initialization
         if (IsPlayer())
@@ -8546,7 +8541,7 @@ void Unit::UpdateModelData()
                 SetFloatValue(UNIT_FIELD_COMBATREACH, 1.5f);
         }
         else
-            SetFloatValue(UNIT_FIELD_COMBATREACH, (GetObjectScale() / displayEntry->scale) * modelInfo->combat_reach);
+            SetFloatValue(UNIT_FIELD_COMBATREACH, (GetObjectScale() / displayEntry->scale) * displayAddon->combat_reach);
 
         if (CreatureModelDataEntry const* modelData = sCreatureModelDataStore.LookupEntry(displayEntry->ModelId))
         {
@@ -8558,7 +8553,7 @@ void Unit::UpdateModelData()
     }
     else
     {
-        sLog.outError("UpdateModelData : pas / mauvaises infos pour le displayid %u de '%s'", GetDisplayId(), GetGuidStr().c_str());
+        sLog.outError("Unit::UpdateModelData - %s has missing or bad info for display id %u", GetGuidStr().c_str(), GetDisplayId());
         SetFloatValue(UNIT_FIELD_COMBATREACH, 1.5f);
         SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 1.5f);
     }
@@ -9330,7 +9325,7 @@ void Unit::InterruptAttacksOnMe(float dist, bool guard_check)
         dist = GetMap()->GetVisibilityDistance();
 
     // Must use modifier, otherwise long range auto attacks will not toggle
-    dist += GetVisibilityModifier();
+    dist = std::max(dist, GetVisibilityModifier());
 
     std::list<Unit*> targets;
     MaNGOS::AnyUnfriendlyUnitInObjectRangeCheck u_check(this, this, dist);
@@ -9354,7 +9349,7 @@ void Unit::CombatStopInRange(float dist)
         dist = GetMap()->GetVisibilityDistance();
 
     // must check with modifier, otherwise we could combat bug
-    dist += GetVisibilityModifier();
+    dist = std::max(dist, GetVisibilityModifier());
 
     std::list<Unit*> targets;
     MaNGOS::AnyUnfriendlyUnitInObjectRangeCheck u_check(this, this, dist);
@@ -9437,9 +9432,9 @@ void Unit::GetRandomAttackPoint(Unit const* attacker, float &x, float &y, float 
     float initialPosX, initialPosY, initialPosZ, o;
     GetPosition(initialPosX, initialPosY, initialPosZ);
 
-    // Moving player: try to interpolate movement a bit
+    // Moving player: try to extrapolate movement a bit
     if (IsPlayer() && IsMoving())
-        if (!ToPlayer()->GetCheatData()->InterpolateMovement(m_movementInfo, 200, initialPosX, initialPosY, initialPosZ, o))
+        if (!ToPlayer()->GetCheatData()->ExtrapolateMovement(m_movementInfo, 200, initialPosX, initialPosY, initialPosZ, o))
             GetPosition(initialPosX, initialPosY, initialPosZ);
 
     float attackerTargetDistance = sqrt(pow(initialPosX - attacker->GetPositionX(), 2) +

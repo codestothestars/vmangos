@@ -192,8 +192,6 @@ enum eConfigUInt32Values
     CONFIG_UINT32_MAX_PLAYER_LEVEL,
     CONFIG_UINT32_START_PLAYER_LEVEL,
     CONFIG_UINT32_START_PLAYER_MONEY,
-    CONFIG_UINT32_MAX_HONOR_POINTS,
-    CONFIG_UINT32_START_HONOR_POINTS,
     CONFIG_UINT32_MIN_HONOR_KILLS,
     CONFIG_UINT32_INSTANCE_RESET_TIME_HOUR,
     CONFIG_UINT32_INSTANCE_UNLOAD_DELAY,
@@ -282,8 +280,6 @@ enum eConfigUInt32Values
     CONFIG_UINT32_AC_MOVEMENT_CHEAT_NUM_DESYNCS_PENALTY,
     CONFIG_UINT32_AC_MOVEMENT_CHEAT_OVERSPEED_DISTANCE_THRESHOLD,
     CONFIG_UINT32_AC_MOVEMENT_CHEAT_OVERSPEED_DISTANCE_PENALTY,
-    CONFIG_UINT32_AC_MOVEMENT_CHEAT_OVERSPEED_Z_THRESHOLD,
-    CONFIG_UINT32_AC_MOVEMENT_CHEAT_OVERSPEED_Z_PENALTY,
     CONFIG_UINT32_AC_MOVEMENT_CHEAT_OVERSPEED_JUMP_THRESHOLD,
     CONFIG_UINT32_AC_MOVEMENT_CHEAT_OVERSPEED_JUMP_PENALTY,
     CONFIG_UINT32_AC_MOVEMENT_CHEAT_JUMP_SPEED_CHANGE_THRESHOLD,
@@ -337,6 +333,7 @@ enum eConfigUInt32Values
     CONFIG_UINT32_AC_WARDEN_NUM_MEM_CHECKS,
     CONFIG_UINT32_AC_WARDEN_NUM_OTHER_CHECKS,
     CONFIG_UINT32_AC_WARDEN_DB_LOGLEVEL,
+    CONFIG_UINT32_AUTOBROADCAST_INTERVAL,
     CONFIG_UINT32_VALUE_COUNT
 };
 
@@ -546,9 +543,7 @@ enum eConfigBoolValues
     CONFIG_BOOL_AC_MOVEMENT_CHEAT_TIME_DESYNC_ENABLED,
     CONFIG_BOOL_AC_MOVEMENT_CHEAT_NUM_DESYNCS_ENABLED,
     CONFIG_BOOL_AC_MOVEMENT_CHEAT_SPEED_HACK_ENABLED,
-    CONFIG_BOOL_AC_MOVEMENT_USE_INTERPOLATION,
     CONFIG_BOOL_AC_MOVEMENT_CHEAT_OVERSPEED_DISTANCE_ENABLED,
-    CONFIG_BOOL_AC_MOVEMENT_CHEAT_OVERSPEED_Z_ENABLED,
     CONFIG_BOOL_AC_MOVEMENT_CHEAT_OVERSPEED_JUMP_ENABLED,
     CONFIG_BOOL_AC_MOVEMENT_CHEAT_OVERSPEED_JUMP_REJECT,
     CONFIG_BOOL_AC_MOVEMENT_CHEAT_JUMP_SPEED_CHANGE_ENABLED,
@@ -587,6 +582,7 @@ enum eConfigBoolValues
     CONFIG_BOOL_AC_WARDEN_WIN_ENABLED,
     CONFIG_BOOL_AC_WARDEN_OSX_ENABLED,
     CONFIG_BOOL_AC_WARDEN_PLAYERS_ONLY,
+    CONFIG_BOOL_VISIBILITY_FORCE_ACTIVE_OBJECTS,
     CONFIG_BOOL_VALUE_COUNT
 };
 
@@ -750,6 +746,9 @@ class World
         /// Get the path where data (dbc, maps) are stored on disk
         std::string GetDataPath() const { return m_dataPath; }
 
+        /// Get the path where honor logs are stored on disk
+        std::string GetHonorPath() const { return m_honorPath; }
+
         /// When server started?
         time_t const& GetStartTime() const { return m_startTime; }
         /// What time is it?
@@ -830,7 +829,7 @@ class World
         void KickAll();
         void KickAllLess(AccountTypes sec);
         void WarnAccount(uint32 accountId, std::string from, std::string reason, char const* type = "WARNING");
-        void BanAccount(uint32 accountId, uint32 duration, std::string reason, std::string author);
+        void BanAccount(uint32 accountId, uint32 duration, std::string reason, std::string const& author);
         BanReturn BanAccount(BanMode mode, std::string nameOrIP, uint32 duration_secs, std::string reason, std::string author);
         bool RemoveBanAccount(BanMode mode, std::string const& source, std::string const& message, std::string nameOrIP);
 
@@ -971,6 +970,7 @@ class World
         bool m_allowMovement;
         std::string m_motd;
         std::string m_dataPath;
+        std::string m_honorPath;
         std::string m_wardenModuleDirectory;
 
         // for max speed access

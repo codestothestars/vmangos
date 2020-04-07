@@ -34,8 +34,11 @@ Corpse::Corpse(CorpseType type) : WorldObject(), loot(nullptr), lootRecipient(nu
 {
     m_objectType |= TYPEMASK_CORPSE;
     m_objectTypeId = TYPEID_CORPSE;
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_8_4
     m_updateFlag = (UPDATEFLAG_TRANSPORT | UPDATEFLAG_ALL | UPDATEFLAG_HAS_POSITION);
-
+#else
+    m_updateFlag = UPDATEFLAG_TRANSPORT;
+#endif
     m_valuesCount = CORPSE_END;
 
     m_type = type;
@@ -257,7 +260,7 @@ bool Corpse::LoadFromDB(uint32 lowguid, Field* fields)
 
 bool Corpse::IsVisibleForInState(WorldObject const* pDetector, WorldObject const* viewPoint, bool inVisibleList) const
 {
-    return IsInWorld() && pDetector->IsInWorld() && IsWithinDist(viewPoint, pDetector->GetMap()->GetVisibilityDistance() + (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f) + GetVisibilityModifier(), false);
+    return IsInWorld() && pDetector->IsInWorld() && IsWithinDist(viewPoint, std::max(pDetector->GetMap()->GetVisibilityDistance() + (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), GetVisibilityModifier()), false);
 }
 
 ReputationRank Corpse::GetReactionTo(WorldObject const* target) const

@@ -38,7 +38,7 @@
 
 #include <regex>
 
-bool ChatHandler::HandleXpCommand(char* args)
+bool ChatHandler::HandleModifyXpRateCommand(char* args)
 {
     // Only a GM can modify another player's rates.
     Player* pPlayer = (m_session->GetSecurity() < SEC_GAMEMASTER) ? m_session->GetPlayer() : GetSelectedPlayer();
@@ -175,7 +175,7 @@ bool ChatHandler::HandleCheatPowerCommand(char* args)
     return true;
 }
 
-bool ChatHandler::HandleCheatImmuneToAuraCommand(char* args)
+bool ChatHandler::HandleCheatDebuffImmunityCommand(char* args)
 {
     if (*args)
     {
@@ -191,11 +191,11 @@ bool ChatHandler::HandleCheatImmuneToAuraCommand(char* args)
         if (!ExtractPlayerTarget(&args, &target))
             return false;
 
-        target->SetCheatImmuneToAura(value, true);
+        target->SetCheatDebuffImmunity(value, true);
 
-        PSendSysMessage(LANG_YOU_SET_IMMUNE_TO_AURA, value ? "on" : "off", GetNameLink(target).c_str());
+        PSendSysMessage(LANG_YOU_SET_DEBUFF_IMMUNITY, value ? "on" : "off", GetNameLink(target).c_str());
         if (needReportToTarget(target))
-            ChatHandler(target).PSendSysMessage(LANG_YOUR_IMMUNE_TO_AURA_SET, value ? "on" : "off", GetNameLink().c_str());
+            ChatHandler(target).PSendSysMessage(LANG_YOUR_DEBUFF_IMMUNITY_SET, value ? "on" : "off", GetNameLink().c_str());
     }
 
     return true;
@@ -420,8 +420,8 @@ bool ChatHandler::HandleCheatStatusCommand(char* args)
         SendSysMessage("- No cast time");
     if (target->HasCheatOption(PLAYER_CHEAT_NO_POWER))
         SendSysMessage("- No power costs");
-    if (target->HasCheatOption(PLAYER_CHEAT_IMMUNE_AURA))
-        SendSysMessage("- Immune to auras");
+    if (target->HasCheatOption(PLAYER_CHEAT_DEBUFF_IMMUNITY))
+        SendSysMessage("- Debuff immunity");
     if (target->HasCheatOption(PLAYER_CHEAT_ALWAYS_CRIT))
         SendSysMessage("- Always crit");
     if (target->HasCheatOption(PLAYER_CHEAT_NO_CHECK_CAST))
@@ -432,6 +432,10 @@ bool ChatHandler::HandleCheatStatusCommand(char* args)
         SendSysMessage("- Areatrigger pass");
     if (target->HasCheatOption(PLAYER_CHEAT_IGNORE_TRIGGERS))
         SendSysMessage("- Ignore areatriggers");
+    if (target->HasMovementFlag(MOVEFLAG_WATERWALKING) && !target->HasAuraType(SPELL_AURA_WATER_WALK))
+        SendSysMessage("- Water walking");
+    if (target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_UNK_0))
+        SendSysMessage("- Wall climbing");
 
     return true;
 }
@@ -1006,6 +1010,31 @@ bool ChatHandler::HandlePInfoCommand(char* args)
 
     PInfoHandler::HandlePInfoCommand(m_session, target, target_guid, target_name);
 
+    return true;
+}
+
+bool ChatHandler::HandleMountCommand(char* /*args*/)
+{
+    Player* player = m_session->GetPlayer();
+    if (player->IsTaxiFlying())
+    {
+        SendSysMessage(LANG_YOU_IN_FLIGHT);
+        SetSentErrorMessage(true);
+        return false;
+    }
+    
+    Creature* target = GetSelectedCreature();
+    if (!target)
+    {
+        player->Unmount();
+        player->UpdateSpeed(MOVE_RUN, false, 1.0F);
+        PSendSysMessage("Nothing to ride on! Target any creature with mounting points.");
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    player->SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, target->GetUInt32Value(UNIT_FIELD_DISPLAYID));
+    player->UpdateSpeed(MOVE_RUN, false, 2.0F);
     return true;
 }
 
@@ -2195,11 +2224,21 @@ bool ChatHandler::HandleHonorResetCommand(char* /*args*/)
 
 bool ChatHandler::HandleHonorSetRPCommand(char *args)
 {
-    float value = 0.0f;
-    sscanf(args, "%f", &value);
-    m_session->GetPlayer()->GetHonorMgr().SetRankPoints(value);
-    m_session->GetPlayer()->GetHonorMgr().Update();
-    PSendSysMessage("RankPoint set to %f", value);
+    Player* target = GetSelectedPlayer();
+    if (!target)
+    {
+        SendSysMessage(LANG_PLAYER_NOT_FOUND);
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    float value;
+    if (!ExtractFloat(&args, value))
+        return false;
+    
+    target->GetHonorMgr().SetRankPoints(value);
+    target->GetHonorMgr().Update();
+    PSendSysMessage("You have changed rank points of %s to %g.", target->GetName(), value);
     return true;
 }
 
@@ -2427,7 +2466,7 @@ bool ChatHandler::HandleLearnAllMyTaxisCommand(char* /*args*/)
                 sObjectMgr.DoCreatureData(worker);
                 if (CreatureDataPair const* dataPair = worker.GetResult())
                     if (CreatureData const* data = &dataPair->second)
-                        if (uint32 taxiNode = sObjectMgr.GetNearestTaxiNode(data->posX, data->posY, data->posZ, data->mapid, player->GetTeam()))
+                        if (uint32 taxiNode = sObjectMgr.GetNearestTaxiNode(data->position.x, data->position.y, data->position.z, data->position.mapId, player->GetTeam()))
                             if (player->GetTaxi().SetTaximaskNode(taxiNode))
                             {
                                 WorldPacket msg(SMSG_NEW_TAXI_PATH, 0);
@@ -3683,6 +3722,33 @@ bool ChatHandler::HandleModifyDrunkCommand(char* args)
     return true;
 }
 
+bool ChatHandler::HandleModifyExhaustionCommand(char* args)
+{
+    if (!*args)
+        return false;
+
+    uint32 exhaustion_state = (uint32)atoi(args);
+    Player* target = GetSelectedPlayer();
+
+    if (!target)
+    {
+        SendSysMessage(LANG_PLAYER_NOT_FOUND);
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    target->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_PARTIAL_PLAY_TIME);
+    target->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_PLAY_TIME);
+
+    switch (exhaustion_state)
+    {
+        case 0: break;
+        case 1: target->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_PLAY_TIME); break;
+        case 2: target->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_PARTIAL_PLAY_TIME); break;
+    }
+    return true;
+}
+
 static uint32 ReputationRankStrIndex[MAX_REPUTATION_RANK] =
 {
     LANG_REP_HATED,    LANG_REP_HOSTILE, LANG_REP_UNFRIENDLY, LANG_REP_NEUTRAL,
@@ -3792,7 +3858,7 @@ bool ChatHandler::HandleModifyMountCommand(char* args)
 
     uint32 mountId = atoi(args);
     
-    if (!sObjectMgr.GetCreatureModelInfo(mountId))
+    if (!sObjectMgr.GetCreatureDisplayInfoAddon(mountId))
     {
         SendSysMessage(LANG_NO_MOUNT);
         SetSentErrorMessage(true);
@@ -4194,6 +4260,89 @@ bool ChatHandler::HandleModifyRageCommand(char* args)
     chr->SetMaxPower(POWER_RAGE, ragem);
     chr->SetPower(POWER_RAGE, rage);
 
+    return true;
+}
+
+// This is the first id in the dbc and exists in all clients.
+#define DISPLAY_ID_BOX 4
+
+bool ChatHandler::HandleModifyHairStyleCommand(char* args)
+{
+    if (!*args)
+        return false;
+
+    uint8 hairstyle = (uint8)atoi(args);
+    Player* target = GetSelectedPlayer();
+
+    if (!target)
+        target = m_session->GetPlayer();
+
+    target->SetByteValue(PLAYER_BYTES, 2, hairstyle);
+    target->SetDisplayId(DISPLAY_ID_BOX);
+    target->DirectSendPublicValueUpdate(UNIT_FIELD_DISPLAYID);
+    target->DeMorph();
+
+    PSendSysMessage("Character's hair style has been changed to: %u", hairstyle);
+    return true;
+}
+
+bool ChatHandler::HandleModifyHairColorCommand(char* args)
+{
+    if (!*args)
+        return false;
+
+    uint8 haircolor = (uint8)atoi(args);
+    Player* target = GetSelectedPlayer();
+
+    if (!target)
+        target = m_session->GetPlayer();
+
+    target->SetByteValue(PLAYER_BYTES, 3, haircolor);
+    target->SetDisplayId(DISPLAY_ID_BOX);
+    target->DirectSendPublicValueUpdate(UNIT_FIELD_DISPLAYID);
+    target->DeMorph();
+
+    PSendSysMessage("Character's hair color has been changed to: %u", haircolor);
+    return true;
+}
+
+bool ChatHandler::HandleModifySkinColorCommand(char* args)
+{
+    if (!*args)
+        return false;
+
+    uint8 skincolor = (uint8)atoi(args);
+    Player* target = GetSelectedPlayer();
+
+    if (!target)
+        target = m_session->GetPlayer();
+
+    target->SetByteValue(PLAYER_BYTES, 0, skincolor);
+    target->SetDisplayId(DISPLAY_ID_BOX);
+    target->DirectSendPublicValueUpdate(UNIT_FIELD_DISPLAYID);
+    target->DeMorph();
+
+    PSendSysMessage("Character's skin color has been changed to: %u", skincolor);
+    return true;
+}
+
+bool ChatHandler::HandleModifyAccessoriesCommand(char* args)
+{
+    if (!*args)
+        return false;
+
+    uint8 accessories = (uint8)atoi(args);
+    Player* target = GetSelectedPlayer();
+
+    if (!target)
+        target = m_session->GetPlayer();
+
+    target->SetByteValue(PLAYER_BYTES_2, 0, accessories);
+    target->SetDisplayId(DISPLAY_ID_BOX);
+    target->DirectSendPublicValueUpdate(UNIT_FIELD_DISPLAYID);
+    target->DeMorph();
+
+    PSendSysMessage("Character's facial hair / markings / hooves have been changed to: %u", accessories);
     return true;
 }
 

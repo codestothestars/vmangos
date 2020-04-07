@@ -330,9 +330,7 @@ bool Map::ScriptCommand_RespawnGameObject(ScriptInfo const& script, WorldObject*
     int32 time_to_despawn = script.respawnGo.despawnDelay < 5 ? 5 : script.respawnGo.despawnDelay;
 
     if (pGo->GetGoType() == GAMEOBJECT_TYPE_FISHINGNODE ||
-        pGo->GetGoType() == GAMEOBJECT_TYPE_DOOR ||
-        pGo->GetGoType() == GAMEOBJECT_TYPE_BUTTON ||
-        pGo->GetGoType() == GAMEOBJECT_TYPE_TRAP)
+        pGo->GetGoType() == GAMEOBJECT_TYPE_DOOR)
     {
         sLog.outError("SCRIPT_COMMAND_RESPAWN_GAMEOBJECT (script id %u) can not be used with gameobject of type %u (guid: %u).", script.id, uint32(pGo->GetGoType()), script.respawnGo.goGuid);
         return ShouldAbortScript(script);
@@ -412,21 +410,18 @@ bool Map::ScriptCommand_SummonCreature(ScriptInfo const& script, WorldObject* so
             break;
         default:
         {
-            if (Creature* pCreatureSummoner = pSummoner->ToCreature())
+            if (Unit* pAttackTarget = ToUnit(GetTargetByType(pSummoner, ToUnit(target), script.summonCreature.attackTarget)))
             {
-                if (Unit* pAttackTarget = ToUnit(GetTargetByType(pCreatureSummoner, ToUnit(target), script.summonCreature.attackTarget)))
+                if (pCreature->AI())
                 {
-                    if (pCreature->AI())
-                    {
-                        // Hack: there is a visual bug where the melee animation
-                        // does not play for summoned units if they enter combat
-                        // immediately and their target is within melee range.
-                        // Sending the packet a second time fixes the animation.
-                        if (pCreature->AI()->IsMeleeAttackEnabled())
-                            pCreature->SendMeleeAttackStart(pAttackTarget);
+                    // Hack: there is a visual bug where the melee animation
+                    // does not play for summoned units if they enter combat
+                    // immediately and their target is within melee range.
+                    // Sending the packet a second time fixes the animation.
+                    if (pCreature->AI()->IsMeleeAttackEnabled())
+                        pCreature->SendMeleeAttackStart(pAttackTarget);
 
-                        pCreature->AI()->AttackStart(pAttackTarget);
-                    }
+                    pCreature->AI()->AttackStart(pAttackTarget);
                 }
             }
         }
@@ -839,11 +834,11 @@ bool Map::ScriptCommand_Morph(ScriptInfo const& script, WorldObject* source, Wor
 // SCRIPT_COMMAND_MOUNT_TO_ENTRY_OR_MODEL (24)
 bool Map::ScriptCommand_Mount(ScriptInfo const& script, WorldObject* source, WorldObject* target)
 {
-    Creature* pSource;
+    Unit* pSource = ToUnit(source);
 
-    if (!((pSource = ToCreature(source)) || (pSource = ToCreature(target))))
+    if (!pSource)
     {
-        sLog.outError("SCRIPT_COMMAND_MOUNT_TO_ENTRY_OR_MODEL (script id %u) call for a nullptr or non-creature source and target (TypeIdSource: %u)(TypeIdTarget: %u), skipping.", script.id, source ? source->GetTypeId() : 0, target ? target->GetTypeId() : 0);
+        sLog.outError("SCRIPT_COMMAND_MOUNT_TO_ENTRY_OR_MODEL (script id %u) call for a nullptr or non-unit source and target (TypeIdSource: %u)(TypeIdTarget: %u), skipping.", script.id, source ? source->GetTypeId() : 0, target ? target->GetTypeId() : 0);
         return ShouldAbortScript(script);
     }
 
@@ -862,7 +857,15 @@ bool Map::ScriptCommand_Mount(ScriptInfo const& script, WorldObject* source, Wor
     }
 
     if (script.mount.permanent)
-        pSource->SetDefaultMount(displayId);
+    {
+        Creature* pCreature = ToCreature(source);
+        if (!pCreature)
+        {
+            sLog.outError("SCRIPT_COMMAND_MOUNT_TO_ENTRY_OR_MODEL (script id %u) call for a nullptr or non-creature source and target (TypeIdSource: %u)(TypeIdTarget: %u), skipping.", script.id, source ? source->GetTypeId() : 0, target ? target->GetTypeId() : 0);
+            return ShouldAbortScript(script);
+        }
+        pCreature->SetDefaultMount(displayId);
+    }
 
     return false;
 }
@@ -1872,9 +1875,7 @@ bool Map::ScriptCommand_SetDefaultMovement(ScriptInfo const& script, WorldObject
     pSource->SetDefaultMovementType(MovementGeneratorType(script.setDefaultMovement.movementType));
 
     if (script.setDefaultMovement.movementType == RANDOM_MOTION_TYPE)
-        pSource->SetRespawnRadius(script.setDefaultMovement.param1);
-    else if (script.setDefaultMovement.movementType == WAYPOINT_MOTION_TYPE)
-        pSource->m_startwaypoint = script.setDefaultMovement.param1;
+        pSource->SetWanderDistance(script.setDefaultMovement.param1);
 
     if (pSource->IsAlive())
         pSource->GetMotionMaster()->InitializeNewDefault(script.setDefaultMovement.alwaysReplace);
@@ -2200,5 +2201,63 @@ bool Map::ScriptCommand_SetGoState(ScriptInfo const& script, WorldObject* source
     }
 
     pGo->SetGoState(GOState(script.setGoState.state));
+    return false;
+}
+
+// SCRIPT_COMMAND_DESPAWN_GAMEOBJECT (81)
+bool Map::ScriptCommand_DespawnGameObject(ScriptInfo const& script, WorldObject* source, WorldObject* target)
+{
+    GameObject* pGo = nullptr;
+    uint32 guidlow = script.despawnGo.goGuid;
+
+    if (guidlow)
+    {
+        GameObjectData const* goData = sObjectMgr.GetGOData(guidlow);
+        if (!goData)
+            return ShouldAbortScript(script); // checked at load
+
+        pGo = GetGameObject(ObjectGuid(HIGHGUID_GAMEOBJECT, goData->id, guidlow));
+    }
+    else if (target && target->GetTypeId() == TYPEID_GAMEOBJECT)
+        pGo = static_cast<GameObject*>(target);
+    else if (source && source->GetTypeId() == TYPEID_GAMEOBJECT)
+        pGo = static_cast<GameObject*>(source);
+
+    if (!pGo)
+    {
+        sLog.outError("SCRIPT_COMMAND_DESPAWN_GAMEOBJECT (script id %u) failed for gameobject(guid: %u).", script.id, guidlow);
+        return ShouldAbortScript(script);
+    }
+
+    if (!pGo->isSpawned())
+        return ShouldAbortScript(script);          // gameobject already despawned
+
+    pGo->SetLootState(GO_JUST_DEACTIVATED);
+    if (script.despawnGo.respawnDelay)
+        pGo->SetRespawnDelay(script.despawnGo.respawnDelay);        // respawn object in ? seconds
+
+    return false;
+}
+
+// SCRIPT_COMMAND_LOAD_GAMEOBJECT (82)
+bool Map::ScriptCommand_LoadGameObject(ScriptInfo const& script, WorldObject* source, WorldObject* target)
+{
+    GameObjectData const* pGameObjectData = sObjectMgr.GetGOData(script.loadGo.goGuid);
+
+    if (GetId() != pGameObjectData->position.mapId)
+    {
+        sLog.outError("SCRIPT_COMMAND_LOAD_GAMEOBJECT (script id %u) tried to spawn guid %u on wrong map %u.", script.id, script.loadGo.goGuid, GetId());
+        return ShouldAbortScript(script);
+    }
+
+    if (GetGameObject(ObjectGuid(HIGHGUID_GAMEOBJECT, pGameObjectData->id, script.loadGo.goGuid)))
+        return ShouldAbortScript(script); // already spawned
+
+    GameObject* pGameobject = new GameObject;
+    if (!pGameobject->LoadFromDB(script.loadGo.goGuid, this))
+        delete pGameobject;
+    else
+        Add(pGameobject);
+
     return false;
 }

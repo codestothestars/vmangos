@@ -374,14 +374,11 @@ void BattleGround::Update(uint32 diff)
             SetStatus(STATUS_IN_PROGRESS);
             SetStartDelayTime(m_StartDelayTimes[BG_STARTING_EVENT_FOURTH]);
 
-            {
+            PlaySoundToAll(SOUND_BG_START);
 
-                PlaySoundToAll(SOUND_BG_START);
-
-                //Announce BG starting
-                if (sWorld.getConfig(CONFIG_BOOL_BATTLEGROUND_QUEUE_ANNOUNCER_START))
-                    sWorld.SendWorldText(LANG_BG_STARTED_ANNOUNCE_WORLD, GetName(), GetMinLevel(), GetMaxLevel());
-            }
+            //Announce BG starting
+            if (sWorld.getConfig(CONFIG_BOOL_BATTLEGROUND_QUEUE_ANNOUNCER_START))
+                sWorld.SendWorldText(LANG_BG_STARTED_ANNOUNCE_WORLD, GetName(), GetMinLevel(), GetMaxLevel());
         }
     }
     // Despawn des portes apres 2min (preparation) + 1min
@@ -1030,11 +1027,13 @@ void BattleGround::RemoveFromBGFreeSlotQueue()
 {
     // set to be able to re-add if needed
     m_InBGFreeSlotQueue = false;
-    for (BGFreeSlotQueueType::iterator itr = sBattleGroundMgr.BGFreeSlotQueue[m_TypeID].begin(); itr != sBattleGroundMgr.BGFreeSlotQueue[m_TypeID].end(); ++itr)
+    BGFreeSlotQueueType& bgFreeSlot = sBattleGroundMgr.BGFreeSlotQueue[m_TypeID];
+
+    for (BGFreeSlotQueueType::iterator itr = bgFreeSlot.begin(); itr != bgFreeSlot.end(); ++itr)
     {
         if ((*itr)->GetInstanceID() == GetInstanceID())
         {
-            sBattleGroundMgr.BGFreeSlotQueue[m_TypeID].erase(itr);
+            bgFreeSlot.erase(itr);
             return;
         }
     }
@@ -1162,10 +1161,10 @@ bool BattleGround::AddObject(uint32 type, uint32 entry, float x, float y, float 
         GameObjectData& data = sObjectMgr.NewGOData(guid);
 
         data.id             = entry;
-        data.mapid          = GetMapId();
-        data.posX           = x;
-        data.posY           = y;
-        data.posZ           = z;
+        data.position.mapId = GetMapId();
+        data.position.x     = x;
+        data.position.y     = y;
+        data.position.z     = z;
         data.orientation    = o;
         data.rotation0      = rotation0;
         data.rotation1      = rotation1;

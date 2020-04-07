@@ -150,10 +150,10 @@ enum eScriptCommand
                                                             // datalong = faction_Id,
                                                             // datalong2 = see enum TemporaryFactionFlags
     SCRIPT_COMMAND_MORPH_TO_ENTRY_OR_MODEL  = 23,           // source = Unit
-                                                            // datalong = creature entry/modelid (depend on datalong2)
+                                                            // datalong = creature_id/display_id (depend on datalong2)
                                                             // datalong2 = (bool) is_display_id
     SCRIPT_COMMAND_MOUNT_TO_ENTRY_OR_MODEL  = 24,           // source = Creature
-                                                            // datalong = creature entry/modelid (depend on datalong2)
+                                                            // datalong = creature_id/display_id (depend on datalong2)
                                                             // datalong2 = (bool) is_display_id
                                                             // datalong3 = (bool) permanent
     SCRIPT_COMMAND_SET_RUN                  = 25,           // source = Creature
@@ -329,6 +329,11 @@ enum eScriptCommand
     SCRIPT_COMMAND_LEAVE_CREATURE_GROUP     = 79,           // source = Creature
     SCRIPT_COMMAND_SET_GO_STATE             = 80,           // source = GameObject
                                                             // datalong = GOState
+    SCRIPT_COMMAND_DESPAWN_GAMEOBJECT       = 81,           // source = GameObject (from datalong, provided source or target)
+                                                            // datalong = db_guid
+                                                            // datalong2 = despawn_delay
+    SCRIPT_COMMAND_LOAD_GAMEOBJECT          = 82,           // source = Map
+                                                            // datalong = db_guid
     SCRIPT_COMMAND_MAX,
 
     SCRIPT_COMMAND_DISABLED                 = 9999          // Script action was disabled during loading.
@@ -997,6 +1002,17 @@ struct ScriptInfo
             uint32 state;                                   // datalong
         } setGoState;
 
+        struct                                              // SCRIPT_COMMAND_DESPAWN_GAMEOBJECT (81)
+        {
+            uint32 goGuid;                                  // datalong
+            uint32 respawnDelay;                            // datalong2
+        } despawnGo;
+
+        struct                                              // SCRIPT_COMMAND_LOAD_GAMEOBJECT (82)
+        {
+            uint32 goGuid;                                  // datalong
+        } loadGo;
+
         struct
         {
             uint32 data[9];
@@ -1023,6 +1039,8 @@ struct ScriptInfo
         switch(command)
         {
             case SCRIPT_COMMAND_RESPAWN_GAMEOBJECT: return respawnGo.goGuid;
+            case SCRIPT_COMMAND_DESPAWN_GAMEOBJECT: return despawnGo.goGuid;
+            case SCRIPT_COMMAND_LOAD_GAMEOBJECT: return loadGo.goGuid;
             case SCRIPT_COMMAND_OPEN_DOOR: return openDoor.goGuid;
             case SCRIPT_COMMAND_CLOSE_DOOR: return closeDoor.goGuid;
             default: return 0;
@@ -1098,7 +1116,7 @@ enum ScriptTarget
     TARGET_T_OWNER                          = 7,            //The owner of the source.
     
 
-    TARGET_T_CREATURE_WITH_ENTRY            = 8,            //Searches for nearby creature with the given entry.
+    TARGET_T_CREATURE_WITH_ENTRY            = 8,            //Searches for closest nearby creature with the given entry.
                                                             //Param1 = creature_entry
                                                             //Param2 = search_radius
 
@@ -1108,7 +1126,7 @@ enum ScriptTarget
     TARGET_T_CREATURE_FROM_INSTANCE_DATA    = 10,           //Find creature by guid stored in instance data.
                                                             //Param1 = instance_data_field
 
-    TARGET_T_GAMEOBJECT_WITH_ENTRY          = 11,           //Searches for nearby gameobject with the given entry.
+    TARGET_T_GAMEOBJECT_WITH_ENTRY          = 11,           //Searches for closest nearby gameobject with the given entry.
                                                             //Param1 = gameobject_entry
                                                             //Param2 = search_radius
 
@@ -1148,7 +1166,9 @@ enum ScriptTarget
                                                             //Param1 = search-radius
     TARGET_T_NEAREST_FRIENDLY_PLAYER        = 25,           //Nearest friendly player within range.
                                                             //Param1 = search-radius
-
+    TARGET_T_RANDOM_CREATURE_WITH_ENTRY     = 26,           //Searches for random nearby creature with the given entry. Not Self.
+                                                            //Param1 = creature_entry
+                                                            //Param2 = search_radius
     TARGET_T_END
 };
 

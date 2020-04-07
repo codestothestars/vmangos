@@ -139,23 +139,23 @@ public:
     ActiveObjectsGridLoader(Map* _map) : map(_map) {}
     bool operator()(GameObjectDataPair const& dataPair)
     {
-        if (!(dataPair.second.spawnFlags & SPAWN_FLAG_ACTIVE) || dataPair.second.mapid != map->GetId())
+        if (!(dataPair.second.spawn_flags & SPAWN_FLAG_ACTIVE) || dataPair.second.position.mapId != map->GetId())
             return false;
         // Instanciated continents case
         if (map->IsContinent() && map->GetInstanceId() && map->GetInstanceId() != dataPair.second.instanciatedContinentInstanceId)
             return false;
-        Cell c(MaNGOS::ComputeCellPair(dataPair.second.posX, dataPair.second.posY));
+        Cell c(MaNGOS::ComputeCellPair(dataPair.second.position.x, dataPair.second.position.y));
         map->LoadGrid(c, true);
         return false;
     }
     bool operator()(CreatureDataPair const& dataPair)
     {
-        if (!(dataPair.second.spawnFlags & SPAWN_FLAG_ACTIVE) || dataPair.second.mapid != map->GetId())
+        if (!(dataPair.second.spawn_flags & SPAWN_FLAG_ACTIVE) || dataPair.second.position.mapId != map->GetId())
             return false;
         // Instanciated continents case
         if (map->IsContinent() && map->GetInstanceId() && map->GetInstanceId() != dataPair.second.instanciatedContinentInstanceId)
             return false;
-        Cell c(MaNGOS::ComputeCellPair(dataPair.second.posX, dataPair.second.posY));
+        Cell c(MaNGOS::ComputeCellPair(dataPair.second.position.x, dataPair.second.position.y));
         map->LoadGrid(c, true);
         return false;
     }
@@ -1374,7 +1374,7 @@ void Map::CreatureRelocation(Creature* creature, float x, float y, float z, floa
     MANGOS_ASSERT(CheckGridIntegrity(creature, true));
 }
 
-bool Map::CreatureCellRelocation(Creature* c, Cell new_cell)
+bool Map::CreatureCellRelocation(Creature* c, Cell const& new_cell)
 {
     Cell const& old_cell = c->GetCurrentCell();
     if (old_cell.DiffGrid(new_cell))
@@ -2434,6 +2434,27 @@ bool Map::FindScriptFinalTargets(WorldObject*& source, WorldObject*& target, Scr
                 }
 
                 Creature* pCreatureBuddy = pSearcher->FindNearestCreature(script.target_param1, script.target_param2, true);
+
+                if (pCreatureBuddy)
+                    target = pCreatureBuddy;
+                else
+                {
+                    sLog.outError("FindScriptTargets: Failed to find buddy for script with id %u (target_param1: %u), (target_param2: %u), (target_type: %u).", script.id, script.target_param1, script.target_param2, script.target_type);
+                    return false;
+                }
+                break;
+            }
+            case TARGET_T_RANDOM_CREATURE_WITH_ENTRY:
+            {
+                WorldObject* pSearcher;
+
+                if (!((pSearcher = source) || (pSearcher = original_source)))
+                {
+                    sLog.outError("FindScriptTargets: Attempt to search for random creature in script with id %u but source is a nullptr object.", script.id);
+                    return false;
+                }
+
+                Creature* pCreatureBuddy = pSearcher->FindRandomCreature(script.target_param1, script.target_param2, true, pSearcher->ToCreature());
 
                 if (pCreatureBuddy)
                     target = pCreatureBuddy;

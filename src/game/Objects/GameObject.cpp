@@ -54,8 +54,9 @@ GameObject::GameObject() : WorldObject(),
 {
     m_objectType |= TYPEMASK_GAMEOBJECT;
     m_objectTypeId = TYPEID_GAMEOBJECT;
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_8_4
     m_updateFlag = (UPDATEFLAG_ALL | UPDATEFLAG_HAS_POSITION);
-
+#endif
     m_valuesCount = GAMEOBJECT_END;
     m_respawnTime = 0;
     m_respawnDelayTime = 25;
@@ -208,6 +209,19 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map* map, float x, float
 
     SetGoAnimProgress(animprogress);
     SetName(goinfo->name);
+
+    if (GetGOInfo()->IsLargeGameObject())
+    {
+        SetVisibilityModifier(VISIBILITY_DISTANCE_LARGE);
+        if (sWorld.getConfig(CONFIG_BOOL_VISIBILITY_FORCE_ACTIVE_OBJECTS))
+            SetActiveObjectState(true);
+    }
+    if (GetGOInfo()->IsInfiniteGameObject())
+    {
+        SetVisibilityModifier(MAX_VISIBILITY_DISTANCE);
+        if (sWorld.getConfig(CONFIG_BOOL_VISIBILITY_FORCE_ACTIVE_OBJECTS))
+            SetActiveObjectState(true);
+    }
 
     //Notify the map's instance data.
     //Only works if you create the object in it, not if it is moves to that map.
@@ -611,9 +625,9 @@ uint32 GameObject::ComputeRespawnDelay() const
 
 uint32 GameObjectData::ComputeRespawnDelay(uint32 respawnDelay) const
 {
-    if (spawnFlags & SPAWN_FLAG_RANDOM_RESPAWN_TIME)
+    if (spawn_flags & SPAWN_FLAG_RANDOM_RESPAWN_TIME)
         respawnDelay = uint32(float(respawnDelay * urand(90, 110)) / 100.f);
-    if (spawnFlags & SPAWN_FLAG_DYNAMIC_RESPAWN_TIME && sWorld.GetActiveSessionCount() > BLIZZLIKE_REALM_POPULATION)
+    if (spawn_flags & SPAWN_FLAG_DYNAMIC_RESPAWN_TIME && sWorld.GetActiveSessionCount() > BLIZZLIKE_REALM_POPULATION)
         respawnDelay = uint32(float(respawnDelay * BLIZZLIKE_REALM_POPULATION) / float(sWorld.GetActiveSessionCount()));
     return respawnDelay;
 }
@@ -763,13 +777,13 @@ void GameObject::CleanupsBeforeDelete()
 
 void GameObject::Delete()
 {
-    if (!IsDeleted())
-        AddObjectToRemoveList();
-
     // no despawn animation for not activated rituals
     if (GetGoType() != GAMEOBJECT_TYPE_SUMMONING_RITUAL ||
         GetGoState() == GO_STATE_ACTIVE)
         SendObjectDeSpawnAnim(GetObjectGuid());
+
+    if (!IsDeleted())
+        AddObjectToRemoveList();
 
     SetGoState(GO_STATE_READY);
     SetUInt32Value(GAMEOBJECT_FLAGS, GetGOInfo()->flags);
@@ -821,11 +835,11 @@ void GameObject::SaveToDB(uint32 mapid)
 
     // data->guid = guid don't must be update at save
     data.id = GetEntry();
-    data.mapid = mapid;
-    data.posX = GetFloatValue(GAMEOBJECT_POS_X);
-    data.posY = GetFloatValue(GAMEOBJECT_POS_Y);
-    data.posZ = GetFloatValue(GAMEOBJECT_POS_Z);
-    data.orientation = GetFloatValue(GAMEOBJECT_FACING);
+    data.position.mapId = mapid;
+    data.position.x = GetFloatValue(GAMEOBJECT_POS_X);
+    data.position.y = GetFloatValue(GAMEOBJECT_POS_Y);
+    data.position.z = GetFloatValue(GAMEOBJECT_POS_Z);
+    data.position.o = GetFloatValue(GAMEOBJECT_FACING);
     data.rotation0 = GetFloatValue(GAMEOBJECT_ROTATION + 0);
     data.rotation1 = GetFloatValue(GAMEOBJECT_ROTATION + 1);
     data.rotation2 = GetFloatValue(GAMEOBJECT_ROTATION + 2);
@@ -834,7 +848,7 @@ void GameObject::SaveToDB(uint32 mapid)
     data.spawntimesecsmax = m_spawnedByDefault ? (int32)m_respawnDelayTime : -(int32)m_respawnDelayTime;
     data.animprogress = GetGoAnimProgress();
     data.go_state = GetGoState();
-    data.spawnFlags = m_isActiveObject ? SPAWN_FLAG_ACTIVE : 0;
+    data.spawn_flags = m_isActiveObject ? SPAWN_FLAG_ACTIVE : 0;
 
     // updated in DB
     std::ostringstream ss;
@@ -874,16 +888,16 @@ bool GameObject::LoadFromDB(uint32 guid, Map* map)
         sLog.outErrorDb("Gameobject (GUID: %u) not found in table `gameobject`, can't load. ", guid);
         return false;
     }
-    if (data->spawnFlags & SPAWN_FLAG_DISABLED)
+    if (data->spawn_flags & SPAWN_FLAG_DISABLED)
         return false;
 
 
     uint32 entry = data->id;
-    //uint32 map_id = data->mapid;                          // already used before call
-    float x = data->posX;
-    float y = data->posY;
-    float z = data->posZ;
-    float ang = data->orientation;
+    //uint32 map_id = data->position.mapId;                          // already used before call
+    float x = data->position.x;
+    float y = data->position.y;
+    float z = data->position.z;
+    float ang = data->position.o;
 
     float rotation0 = data->rotation0;
     float rotation1 = data->rotation1;
@@ -927,8 +941,11 @@ bool GameObject::LoadFromDB(uint32 guid, Map* map)
         }
     }
 
-    m_isActiveObject = (data->spawnFlags & SPAWN_FLAG_ACTIVE);
-    m_visibilityModifier = data->visibilityModifier;
+    if (data->spawn_flags & SPAWN_FLAG_ACTIVE)
+        m_isActiveObject = true;
+
+    if (data->visibility_mod)
+        m_visibilityModifier = data->visibility_mod; // custom db change aka hack
 
     return true;
 }
@@ -1064,8 +1081,8 @@ bool GameObject::IsVisibleForInState(WorldObject const* pDetector, WorldObject c
     }
 
     // check distance
-    return IsWithinDistInMap(viewPoint, GetMap()->GetVisibilityDistance() +
-                             (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f) + GetVisibilityModifier(), false);
+    return IsWithinDistInMap(viewPoint, std::max(GetMap()->GetVisibilityDistance() +
+                             (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), GetVisibilityModifier()), false);
 }
 
 void GameObject::Respawn()
@@ -1144,7 +1161,7 @@ bool GameObject::ActivateToQuest(Player* pTarget) const
         }
         case GAMEOBJECT_TYPE_GOOBER:
         {
-            if (pTarget->GetQuestStatus(GetGOInfo()->goober.questId) == QUEST_STATUS_INCOMPLETE)
+            if (GetGOInfo()->goober.questId == -1 || pTarget->GetQuestStatus(GetGOInfo()->goober.questId) == QUEST_STATUS_INCOMPLETE)
                 return true;
             break;
         }
@@ -1374,6 +1391,7 @@ void GameObject::Use(Unit* user)
             if (user->GetTypeId() != TYPEID_PLAYER)
                 return;
 
+            GetMap()->ScriptsStart(sGameObjectScripts, GetGUIDLow(), user, this);
             TriggerLinkedGameObject(user);
             return;
         }
@@ -1503,7 +1521,7 @@ void GameObject::Use(Unit* user)
                 }
 
                 // possible quest objective for active quests
-                if (info->goober.questId && sObjectMgr.GetQuestTemplate(info->goober.questId))
+                if (info->goober.questId > 0 && sObjectMgr.GetQuestTemplate(info->goober.questId))
                 {
                     //Quest require to be active for GO using
                     if (player->GetQuestStatus(info->goober.questId) != QUEST_STATUS_INCOMPLETE)
@@ -1517,9 +1535,11 @@ void GameObject::Use(Unit* user)
                     if (!sScriptMgr.OnProcessEvent(info->goober.eventId, player, this, true))
                         GetMap()->ScriptsStart(sEventScripts, info->goober.eventId, player, this);
                 }
+                else
+                    GetMap()->ScriptsStart(sGameObjectScripts, GetGUIDLow(), user, this);
 
                 // possible quest objective for active quests
-                if (info->goober.questId && sObjectMgr.GetQuestTemplate(info->goober.questId))
+                if (info->goober.questId > 0 && sObjectMgr.GetQuestTemplate(info->goober.questId))
                 {
                     //Quest require to be active for GO using
                     if (player->GetQuestStatus(info->goober.questId) != QUEST_STATUS_INCOMPLETE)
@@ -1818,6 +1838,7 @@ void GameObject::Use(Unit* user)
             player->SendLoot(GetObjectGuid(), LOOT_FISHINGHOLE);
             return;
         }
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_7_1
         case GAMEOBJECT_TYPE_FLAGDROP:                      // 26
         {
             if (user->GetTypeId() != TYPEID_PLAYER)
@@ -1827,38 +1848,21 @@ void GameObject::Use(Unit* user)
 
             if (player->CanUseBattleGroundObject())
             {
-                // in battleground check
-                BattleGround* bg = player->GetBattleGround();
-                if (!bg)
-                    return;
-                // BG flag dropped
-                // WS:
-                // 179785 - Silverwing Flag
-                // 179786 - Warsong Flag
                 GameObjectInfo const* info = GetGOInfo();
-                if (info)
+                if (info && info->flagdrop.eventID)
                 {
-                    switch (info->id)
-                    {
-                        case 179785:                        // Silverwing Flag
-                            // check if it's correct bg
-                            if (bg->GetTypeID() == BATTLEGROUND_WS)
-                                bg->EventPlayerClickedOnFlag(player, this);
-                            break;
-                        case 179786:                        // Warsong Flag
-                            if (bg->GetTypeID() == BATTLEGROUND_WS)
-                                bg->EventPlayerClickedOnFlag(player, this);
-                            break;
-                    }
+                    DEBUG_FILTER_LOG(LOG_FILTER_AI_AND_MOVEGENSS, "FlagDrop ScriptStart id %u for GO entry %u (GUID %u).", info->flagdrop.eventID, GetEntry(), GetGUIDLow());
+
+                    if (!sScriptMgr.OnProcessEvent(info->flagdrop.eventID, player, this, true))
+                        GetMap()->ScriptsStart(sEventScripts, info->flagdrop.eventID, player, this);
                 }
-                player->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
-                player->RemoveSpellsCausingAura(SPELL_AURA_MOD_INVISIBILITY);
-                //this cause to call return, all flags must be deleted here!!
-                spellId = 0;
-                Delete();
+                
+                spellId = info->flagdrop.pickupSpell;
             }
             break;
         }
+#endif
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_11_2
         case GAMEOBJECT_TYPE_CAPTURE_POINT:                 // 29
         {
             // Code here is not even halfway complete, and only added for further development.
@@ -1932,6 +1936,7 @@ void GameObject::Use(Unit* user)
             // Some has spell, need to process those further.
             return;
         }
+#endif
         default:
             sLog.outError("GameObject::Use unhandled GameObject type %u (entry %u).", GetGoType(), GetEntry());
             break;
@@ -2235,7 +2240,7 @@ struct AddGameObjectToRemoveListInMapsWorker
 void GameObject::AddToRemoveListInMaps(uint32 db_guid, GameObjectData const* data)
 {
     AddGameObjectToRemoveListInMapsWorker worker(ObjectGuid(HIGHGUID_GAMEOBJECT, data->id, db_guid));
-    sMapMgr.DoForAllMapsWithMapId(data->mapid, worker);
+    sMapMgr.DoForAllMapsWithMapId(data->position.mapId, worker);
 }
 
 struct SpawnGameObjectInMapsWorker
@@ -2246,7 +2251,7 @@ struct SpawnGameObjectInMapsWorker
     void operator()(Map* map)
     {
         // Spawn if necessary (loaded grids only)
-        if (map->IsLoaded(i_data->posX, i_data->posY))
+        if (map->IsLoaded(i_data->position.x, i_data->position.y))
         {
             ObjectGuid guid(HIGHGUID_GAMEOBJECT, i_data->id, i_guid);
             if (GameObject* go = map->GetGameObject(guid))
@@ -2275,7 +2280,7 @@ struct SpawnGameObjectInMapsWorker
 void GameObject::SpawnInMaps(uint32 db_guid, GameObjectData const* data)
 {
     SpawnGameObjectInMapsWorker worker(db_guid, data);
-    sMapMgr.DoForAllMapsWithMapId(data->mapid, worker);
+    sMapMgr.DoForAllMapsWithMapId(data->position.mapId, worker);
 }
 
 bool GameObject::HasStaticDBSpawnData() const

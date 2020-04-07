@@ -41,6 +41,7 @@
 #include "MapManager.h"
 #include "SocialMgr.h"
 #include "PlayerBotMgr.h"
+#include "PlayerBotAI.h"
 #include "Anticheat.h"
 #include "Language.h"
 #include "Auth/Sha1.h"
@@ -144,6 +145,9 @@ void WorldSession::SendPacket(WorldPacket const* packet)
     }
     if (!m_Socket)
     {
+        if (GetBot() && GetBot()->ai)
+            GetBot()->ai->OnPacketReceived(packet);
+
         if (packet->GetOpcode() == SMSG_MESSAGECHAT)
         {
             WorldPacket packet2(*packet);
@@ -235,7 +239,7 @@ void WorldSession::SendPacket(WorldPacket const* packet)
 }
 
 /// Add an incoming packet to the queue
-void WorldSession::QueuePacket(WorldPacket* newPacket, NodeSession* from_node)
+void WorldSession::QueuePacket(WorldPacket* newPacket)
 {
     OpcodeHandler const& opHandle = opcodeTable[newPacket->GetOpcode()];
     if (opHandle.packetProcessing >= PACKET_PROCESS_MAX_TYPE)
@@ -317,7 +321,6 @@ bool WorldSession::Update(PacketFilter& updater)
         if (_clientHashComputeStep == HASH_COMPUTED && GetPlayer())
         {
             _clientHashComputeStep = HASH_NOTIFIED;
-            sAnticheatLib->OnClientHashComputed(this);
         }
         ///- Cleanup socket pointer if need
         if (m_Socket && m_Socket->IsClosed())
@@ -342,7 +345,6 @@ bool WorldSession::Update(PacketFilter& updater)
     }
     else // Async map based update
     {
-        sAnticheatLib->MapAccountUpdate(this);
         if (GetMasterPlayer() && GetPlayer())
         {
             GetMasterPlayer()->LoadPlayer(GetPlayer());
@@ -1071,7 +1073,7 @@ void WorldSession::SetDumpRecvPackets(char const* file)
 
 void WorldSession::InitWarden(BigNumber* k)
 {
-    m_warden = sAnticheatLib->CreateWardenFor(this, k);
+    m_warden = sAnticheatMgr->CreateWardenFor(this, k);
 }
 
 void WorldSession::InitCheatData(Player* pPlayer)
@@ -1079,12 +1081,12 @@ void WorldSession::InitCheatData(Player* pPlayer)
     if (m_cheatData)
         m_cheatData->InitNewPlayer(pPlayer);
     else
-        m_cheatData = sAnticheatLib->CreateAnticheatFor(pPlayer);
+        m_cheatData = sAnticheatMgr->CreateAnticheatFor(pPlayer);
 }
 
-MovementAnticheatInterface* WorldSession::GetCheatData()
+MovementAnticheat* WorldSession::GetCheatData()
 {
-    return m_cheatData ? m_cheatData : (m_cheatData = sAnticheatLib->CreateAnticheatFor(GetPlayer()));
+    return m_cheatData ? m_cheatData : (m_cheatData = sAnticheatMgr->CreateAnticheatFor(GetPlayer()));
 }
 
 void WorldSession::ProcessAnticheatAction(char const* detector, char const* reason, uint32 cheatAction, uint32 banSeconds)

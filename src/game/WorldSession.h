@@ -51,11 +51,10 @@ class LoginQueryHolder;
 class CharacterHandler;
 class MovementInfo;
 class WorldSession;
-class WardenInterface;
-class MovementAnticheatInterface;
+class Warden;
+class MovementAnticheat;
 class BigNumber;
 class BehaviorAnalyzer;
-class NodeSession;
 class MasterPlayer;
 
 struct OpcodeHandler;
@@ -331,7 +330,7 @@ class MANGOS_DLL_SPEC WorldSession
         // Session can be safely deleted if returns false
         bool ForcePlayerLogoutDelay();
 
-        void QueuePacket(WorldPacket* new_packet, NodeSession* from_node = nullptr);
+        void QueuePacket(WorldPacket* new_packet);
 
         bool Update(PacketFilter& updater);
         /**
@@ -489,7 +488,7 @@ class MANGOS_DLL_SPEC WorldSession
 
         // Warden / Anticheat
         void InitWarden(BigNumber* K);
-        WardenInterface* GetWarden() const { return m_warden; }
+        Warden* GetWarden() const { return m_warden; }
 
         bool AllowPacket(uint16 opcode);
         void ProcessAnticheatAction(char const* detector, char const* reason, uint32 action, uint32 banTime = 0 /* Perm ban */);
@@ -500,7 +499,7 @@ class MANGOS_DLL_SPEC WorldSession
         bool IsClientHashComputed() const { return _clientHashComputeStep != HASH_NOT_COMPUTED; }
         
         void InitCheatData(Player* pPlayer);
-        MovementAnticheatInterface* GetCheatData();
+        MovementAnticheat* GetCheatData();
 
         void AddScript(std::string name, WorldSessionScript* script)
         {
@@ -798,7 +797,7 @@ class MANGOS_DLL_SPEC WorldSession
 
         bool ProcessChatMessageAfterSecurityCheck(std::string&, uint32, uint32);
         static bool IsLanguageAllowedForChatType(uint32 lang, uint32 msgType);
-        void SendPlayerNotFoundNotice(std::string name);
+        void SendPlayerNotFoundNotice(std::string const& name);
         void SendWrongFactionNotice();
         void SendChatRestrictedNotice();
         void HandleMessagechatOpcode(WorldPacket& recvPacket);
@@ -915,8 +914,8 @@ class MANGOS_DLL_SPEC WorldSession
         ACE_Based::LockedQueue<WorldPacket*, ACE_Thread_Mutex> _recvQueue[PACKET_PROCESS_MAX_TYPE];
         bool _receivedPacketType[PACKET_PROCESS_MAX_TYPE];
 
-        WardenInterface* m_warden;
-        MovementAnticheatInterface* m_cheatData;
+        Warden* m_warden;
+        MovementAnticheat* m_cheatData;
 
         std::string m_username;
         uint32 _floodPacketsCount[FLOOD_MAX_OPCODES_TYPE];

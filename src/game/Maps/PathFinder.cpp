@@ -54,13 +54,21 @@ void PathInfo::setPathLengthLimit(float dist)
 
 bool PathInfo::calculate(float destX, float destY, float destZ, bool forceDest, bool offsets)
 {
+    float x, y, z;
+    m_sourceUnit->GetSafePosition(x, y, z, m_transport);
+
+    return calculate(Vector3(x, y, z), Vector3(destX, destY, destZ), forceDest, offsets);
+}
+
+bool PathInfo::calculate(Vector3 const& start, Vector3 dest, bool forceDest, bool offsets)
+{
     // A m_navMeshQuery object is not thread safe, but a same PathInfo can be shared between threads.
     // So need to get a new one.
     MMAP::MMapManager* mmap = MMAP::MMapFactory::createOrGetMMapManager();
     if (m_transport)
     {
         if (!offsets)
-            m_transport->CalculatePassengerOffset(destX, destY, destZ);
+            m_transport->CalculatePassengerOffset(dest.x, dest.y, dest.z);
         m_navMeshQuery = mmap->GetModelNavMeshQuery(m_transport->GetDisplayId());
     }
     else
@@ -72,12 +80,7 @@ bool PathInfo::calculate(float destX, float destY, float destZ, bool forceDest, 
     m_pathPoints.clear();
 
     Vector3 oldDest = getEndPosition();
-    Vector3 dest(destX, destY, destZ);
     setEndPosition(dest);
-
-    float x, y, z;
-    m_sourceUnit->GetSafePosition(x, y, z, m_transport);
-    Vector3 start(x, y, z);
     setStartPosition(start);
 
     m_forceDestination = forceDest;
@@ -88,7 +91,7 @@ bool PathInfo::calculate(float destX, float destY, float destZ, bool forceDest, 
     // make sure navMesh works - we can run on map w/o mmap
     // check if the start and end point have a .mmtile loaded (can we pass via not loaded tile on the way?)
     if (!m_navMesh || !m_navMeshQuery || m_sourceUnit->HasUnitState(UNIT_STAT_IGNORE_PATHFINDING) ||
-            !HaveTiles(start) || !HaveTiles(dest))
+        !HaveTiles(start) || !HaveTiles(dest))
     {
         BuildShortcut();
         m_type = PathType(PATHFIND_NORMAL | PATHFIND_NOT_USING_PATH);

@@ -278,13 +278,12 @@ void Object::BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) c
     uint8  updatetype   = UPDATETYPE_CREATE_OBJECT;
     uint8 updateFlags  = m_updateFlag;
 
-    /** lower flag1 **/
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_8_4
     if (target == this)                                     // building packet for yourself
         updateFlags |= UPDATEFLAG_SELF;
 
     if (updateFlags & UPDATEFLAG_HAS_POSITION)
     {
-#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_8_4
         // UPDATETYPE_CREATE_OBJECT2 dynamic objects, corpses...
         if (isType(TYPEMASK_DYNAMICOBJECT) || isType(TYPEMASK_CORPSE) || isType(TYPEMASK_PLAYER))
             updatetype = UPDATETYPE_CREATE_OBJECT2;
@@ -292,7 +291,6 @@ void Object::BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) c
         // UPDATETYPE_CREATE_OBJECT2 for pets...
         if (target->GetPetGuid() == GetObjectGuid())
             updatetype = UPDATETYPE_CREATE_OBJECT2;
-#endif
 
         // UPDATETYPE_CREATE_OBJECT2 for some gameobject types...
         if (isType(TYPEMASK_GAMEOBJECT))
@@ -307,20 +305,24 @@ void Object::BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) c
                             (go->isSpawned() && !go->GetRespawnDelay()))
                         break;
                 }
-#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_8_4
                 case GAMEOBJECT_TYPE_TRAP:
                 case GAMEOBJECT_TYPE_DUEL_ARBITER:
                 case GAMEOBJECT_TYPE_FLAGSTAND:
                 case GAMEOBJECT_TYPE_FLAGDROP:
                     updatetype = UPDATETYPE_CREATE_OBJECT2;
                     break;
-#endif
                 case GAMEOBJECT_TYPE_TRANSPORT:
                     updateFlags |= UPDATEFLAG_TRANSPORT;
                     break;
             }
         }
     }
+#else
+    if (target->GetMover() == this)
+        updateFlags |= UPDATEFLAG_SELF;
+    else if (isType(TYPEMASK_GAMEOBJECT) && ((GameObject*)this)->GetGoType() == GAMEOBJECT_TYPE_TRANSPORT)
+        updateFlags |= UPDATEFLAG_TRANSPORT;
+#endif
 
     //DEBUG_LOG("BuildCreateUpdate: update-type: %u, object-type: %u got updateFlags: %X", updatetype, m_objectTypeId, updateFlags);
 
@@ -336,10 +338,19 @@ void Object::BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) c
     BuildMovementUpdate(&buf, updateFlags);
 
 #if SUPPORTED_CLIENT_BUILD <= CLIENT_BUILD_1_8_4
-    buf << uint32(target->GetMover() == this ? 1 : 0); // Flags, 1 - Active Player
-    buf << uint32(0); // AttackCycle
+    buf << uint32(updateFlags); // Flags
+    buf << uint32(1); // AttackCycle (always 1 in sniffs)
     buf << uint32(0); // TimerId
     buf << uint64(0); // VictimGuid
+
+    if (updateFlags & UPDATEFLAG_TRANSPORT)
+    {
+        GameObject const* go = ToGameObject();
+        if (go && go->ToTransport())
+            buf << uint32(go->ToTransport()->GetPathProgress());
+        else
+            buf << uint32(WorldTimer::getMSTime());           // ms time
+    }
 #endif
 
     UpdateMask updateMask;
@@ -519,9 +530,8 @@ void Object::BuildMovementUpdate(ByteBuffer* data, uint8 updateFlags) const
     }
 #else
     Unit const* unit = ToUnit();
-    if (updateFlags & UPDATEFLAG_LIVING)
+    if (unit)
     {
-        ASSERT(unit);
         WorldObject const* wobject = (WorldObject*)this;
         MovementInfo m = wobject->m_movementInfo;
         if (!m.ctime)
@@ -537,14 +547,12 @@ void Object::BuildMovementUpdate(ByteBuffer* data, uint8 updateFlags) const
     {
         *data << uint32(0); // movement flags
         *data << uint32(WorldTimer::getMSTime());
-        if (updateFlags & UPDATEFLAG_HAS_POSITION)                     // 0x40
+        if (WorldObject const* pObject = ToWorldObject())
         {
-            WorldObject* object = ((WorldObject*)this);
-
-            *data << float(object->GetPositionX());
-            *data << float(object->GetPositionY());
-            *data << float(object->GetPositionZ());
-            *data << float(object->GetOrientation());
+            *data << float(pObject->GetPositionX());
+            *data << float(pObject->GetPositionY());
+            *data << float(pObject->GetPositionZ());
+            *data << float(pObject->GetOrientation());
         }
         else
         {
@@ -579,7 +587,7 @@ void Object::BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* u
     if (!target)
         return;
     
-    bool ShowHealthValues = sWorld.getConfig(CONFIG_BOOL_OBJECT_HEALTH_VALUE_SHOW);
+    bool const ShowHealthValues = sWorld.getConfig(CONFIG_BOOL_OBJECT_HEALTH_VALUE_SHOW);
 
     bool IsActivateToQuest = false;
 
@@ -762,8 +770,7 @@ void Object::BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* u
                 // Hide real health value. Send a percent instead. See ShowHealthValues option in mangosd.conf
                 else if (!ShowHealthValues && (index == UNIT_FIELD_HEALTH || index == UNIT_FIELD_MAXHEALTH))
                 {
-                    Player* owner = ((Unit*)this)->GetCharmerOrOwnerPlayerOrPlayerItself();
-                    if (owner && owner->IsInSameRaidWith(target))
+                    if (target->CanSeeHealthOf((Unit*)this))
                         *data << m_uint32Values[index];
                     else // Hide
                     {
@@ -786,7 +793,7 @@ void Object::BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* u
                 }
                 else if (target == this && (index == PLAYER_TRACK_CREATURES || index == PLAYER_TRACK_RESOURCES))
                 {
-                    //if (WardenInterface* base = target->GetSession()->GetWarden())
+                    //if (Warden* base = target->GetSession()->GetWarden())
                         //base->TrackingUpdateSent(index, m_uint32Values[index]);
                     *data << m_uint32Values[index];
                 }
@@ -1890,7 +1897,7 @@ void WorldObject::SendMessageToSet(WorldPacket* data, bool /*bToSelf*/) const
         GetMap()->MessageBroadcast(this, data);
 }
 
-struct MANGOS_DLL_DECL ObjectViewersDeliverer
+struct ObjectViewersDeliverer
 {
     WorldPacket* i_message;
     WorldObject const* i_sender;
@@ -1929,7 +1936,7 @@ void WorldObject::SendObjectMessageToSet(WorldPacket* data, bool self, WorldObje
 
     ObjectViewersDeliverer post_man(this, data, except);
     TypeContainerVisitor<ObjectViewersDeliverer, WorldTypeMapContainer> message(post_man);
-    cell.Visit(p, message, *GetMap(), *this, GetMap()->GetVisibilityDistance() + GetVisibilityModifier());
+    cell.Visit(p, message, *GetMap(), *this, std::max(GetMap()->GetVisibilityDistance(), GetVisibilityModifier()));
 }
 
 void WorldObject::SendMovementMessageToSet(WorldPacket data, bool self, WorldObject const* except)
@@ -1958,7 +1965,7 @@ void WorldObject::SendMessageToSetExcept(WorldPacket* data, Player const* skippe
     if (IsInWorld())
     {
         MaNGOS::MessageDelivererExcept notifier(data, skipped_receiver);
-        Cell::VisitWorldObjects(this, notifier, GetMap()->GetVisibilityDistance() + GetVisibilityModifier());
+        Cell::VisitWorldObjects(this, notifier, std::max(GetMap()->GetVisibilityDistance(), GetVisibilityModifier()));
     }
 }
 
@@ -1973,10 +1980,7 @@ bool WorldObject::isWithinVisibilityDistanceOf(Unit const* viewer, WorldObject c
 {
     if (viewer->IsTaxiFlying())
     {
-        float distance = World::GetMaxVisibleDistanceInFlight() + (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f);
-
-        if (m_isActiveObject)
-            distance += m_visibilityModifier;
+        float distance = std::max(World::GetMaxVisibleDistanceInFlight() + (inVisibleList ? World::GetVisibleObjectGreyDistance() : 0.0f), GetVisibilityModifier());
 
         // use object grey distance for all (only see objects any way)
         if (!IsWithinDistInMap(viewPoint, distance, false))
@@ -1984,10 +1988,7 @@ bool WorldObject::isWithinVisibilityDistanceOf(Unit const* viewer, WorldObject c
     }
     else if (!GetTransport() || GetTransport() != viewer->GetTransport())
     {
-        float distance = GetMap()->GetVisibilityDistance() + (inVisibleList ? World::GetVisibleUnitGreyDistance() : 0.0f);
-
-        if (m_isActiveObject)
-            distance += m_visibilityModifier;
+        float distance = std::max(GetMap()->GetVisibilityDistance() + (inVisibleList ? World::GetVisibleUnitGreyDistance() : 0.0f), GetVisibilityModifier());
 
         // Any units far than max visible distance for viewer or not in our map are not visible too
         if (!IsWithinDistInMap(viewPoint, distance, false))
@@ -2496,7 +2497,7 @@ void WorldObject::BuildUpdateData(UpdateDataMapType & update_players)
 {
     WorldObjectChangeAccumulator notifier(*this, update_players);
     // Update with modifier for long range players
-    Cell::VisitWorldObjects(this, notifier, GetMap()->GetVisibilityDistance() + GetVisibilityModifier());
+    Cell::VisitWorldObjects(this, notifier, std::max(GetMap()->GetVisibilityDistance(), GetVisibilityModifier()));
 
     ClearUpdateMask(false);
 }
@@ -2565,9 +2566,9 @@ void WorldObject::DestroyForNearbyPlayers()
 
     std::list<Player*> targets;
     // Use visibility modifier for long range players
-    MaNGOS::AnyPlayerInObjectRangeCheck check(this, GetMap()->GetVisibilityDistance() + GetVisibilityModifier());
+    MaNGOS::AnyPlayerInObjectRangeCheck check(this, std::max(GetMap()->GetVisibilityDistance(), GetVisibilityModifier()));
     MaNGOS::PlayerListSearcher<MaNGOS::AnyPlayerInObjectRangeCheck> searcher(targets, check);
-    Cell::VisitWorldObjects(this, searcher, GetMap()->GetVisibilityDistance() + GetVisibilityModifier());
+    Cell::VisitWorldObjects(this, searcher, std::max(GetMap()->GetVisibilityDistance(), GetVisibilityModifier()));
     for (const auto plr : targets)
     {
         if (plr == this)
@@ -2587,7 +2588,7 @@ void WorldObject::DestroyForNearbyPlayers()
     }
 }
 
-Creature* WorldObject::FindNearestCreature(uint32 uiEntry, float range, bool alive) const
+Creature* WorldObject::FindNearestCreature(uint32 uiEntry, float range, bool alive, Creature const* except) const
 {
     Creature* pCreature = nullptr;
 
@@ -2595,7 +2596,7 @@ Creature* WorldObject::FindNearestCreature(uint32 uiEntry, float range, bool ali
     Cell cell(pair);
     cell.SetNoCreate();
 
-    MaNGOS::NearestCreatureEntryWithLiveStateInObjectRangeCheck creature_check(*this, uiEntry, alive, range);
+    MaNGOS::NearestCreatureEntryWithLiveStateInObjectRangeCheck creature_check(*this, uiEntry, alive, range, except);
     MaNGOS::CreatureLastSearcher<MaNGOS::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(pCreature, creature_check);
 
     TypeContainerVisitor<MaNGOS::CreatureLastSearcher<MaNGOS::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer> creature_searcher(searcher);
@@ -2603,6 +2604,40 @@ Creature* WorldObject::FindNearestCreature(uint32 uiEntry, float range, bool ali
     cell.Visit(pair, creature_searcher, *(GetMap()), *this, range);
 
     return pCreature;
+}
+
+Creature* WorldObject::FindRandomCreature(uint32 uiEntry, float range, bool alive, Creature const* except) const
+{
+    std::list<Creature*> targets;
+    GetCreatureListWithEntryInGrid(targets, uiEntry, range);
+
+    // remove current target
+    if (except)
+        targets.remove((Creature*)except);
+
+    for (std::list<Creature*>::iterator tIter = targets.begin(); tIter != targets.end();)
+    {
+        if ((alive && !(*tIter)->IsAlive()) || (!alive && (*tIter)->IsAlive()))
+        {
+            std::list<Creature*>::iterator tIter2 = tIter;
+            ++tIter;
+            targets.erase(tIter2);
+        }
+        else
+            ++tIter;
+    }
+
+    // no appropriate targets
+    if (targets.empty())
+        return nullptr;
+
+    // select random
+    uint32 rIdx = urand(0, targets.size() - 1);
+    std::list<Creature*>::const_iterator tcIter = targets.begin();
+    for (uint32 i = 0; i < rIdx; ++i)
+        ++tcIter;
+
+    return *tcIter;
 }
 
 GameObject* WorldObject::FindNearestGameObject(uint32 uiEntry, float fMaxSearchRange) const
@@ -2633,7 +2668,7 @@ Player* WorldObject::FindNearestPlayer(float range) const
     return target;
 }
 
-void WorldObject::GetGameObjectListWithEntryInGrid(std::list<GameObject*>& lList, uint32 uiEntry, float fMaxSearchRange)
+void WorldObject::GetGameObjectListWithEntryInGrid(std::list<GameObject*>& lList, uint32 uiEntry, float fMaxSearchRange) const
 {
     CellPair pair(MaNGOS::ComputeCellPair(GetPositionX(), GetPositionY()));
     Cell cell(pair);
@@ -2646,7 +2681,7 @@ void WorldObject::GetGameObjectListWithEntryInGrid(std::list<GameObject*>& lList
     cell.Visit(pair, visitor, *(GetMap()), *this, fMaxSearchRange);
 }
 
-void WorldObject::GetCreatureListWithEntryInGrid(std::list<Creature*>& lList, uint32 uiEntry, float fMaxSearchRange)
+void WorldObject::GetCreatureListWithEntryInGrid(std::list<Creature*>& lList, uint32 uiEntry, float fMaxSearchRange) const
 {
     CellPair pair(MaNGOS::ComputeCellPair(GetPositionX(), GetPositionY()));
     Cell cell(pair);
@@ -3045,7 +3080,7 @@ void WorldObject::Update(uint32 update_diff, uint32 /*time_diff*/)
     ExecuteDelayedActions();
 }
 
-class MANGOS_DLL_DECL NULLNotifier
+class NULLNotifier
 {
 public:
     template<class T> void Visit(GridRefManager<T>& m) {}
@@ -3743,10 +3778,10 @@ float WorldObject::GetSpellResistChance(Unit const* victim, uint32 schoolMask, b
     return resistModHitChance;
 }
 
-void WorldObject::SendSpellMiss(Unit* target, uint32 spellID, SpellMissInfo missInfo)
+void WorldObject::SendSpellMiss(Unit* target, uint32 spellId, SpellMissInfo missInfo)
 {
     WorldPacket data(SMSG_SPELLLOGMISS, (4 + 8 + 1 + 4 + 8 + 1));
-    data << uint32(spellID);
+    data << uint32(spellId);
     data << GetObjectGuid();
     data << uint8(0);                                       // unk8
     data << uint32(1);                                      // target count
@@ -3758,12 +3793,12 @@ void WorldObject::SendSpellMiss(Unit* target, uint32 spellID, SpellMissInfo miss
     SendObjectMessageToSet(&data, true);
 }
 
-void WorldObject::SendSpellOrDamageImmune(Unit* target, uint32 spellID) const
+void WorldObject::SendSpellOrDamageImmune(Unit* target, uint32 spellId) const
 {
     WorldPacket data(SMSG_SPELLORDAMAGE_IMMUNE, (8 + 8 + 4 + 1));
     data << GetObjectGuid();
     data << target->GetObjectGuid();
-    data << uint32(spellID);
+    data << uint32(spellId);
     data << uint8(0);
     SendMessageToSet(&data, true);
 }
@@ -3915,9 +3950,9 @@ void WorldObject::SendSpellNonMeleeDamageLog(SpellNonMeleeDamage* log)
     SendMessageToSet(&data, true);
 }
 
-void WorldObject::SendSpellNonMeleeDamageLog(Unit* target, uint32 spellID, uint32 damage, SpellSchoolMask damageSchoolMask, uint32 absorbedDamage, int32 resist, bool isPeriodic, uint32 blocked, bool criticalHit, bool split)
+void WorldObject::SendSpellNonMeleeDamageLog(Unit* target, uint32 spellId, uint32 damage, SpellSchoolMask damageSchoolMask, uint32 absorbedDamage, int32 resist, bool isPeriodic, uint32 blocked, bool criticalHit, bool split)
 {
-    SpellNonMeleeDamage log(this, target, spellID, GetFirstSchoolInMask(damageSchoolMask));
+    SpellNonMeleeDamage log(this, target, spellId, GetFirstSchoolInMask(damageSchoolMask));
     log.damage = damage;
     log.damage += (resist < 0 ? uint32(std::abs(resist)) : 0);
     log.damage -= (absorbedDamage + (resist > 0 ? uint32(resist) : 0) + blocked);
@@ -5000,7 +5035,7 @@ void WorldObject::RemoveAllDynObjects()
     }
 }
 
-void WorldObject::CastSpell(Unit* Victim, uint32 spellId, bool triggered, Item* castItem, Aura* triggeredByAura, ObjectGuid originalCaster, SpellEntry const* triggeredBy, SpellEntry const* triggeredByParent)
+SpellCastResult WorldObject::CastSpell(Unit* pVictim, uint32 spellId, bool triggered, Item* castItem, Aura* triggeredByAura, ObjectGuid originalCaster, SpellEntry const* triggeredBy, SpellEntry const* triggeredByParent)
 {
     SpellEntry const* spellInfo = sSpellMgr.GetSpellEntry(spellId);
 
@@ -5010,13 +5045,13 @@ void WorldObject::CastSpell(Unit* Victim, uint32 spellId, bool triggered, Item* 
             sLog.outError("CastSpell: unknown spell id %i by caster: %s triggered by aura %u (eff %u)", spellId, GetGuidStr().c_str(), triggeredByAura->GetId(), triggeredByAura->GetEffIndex());
         else
             sLog.outError("CastSpell: unknown spell id %i by caster: %s", spellId, GetGuidStr().c_str());
-        return;
+        return SPELL_FAILED_SPELL_UNAVAILABLE;
     }
 
-    CastSpell(Victim, spellInfo, triggered, castItem, triggeredByAura, originalCaster, triggeredBy, triggeredByParent);
+    return CastSpell(pVictim, spellInfo, triggered, castItem, triggeredByAura, originalCaster, triggeredBy, triggeredByParent);
 }
 
-void WorldObject::CastSpell(Unit* Victim, SpellEntry const* spellInfo, bool triggered, Item* castItem, Aura* triggeredByAura, ObjectGuid originalCaster, SpellEntry const* triggeredBy, SpellEntry const* triggeredByParent)
+SpellCastResult WorldObject::CastSpell(Unit* pVictim, SpellEntry const* spellInfo, bool triggered, Item* castItem, Aura* triggeredByAura, ObjectGuid originalCaster, SpellEntry const* triggeredBy, SpellEntry const* triggeredByParent)
 {
     if (!spellInfo)
     {
@@ -5024,7 +5059,7 @@ void WorldObject::CastSpell(Unit* Victim, SpellEntry const* spellInfo, bool trig
             sLog.outError("CastSpell: unknown spell by caster: %s triggered by aura %u (eff %u)", GetGuidStr().c_str(), triggeredByAura->GetId(), triggeredByAura->GetEffIndex());
         else
             sLog.outError("CastSpell: unknown spell by caster: %s", GetGuidStr().c_str());
-        return;
+        return SPELL_FAILED_SPELL_UNAVAILABLE;
     }
 
     if (castItem)
@@ -5045,26 +5080,26 @@ void WorldObject::CastSpell(Unit* Victim, SpellEntry const* spellInfo, bool trig
     else if (GameObject* pGameObject = ToGameObject())
         spell = new Spell(pGameObject, spellInfo, triggered, originalCaster, triggeredBy, nullptr, triggeredByParent);
     else
-        return;
+        return SPELL_FAILED_ERROR;
 
     SpellCastTargets targets;
 
     // Don't set unit target on destination target based spells, otherwise the spell will cancel
     // as soon as the target dies or leaves the area of the effect
     if (spellInfo->Targets & TARGET_FLAG_DEST_LOCATION)
-        targets.setDestination(Victim->GetPositionX(), Victim->GetPositionY(), Victim->GetPositionZ());
+        targets.setDestination(pVictim->GetPositionX(), pVictim->GetPositionY(), pVictim->GetPositionZ());
     else
-        targets.setUnitTarget(Victim);
+        targets.setUnitTarget(pVictim);
 
     if (spellInfo->Targets & TARGET_FLAG_SOURCE_LOCATION)
         if (WorldObject* caster = spell->GetCastingObject())
             targets.setSource(caster->GetPositionX(), caster->GetPositionY(), caster->GetPositionZ());
 
     spell->SetCastItem(castItem);
-    spell->prepare(std::move(targets), triggeredByAura);
+    return spell->prepare(std::move(targets), triggeredByAura);
 }
 
-void WorldObject::CastCustomSpell(Unit* Victim, uint32 spellId, int32 const* bp0, int32 const* bp1, int32 const* bp2, bool triggered, Item* castItem, Aura* triggeredByAura, ObjectGuid originalCaster, SpellEntry const* triggeredBy)
+void WorldObject::CastCustomSpell(Unit* pVictim, uint32 spellId, int32 const* bp0, int32 const* bp1, int32 const* bp2, bool triggered, Item* castItem, Aura* triggeredByAura, ObjectGuid originalCaster, SpellEntry const* triggeredBy)
 {
     SpellEntry const* spellInfo = sSpellMgr.GetSpellEntry(spellId);
 
@@ -5077,10 +5112,10 @@ void WorldObject::CastCustomSpell(Unit* Victim, uint32 spellId, int32 const* bp0
         return;
     }
 
-    CastCustomSpell(Victim, spellInfo, bp0, bp1, bp2, triggered, castItem, triggeredByAura, originalCaster, triggeredBy);
+    CastCustomSpell(pVictim, spellInfo, bp0, bp1, bp2, triggered, castItem, triggeredByAura, originalCaster, triggeredBy);
 }
 
-void WorldObject::CastCustomSpell(Unit* Victim, SpellEntry const* spellInfo, int32 const* bp0, int32 const* bp1, int32 const* bp2, bool triggered, Item* castItem, Aura* triggeredByAura, ObjectGuid originalCaster, SpellEntry const* triggeredBy)
+void WorldObject::CastCustomSpell(Unit* pVictim, SpellEntry const* spellInfo, int32 const* bp0, int32 const* bp1, int32 const* bp2, bool triggered, Item* castItem, Aura* triggeredByAura, ObjectGuid originalCaster, SpellEntry const* triggeredBy)
 {
     if (!spellInfo)
     {
@@ -5121,13 +5156,13 @@ void WorldObject::CastCustomSpell(Unit* Victim, SpellEntry const* spellInfo, int
         spell->m_currentBasePoints[EFFECT_INDEX_2] = *bp2;
 
     SpellCastTargets targets;
-    targets.setUnitTarget(Victim);
+    targets.setUnitTarget(pVictim);
     spell->SetCastItem(castItem);
     spell->prepare(std::move(targets), triggeredByAura);
 }
 
 // used for scripting
-void WorldObject::CastSpell(float x, float y, float z, uint32 spellId, bool triggered, Item* castItem, Aura* triggeredByAura, ObjectGuid originalCaster, SpellEntry const* triggeredBy)
+SpellCastResult WorldObject::CastSpell(float x, float y, float z, uint32 spellId, bool triggered, Item* castItem, Aura* triggeredByAura, ObjectGuid originalCaster, SpellEntry const* triggeredBy)
 {
     SpellEntry const* spellInfo = sSpellMgr.GetSpellEntry(spellId);
 
@@ -5137,14 +5172,14 @@ void WorldObject::CastSpell(float x, float y, float z, uint32 spellId, bool trig
             sLog.outError("CastSpell(x,y,z): unknown spell id %i by caster: %s triggered by aura %u (eff %u)", spellId, GetGuidStr().c_str(), triggeredByAura->GetId(), triggeredByAura->GetEffIndex());
         else
             sLog.outError("CastSpell(x,y,z): unknown spell id %i by caster: %s", spellId, GetGuidStr().c_str());
-        return;
+        return SPELL_FAILED_SPELL_UNAVAILABLE;
     }
 
-    CastSpell(x, y, z, spellInfo, triggered, castItem, triggeredByAura, originalCaster, triggeredBy);
+    return CastSpell(x, y, z, spellInfo, triggered, castItem, triggeredByAura, originalCaster, triggeredBy);
 }
 
 // used for scripting
-void WorldObject::CastSpell(float x, float y, float z, SpellEntry const* spellInfo, bool triggered, Item* castItem, Aura* triggeredByAura, ObjectGuid originalCaster, SpellEntry const* triggeredBy)
+SpellCastResult WorldObject::CastSpell(float x, float y, float z, SpellEntry const* spellInfo, bool triggered, Item* castItem, Aura* triggeredByAura, ObjectGuid originalCaster, SpellEntry const* triggeredBy)
 {
     if (!spellInfo)
     {
@@ -5152,7 +5187,7 @@ void WorldObject::CastSpell(float x, float y, float z, SpellEntry const* spellIn
             sLog.outError("CastSpell(x,y,z): unknown spell by caster: %s triggered by aura %u (eff %u)", GetGuidStr().c_str(), triggeredByAura->GetId(), triggeredByAura->GetEffIndex());
         else
             sLog.outError("CastSpell(x,y,z): unknown spell by caster: %s", GetGuidStr().c_str());
-        return;
+        return SPELL_FAILED_SPELL_UNAVAILABLE;
     }
 
     if (castItem)
@@ -5173,12 +5208,12 @@ void WorldObject::CastSpell(float x, float y, float z, SpellEntry const* spellIn
     else if (GameObject* pGameObject = ToGameObject())
         spell = new Spell(pGameObject, spellInfo, triggered, originalCaster, triggeredBy);
     else
-        return;
+        return SPELL_FAILED_ERROR;
 
     SpellCastTargets targets;
     targets.setDestination(x, y, z);
     spell->SetCastItem(castItem);
-    spell->prepare(std::move(targets), triggeredByAura);
+    return spell->prepare(std::move(targets), triggeredByAura);
 }
 
 bool WorldObject::isVisibleFor(Player const* u, WorldObject const* viewPoint) const

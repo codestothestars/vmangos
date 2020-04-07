@@ -183,7 +183,7 @@ extern pAuraProcHandler AuraProcHandler[TOTAL_AURAS];
 
 struct GlobalCooldown
 {
-    explicit GlobalCooldown(uint32 _dur = 0, uint32 _time = 0) : duration(_dur), cast_time(_time) {}
+    explicit GlobalCooldown(uint32 dur = 0, uint32 time = 0) : duration(dur), cast_time(time) {}
 
     uint32 duration;
     uint32 cast_time;
@@ -321,14 +321,14 @@ private:
     ReactStates     m_reactState;
     uint32          m_petnumber;
 
-    bool _isCommandAttack;
-    bool _isCommandFollow;
-    bool _isAtStay;
-    bool _isFollowing;
-    bool _isReturning;
-    float _stayX;
-    float _stayY;
-    float _stayZ;
+    bool m_isCommandAttack;
+    bool m_isCommandFollow;
+    bool m_isAtStay;
+    bool m_isFollowing;
+    bool m_isReturning;
+    float m_stayX;
+    float m_stayY;
+    float m_stayZ;
 };
 
 typedef std::set<ObjectGuid> GuardianPetList;
@@ -392,8 +392,14 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
         bool m_canModifyStats;
         int32 m_regenTimer;
 
-        void SetCreateStat(Stats stat, float val) { m_createStats[stat] = val; }
+#if SUPPORTED_CLIENT_BUILD <= CLIENT_BUILD_1_6_1
+        uint32 m_createHealth = 0;
+        void SetCreateHealth(uint32 val) { m_createHealth = val; }
+#else
         void SetCreateHealth(uint32 val) { SetUInt32Value(UNIT_FIELD_BASE_HEALTH, val); }
+#endif
+
+        void SetCreateStat(Stats stat, float val) { m_createStats[stat] = val; }
         void SetCreateMana(uint32 val) { SetUInt32Value(UNIT_FIELD_BASE_MANA, val); }
         void SetCreateResistance(SpellSchools school, int32 val) { m_createResistances[school] = val; }
         void SetStat(Stats stat, int32 val) { SetStatInt32Value(UNIT_FIELD_STAT0 + stat, val); }
@@ -410,8 +416,13 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
         float m_modAttackSpeedPct[3];
         float m_modRecalcDamagePct[3];
 
-        float GetCreateStat(Stats stat) const { return m_createStats[stat]; }
+#if SUPPORTED_CLIENT_BUILD <= CLIENT_BUILD_1_6_1
+        uint32 GetCreateHealth() const { return m_createHealth; }
+#else
         uint32 GetCreateHealth() const { return GetUInt32Value(UNIT_FIELD_BASE_HEALTH); }
+#endif
+
+        float GetCreateStat(Stats stat) const { return m_createStats[stat]; }
         uint32 GetCreateMana() const { return GetUInt32Value(UNIT_FIELD_BASE_MANA); }
         uint32 GetCreatePowers(Powers power) const;
         int32 GetCreateResistance(SpellSchools school) const { return m_createResistances[school]; }
@@ -564,9 +575,9 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
         }
         bool IsInDisallowedMountForm() const;
         uint32 GetDisplayId() const { return GetUInt32Value(UNIT_FIELD_DISPLAYID); }
-        void SetDisplayId(uint32 modelId);
+        void SetDisplayId(uint32 displayId);
         uint32 GetNativeDisplayId() const { return GetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID); }
-        void SetNativeDisplayId(uint32 modelId) { SetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID, modelId); }
+        void SetNativeDisplayId(uint32 displayId) { SetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID, displayId); }
         void SetTransForm(uint32 spellid) { m_transform = spellid; }
         uint32 GetTransForm() const { return m_transform; }
         void SetTransformScale(float scale);
@@ -725,7 +736,7 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
         void SendPlaySpellVisual(uint32 id) const;
         void SendPeriodicAuraLog(SpellPeriodicAuraLogInfo* pInfo, AuraType auraTypeOverride = SPELL_AURA_NONE) const;
         void SendEnvironmentalDamageLog(uint8 type, uint32 damage, uint32 absorb, int32 resist) const;
-        uint32 SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage);
+        uint32 SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellId, uint32 damage);
 
         SpellAuraHolder* AddAura(uint32 spellId, uint32 addAuraFlags = 0, Unit* pCaster = nullptr);
         SpellAuraHolder* RefreshAura(uint32 spellId, int32 duration);
@@ -843,7 +854,7 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
         bool HasAuraTypeByCaster(AuraType auraType, ObjectGuid casterGuid) const;
         bool HasAura(uint32 spellId, SpellEffectIndex effIndex) const;
         bool HasAura(uint32 spellId) const { return m_spellAuraHolders.find(spellId) != m_spellAuraHolders.end(); }
-        bool virtual HasSpell(uint32 /*spellID*/) const { return false; }
+        bool virtual HasSpell(uint32 /*spellId*/) const { return false; }
         bool HasStealthAura()      const { return HasAuraType(SPELL_AURA_MOD_STEALTH); }
         bool HasInvisibilityAura() const { return HasAuraType(SPELL_AURA_MOD_INVISIBILITY); }
         bool IsFeared()  const { return HasAuraType(SPELL_AURA_MOD_FEAR); }
@@ -909,10 +920,10 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
         virtual bool IsImmuneToSpellEffect(SpellEntry const* spellInfo, SpellEffectIndex index, bool castOnSelf) const;
         bool IsImmuneToSchool(SpellEntry const* spellInfo, uint8 effectMask) const;
 
-        void ModConfuseSpell(bool apply, ObjectGuid casterGuid, uint32 spellID, MovementModType modType, uint32 time = 0);
-        void SetFleeing(bool apply, ObjectGuid casterGuid = ObjectGuid(), uint32 spellID = 0, uint32 time = 0);
-        void SetFeared(bool apply, ObjectGuid casterGuid = ObjectGuid(), uint32 spellID = 0, uint32 time = 0);/*DEPRECATED METHOD*/
-        void SetConfused(bool apply, ObjectGuid casterGuid = ObjectGuid(), uint32 spellID = 0);/*DEPRECATED METHOD*/
+        void ModConfuseSpell(bool apply, ObjectGuid casterGuid, uint32 spellId, MovementModType modType, uint32 time = 0);
+        void SetFleeing(bool apply, ObjectGuid casterGuid = ObjectGuid(), uint32 spellId = 0, uint32 time = 0);
+        void SetFeared(bool apply, ObjectGuid casterGuid = ObjectGuid(), uint32 spellId = 0, uint32 time = 0);/*DEPRECATED METHOD*/
+        void SetConfused(bool apply, ObjectGuid casterGuid = ObjectGuid(), uint32 spellId = 0);/*DEPRECATED METHOD*/
         void SetFeignDeath(bool apply, ObjectGuid casterGuid = ObjectGuid(), bool success = true);
 
         // Cooldown management
@@ -1355,6 +1366,7 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
         MotionMaster i_motionMaster;
     public:
         void SendHeartBeat(bool includingSelf = true);
+        void SendMovementPacket(uint16 opcode, bool includingSelf = true);
         virtual void SetFly(bool enable);
         
         void SetRooted(bool apply);
