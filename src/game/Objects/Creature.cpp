@@ -54,6 +54,8 @@
 #include "TemporarySummon.h"
 #include "GuardMgr.h"
 
+using namespace std;
+
 TrainerSpell const* TrainerSpellData::Find(uint32 spell_id) const
 {
     TrainerSpellMap::const_iterator itr = spellList.find(spell_id);
@@ -1553,6 +1555,19 @@ void Creature::SelectLevel(CreatureInfo const* cinfo, float percentHealth, float
 
 float Creature::_GetHealthMod(int32 rank)
 {
+    uint32 dungeons[] = {
+        349 // Maraudon
+    };
+
+    uint32 map = GetMapId();
+
+    bool dungeon = find(begin(dungeons), end(dungeons), map) != end(dungeons);
+    
+    if (dungeon)
+    {
+        return .43f;
+    }
+
     switch (rank)                                           // define rates for each elite rank
     {
         case CREATURE_ELITE_NORMAL:
