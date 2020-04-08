@@ -54,6 +54,8 @@
 #include "TemporarySummon.h"
 #include "GuardMgr.h"
 
+using namespace std;
+
 TrainerSpell const* TrainerSpellData::Find(uint32 spell_id) const
 {
     TrainerSpellMap::const_iterator itr = spellList.find(spell_id);
@@ -1663,6 +1665,24 @@ void Creature::InitStatsForLevel(float percentHealth, float percentMana)
 
 float Creature::_GetHealthMod(int32 rank)
 {
+    uint32 dungeons[] = {
+        109, // Sunken Temple
+        209, // Zul'Farrak
+        // 229, // Lower Blackrock Spire
+        230, // Blackrock Depths
+        349, // Maraudon
+        429  // Dire Maul
+    };
+
+    uint32 tenPersonRaids[] = {
+        229 // Upper Blackrock Spire
+    };
+
+    uint32 map = GetMapId();
+
+    if (find(begin(dungeons), end(dungeons), map) != end(dungeons)) return .429f;
+    else if (find(begin(tenPersonRaids), end(tenPersonRaids), map) != end(tenPersonRaids)) return .214f;
+
     switch (rank)                                           // define rates for each elite rank
     {
         case CREATURE_ELITE_NORMAL:
