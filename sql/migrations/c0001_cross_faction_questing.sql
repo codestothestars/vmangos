@@ -8,6 +8,7 @@ UPDATE `creature_template` SET `Faction` =  11 WHERE `Faction` IN (150, 1096);  
 UPDATE `creature_template` SET `Faction` =  12 WHERE `Faction` IN (151, 371, 894, 1075, 1077, 1622); -- Theramore (neutral to creatures) to Stormwind
 UPDATE `creature_template` SET `Faction` =  12 WHERE `Entry` =  467;  -- Defias Traitor from Escortee to Stormwind
 UPDATE `creature_template` SET `Faction` =  12 WHERE `Entry` = 1156;  -- Vyrin Swiftwind from Alliance Generic to Stormwind
+UPDATE `creature_template` SET `Faction` =  23 WHERE `Entry` =  417;  -- Felhunter from PLAYER, Gnome to Gnomeregan Exiles
 UPDATE `creature_template` SET `Faction` = 104 WHERE `Entry` = 2987;  -- Eyahn Eagletalon from Horde Generic to Thunder Bluff
 UPDATE `creature_template` SET `Faction` = 123 WHERE `Faction` = 88;  -- Hillsbrad Militia to Stormwind
 UPDATE `creature_template` SET `Faction` = 123 WHERE `Entry` = 14275; -- Tamra Stormpike to Stormwind
