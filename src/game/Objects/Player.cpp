@@ -65,6 +65,7 @@
 #include "WaypointMovementGenerator.h"
 #include "GMTicketMgr.h"
 #include "MasterPlayer.h"
+#include "MovementPacketSender.h"
 
 /* Nostalrius */
 #include "Config/Config.h"
@@ -1924,13 +1925,10 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         if (!GetSession()->PlayerLogout())
         {
             const auto wps = [this](){
-                WorldPacket data;
-                BuildTeleportAckMsg(data,
-                                    m_teleport_dest.x,
-                                    m_teleport_dest.y,
-                                    m_teleport_dest.z,
-                                    m_teleport_dest.o);
-                SendMovementMessageToSet(std::move(data), true);
+                MovementPacketSender::SendTeleportToController(this, m_teleport_dest.x, 
+                                                                     m_teleport_dest.y, 
+                                                                     m_teleport_dest.z, 
+                                                                     m_teleport_dest.o);
             };
             if (recover)
                 m_teleportRecover = recover;
@@ -16093,7 +16091,7 @@ void Player::SaveToDB(bool online, bool force)
     // delay auto save at any saves (manual, in code, or autosave)
     m_nextSave = sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVE);
 
-    // Pas de sauvegarde des bots
+    // Do not save bots
     if (GetSession()->GetBot())
         return;
     if (m_DbSaveDisabled)
@@ -18042,6 +18040,12 @@ bool Player::BuyItemFromVendor(ObjectGuid vendorGuid, uint32 item, uint8 count, 
         return false;
     }
 
+    if (crItem->conditionId && !IsGameMaster() && !sObjectMgr.IsConditionSatisfied(crItem->conditionId, this, pCreature->GetMap(), pCreature, CONDITION_FROM_VENDOR))
+    {
+        SendBuyError(BUY_ERR_CANT_FIND_ITEM, pCreature, item, 0);
+        return false;
+    }
+
     uint32 price  = pProto->BuyPrice * count;
 
     // reputation discount
@@ -19417,7 +19421,7 @@ void Player::RewardSinglePlayerAtKill(Unit* pVictim)
 {
     bool PvP = pVictim->IsCharmedOwnedByPlayerOrPlayer();
 
-    uint32 xp = PvP ? 0 : MaNGOS::XP::Gain(this, pVictim);
+    uint32 xp = PvP ? 0 : MaNGOS::XP::Gain(this, static_cast<Creature*>(pVictim));
 
     // honor can be in PvP and !PvP (racial leader) cases
     RewardHonor(pVictim, 1);
@@ -19430,7 +19434,7 @@ void Player::RewardSinglePlayerAtKill(Unit* pVictim)
 
         if (Pet* pet = GetPet())
         {
-            uint32 XP = PvP ? 0 : MaNGOS::XP::PetGain(pet, pVictim);
+            uint32 XP = PvP ? 0 : MaNGOS::XP::Gain(pet, static_cast<Creature*>(pVictim));
             pet->GivePetXP(XP);
         }
 
@@ -20414,23 +20418,6 @@ void Player::SendSpellRemoved(uint32 spell_id) const
     WorldPacket data(SMSG_REMOVED_SPELL, 4);
     data << uint16(spell_id);
     GetSession()->SendPacket(&data);
-}
-
-void Player::BuildTeleportAckMsg(WorldPacket& data, float x, float y, float z, float ang) const
-{
-    MovementInfo mi = m_movementInfo;
-    mi.UpdateTime(WorldTimer::getMSTime());
-    mi.ChangePosition(x, y, z, ang);
-    data.Initialize(MSG_MOVE_TELEPORT_ACK, 41);
-#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_8_4
-    data << GetPackGUID();
-#else
-    data << GetGUID();
-#endif
-#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_9_4
-    data << uint32(0);                                      // this value increments every time
-#endif
-    data << mi;
 }
 
 bool Player::HasMovementFlag(MovementFlags f) const

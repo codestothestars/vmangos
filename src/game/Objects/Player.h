@@ -1764,7 +1764,6 @@ class MANGOS_DLL_SPEC Player final: public Unit
         bool SetPosition(float x, float y, float z, float orientation, bool teleport = false);
         void SetBindPoint(ObjectGuid guid) const;
 
-        void BuildTeleportAckMsg(WorldPacket& data, float x, float y, float z, float ang) const;
         WorldLocation& GetTeleportDest() { return m_teleport_dest; }
         bool IsBeingTeleported() const { return mSemaphoreTeleport_Near || mSemaphoreTeleport_Far || mPendingFarTeleport; }
         bool IsBeingTeleportedNear() const { return mSemaphoreTeleport_Near; }
@@ -2112,6 +2111,7 @@ class MANGOS_DLL_SPEC Player final: public Unit
         void ClearResurrectRequestData() { SetResurrectRequestData(ObjectGuid(), 0, 0.0f, 0.0f, 0.0f, 0, 0); }
         bool IsRessurectRequestedBy(ObjectGuid guid) const { return m_resurrectGuid == guid; }
         bool IsRessurectRequested() const { return !m_resurrectGuid.IsEmpty(); }
+        ObjectGuid const& GetResurrector() const { return m_resurrectGuid; }
         void ResurectUsingRequestData();
 
         static bool IsActionButtonDataValid(uint8 button, uint32 action, uint8 type, Player* player);

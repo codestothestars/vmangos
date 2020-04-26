@@ -227,19 +227,17 @@ void WorldSession::HandleMoveTeleportAckOpcode(WorldPacket& recvData)
 
     ObjectGuid guid;
     recvData >> guid;
-
     uint32 counter = 0;
-    uint32 time = 0;
 #if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_9_4
-    recvData >> counter >> time;
-#else
-    recvData >> time;
+    recvData >> counter;
 #endif
+    uint32 time = 0;
+    recvData >> time;
     DEBUG_LOG("Guid: %s", guid.GetString().c_str());
     DEBUG_LOG("Counter %u, time %u", counter, time / IN_MILLISECONDS);
 
     Unit* pMover = _player->GetMover();
-    Player* pPlayerMover = pMover->GetTypeId() == TYPEID_PLAYER ? (Player*)pMover : nullptr;
+    Player* pPlayerMover = pMover->ToPlayer();
 
     if (!pPlayerMover || !pPlayerMover->IsBeingTeleportedNear())
         return;
@@ -247,10 +245,17 @@ void WorldSession::HandleMoveTeleportAckOpcode(WorldPacket& recvData)
     if (guid != pPlayerMover->GetObjectGuid())
         return;
 
+    if (!pMover->FindPendingMovementTeleportChange(counter))
+    {
+        sLog.outInfo("WorldSession::HandleMoveTeleportAckOpcode: Player %s from account id %u sent MSG_MOVE_TELEPORT_ACK, but no pending teleport found",
+            _player->GetName(), _player->GetSession()->GetAccountId());
+    }
+
     pPlayerMover->SetSemaphoreTeleportNear(false);
 
     WorldLocation const& dest = pPlayerMover->GetTeleportDest();
     pPlayerMover->TeleportPositionRelocation(dest);
+    MovementPacketSender::SendTeleportToObservers(pPlayerMover);
 
     // resummon pet, if the destination is in another continent instance, let Player::SwitchInstance do it
     // because the client will request the name for the old pet guid and receive no answer
@@ -269,13 +274,6 @@ void WorldSession::HandleMoveTeleportAckOpcode(WorldPacket& recvData)
 
     //lets process all delayed operations on successful teleport
     pPlayerMover->ProcessDelayedOperations();
-
-    // Si le joueur est stun, il ne pourra pas envoyer sa position -> Fix desynchro ici.
-    if (pPlayerMover->HasUnitState(UNIT_STAT_NO_FREE_MOVE))
-    {
-        pPlayerMover->m_movementInfo.moveFlags &= ~MOVEFLAG_MASK_MOVING_OR_TURN;
-        pPlayerMover->SendHeartBeat(false);
-    }
 }
 
 void WorldSession::HandleMovementOpcodes(WorldPacket& recvData)

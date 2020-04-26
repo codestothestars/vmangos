@@ -567,6 +567,7 @@ struct PlayerPremadeGearTemplate
     uint32 entry = 0;
     uint8 level = 0;
     uint8 requiredClass = 0;
+    CombatBotRoles role = ROLE_INVALID;
     std::string name;
     std::vector<PlayerPremadeItem> items;
 };
@@ -575,6 +576,7 @@ struct PlayerPremadeSpecTemplate
     uint32 entry = 0;
     uint8 level = 0;
     uint8 requiredClass = 0;
+    CombatBotRoles role = ROLE_INVALID;
     std::string name;
     std::vector<uint32> spells;
 };
@@ -1207,7 +1209,7 @@ class ObjectMgr
 
         void AddVendorItem(uint32 entry,uint32 item, uint32 maxcount, uint32 incrtime, uint32 itemflags);
         bool RemoveVendorItem(uint32 entry,uint32 item);
-        bool IsVendorItemValid(bool isTemplate, char const* tableName, uint32 vendor_entry, uint32 item, uint32 maxcount, uint32 ptime, Player* pl = nullptr, std::set<uint32>* skip_vendors = nullptr) const;
+        bool IsVendorItemValid(bool isTemplate, char const* tableName, uint32 vendor_entry, uint32 item, uint32 maxcount, uint32 incrtime, uint32 conditionId, Player* pl = nullptr, std::set<uint32>* skip_vendors = nullptr) const;
 
         int GetOrNewIndexForLocale(LocaleConstant loc);
 

@@ -3043,7 +3043,7 @@ void Spell::SetTargetMap(SpellEffectIndex effIndex, uint32 targetMode, UnitList&
                 m_targets.setDestination(x, y, z);
             }                
 
-            if (m_casterUnit)
+            if (m_casterUnit && targetUnitMap.empty())
                 targetUnitMap.push_back(m_casterUnit);
             else if (m_casterGo)
                 AddGOTarget(m_casterGo, effIndex);
@@ -3115,6 +3115,10 @@ void Spell::SetTargetMap(SpellEffectIndex effIndex, uint32 targetMode, UnitList&
                         targetUnitMap.push_back(m_targets.getUnitTarget());
                     // Triggered spells have additional spell targets - cast them even if no explicit unit target is given (required for spell 50516 for example)
                     else if (m_spellInfo->Effect[effIndex] == SPELL_EFFECT_TRIGGER_SPELL && m_casterUnit)
+                        targetUnitMap.push_back(m_casterUnit);
+                    break;
+                case SPELL_EFFECT_CREATE_HOUSE:
+                    if (m_casterUnit)
                         targetUnitMap.push_back(m_casterUnit);
                     break;
                 case SPELL_EFFECT_SUMMON_PLAYER:
