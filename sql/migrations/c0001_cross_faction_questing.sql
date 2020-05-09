@@ -1,5 +1,8 @@
 -- Remove faction condition for creatures that drop items that start quests
-UPDATE `creature_loot_template` SET `condition_id` = 0 WHERE `item` = 2874; -- Unsent Letter
+UPDATE `creature_loot_template` SET `condition_id` = 0 WHERE `item` IN (
+   2874, -- Unsent Letter
+  10000  -- Margol's Horn
+);
 
 -- Change team-allied NPC factions to city-based versions so players can toggle At War.
 UPDATE `creature_template` SET `Faction` =  11 WHERE `Entry` = 7865;        -- Wildhammer Sentry from Alliance Generic to Stormwind
