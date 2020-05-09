@@ -40,6 +40,9 @@
 #define CONTACT_DISTANCE            0.5f
 #define INTERACTION_DISTANCE        5.0f
 #define ATTACK_DISTANCE             5.0f
+#define INSPECT_DISTANCE            10.0f
+#define TRADE_DISTANCE              11.11f
+
 #define MAX_VISIBILITY_DISTANCE     SIZE_OF_GRIDS      // max distance for visible object show, used to be 333 yards
 #define DEFAULT_VISIBILITY_DISTANCE 100.0f             // default visible distance on continents, used to be 90 yards
 #define DEFAULT_VISIBILITY_INSTANCE 170.0f             // default visible distance in instances, used to be 120 yards
@@ -299,7 +302,7 @@ enum ObjectDelayedAction
 
 typedef void(*CreatureAiSetter) (Creature* pCreature);
 
-class MANGOS_DLL_SPEC Object
+class Object
 {
     public:
         virtual ~Object();
@@ -687,7 +690,7 @@ enum CurrentSpellTypes
 #define CURRENT_FIRST_NON_MELEE_SPELL 1
 #define CURRENT_MAX_SPELL             4
 
-class MANGOS_DLL_SPEC WorldObject : public Object
+class WorldObject : public Object
 {
     friend struct WorldObjectChangeAccumulator;
 
@@ -695,7 +698,7 @@ class MANGOS_DLL_SPEC WorldObject : public Object
 
         //class is used to manipulate with WorldUpdateCounter
         //it is needed in order to get time diff between two object's Update() calls
-        class MANGOS_DLL_SPEC UpdateHelper
+        class UpdateHelper
         {
             public:
                 explicit UpdateHelper(WorldObject* obj) : m_obj(obj) {}

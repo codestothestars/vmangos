@@ -392,7 +392,7 @@ AutoAttackCheckResult Unit::CanAutoAttackTarget(Unit const* pVictim) const
     if (!CanReachWithMeleeAutoAttack(pVictim) || (!IsWithinLOSInMap(pVictim) && !HasUnitState(UNIT_STAT_ALLOW_LOS_ATTACK)))
         return ATTACK_RESULT_NOT_IN_RANGE;
 
-    if (GetDistance2dToCenter(pVictim) > AUTO_ATTACK_FACING_LEEWAY)
+    if (GetDistance2dToCenter(pVictim) > NO_FACING_CHECKS_DISTANCE)
     {
         if (!HasInArc(2 * M_PI_F / 3, pVictim))
             return ATTACK_RESULT_BAD_FACING;
@@ -5504,8 +5504,8 @@ bool Unit::IsInDisallowedMountForm() const
     CreatureModelDataEntry const* model = sCreatureModelDataStore.LookupEntry(display->ModelId);
     ChrRacesEntry const* race = sChrRacesStore.LookupEntry(displayExtra->Race);
 
-    if (model && !(model->flags & 0x80))
-        if (race && !(race->Flags & 0x4))
+    if (model && !model->HasFlag(CREATURE_MODEL_DATA_FLAGS_CAN_MOUNT))
+        if (race && !race->HasFlag(CHRRACES_FLAGS_CAN_MOUNT))
             return true;
 
     return false;
@@ -7206,6 +7206,8 @@ uint32 Unit::GetCreatureType() const
         SpellShapeshiftFormEntry const* ssEntry = sSpellShapeshiftFormStore.LookupEntry(GetShapeshiftForm());
         if (ssEntry && ssEntry->creatureType > 0)
             return ssEntry->creatureType;
+        else if (ChrRacesEntry const* raceEntry = sChrRacesStore.LookupEntry(GetRace()))
+            return raceEntry->creatureType;
         else
             return CREATURE_TYPE_HUMANOID;
     }

@@ -272,6 +272,7 @@ bool ChatHandler::HandleUnitInfoCommand(char* args)
     PSendSysMessage("Target: %s", pTarget->GetTargetGuid().GetString().c_str());
     PSendSysMessage("Persuaded: %s", pTarget->GetGuidValue(UNIT_FIELD_PERSUADED).GetString().c_str());
     PSendSysMessage("Channel object: %s", pTarget->GetChannelObjectGuid().GetString().c_str());
+    PSendSysMessage("Scale: %g", pTarget->GetFloatValue(OBJECT_FIELD_SCALE_X));
     PSendSysMessage("Level: %u", pTarget->GetLevel());
     if (auto pFactionTemplate = pTarget->getFactionTemplateEntry())
     {
@@ -283,6 +284,7 @@ bool ChatHandler::HandleUnitInfoCommand(char* args)
     PSendSysMessage("Race: %hhu", pTarget->GetRace());
     PSendSysMessage("Class: %hhu", pTarget->GetClass());
     PSendSysMessage("Gender: %hhu", pTarget->GetGender());
+    PSendSysMessage("Creature type: %u", pTarget->GetCreatureType());
     PSendSysMessage("Unit flags: %u", pTarget->GetUInt32Value(UNIT_FIELD_FLAGS));
     PSendSysMessage("Aura state: %u", pTarget->GetUInt32Value(UNIT_FIELD_AURASTATE));
     PSendSysMessage("Bounding radius: %f", pTarget->GetObjectBoundingRadius());
@@ -306,6 +308,8 @@ bool ChatHandler::HandleUnitInfoCommand(char* args)
     PSendSysMessage("NPC emote state: %u", pTarget->GetUInt32Value(UNIT_NPC_EMOTESTATE));
     PSendSysMessage("Unit state flags: %u", pTarget->GetUnitState());
     PSendSysMessage("Death state: %hhu", pTarget->GetDeathState());
+    PSendSysMessage("Sheath state: %hhu", pTarget->GetSheath());
+    PSendSysMessage("Byte flags 2: %hhu", pTarget->GetByteValue(UNIT_FIELD_BYTES_2, 1));
 
     return true;
 }
@@ -633,7 +637,7 @@ bool ChatHandler::HandleListAurasCommand(char* /*args*/)
                 ss_name << "|cffffffff|Hspell:" << aura.second->GetId() << "|h[" << name << "]|h|r";
 
                 PSendSysMessage(LANG_COMMAND_TARGET_AURADETAIL, holder->GetId(), aur->GetEffIndex(),
-                    aur->GetModifier()->m_auraname, aur->GetAuraDuration(), aur->GetAuraMaxDuration(),
+                    aur->GetModifier()->m_auraname, aur->GetAuraDuration(), aur->GetAuraMaxDuration(), aur->GetStackAmount(),
                     ss_name.str().c_str(),
                     (holder->IsPassive() ? passiveStr : ""), (talent ? talentStr : ""),
                     holder->GetCasterGuid().GetString().c_str());
@@ -641,7 +645,7 @@ bool ChatHandler::HandleListAurasCommand(char* /*args*/)
             else
             {
                 PSendSysMessage(LANG_COMMAND_TARGET_AURADETAIL, holder->GetId(), aur->GetEffIndex(),
-                    aur->GetModifier()->m_auraname, aur->GetAuraDuration(), aur->GetAuraMaxDuration(),
+                    aur->GetModifier()->m_auraname, aur->GetAuraDuration(), aur->GetAuraMaxDuration(), aur->GetStackAmount(),
                     name,
                     (holder->IsPassive() ? passiveStr : ""), (talent ? talentStr : ""),
                     holder->GetCasterGuid().GetString().c_str());

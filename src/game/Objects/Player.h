@@ -645,7 +645,7 @@ struct InstancePlayerBind
 
 #define MAX_INSTANCE_PER_ACCOUNT_PER_HOUR 5
 
-class MANGOS_DLL_SPEC PlayerTaxi
+class PlayerTaxi
 {
     public:
         PlayerTaxi();
@@ -851,7 +851,7 @@ struct ScheduledTeleportData
     std::function<void()> recover = std::function<void()>();
 };
 
-class MANGOS_DLL_SPEC Player final: public Unit
+class Player final: public Unit
 {
     friend class WorldSession;
     friend void Item::AddToUpdateQueueOf(Player* player);
@@ -1274,7 +1274,7 @@ class MANGOS_DLL_SPEC Player final: public Unit
         void SendCanTakeQuestResponse(uint32 msg) const;
         void SendQuestConfirmAccept(Quest const* pQuest, Player* pReceiver) const;
         void SendPushToPartyResponse(Player* pPlayer, uint8 msg) const;
-        void SendQuestUpdateAddItem(Quest const* pQuest, uint32 item_idx, uint32 count) const;
+        void SendQuestUpdateAddItem(Quest const* pQuest, uint32 item_idx, uint32 current, uint32 count);
         void SendQuestUpdateAddCreatureOrGo(Quest const* pQuest, ObjectGuid guid, uint32 creatureOrGO_idx, uint32 count);
 
         ObjectGuid GetDividerGuid() const { return m_dividerGuid; }
