@@ -468,6 +468,7 @@ class ChatHandler
         bool HandleDebugSendPoiCommand(char* args);
         bool HandleDebugSendQuestPartyMsgCommand(char* args);
         bool HandleDebugSendQuestInvalidMsgCommand(char* args);
+        bool HandleDebugSendMailErrorCommand(char* args);
         bool HandleDebugSendSellErrorCommand(char* args);
         bool HandleDebugSendSpellFailCommand(char* args);
         bool HandleDebugSendOpenBagCommand(char* args);
@@ -790,6 +791,7 @@ class ChatHandler
         bool HandleResetSpellsCommand(char* args);
         bool HandleResetStatsCommand(char* args);
         bool HandleResetTalentsCommand(char* args);
+        bool HandleResetItemsCommand(char* args);
 
         bool HandleSendItemsCommand(char* args);
         bool HandleSendMailCommand(char* args);
