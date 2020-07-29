@@ -5,8 +5,8 @@ UPDATE `creature_loot_template` SET `condition_id` = 0 WHERE `item` IN (
 );
 
 -- Change team-allied NPC factions to city-based versions so players can toggle At War.
-UPDATE `creature_template` SET `Faction` =  11 WHERE `Entry` = 7865;        -- Wildhammer Sentry from Alliance Generic to Stormwind
-UPDATE `creature_template` SET `Faction` =  11 WHERE `Faction` IN (53, 56); -- Night Watch to Stormwind
+UPDATE `creature_template` SET `Faction` =  11 WHERE `Entry`   IN (7865, 9119); -- Wildhammer Sentry, Muigin from Alliance Generic to Stormwind
+UPDATE `creature_template` SET `Faction` =  11 WHERE `Faction` IN (53, 56);     -- Night Watch to Stormwind
 UPDATE `creature_template` SET `Faction` =  11 WHERE `Faction` IN (150, 1096);                       -- Theramore (hostile to creatures) to Stormwind
 UPDATE `creature_template` SET `Faction` =  12 WHERE `Faction` IN (151, 371, 894, 1075, 1077, 1622); -- Theramore (neutral to creatures) to Stormwind
 UPDATE `creature_template` SET `Faction` =  12 WHERE `Entry` =  467;            -- Defias Traitor from Escortee to Stormwind
