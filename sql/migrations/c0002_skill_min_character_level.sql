@@ -8,6 +8,7 @@ WHERE spell IN (
      2021, -- Journeyman Blacksmith
      3539, -- Expert Blacksmith
      4041, -- Expert Engineer
+     9786, -- Artisan Blacksmith
     10663, -- Artisan Leatherworking
     10769, -- Artisan Skinning
     11612  -- Artisan Alchemist
