@@ -41,3 +41,36 @@ UPDATE `quest_template` SET `RequiredRaces` = 195 WHERE `RequiredRaces` IN ( 65,
 UPDATE `quest_template` SET `RequiredRaces` = 212 WHERE `RequiredRaces` IN ( 68, 144); -- Dwarf+Gnome, Undead+Troll
 UPDATE `quest_template` SET `RequiredRaces` = 235 WHERE `RequiredRaces` IN (162     ); -- Human+NightElf+Gnome, Orc+Tauren+Troll
 UPDATE `quest_template` SET `RequiredRaces` = 255 WHERE `RequiredRaces` IN ( 77, 178); -- All races
+
+-- Guards reciprocate salutes from anyone with reputation Friendly or greater.
+UPDATE `creature_ai_events` SET `condition_id` = 1707 WHERE `id` IN ( -- Ironforge
+    72701, -- Ironforge Mountaineer
+   559503, -- Ironforge Guard
+  1299601, -- Mounted Ironforge Mountaineer
+  1511313  -- Honored Hero
+);
+UPDATE `creature_ai_events` SET `condition_id` = 1713 WHERE `id` IN ( -- Undercity
+   240501, -- Tarren Mill Deathguard
+   798001, -- Deathguard Elite
+  1383902  -- Royal Dreadguard (note the condition_id for this was 0, which warrants an issue in VMaNGOS)
+);
+UPDATE `creature_ai_events` SET `condition_id` = 1716 WHERE `id` IN ( -- Darnassus
+   426201  -- Darnassus Sentinel
+);
+UPDATE `creature_ai_events` SET `condition_id` = 1719 WHERE `id` IN ( -- Stormwind
+     6803, -- Stormwind City Guard
+    46602, -- General Marcus Jonathan
+   142301, -- Stormwind Guard
+   175603, -- Stormwind Royal Guard
+   197601  -- Stormwind City Patroller
+);
+UPDATE `creature_ai_events` SET `condition_id` = 1725 WHERE `id` IN ( -- Thunder Bluff
+   308401  -- Bluffwatcher
+);
+UPDATE `creature_ai_events` SET `condition_id` = 4903 WHERE `id` IN ( -- Orgrimmar
+   262101, -- Hammerfall Guardian
+   329603, -- Orgrimmar Grunt
+   595303, -- Razor Hill Grunt
+  1430403, -- Kor'kron Elite
+  1511513  -- Honored Ancestor
+);
