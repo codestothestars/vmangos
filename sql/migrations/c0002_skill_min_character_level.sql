@@ -11,5 +11,6 @@ WHERE spell IN (
      9786, -- Artisan Blacksmith
     10663, -- Artisan Leatherworking
     10769, -- Artisan Skinning
-    11612  -- Artisan Alchemist
+    11612, -- Artisan Alchemist,
+    12657  -- Artisan Engineer
 );
