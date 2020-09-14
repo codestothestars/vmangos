@@ -1556,7 +1556,8 @@ void Creature::SelectLevel(CreatureInfo const* cinfo, float percentHealth, float
 float Creature::_GetHealthMod(int32 rank)
 {
     uint32 dungeons[] = {
-        349 // Maraudon
+        209, // Zul'Farrak
+        349  // Maraudon
     };
 
     uint32 map = GetMapId();
