@@ -6,5 +6,6 @@ UPDATE `quest_template` SET `MinLevel` = 40 WHERE `entry` IN (7028, 7029, 7041, 
 
 UPDATE `quest_template` SET `MinLevel` =  0 WHERE `RequiredSkill` IN (
     164, -- Blacksmithing
+    197, -- Tailoring
     202  -- Engineering
 );
