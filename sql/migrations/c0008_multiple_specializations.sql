@@ -1,4 +1,5 @@
--- Enables players to have multiple specializations in their profession.
+-- Enables players to have multiple specializations in their profession
+-- for role-playing.
 
 UPDATE `quest_template`
 SET `ExclusiveGroup` = 0
