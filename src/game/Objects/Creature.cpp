@@ -1556,6 +1556,7 @@ void Creature::SelectLevel(CreatureInfo const* cinfo, float percentHealth, float
 float Creature::_GetHealthMod(int32 rank)
 {
     uint32 dungeons[] = {
+        109, // Sunken Temple
         209, // Zul'Farrak
         349  // Maraudon
     };
