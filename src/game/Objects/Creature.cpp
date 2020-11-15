@@ -1657,6 +1657,7 @@ void Creature::InitStatsForLevel(float percentHealth, float percentMana)
 float Creature::_GetHealthMod(int32 rank)
 {
     uint32 dungeons[] = {
+        109, // Sunken Temple
         209, // Zul'Farrak
         349  // Maraudon
     };
