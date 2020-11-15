@@ -29,6 +29,7 @@ UPDATE `gameobject_template` SET `faction` = 35 WHERE `entry` IN (
        270, -- Unguarded Thunder Ale Barrel
       2868, -- Crumpled Map
       2875, -- Battered Dwarven Skeleton
+    148498, -- Altar of Suntara
     152095, -- Moonpetal Lily
     175704  -- Singed Letter
 );
