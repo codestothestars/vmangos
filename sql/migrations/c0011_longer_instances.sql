@@ -4,5 +4,6 @@
 UPDATE `creature` SET `spawntimesecsmax` = 2678400, `spawntimesecsmin` = 2678400 WHERE `map` IN (
     109, -- Sunken Temple
     209, -- Zul'Farrak
+    230, -- Blackrock Depths
     349  -- Maraudon
 );
