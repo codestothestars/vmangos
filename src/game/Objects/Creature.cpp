@@ -1659,6 +1659,7 @@ float Creature::_GetHealthMod(int32 rank)
     uint32 dungeons[] = {
         109, // Sunken Temple
         209, // Zul'Farrak
+        230, // Blackrock Depths
         349  // Maraudon
     };
 
