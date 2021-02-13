@@ -5443,13 +5443,7 @@ bool ChatHandler::HandleRepairitemsCommand(char* args)
 
 bool ChatHandler::HandleCombatStopCommand(char* args)
 {
-    Player* target;
-    if (!ExtractPlayerTarget(&args, &target))
-        return false;
-
-    // check online security
-    if (HasLowerSecurity(target))
-        return false;
+    Unit* target = GetSelectedUnit();
 
     target->CombatStop();
     target->GetHostileRefManager().deleteReferences();
