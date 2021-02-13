@@ -14,6 +14,7 @@ UPDATE `creature_template` SET `Faction` =  12 WHERE `Entry` = 1156;            
 UPDATE `creature_template` SET `Faction` =  12 WHERE `Entry` = 9023;            -- Marshal Windsor from Alliance Generic to Stormwind
 UPDATE `creature_template` SET `Faction` =  23 WHERE `Entry` =  417;            -- Felhunter from PLAYER, Gnome to Gnomeregan Exiles
 UPDATE `creature_template` SET `Faction` =  29 WHERE `Entry` IN (10182, 10204); -- Rexxar, Misha from Horde Generic to Orgrimmar
+UPDATE `creature_template` SET `Faction` =  55 WHERE `Entry` = 9022;            -- Dughal Stormwing
 UPDATE `creature_template` SET `Faction` =  80 WHERE `Entry` = 8436;            -- Zamael Lunthistle from Alliance Generic to Darnassus
 UPDATE `creature_template` SET `Faction` = 104 WHERE `Entry` = 2987;            -- Eyahn Eagletalon from Horde Generic to Thunder Bluff
 UPDATE `creature_template` SET `Faction` = 122 WHERE `Entry` IN (4782, 5635, 5636, 7744, 7778, 7884, 7865, 8018, 8160, 8161, 9660, 10061, 11097, 11810, 11812, 11813); -- Aerie Peak to Stormwind
