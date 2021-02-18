@@ -8,3 +8,4 @@ UPDATE `creature_onkill_reputation` SET `RewOnKillRepValue1` = 400 WHERE `creatu
 
 UPDATE `quest_template` SET `RewRepValue1` =  100 WHERE `entry` = 6031; -- Runecloth
 UPDATE `quest_template` SET `RewRepValue1` = 1600 WHERE `entry` = 6131; -- Timbermaw Ally
+UPDATE `quest_template` SET `RewRepValue1` = 1600 WHERE `entry` = 7736; -- Restoring Fiery Flux Supplies via Kingsblood
