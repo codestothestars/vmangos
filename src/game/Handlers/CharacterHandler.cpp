@@ -568,10 +568,21 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder *holder)
 
     WorldPacket data(SMSG_LOGIN_VERIFY_WORLD, 20);
     data << pCurrChar->GetMapId();
-    data << pCurrChar->GetPositionX();
-    data << pCurrChar->GetPositionY();
-    data << pCurrChar->GetPositionZ();
-    data << pCurrChar->GetOrientation();
+    if (pCurrChar->GetTransport())
+    {
+        Position const& transportPosition = pCurrChar->m_movementInfo.GetTransportPos();
+        data << transportPosition.x;
+        data << transportPosition.y;
+        data << transportPosition.z;
+        data << transportPosition.o;
+    }
+    else
+    {
+        data << pCurrChar->GetPositionX();
+        data << pCurrChar->GetPositionY();
+        data << pCurrChar->GetPositionZ();
+        data << pCurrChar->GetOrientation();
+    }
     SendPacket(&data);
 
     data.Initialize(SMSG_ACCOUNT_DATA_TIMES, 128);
@@ -703,7 +714,10 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder *holder)
 
     // Load pet if any (if player not alive and in taxi flight or another then pet will remember as temporary unsummoned)
     if (alreadyOnline)
+    {
         pCurrChar->PetSpellInitialize();
+        pCurrChar->SendMirrorTimers(true);
+    }
     else
     {
         pCurrChar->ContinueTaxiFlight();
