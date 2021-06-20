@@ -640,43 +640,15 @@ void PartyBotAI::UpdateAI(uint32 const diff)
             return;
 
         // Teleport to leader if too far away.
-        bool const tooFarAway = !me->IsWithinDistInMap(pLeader, 100.0f);
-        bool const onDifferentTransports = me->m_movementInfo.t_guid != pLeader->m_movementInfo.t_guid;
-
-        if (tooFarAway || onDifferentTransports)
+        if (!me->IsWithinDistInMap(pLeader, 100.0f))
         {
             if (!me->IsStopped())
                 me->StopMoving();
             me->GetMotionMaster()->Clear();
             me->GetMotionMaster()->MoveIdle();
-
-            if (tooFarAway)
-            {
-                char name[128] = {};
-                strcpy(name, pLeader->GetName());
-                ChatHandler(me).HandleGonameCommand(name);
-            }
-            else // if (onDifferentTransports)
-            {
-                bool sendHeartbeat = false;
-
-                if (GenericTransport* pMyTransport = me->GetTransport())
-                {
-                    sendHeartbeat = true;
-                    pMyTransport->RemovePassenger(me);
-                    me->Relocate(pLeader->GetPositionX(), pLeader->GetPositionY(), pLeader->GetPositionZ());
-                }
-
-                if (GenericTransport* pHisTransport = pLeader->GetTransport())
-                {
-                    sendHeartbeat = true;
-                    me->Relocate(pLeader->GetPositionX(), pLeader->GetPositionY(), pLeader->GetPositionZ());
-                    pHisTransport->AddPassenger(me);
-                }
-
-                if (sendHeartbeat)
-                    me->SendHeartBeat(false);
-            }
+            char name[128] = {};
+            strcpy(name, pLeader->GetName());
+            ChatHandler(me).HandleGonameCommand(name);
             return;
         }
     }
@@ -2403,23 +2375,22 @@ void PartyBotAI::UpdateInCombatAI_Warrior()
             me->GetMotionMaster()->MoveChase(pVictim);
         }
 
-        if (me->GetPower(POWER_RAGE) > 20)
+        if (me->GetPower(POWER_RAGE) > 30)
         {
-            if (me->GetEnemyCountInRadiusAround(pVictim, 8.0f) > 1)
+            if (m_spells.warrior.pCleave && me->GetEnemyCountInRadiusAround(pVictim, 8.0f) > 1)
             {
-                if (m_spells.warrior.pHeroicStrike &&
-                    CanTryToCastSpell(pVictim, m_spells.warrior.pHeroicStrike))
+                if (CanTryToCastSpell(pVictim, m_spells.warrior.pCleave))
                 {
-                    if (DoCastSpell(pVictim, m_spells.warrior.pHeroicStrike) == SPELL_CAST_OK)
+                    if (DoCastSpell(pVictim, m_spells.warrior.pCleave) == SPELL_CAST_OK)
                         return;
                 }
             }
             else
             {
-                if (m_spells.warrior.pCleave &&
-                    CanTryToCastSpell(pVictim, m_spells.warrior.pCleave))
+                if (m_spells.warrior.pHeroicStrike &&
+                    CanTryToCastSpell(pVictim, m_spells.warrior.pHeroicStrike))
                 {
-                    if (DoCastSpell(pVictim, m_spells.warrior.pCleave) == SPELL_CAST_OK)
+                    if (DoCastSpell(pVictim, m_spells.warrior.pHeroicStrike) == SPELL_CAST_OK)
                         return;
                 }
             }

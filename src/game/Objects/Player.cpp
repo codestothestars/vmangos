@@ -1220,7 +1220,10 @@ void Player::SetEnvironmentFlags(EnvironmentFlags flags, bool apply)
 
     // Remove auras that need land or water
     if (flags & ENVIRONMENT_FLAG_HIGH_LIQUID)
-        RemoveAurasWithInterruptFlags(apply ?  AURA_INTERRUPT_FLAG_NOT_ABOVEWATER : AURA_INTERRUPT_FLAG_NOT_UNDERWATER);
+    {
+        InterruptSpellsWithChannelFlags(apply ? CHANNEL_FLAG_ABOVE_WATER_CANCELS : CHANNEL_FLAG_UNDER_WATER_CANCELS);
+        RemoveAurasWithInterruptFlags(apply ? AURA_INTERRUPT_FLAG_NOT_ABOVEWATER : AURA_INTERRUPT_FLAG_NOT_UNDERWATER);
+    }
 
     // On moving in/out high sea area: affect fatigue timer
     if (flags & ENVIRONMENT_FLAG_HIGH_SEA)
@@ -14909,6 +14912,9 @@ bool Player::LoadFromDB(ObjectGuid guid, SqlQueryHolder* holder)
             {
                 Relocate(at->destination.x, at->destination.y, at->destination.z, at->destination.o);
                 SetLocationMapId(at->destination.mapId);
+                if (GetMapId() <= 1)
+                    SetLocationInstanceId(sMapMgr.GetContinentInstanceId(GetMapId(), GetPositionX(), GetPositionY()));
+                SetMap(sMapMgr.CreateMap(GetMapId(), this));
             }
             else if (GetMapId() == 533) // Naxxramas
             {
@@ -14916,6 +14922,9 @@ bool Player::LoadFromDB(ObjectGuid guid, SqlQueryHolder* holder)
                 // all dungeons is stored in WorldSafeLocs.db2 in 1.13 classic client.
                 Relocate(3362.15f, -3379.35f, 144.782f, 6.28319f);
                 SetLocationMapId(0);
+                if (GetMapId() <= 1)
+                    SetLocationInstanceId(sMapMgr.GetContinentInstanceId(GetMapId(), GetPositionX(), GetPositionY()));
+                SetMap(sMapMgr.CreateMap(GetMapId(), this));
             }
         }
     }
@@ -16247,13 +16256,13 @@ bool Player::SaveNewPlayer(WorldSession* session, uint32 guidlow, std::string co
         "`map`, `position_x`, `position_y`, `position_z`, `orientation`, "
         "`known_taxi_mask`, `current_taxi_path`, `online`, `extra_flags`, `at_login_flags`, "
         "`health`, `power1`, `power2`, `power3`, `power4`, `power5`, "
-        "`explored_zones`, `equipment_cache`, `ammo_id`, `world_phase_mask`, `create_time`) "
+        "`explored_zones`, `equipment_cache`, `ammo_id`, `world_phase_mask`, `create_time`, `logout_time`) "
         "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, "
         "?, ?, ?, ?, ?, "
         "?, ?, ?, ?, ?, "
         "?, ?, ?, ?, ?, "
         "?, ?, ?, ?, ?, ?, "
-        "?, ?, ?, ?, ?)");
+        "?, ?, ?, ?, ?, ?)");
 
     uberInsert.addUInt32(guidlow);
     uberInsert.addUInt32(session->GetAccountId());
@@ -16355,7 +16364,8 @@ bool Player::SaveNewPlayer(WorldSession* session, uint32 guidlow, std::string co
 
     uberInsert.addUInt32(ammoId);
     uberInsert.addUInt32(WORLD_DEFAULT_CHAR);
-    uberInsert.addUInt64(uint64(time(nullptr)));
+    uberInsert.addUInt64(uint64(time(nullptr))); // create time
+    uberInsert.addUInt64(uint64(time(nullptr))); // logout time (for rested xp)
     uberInsert.Execute();
 
     sObjectMgr.SetPlayerWorldMask(guidlow, WORLD_DEFAULT_CHAR);
@@ -17471,12 +17481,12 @@ Creature* Player::SummonPossessedMinion(uint32 creatureId, uint32 spellId, float
     if (!GetCharmGuid().IsEmpty())
         return nullptr;
 
-    Creature* pCreature = SummonCreature(creatureId, x, y, z, ang, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 5000);
+    Creature* pCreature = SummonCreature(creatureId, x, y, z, ang, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 5000, false, 0, nullptr, GetTransport());
 
     if (!pCreature)
         return nullptr;
 
-    pCreature->SetFactionTemporary(GetFactionTemplateId(), TEMPFACTION_NONE);     // set same faction than player
+    pCreature->SetFactionTemporary(GetFactionTemplateId(), TEMPFACTION_NONE);     // set same faction as player
     pCreature->SetCharmerGuid(GetObjectGuid());                         // save guid of the charmer
     pCreature->SetPossessorGuid(GetObjectGuid());
     pCreature->SetUInt32Value(UNIT_CREATED_BY_SPELL, spellId);          // set the spell id used to create this
