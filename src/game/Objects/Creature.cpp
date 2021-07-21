@@ -1660,7 +1660,8 @@ float Creature::_GetHealthMod(int32 rank)
         109, // Sunken Temple
         209, // Zul'Farrak
         230, // Blackrock Depths
-        349  // Maraudon
+        349, // Maraudon
+        429  // Dire Maul
     };
 
     uint32 map = GetMapId();
