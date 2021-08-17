@@ -67,7 +67,7 @@ WHERE `entry` = 8442;
 
 -- Add new custom "teach me portal" text for second custom option.
 INSERT INTO `broadcast_text`
-(`entry`, `male_text`,                                           `female_text`,                                         `sound_id`, `chat_type`, `language_id`, `emote_id0`, `emote_id1`, `emote_id2`, `emote_delay0`, `emote_delay1`, `emote_delay2`)
+(`entry`, `male_text`,                                           `female_text`,                                         `sound_id`, `chat_type`, `language_id`, `emote_id1`, `emote_id2`, `emote_id3`, `emote_delay1`, `emote_delay2`, `emote_delay3`)
 VALUES
 (      2, 'Please teach me how to create portals to this city.', 'Please teach me how to create portals to this city.',          0,           0,             0,           0,           0,           0,              0,              0,              0);
 
