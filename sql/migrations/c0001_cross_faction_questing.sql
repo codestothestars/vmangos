@@ -24,6 +24,8 @@ UPDATE `creature_template` SET `Faction` = 123 WHERE `Faction` = 88;            
 UPDATE `creature_template` SET `Faction` = 123 WHERE `Entry` = 14275;           -- Tamra Stormpike to Stormwind
 UPDATE `creature_template` SET `Faction` = 250 WHERE `Entry` = 8284;            -- Dorius Stonetender from Escortee (Alliance) to Escortee (Neutral)
 
+UPDATE `game_graveyard_zone` SET `faction` = 0;
+
 -- Remove faction condition for objects that contain items that start quests
 UPDATE `gameobject_loot_template` SET `condition_id` = 0 WHERE `entry` = 3214; -- Henrig Lonebrow's Journal
 
