@@ -586,7 +586,7 @@ VALUES
 UPDATE `creature_template` SET `gossip_menu_id` = 186 WHERE `Entry` =   352;
 UPDATE `creature_template` SET `gossip_menu_id` = 187 WHERE `Entry` =   523;
 UPDATE `creature_template` SET `gossip_menu_id` = 198 WHERE `Entry` =  2226;
-UPDATE `creature_template` SET `gossip_menu_id` = 199 WHERE `Entry` =  3841;
+UPDATE `creature_template` SET `gossip_menu_id` = 189 WHERE `Entry` =  3841;
 UPDATE `creature_template` SET `gossip_menu_id` = 190 WHERE `Entry` =  3838;
 UPDATE `creature_template` SET `gossip_menu_id` = 191 WHERE `Entry` =  2859;
 UPDATE `creature_template` SET `gossip_menu_id` = 192 WHERE `Entry` =  2858;
