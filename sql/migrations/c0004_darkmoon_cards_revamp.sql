@@ -22,96 +22,68 @@ VALUES
 
 -- Add a condition for each new quest and non-Ace card
 INSERT INTO `conditions`
-(`condition_entry`, `type`, `value1`, `value2`)
+(`condition_entry`, `type`, `value1`, `value2`, `flags`)
 VALUES
-(              202,      2,    19230,        1),
-(              199,      2,    19231,        1),
-(              200,      2,    19232,        1),
-(              201,      2,    19233,        1),
-(              207,      2,    19234,        1),
-(              240,      2,    19235,        1),
-(              241,      2,    19236,        1),
-(              242,      2,    19259,        1),
-(              243,      2,    19260,        1),
-(              244,      2,    19261,        1),
-(              561,      2,    19262,        1),
-(              562,      2,    19263,        1),
-(              563,      2,    19264,        1),
-(              564,      2,    19265,        1),
-(              565,      2,    19269,        1),
-(              566,      2,    19270,        1),
-(              567,      2,    19271,        1),
-(              568,      2,    19272,        1),
-(              569,      2,    19273,        1),
-(              570,      2,    19274,        1),
-(              571,      2,    19275,        1),
-(              572,      2,    19278,        1),
-(              573,      2,    19279,        1),
-(              574,      2,    19280,        1),
-(              575,      2,    19281,        1),
-(              576,      2,    19282,        1),
-(              577,      2,    19283,        1),
-(              578,      2,    19284,        1),
-(              579,      9,       41,        1),
-(              580,      9,       42,        1),
-(              581,      9,       43,        1),
-(              582,      9,       44,        1),
-(              583,     -3,      202,        0),
-(              584,     -3,      199,        0),
-(              585,     -3,      200,        0),
-(              586,     -3,      201,        0),
-(              587,     -3,      207,        0),
-(              588,     -3,      240,        0),
-(              589,     -3,      241,        0),
-(              590,     -3,      242,        0),
-(              591,     -3,      243,        0),
-(              592,     -3,      244,        0),
-(              593,     -3,      561,        0),
-(              594,     -3,      562,        0),
-(              595,     -3,      563,        0),
-(              596,     -3,      564,        0),
-(              597,     -3,      565,        0),
-(              598,     -3,      566,        0),
-(              599,     -3,      567,        0),
-(              303,     -3,      568,        0),
-(              601,     -3,      569,        0),
-(              602,     -3,      570,        0),
-(              603,     -3,      571,        0),
-(              604,     -3,      572,        0),
-(              605,     -3,      573,        0),
-(              606,     -3,      574,        0),
-(              607,     -3,      575,        0),
-(              608,     -3,      576,        0),
-(              609,     -3,      577,        0),
-(              610,     -3,      578,        0),
-(              611,     -1,      579,      583),
-(              612,     -1,      579,      584),
-(              613,     -1,      579,      585),
-(              614,     -1,      579,      586),
-(              615,     -1,      579,      587),
-(              616,     -1,      579,      588),
-(              617,     -1,      579,      589),
-(              618,     -1,      580,      590),
-(              619,     -1,      580,      591),
-(              620,     -1,      580,      592),
-(              621,     -1,      580,      593),
-(              622,     -1,      580,      594),
-(              623,     -1,      580,      595),
-(              624,     -1,      580,      596),
-(              625,     -1,      581,      597),
-(              626,     -1,      581,      598),
-(              627,     -1,      581,      599),
-(              628,     -1,      581,      303),
-(              629,     -1,      581,      601),
-(              630,     -1,      581,      602),
-(              631,     -1,      581,      603),
-(              632,     -1,      582,      604),
-(              633,     -1,      582,      605),
-(              634,     -1,      582,      606),
-(              635,     -1,      582,      607),
-(              636,     -1,      582,      608),
-(              637,     -1,      582,      609),
-(              638,     -1,      582,      610);
+(             1204,      2,    19230,        1,       1), -- Does NOT have Two of Beasts
+(             1205,      2,    19231,        1,       1), -- Does NOT have Three of Beasts
+(             1206,      2,    19232,        1,       1), -- Does NOT have Four of Beasts
+(             1207,      2,    19233,        1,       1), -- Does NOT have Five of Beasts
+(             1208,      2,    19234,        1,       1), -- Does NOT have Six of Beasts
+(             1209,      2,    19235,        1,       1), -- Does NOT have Seven of Beasts
+(             1210,      2,    19236,        1,       1), -- Does NOT have Eight of Beasts
+(             1211,      2,    19259,        1,       1), -- Does NOT have Two of Warlords
+(             1212,      2,    19260,        1,       1), -- Does NOT have Three of Warlords
+(             1213,      2,    19261,        1,       1), -- Does NOT have Four of Warlords
+(             1214,      2,    19262,        1,       1), -- Does NOT have Five of Warlords
+(             1215,      2,    19263,        1,       1), -- Does NOT have Six of Warlords
+(             1216,      2,    19264,        1,       1), -- Does NOT have Seven of Warlords
+(             1217,      2,    19265,        1,       1), -- Does NOT have Eight of Warlords
+(             1218,      2,    19269,        1,       1), -- Does NOT have Two of Elementals
+(             1219,      2,    19270,        1,       1), -- Does NOT have Three of Elementals
+(             1220,      2,    19271,        1,       1), -- Does NOT have Four of Elementals
+(             1221,      2,    19272,        1,       1), -- Does NOT have Five of Elementals
+(             1222,      2,    19273,        1,       1), -- Does NOT have Six of Elementals
+(             1223,      2,    19274,        1,       1), -- Does NOT have Seven of Elementals
+(             1224,      2,    19275,        1,       1), -- Does NOT have Eight of Elementals
+(             1225,      2,    19278,        1,       1), -- Does NOT have Two of Portals
+(             1226,      2,    19279,        1,       1), -- Does NOT have Three of Portals
+(             1227,      2,    19280,        1,       1), -- Does NOT have Four of Portals
+(             1228,      2,    19281,        1,       1), -- Does NOT have Five of Portals
+(             1229,      2,    19282,        1,       1), -- Does NOT have Six of Portals
+(             1230,      2,    19283,        1,       1), -- Does NOT have Seven of Portals
+(             1231,      2,    19284,        1,       1), -- Does NOT have Eight of Portals
+(             1232,      9,       41,        1,       0), -- Has quest Ace of Beasts
+(             1233,      9,       42,        1,       0), -- Has quest Ace of Warlords
+(             1234,      9,       43,        1,       0), -- Has quest Ace of Elementals
+(             1235,      9,       44,        1,       0), -- Has quest Ace of Portals
+(             1236,     -1,     1204,     1232,       0), -- Does NOT have Two of Beasts AND Has quest Ace of Beasts
+(             1237,     -1,     1205,     1232,       0), -- Does NOT have Three of Beasts AND Has quest Ace of Beasts
+(             1238,     -1,     1206,     1232,       0), -- Does NOT have Four of Beasts AND Has quest Ace of Beasts
+(             1239,     -1,     1207,     1232,       0), -- Does NOT have Five of Beasts AND Has quest Ace of Beasts
+(             1240,     -1,     1208,     1232,       0), -- Does NOT have Six of Beasts AND Has quest Ace of Beasts
+(             1241,     -1,     1209,     1232,       0), -- Does NOT have Seven of Beasts AND Has quest Ace of Beasts
+(             1242,     -1,     1210,     1232,       0), -- Does NOT have Eight of Beasts AND Has quest Ace of Beasts
+(             1243,     -1,     1211,     1233,       0), -- Does NOT have Two of Warlords AND Has quest Ace of Warlords
+(             1244,     -1,     1212,     1233,       0), -- Does NOT have Three of Warlords AND Has quest Ace of Warlords
+(             1245,     -1,     1213,     1233,       0), -- Does NOT have Four of Warlords AND Has quest Ace of Warlords
+(             1246,     -1,     1214,     1233,       0), -- Does NOT have Five of Warlords AND Has quest Ace of Warlords
+(             1247,     -1,     1215,     1233,       0), -- Does NOT have Six of Warlords AND Has quest Ace of Warlords
+(             1248,     -1,     1216,     1233,       0), -- Does NOT have Seven of Warlords AND Has quest Ace of Warlords
+(             1249,     -1,     1217,     1233,       0), -- Does NOT have Eight of Warlords AND Has quest Ace of Warlords
+(             1250,     -1,     1218,     1234,       0), -- Does NOT have Two of Elementals AND Has quest Ace of Elementals
+(             1251,     -1,     1219,     1234,       0), -- Does NOT have Three of Elementals AND Has quest Ace of Elementals
+(             1252,     -1,     1220,     1234,       0), -- Does NOT have Four of Elementals AND Has quest Ace of Elementals
+(             1253,     -1,     1221,     1234,       0), -- Does NOT have Five of Elementals AND Has quest Ace of Elementals
+(             1254,     -1,     1222,     1234,       0), -- Does NOT have Six of Elementals AND Has quest Ace of Elementals
+(             1255,     -1,     1223,     1234,       0), -- Does NOT have Seven of Elementals AND Has quest Ace of Elementals
+(             1256,     -1,     1224,     1234,       0), -- Does NOT have Eight of Elementals AND Has quest Ace of Elementals
+(             1257,     -1,     1225,     1235,       0), -- Does NOT have Two of Portals AND Has quest Ace of Portals
+(             1258,     -1,     1226,     1235,       0), -- Does NOT have Three of Portals AND Has quest Ace of Portals
+(             1259,     -1,     1227,     1235,       0), -- Does NOT have Four of Portals AND Has quest Ace of Portals
+(             1260,     -1,     1228,     1235,       0), -- Does NOT have Five of Portals AND Has quest Ace of Portals
+(             1261,     -1,     1229,     1235,       0), -- Does NOT have Six of Portals AND Has quest Ace of Portals
+(             1262,     -1,     1230,     1235,       0), -- Does NOT have Seven of Portals AND Has quest Ace of Portals
+(             1263,     -1,     1231,     1235,       0); -- Does NOT have Eight of Portals AND Has quest Ace of Portals
 
 -- Make the spell that creates each deck complete the new quest for that deck
 UPDATE `spell_template` SET `Effect2` = 16, `EffectMiscValue2` = 41 WHERE `entry` = 23677;
@@ -141,34 +113,34 @@ SET
 WHERE `item` IN (1, 2, 3, 4);
 
 -- Make each non-Ace card of each set require the new quest for that set and not drop if the player already has it
-UPDATE `creature_loot_template` SET `condition_id` = 611 WHERE `item` = 19230;
-UPDATE `creature_loot_template` SET `condition_id` = 612 WHERE `item` = 19231;
-UPDATE `creature_loot_template` SET `condition_id` = 613 WHERE `item` = 19232;
-UPDATE `creature_loot_template` SET `condition_id` = 614 WHERE `item` = 19233;
-UPDATE `creature_loot_template` SET `condition_id` = 615 WHERE `item` = 19234;
-UPDATE `creature_loot_template` SET `condition_id` = 616 WHERE `item` = 19235;
-UPDATE `creature_loot_template` SET `condition_id` = 617 WHERE `item` = 19236;
-UPDATE `creature_loot_template` SET `condition_id` = 618 WHERE `item` = 19259;
-UPDATE `creature_loot_template` SET `condition_id` = 619 WHERE `item` = 19260;
-UPDATE `creature_loot_template` SET `condition_id` = 620 WHERE `item` = 19261;
-UPDATE `creature_loot_template` SET `condition_id` = 621 WHERE `item` = 19262;
-UPDATE `creature_loot_template` SET `condition_id` = 622 WHERE `item` = 19263;
-UPDATE `creature_loot_template` SET `condition_id` = 623 WHERE `item` = 19264;
-UPDATE `creature_loot_template` SET `condition_id` = 624 WHERE `item` = 19265;
-UPDATE `creature_loot_template` SET `condition_id` = 625 WHERE `item` = 19269;
-UPDATE `creature_loot_template` SET `condition_id` = 626 WHERE `item` = 19270;
-UPDATE `creature_loot_template` SET `condition_id` = 627 WHERE `item` = 19271;
-UPDATE `creature_loot_template` SET `condition_id` = 628 WHERE `item` = 19272;
-UPDATE `creature_loot_template` SET `condition_id` = 629 WHERE `item` = 19273;
-UPDATE `creature_loot_template` SET `condition_id` = 630 WHERE `item` = 19274;
-UPDATE `creature_loot_template` SET `condition_id` = 631 WHERE `item` = 19275;
-UPDATE `creature_loot_template` SET `condition_id` = 632 WHERE `item` = 19278;
-UPDATE `creature_loot_template` SET `condition_id` = 633 WHERE `item` = 19279;
-UPDATE `creature_loot_template` SET `condition_id` = 634 WHERE `item` = 19280;
-UPDATE `creature_loot_template` SET `condition_id` = 635 WHERE `item` = 19281;
-UPDATE `creature_loot_template` SET `condition_id` = 636 WHERE `item` = 19282;
-UPDATE `creature_loot_template` SET `condition_id` = 637 WHERE `item` = 19283;
-UPDATE `creature_loot_template` SET `condition_id` = 638 WHERE `item` = 19284;
+UPDATE `creature_loot_template` SET `condition_id` = 1236 WHERE `item` = 19230;
+UPDATE `creature_loot_template` SET `condition_id` = 1237 WHERE `item` = 19231;
+UPDATE `creature_loot_template` SET `condition_id` = 1238 WHERE `item` = 19232;
+UPDATE `creature_loot_template` SET `condition_id` = 1239 WHERE `item` = 19233;
+UPDATE `creature_loot_template` SET `condition_id` = 1240 WHERE `item` = 19234;
+UPDATE `creature_loot_template` SET `condition_id` = 1241 WHERE `item` = 19235;
+UPDATE `creature_loot_template` SET `condition_id` = 1242 WHERE `item` = 19236;
+UPDATE `creature_loot_template` SET `condition_id` = 1243 WHERE `item` = 19259;
+UPDATE `creature_loot_template` SET `condition_id` = 1244 WHERE `item` = 19260;
+UPDATE `creature_loot_template` SET `condition_id` = 1245 WHERE `item` = 19261;
+UPDATE `creature_loot_template` SET `condition_id` = 1246 WHERE `item` = 19262;
+UPDATE `creature_loot_template` SET `condition_id` = 1247 WHERE `item` = 19263;
+UPDATE `creature_loot_template` SET `condition_id` = 1248 WHERE `item` = 19264;
+UPDATE `creature_loot_template` SET `condition_id` = 1249 WHERE `item` = 19265;
+UPDATE `creature_loot_template` SET `condition_id` = 1250 WHERE `item` = 19269;
+UPDATE `creature_loot_template` SET `condition_id` = 1251 WHERE `item` = 19270;
+UPDATE `creature_loot_template` SET `condition_id` = 1252 WHERE `item` = 19271;
+UPDATE `creature_loot_template` SET `condition_id` = 1253 WHERE `item` = 19272;
+UPDATE `creature_loot_template` SET `condition_id` = 1254 WHERE `item` = 19273;
+UPDATE `creature_loot_template` SET `condition_id` = 1255 WHERE `item` = 19274;
+UPDATE `creature_loot_template` SET `condition_id` = 1256 WHERE `item` = 19275;
+UPDATE `creature_loot_template` SET `condition_id` = 1257 WHERE `item` = 19278;
+UPDATE `creature_loot_template` SET `condition_id` = 1258 WHERE `item` = 19279;
+UPDATE `creature_loot_template` SET `condition_id` = 1259 WHERE `item` = 19280;
+UPDATE `creature_loot_template` SET `condition_id` = 1260 WHERE `item` = 19281;
+UPDATE `creature_loot_template` SET `condition_id` = 1261 WHERE `item` = 19282;
+UPDATE `creature_loot_template` SET `condition_id` = 1262 WHERE `item` = 19283;
+UPDATE `creature_loot_template` SET `condition_id` = 1263 WHERE `item` = 19284;
 
 -- Remove patch-specific loot info for non-Ace cards
 -- for universal applicability of this
@@ -176,34 +148,34 @@ DELETE FROM `creature_loot_template`
 WHERE
     `patch_max` < 10 AND
     `condition_id` IN (
-        611,
-        612,
-        613,
-        614,
-        615,
-        616,
-        617,
-        618,
-        619,
-        620,
-        621,
-        622,
-        623,
-        624,
-        625,
-        626,
-        627,
-        628,
-        629,
-        630,
-        631,
-        632,
-        633,
-        634,
-        635,
-        636,
-        637,
-        638
+        1236,
+        1237,
+        1238,
+        1239,
+        1240,
+        1241,
+        1242,
+        1243,
+        1244,
+        1245,
+        1246,
+        1247,
+        1248,
+        1249,
+        1250,
+        1251,
+        1252,
+        1253,
+        1254,
+        1255,
+        1256,
+        1257,
+        1258,
+        1259,
+        1260,
+        1261,
+        1262,
+        1263
     );
 
 
@@ -215,32 +187,32 @@ SET
     `maxcount` = 1,
     `mincountOrRef` = 1
 WHERE `condition_id` IN (
-    611,
-    612,
-    613,
-    614,
-    615,
-    616,
-    617,
-    618,
-    619,
-    620,
-    621,
-    622,
-    623,
-    624,
-    625,
-    626,
-    627,
-    628,
-    629,
-    630,
-    631,
-    632,
-    633,
-    634,
-    635,
-    636,
-    637,
-    638
+    1236,
+    1237,
+    1238,
+    1239,
+    1240,
+    1241,
+    1242,
+    1243,
+    1244,
+    1245,
+    1246,
+    1247,
+    1248,
+    1249,
+    1250,
+    1251,
+    1252,
+    1253,
+    1254,
+    1255,
+    1256,
+    1257,
+    1258,
+    1259,
+    1260,
+    1261,
+    1262,
+    1263
 );
