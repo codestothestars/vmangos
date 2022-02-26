@@ -4,25 +4,20 @@ UPDATE `creature_loot_template` SET `condition_id` = 0 WHERE `item` IN (
   10000  -- Margol's Horn
 );
 
--- Change team-allied NPC factions to city-based versions so players can toggle At War.
-UPDATE `creature_template` SET `Faction` =  11 WHERE `Entry`   = 9119;          -- Muigin from Alliance Generic to Stormwind
-UPDATE `creature_template` SET `Faction` =  11 WHERE `Faction` IN (53, 56);     -- Night Watch to Stormwind
-UPDATE `creature_template` SET `Faction` =  11 WHERE `Faction` IN (150, 1096);                       -- Theramore (hostile to creatures) to Stormwind
-UPDATE `creature_template` SET `Faction` =  12 WHERE `Faction` IN (151, 371, 894, 1075, 1077, 1622); -- Theramore (neutral to creatures) to Stormwind
-UPDATE `creature_template` SET `Faction` =  12 WHERE `Entry` =  467;            -- Defias Traitor from Escortee to Stormwind
-UPDATE `creature_template` SET `Faction` =  12 WHERE `Entry` = 1156;            -- Vyrin Swiftwind from Alliance Generic to Stormwind
-UPDATE `creature_template` SET `Faction` =  12 WHERE `Entry` = 1752;            -- Caledra Dawnbreeze from Silvermoon Remnant to Stormwind
-UPDATE `creature_template` SET `Faction` =  12 WHERE `Entry` = 5464;            -- Watchmaster Sorigal from Alliance Generic to Stormwind
-UPDATE `creature_template` SET `Faction` =  12 WHERE `Entry` IN (9023, 12580);  -- Marshal Windsor from Alliance Generic to Stormwind
-UPDATE `creature_template` SET `Faction` =  23 WHERE `Entry` =  417;            -- Felhunter from PLAYER, Gnome to Gnomeregan Exiles
-UPDATE `creature_template` SET `Faction` =  29 WHERE `Entry` IN (10182, 10204); -- Rexxar, Misha from Horde Generic to Orgrimmar
-UPDATE `creature_template` SET `Faction` =  55 WHERE `Entry` = 9022;            -- Dughal Stormwing
-UPDATE `creature_template` SET `Faction` =  80 WHERE `Entry` = 8436;            -- Zamael Lunthistle from Alliance Generic to Darnassus
-UPDATE `creature_template` SET `Faction` = 104 WHERE `Entry` = 2987;            -- Eyahn Eagletalon from Horde Generic to Thunder Bluff
-UPDATE `creature_template` SET `Faction` = 122 WHERE `Entry` IN (4782, 5635, 5636, 7744, 7778, 7884, 7865, 8018, 8160, 8161, 9660, 10061, 11097, 11810, 11812, 11813); -- Aerie Peak to Stormwind
-UPDATE `creature_template` SET `Faction` = 123 WHERE `Faction` = 88;            -- Hillsbrad Militia to Stormwind
-UPDATE `creature_template` SET `Faction` = 123 WHERE `Entry` = 14275;           -- Tamra Stormpike to Stormwind
-UPDATE `creature_template` SET `Faction` = 250 WHERE `Entry` = 8284;            -- Dorius Stonetender from Escortee (Alliance) to Escortee (Neutral)
+-- Match factions to custom entries made in the client.
+UPDATE `faction` SET `base_rep_value2` = 0, `reputation_flags2` = 1 WHERE `id` IN (
+   47, -- Ironforge
+   54, -- Gnomeregan Exiles
+   68, -- Undercity
+   69, -- Darnassus
+   72, -- Stormwind
+   76, -- Orgrimmar
+   81, -- Thunder Bluff
+  530  -- Darkspear Trolls
+);
+UPDATE `faction` SET `base_rep_race_mask1` = 255, `reputation_flags1` = 8, `reputation_list_id` = 54 WHERE `id` =  49; -- Night Watch
+UPDATE `faction` SET `base_rep_race_mask1` = 255, `reputation_flags1` = 8, `reputation_list_id` = 52 WHERE `id` = 108; -- Theramore
+UPDATE `faction` SET `base_rep_race_mask1` = 255, `reputation_flags1` = 8, `reputation_list_id` = 53 WHERE `id` = 189; -- Alliance Generic
 
 UPDATE `game_graveyard_zone` SET `faction` = 0;
 
