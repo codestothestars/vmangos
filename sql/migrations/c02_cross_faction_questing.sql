@@ -26,8 +26,10 @@ UPDATE `gameobject_loot_template` SET `condition_id` = 0 WHERE `entry` = 3214; -
 
 -- Change team-allied object factions to Friendly
 UPDATE `gameobject_template` SET `faction` = 35 WHERE `entry` IN (
+       256, -- WANTED
        269, -- Guarded Thunder Ale Barrel
        270, -- Unguarded Thunder Ale Barrel
+      2059, -- A Dwarven Corpse
       2868, -- Crumpled Map
       2875, -- Battered Dwarven Skeleton
     148498, -- Altar of Suntara
