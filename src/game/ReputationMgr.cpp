@@ -229,12 +229,19 @@ void ReputationMgr::Initialize()
 bool ReputationMgr::SetReputation(FactionEntry const* factionEntry, int32 standing, bool incremental, bool noSpillover)
 {
     bool res = false;
+
+    RepSpilloverTemplate const* repTemplate = sObjectMgr.GetRepSpilloverTemplate(factionEntry->ID);
+
+    auto teamTemplate = sObjectMgr.GetRepSpilloverTemplate(factionEntry->team);
+
+    if (!repTemplate) repTemplate = teamTemplate;
+
     // if spillover definition exists in DB
-    if (RepSpilloverTemplate const* repTemplate = sObjectMgr.GetRepSpilloverTemplate(factionEntry->ID))
+    if (repTemplate)
     {
         for (uint32 i = 0; i < MAX_SPILLOVER_FACTIONS; ++i)
         {
-            if (!noSpillover && repTemplate->faction[i])
+            if (!noSpillover && repTemplate->faction[i] && (!teamTemplate || repTemplate->faction[i] != factionEntry->ID))
             {
                 if (m_player->GetReputationRank(repTemplate->faction[i]) <= ReputationRank(repTemplate->faction_rank[i]))
                 {
