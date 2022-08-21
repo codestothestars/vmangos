@@ -827,6 +827,13 @@ bool ChatHandler::HandleNpcDeleteCommand(char* args)
         return false;
     }
 
+    if (sScriptMgr.IsCreatureGuidReferencedInScripts(unit->GetDBTableGUIDLow()))
+    {
+        SendSysMessage("You cannot delete this spawn because its guid is referenced in a script.");
+        SetSentErrorMessage(true);
+        return false;
+    }
+
     switch (unit->GetSubtype())
     {
         case CREATURE_SUBTYPE_GENERIC:
@@ -1286,6 +1293,7 @@ bool ChatHandler::HandleNpcAllowMovementCommand(char* args)
     if (pCreature->AI())
         pCreature->AI()->SetCombatMovement(value);
 
+    PSendSysMessage("Combat movement %s for %s.", value ? "enabled" : "disabled", pCreature->GetName());
     return true;
 }
 
@@ -1311,6 +1319,7 @@ bool ChatHandler::HandleNpcAllowAttackCommand(char* args)
     if (pCreature->AI())
         pCreature->AI()->SetMeleeAttack(value);
 
+    PSendSysMessage("Melee attacking %s for %s.", value ? "enabled" : "disabled", pCreature->GetName());
     return true;
 }
 

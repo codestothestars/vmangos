@@ -1182,6 +1182,16 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, char const* tablename)
                 }
                 break;
             }
+            case SCRIPT_COMMAND_PLAY_CUSTOM_ANIM:
+            {
+                if (tmp.playCustomAnim.animId > 3)
+                {
+                    sLog.outErrorDb("Table `%s` using invalid anim id in datalong (%u) in SCRIPT_COMMAND_PLAY_CUSTOM_ANIM for script id %u",
+                        tablename, tmp.setGoState.state, tmp.id);
+                    continue;
+                }
+                break;
+            }
         }
 
         if (scripts.find(tmp.id) == scripts.end())
@@ -1248,6 +1258,7 @@ bool ScriptMgr::CheckScriptTargets(uint32 targetType, uint32 targetParam1, uint3
         }
         case TARGET_T_CREATURE_WITH_GUID:
         {
+            m_referencedCreatureGuids.insert(targetParam1);
             if (!sObjectMgr.GetCreatureData(targetParam1))
             {
                 if (!sObjectMgr.IsExistingCreatureGuid(targetParam1))
@@ -1276,6 +1287,7 @@ bool ScriptMgr::CheckScriptTargets(uint32 targetType, uint32 targetParam1, uint3
         }
         case TARGET_T_GAMEOBJECT_WITH_GUID:
         {
+            m_referencedGameObjectGuids.insert(targetParam1);
             if (!sObjectMgr.GetGOData(targetParam1))
             {
                 if (!sObjectMgr.IsExistingGameObjectGuid(targetParam1))

@@ -171,6 +171,10 @@ bool ChatHandler::HandleGameObjectInfoCommand(char* args)
     }
     
     PSendSysMessage("Entry: %u, GUID: %u\nName: %s\nType: %u, Display Id: %u\nGO State: %u, Loot State: %u, Flags: %u", pGameObject->GetEntry(), pGameObject->GetGUIDLow(), pGameObject->GetGOInfo()->name, pGameObject->GetGoType(), pGameObject->GetDisplayId(), pGameObject->GetGoState(), pGameObject->getLootState());
+    if (pGameObject->GetVisibilityModifier())
+        PSendSysMessage("Visibility Modifier: %g", pGameObject->GetVisibilityModifier());
+    if (pGameObject->isActiveObject())
+        SendSysMessage("Active Object.");
     if (pGameObject->isSpawned())
         SendSysMessage("Object is spawned.");
     else
@@ -351,6 +355,13 @@ bool ChatHandler::HandleGameObjectDeleteCommand(char* args)
     if (!obj)
     {
         PSendSysMessage(LANG_COMMAND_OBJNOTFOUND, lowguid);
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    if (sScriptMgr.IsGameObjectGuidReferencedInScripts(obj->GetDBTableGUIDLow()))
+    {
+        SendSysMessage("You cannot delete this spawn because its guid is referenced in a script.");
         SetSentErrorMessage(true);
         return false;
     }
