@@ -6,31 +6,31 @@ INSERT INTO `conditions`
 (`condition_entry`, `type`, `value1`, `value2`)
 VALUES
 (              192,     -1,       90,      178), -- Mage AND Level >= 40
-(              561,     17,     3561,        1), -- Does not know Teleport: Stormwind
-(              562,     17,     3562,        1), -- Does not know Teleport: Ironforge
-(              563,     17,     3563,        1), -- Does not know Teleport: Undercity
-(              564,     17,     3565,        1), -- Does not know Teleport: Darnassus
-(              565,     17,     3566,        1), -- Does not know Teleport: Thunder Bluff
-(              566,     17,     3567,        1), -- Does not know Teleport: Orgrimmar
-(              567,     17,    10059,        1), -- Does not know Portal: Stormwind
-(              568,     17,    11416,        1), -- Does not know Portal: Ironforge
-(              569,     17,    11417,        1), -- Does not know Portal: Orgrimmar
-(              570,     17,    11418,        1), -- Does not know Portal: Undercity
-(              571,     17,    11419,        1), -- Does not know Portal: Darnassus
-(              572,     17,    11420,        1), -- Does not know Portal: Thunder Bluff
+(              572,     17,     3561,        1), -- Does not know Teleport: Stormwind
+(              573,     17,     3562,        1), -- Does not know Teleport: Ironforge
+(              574,     17,     3563,        1), -- Does not know Teleport: Undercity
+(              575,     17,     3565,        1), -- Does not know Teleport: Darnassus
+(              576,     17,     3566,        1), -- Does not know Teleport: Thunder Bluff
+(              577,     17,     3567,        1), -- Does not know Teleport: Orgrimmar
+(              578,     17,    10059,        1), -- Does not know Portal: Stormwind
+(              579,     17,    11416,        1), -- Does not know Portal: Ironforge
+(              580,     17,    11417,        1), -- Does not know Portal: Orgrimmar
+(              581,     17,    11418,        1), -- Does not know Portal: Undercity
+(              582,     17,    11419,        1), -- Does not know Portal: Darnassus
+(              583,     17,    11420,        1), -- Does not know Portal: Thunder Bluff
 (             1025,     -1,       90,     1011), -- Mage AND Level >= 20
-(             1026,     -1,      192,      567), -- Mage AND Level >= 40 AND Does not know Portal: Stormwind
-(             1027,     -1,      192,      568), -- Mage AND Level >= 40 AND Does not know Portal: Ironforge
-(             1028,     -1,      192,      569), -- Mage AND Level >= 40 AND Does not know Portal: Orgrimmar
-(             1029,     -1,      192,      570), -- Mage AND Level >= 40 AND Does not know Portal: Undercity
-(             1030,     -1,      192,      571), -- Mage AND Level >= 40 AND Does not know Portal: Darnassus
-(             1031,     -1,      192,      572), -- Mage AND Level >= 40 AND Does not know Portal: Thunder Bluff
-(             1032,     -1,      561,     1025), -- Does not know Teleport: Stormwind AND Mage AND Level >= 20
-(             1033,     -1,      562,     1025), -- Does not know Teleport: Ironforge AND Mage AND Level >= 20
-(             1034,     -1,      563,     1025), -- Does not know Teleport: Undercity AND Mage AND Level >= 20
-(             1035,     -1,      564,     1025), -- Does not know Teleport: Darnassus AND Mage AND Level >= 20
-(             1036,     -1,      565,     1025), -- Does not know Teleport: Thunder Bluff AND Mage AND Level >= 20
-(             1037,     -1,      566,     1025); -- Does not know Teleport: Orgrimmar AND Mage AND Level >= 20
+(             1026,     -1,      192,      578), -- Mage AND Level >= 40 AND Does not know Portal: Stormwind
+(             1027,     -1,      192,      579), -- Mage AND Level >= 40 AND Does not know Portal: Ironforge
+(             1028,     -1,      192,      580), -- Mage AND Level >= 40 AND Does not know Portal: Orgrimmar
+(             1029,     -1,      192,      581), -- Mage AND Level >= 40 AND Does not know Portal: Undercity
+(             1030,     -1,      192,      582), -- Mage AND Level >= 40 AND Does not know Portal: Darnassus
+(             1031,     -1,      192,      583), -- Mage AND Level >= 40 AND Does not know Portal: Thunder Bluff
+(             1032,     -1,      572,     1025), -- Does not know Teleport: Stormwind AND Mage AND Level >= 20
+(             1033,     -1,      573,     1025), -- Does not know Teleport: Ironforge AND Mage AND Level >= 20
+(             1034,     -1,      574,     1025), -- Does not know Teleport: Undercity AND Mage AND Level >= 20
+(             1035,     -1,      575,     1025), -- Does not know Teleport: Darnassus AND Mage AND Level >= 20
+(             1036,     -1,      576,     1025), -- Does not know Teleport: Thunder Bluff AND Mage AND Level >= 20
+(             1037,     -1,      577,     1025); -- Does not know Teleport: Orgrimmar AND Mage AND Level >= 20
 
 -- Gossip scripts to cast spell teaching the teleport or portal spell
 INSERT INTO `gossip_scripts`
