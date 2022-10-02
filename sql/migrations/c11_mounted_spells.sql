@@ -5,5 +5,6 @@ UPDATE `spell_template` SET `attributes` = `attributes` | 0x01000000 WHERE `entr
      883, -- Call Pet
     9885, -- Mark of the Wild (Rank 7)
     9910, -- Thorns (Rank 6)
-   10714  -- Summon Black Kingsnake
+   10714, -- Summon Black Kingsnake
+   23135  -- Heavy Leather Ball
 );
