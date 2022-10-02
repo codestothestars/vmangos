@@ -891,7 +891,7 @@ void Object::BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* u
                 // Static item flags are part of that field prior to patch 1.7.
                 if (index == ITEM_FIELD_FLAGS)
                 {
-                    if (ItemPrototype const* pProto = ObjectMgr::GetItemPrototype(GetEntry()))
+                    if (ItemPrototype const* pProto = sObjectMgr.GetItemPrototype(GetEntry()))
                         *data << uint16(pProto->Flags);
                     else
                         *data << uint16(0);
@@ -2960,6 +2960,26 @@ Player* WorldObject::FindNearestPlayer(float range) const
     Player* target = nullptr;
     MaNGOS::NearestAlivePlayerCheck check(this, range);
     MaNGOS::PlayerLastSearcher<MaNGOS::NearestAlivePlayerCheck> searcher(target, check);
+    Cell::VisitWorldObjects(this, searcher, range);
+
+    return target;
+}
+
+Player* WorldObject::FindNearestHostilePlayer(float range) const
+{
+    Player* target = nullptr;
+    MaNGOS::NearestHostileUnitCheck check(this, range);
+    MaNGOS::PlayerLastSearcher<MaNGOS::NearestHostileUnitCheck> searcher(target, check);
+    Cell::VisitWorldObjects(this, searcher, range);
+
+    return target;
+}
+
+Player* WorldObject::FindNearestFriendlyPlayer(float range) const
+{
+    Player* target = nullptr;
+    MaNGOS::NearestFriendlyUnitCheck check(this, range);
+    MaNGOS::PlayerLastSearcher<MaNGOS::NearestFriendlyUnitCheck> searcher(target, check);
     Cell::VisitWorldObjects(this, searcher, range);
 
     return target;

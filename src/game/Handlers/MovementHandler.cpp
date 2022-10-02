@@ -29,6 +29,7 @@
 #include "Transport.h"
 #include "BattleGround.h"
 #include "WaypointMovementGenerator.h"
+#include "ConfusedMovementGenerator.h"
 #include "MapPersistentStateMgr.h"
 #include "World.h"
 #include "Anticheat.h"
@@ -267,6 +268,13 @@ void Player::ExecuteTeleportNear()
     TeleportPositionRelocation(dest);
     MovementPacketSender::SendTeleportToObservers(this, dest.x, dest.y, dest.z, dest.o);
 
+    // if player is sheeped make him wander around new position
+    if (GetMotionMaster()->GetCurrentMovementGeneratorType() == CONFUSED_MOTION_TYPE)
+    {
+        ConfusedMovementGenerator<Player>* confuse = (ConfusedMovementGenerator<Player>*)(GetMotionMaster()->top());
+        confuse->SetStartPosition(dest.x, dest.y, dest.z);
+    }
+
     // resummon pet, if the destination is in another continent instance, let Player::SwitchInstance do it
     // because the client will request the name for the old pet guid and receive no answer
     // result would be a pet named "unknown"
@@ -299,15 +307,16 @@ void WorldSession::HandleMovementOpcodes(WorldPacket& recvData)
 
     if (pMover->GetObjectGuid() != m_clientMoverGuid)
         return;
+
+    // currently being moved by server
+    if (!pMover->movespline->Finalized())
+        return;
         
     Player* pPlayerMover = pMover->ToPlayer();
 
     // ignore, waiting processing in WorldSession::HandleMoveWorldportAckOpcode and WorldSession::HandleMoveTeleportAck
     if (pPlayerMover && pPlayerMover->IsBeingTeleported())
-    {
-        recvData.rpos(recvData.wpos());                   // prevent warnings spam
         return;
-    }
 
     /* extract packet */
     MovementInfo movementInfo = pPlayerMover ? pPlayerMover->m_movementInfo : MovementInfo();
@@ -487,29 +496,27 @@ void WorldSession::HandleForceSpeedChangeAckOpcodes(WorldPacket& recvData)
             _player->GetCheatData()->OnWrongAckData();
         return;
     }
-    
-    // Use fake loop here to handle movement position checks separately from change ACK.
-    do
+
+    Player* const pPlayerMover = pMover->ToPlayer();
+
+    // Check if position and movement flags are fine before speed update.
+    bool const canRelocate = 
+        recvData.GetPacketTime() > m_moveRejectTime &&
+        VerifyMovementInfo(movementInfo) &&
+        (!pPlayerMover || 
+        (_player->GetCheatData()->HandleFlagTests(pPlayerMover, movementInfo, opcode) &&
+         _player->GetCheatData()->HandlePositionTests(pPlayerMover, movementInfo, opcode)));
+
+    // the speed has to be applied before relocation
+    // otherwise if the speed update was from an outdoors only aura
+    // and after relocation we are now indoors, player will get
+    // stuck with the faster speed from the aura after removal
+    // because the speed never changed server side
+    float const newSpeedRate = speedReceived / baseMoveSpeed[move_type];
+    pMover->SetSpeedRateReal(move_type, newSpeedRate);
+
+    if (canRelocate)
     {
-        // Do not accept packets sent before this time.
-        if (recvData.GetPacketTime() <= m_moveRejectTime)
-            break;
-
-        if (!VerifyMovementInfo(movementInfo))
-            break;
-
-        Player* pPlayerMover = pMover->ToPlayer();
-
-        if (pPlayerMover)
-        {
-            if (!_player->GetCheatData()->HandleFlagTests(pPlayerMover, movementInfo, opcode) || 
-                !_player->GetCheatData()->HandlePositionTests(pPlayerMover, movementInfo, opcode))
-            {
-                m_moveRejectTime = WorldTimer::getMSTime();
-                break;
-            }
-        }
-        
         if ((pMover == _player->GetMover()) &&
             (!pPlayerMover || !pPlayerMover->IsBeingTeleported()))
         {
@@ -524,11 +531,9 @@ void WorldSession::HandleForceSpeedChangeAckOpcodes(WorldPacket& recvData)
             pMover->m_movementInfo.moveFlags = movementInfo.moveFlags;
             pMover->m_movementInfo.CorrectData(pMover);
         }
-    } while (false);
+    }
 
-    // the client data has been verified, let's do the actual change now
-    float newSpeedRate = speedReceived / baseMoveSpeed[move_type];
-    pMover->SetSpeedRateReal(move_type, newSpeedRate);
+    // send the speed change to others (with updated position if all is fine)
     MovementPacketSender::SendSpeedChangeToObservers(pMover, move_type, speedReceived);
 }
 
@@ -826,24 +831,28 @@ void WorldSession::HandleMoveSplineDoneOpcode(WorldPacket& recvData)
     recvData >> splineId;
     recvData >> Unused<float>();
 
+    if (!VerifyMovementInfo(movementInfo))
+        return;
+
     Unit* pMover = _player->GetMover();
 
     if (pMover->GetObjectGuid() != m_clientMoverGuid)
         return;
 
-    Player* pPlayerMover = pMover->ToPlayer();
-
-    // ignore, waiting processing in WorldSession::HandleMoveWorldportAckOpcode and WorldSession::HandleMoveTeleportAck
-    if (pPlayerMover && pPlayerMover->IsBeingTeleported())
+    if (pMover->movespline->GetId() != splineId)
         return;
 
-    if (!VerifyMovementInfo(movementInfo))
-        return;
-
-    if (pPlayerMover)
+    if (Player* pPlayerMover = pMover->ToPlayer())
     {
-        if (!_player->GetCheatData()->HandleSplineDone(pPlayerMover, movementInfo, splineId) ||
-            !_player->GetCheatData()->HandleFlagTests(pPlayerMover, movementInfo, CMSG_MOVE_SPLINE_DONE))
+        // ignore, waiting processing in WorldSession::HandleMoveWorldportAckOpcode and WorldSession::HandleMoveTeleportAck
+        if (pPlayerMover->IsBeingTeleported())
+            return;
+
+        // no need to reject future packets in this case
+        if (!_player->GetCheatData()->HandleSplineDone(pPlayerMover, movementInfo, splineId))
+            return;
+
+        if (!_player->GetCheatData()->HandleFlagTests(pPlayerMover, movementInfo, CMSG_MOVE_SPLINE_DONE))
         {
             m_moveRejectTime = WorldTimer::getMSTime();
             return;

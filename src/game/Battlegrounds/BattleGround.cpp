@@ -181,6 +181,7 @@ BattleGround::BattleGround()
     m_levelMin          = 0;
     m_levelMax          = 0;
     m_inBGFreeSlotQueue = false;
+    m_playerSkinReflootId = 0;
 
     m_maxPlayersPerTeam = 0;
     m_maxPlayers        = 0;
@@ -767,7 +768,7 @@ void BattleGround::SendRewardMarkByMail(Player* pPlayer, uint32 mark, uint32 cou
     if (!bmEntry)
         return;
 
-    ItemPrototype const* markProto = ObjectMgr::GetItemPrototype(mark);
+    ItemPrototype const* markProto = sObjectMgr.GetItemPrototype(mark);
     if (!markProto)
         return;
 

@@ -704,6 +704,7 @@ enum PlayerLoginQueryIndex
     PLAYER_LOGIN_QUERY_LOADSPELLCOOLDOWNS,
     PLAYER_LOGIN_QUERY_LOADGUILD,
     PLAYER_LOGIN_QUERY_LOADBGDATA,
+    PLAYER_LOGIN_QUERY_LOADACCOUNTDATA,
     PLAYER_LOGIN_QUERY_LOADSKILLS,
     PLAYER_LOGIN_QUERY_LOADMAILS,
     PLAYER_LOGIN_QUERY_LOADMAILEDITEMS,
@@ -2033,13 +2034,13 @@ class Player final: public Unit
         void FreezeMirrorTimers(bool state);
         void UpdateMirrorTimers(uint32 diff, bool send = true);
 
-        inline bool CheckMirrorTimerActivation(MirrorTimer::Type timer) const;
-        inline bool CheckMirrorTimerDeactivation(MirrorTimer::Type timer) const;
+        bool CheckMirrorTimerActivation(MirrorTimer::Type timer) const;
+        bool CheckMirrorTimerDeactivation(MirrorTimer::Type timer) const;
 
-        inline void OnMirrorTimerExpirationPulse(MirrorTimer::Type timer);
+        void OnMirrorTimerExpirationPulse(MirrorTimer::Type timer);
 
-        inline uint32 GetMirrorTimerMaxDuration(MirrorTimer::Type timer) const;
-        inline SpellAuraHolder const* GetMirrorTimerBuff(MirrorTimer::Type timer) const;
+        uint32 GetMirrorTimerMaxDuration(MirrorTimer::Type timer) const;
+        SpellAuraHolder const* GetMirrorTimerBuff(MirrorTimer::Type timer) const;
     public:
         bool IsUnderwater() const override { return (m_environmentFlags & ENVIRONMENT_FLAG_UNDERWATER); }
         bool IsInWater() const override { return (m_environmentFlags & ENVIRONMENT_FLAG_IN_WATER); }

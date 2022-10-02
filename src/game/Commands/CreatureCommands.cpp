@@ -162,7 +162,12 @@ bool ChatHandler::HandleNpcAIInfoCommand(char* /*args*/)
                     strAI.empty() ? " - " : strAI.c_str(),
                     cstrAIClass ? cstrAIClass : " - ",
                     strScript.empty() ? " - " : strScript.c_str());
-    PSendSysMessage("React State: %s", ReactStateToString(pTarget->GetReactState()));
+    PSendSysMessage("React State: %s", ReactStateToString(pTarget->GetCreatureReactState()));
+    if (CharmInfo* pCharmInfo = pTarget->GetCharmInfo())
+    {
+        PSendSysMessage("Charm React State: %s", ReactStateToString(pCharmInfo->GetReactState()));
+        PSendSysMessage("Charm Command State: %s", CommandStateToString(pCharmInfo->GetCommandState()));
+    }
     PSendSysMessage(LANG_NPC_AI_MOVE, GetOnOffStr(pTarget->AI()->IsCombatMovementEnabled()));
     PSendSysMessage(LANG_NPC_AI_ATTACK, GetOnOffStr(pTarget->AI()->IsMeleeAttackEnabled()));
     MovementGeneratorType moveType = pTarget->GetMotionMaster()->GetCurrentMovementGeneratorType();
@@ -952,7 +957,7 @@ bool ChatHandler::HandleNpcAddWeaponCommand(char* args)
     if (!ExtractUInt32(&args, uiSlotId))
         return false;
 
-    ItemPrototype const* pItemProto = ObjectMgr::GetItemPrototype(uiItemId);
+    ItemPrototype const* pItemProto = sObjectMgr.GetItemPrototype(uiItemId);
 
     if (!pItemProto)
     {
@@ -1006,7 +1011,7 @@ bool ChatHandler::HandleNpcAddVendorItemCommand(char* args)
 
     sObjectMgr.AddVendorItem(vendor_entry, itemId, maxcount, incrtime, itemflags);
 
-    ItemPrototype const* pProto = ObjectMgr::GetItemPrototype(itemId);
+    ItemPrototype const* pProto = sObjectMgr.GetItemPrototype(itemId);
 
     PSendSysMessage(LANG_ITEM_ADDED_TO_LIST, itemId, pProto->Name1, maxcount, incrtime);
     return true;
@@ -1040,7 +1045,7 @@ bool ChatHandler::HandleNpcDelVendorItemCommand(char* args)
         return false;
     }
 
-    ItemPrototype const* pProto = ObjectMgr::GetItemPrototype(itemId);
+    ItemPrototype const* pProto = sObjectMgr.GetItemPrototype(itemId);
 
     PSendSysMessage(LANG_ITEM_DELETED_FROM_LIST, itemId, pProto->Name1);
     return true;

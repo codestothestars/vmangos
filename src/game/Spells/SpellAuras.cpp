@@ -945,7 +945,8 @@ bool Aura::CanProcFrom(SpellEntry const* spell, uint32 EventProcEx, uint32 procE
             else // Passive spells hits here only if resist/reflect/immune/evade
             {
                 // Passive spells can`t trigger if need hit (exclude cases when procExtra include non-active flags)
-                if ((EventProcEx & (PROC_EX_NORMAL_HIT | PROC_EX_CRITICAL_HIT) & procEx) && !active)
+                if ((EventProcEx & (PROC_EX_NORMAL_HIT | PROC_EX_CRITICAL_HIT) & procEx) && !active &&
+                   !(EventProcEx & (PROX_EX_NO_DAMAGE_MASK) & procEx))
                     return false;
             }
         }
@@ -3183,6 +3184,9 @@ void Unit::ModPossess(Unit* pTarget, bool apply, AuraRemoveMode m_removeMode)
         pTarget->UpdateControl();
         pTarget->SetWalk(false);
 
+        if (!pTarget->IsPet())
+            pTarget->ClearCharmInfo();
+
         if (Creature* pCreature = pTarget->ToCreature())
         {
             if (!pCreature->HasUnitState(UNIT_STAT_CAN_NOT_REACT))
@@ -3350,9 +3354,6 @@ void Aura::HandleModCharm(bool apply, bool Real)
         target->AttackStop();
         target->InterruptNonMeleeSpells(false);
 
-        if (caster->IsPlayer()) // Units will make the controlled player attack (MoveChase)
-            target->GetMotionMaster()->MoveFollow(caster, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
-
         if (Creature* pCreatureTarget = target->ToCreature())
         {
             if (pCreatureTarget->AI() && pCreatureTarget->AI()->SwitchAiAtControl())
@@ -3395,6 +3396,7 @@ void Aura::HandleModCharm(bool apply, bool Real)
         if (Player* pPlayerCaster = caster->ToPlayer())
         {
             pPlayerCaster->CharmSpellInitialize();
+            target->GetMotionMaster()->MoveFollow(caster, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
 
             UpdateData newData;
             target->BuildValuesUpdateBlockForPlayerWithFlags(newData, pPlayerCaster, UF_FLAG_OWNER_ONLY);
@@ -3482,6 +3484,9 @@ void Aura::HandleModCharm(bool apply, bool Real)
         target->GetMotionMaster()->Clear(false);
         target->GetMotionMaster()->MoveIdle();
 
+        if (!target->IsPet())
+            target->ClearCharmInfo();
+
         if (pCreatureTarget)
         {
             if (pCreatureTarget->AI() && pCreatureTarget->AI()->SwitchAiAtControl())
@@ -3531,10 +3536,23 @@ void Aura::HandleFeignDeath(bool apply, bool Real)
         HostileReference* pReference = pTarget->GetHostileRefManager().getFirst();
         while (pReference)
         {
-            if (Creature* refTarget = ToCreature(pReference->getSourceUnit()))
+            if (Unit* refTarget = pReference->getSourceUnit())
             {
-                if (!refTarget->GetCharmerOrOwnerOrSelf()->IsPlayer() && refTarget->IsWithinDistInMap(pTarget, refTarget->GetAttackDistance(pTarget))
-                    && pTarget->MagicSpellHitResult(refTarget, GetHolder()->GetSpellProto(), nullptr) != SPELL_MISS_NONE)
+                Creature* pCreature = refTarget->ToCreature();
+
+                // World of Warcraft Client Patch 1.7.0 (2005-09-13)
+                // - Feign death is no longer resisted by players.
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_6_1
+                if (!pCreature || refTarget->GetCharmerOrOwnerOrSelf()->IsPlayer())
+                {
+                    pReference = pReference->next();
+                    continue;
+                }
+#endif
+
+                float const distance = pCreature ? pCreature->GetAttackDistance(pTarget) : 30.0f;
+                if (refTarget->IsWithinDistInMap(pTarget, distance) &&
+                    pTarget->MagicSpellHitResult(refTarget, GetHolder()->GetSpellProto(), nullptr) != SPELL_MISS_NONE)
                 {
                     success = false;
                     break;

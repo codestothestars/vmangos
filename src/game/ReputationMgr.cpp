@@ -228,31 +228,34 @@ void ReputationMgr::Initialize()
 
 bool ReputationMgr::SetReputation(FactionEntry const* factionEntry, int32 standing, bool incremental, bool noSpillover)
 {
-    bool res = false;
-
-    RepSpilloverTemplate const* repTemplate = sObjectMgr.GetRepSpilloverTemplate(factionEntry->ID);
-
-    auto teamTemplate = sObjectMgr.GetRepSpilloverTemplate(factionEntry->team);
-
-    if (!repTemplate) repTemplate = teamTemplate;
-
-    // if spillover definition exists in DB
-    if (repTemplate)
+    if (!noSpillover)
     {
-        for (uint32 i = 0; i < MAX_SPILLOVER_FACTIONS; ++i)
+        RepSpilloverTemplate const* repTemplate = sObjectMgr.GetRepSpilloverTemplate(factionEntry->ID);
+
+        auto teamTemplate = sObjectMgr.GetRepSpilloverTemplate(factionEntry->team);
+
+        if (!repTemplate) repTemplate = teamTemplate;
+
+        // if spillover definition exists in DB
+        if (repTemplate)
         {
-            if (!noSpillover && repTemplate->faction[i] && (!teamTemplate || repTemplate->faction[i] != factionEntry->ID))
+            for (uint32 i = 0; i < MAX_SPILLOVER_FACTIONS; ++i)
             {
-                if (m_player->GetReputationRank(repTemplate->faction[i]) <= ReputationRank(repTemplate->faction_rank[i]))
+                if (repTemplate->faction[i] && (!teamTemplate || repTemplate->faction[i] != factionEntry->ID))
                 {
-                    // bonuses are already given, so just modify standing by rate
-                    int32 spilloverRep = standing * repTemplate->faction_rate[i];
-                    SetOneFactionReputation(sObjectMgr.GetFactionEntry(repTemplate->faction[i]), spilloverRep, incremental);
+                    if (m_player->GetReputationRank(repTemplate->faction[i]) <= ReputationRank(repTemplate->faction_rank[i]))
+                    {
+                        // bonuses are already given, so just modify standing by rate
+                        int32 spilloverRep = standing * repTemplate->faction_rate[i];
+                        SetOneFactionReputation(sObjectMgr.GetFactionEntry(repTemplate->faction[i]), spilloverRep, incremental);
+                    }
                 }
             }
         }
     }
+    
     // spillover done, update faction itself
+    bool res = false;
     FactionStateList::iterator faction = m_factions.find(factionEntry->reputationListID);
     if (faction != m_factions.end())
     {
