@@ -16,6 +16,7 @@ UPDATE `faction` SET `base_rep_value2` = 0, `reputation_flags2` = 1 WHERE `id` I
   530  -- Darkspear Trolls
 );
 UPDATE `faction` SET `base_rep_race_mask1` = 255, `reputation_flags1` = 8, `reputation_list_id` = 54 WHERE `id` =  49; -- Night Watch
+UPDATE `faction` SET `base_rep_race_mask1` = 255, `reputation_flags1` = 8, `reputation_list_id` = 56 WHERE `id` =  66; -- Horde Generic
 UPDATE `faction` SET `base_rep_race_mask1` = 255, `reputation_flags1` = 8, `reputation_list_id` = 52 WHERE `id` = 108; -- Theramore
 UPDATE `faction` SET `base_rep_race_mask1` = 255, `reputation_flags1` = 8, `reputation_list_id` = 53 WHERE `id` = 189; -- Alliance Generic
 UPDATE `faction` SET `base_rep_race_mask1` = 255, `reputation_flags1` = 8, `reputation_list_id` = 55 WHERE `id` = 269; -- Silvermoon Remnant
