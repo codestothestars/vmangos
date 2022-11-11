@@ -36,6 +36,7 @@ UPDATE `gameobject_template` SET `faction` = 35 WHERE `entry` IN (
       2875, -- Battered Dwarven Skeleton
     148498, -- Altar of Suntara
     152095, -- Moonpetal Lily
+    175524, -- Mysterious Red Crystal
     175586, -- Jaron's Wagon
     175587, -- Damaged Crate
     175704  -- Singed Letter
