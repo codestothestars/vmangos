@@ -3227,12 +3227,11 @@ void Spell::EffectDispel(SpellEffectIndex effIdx)
         {
             int32 count = successList.size();
             WorldPacket data(SMSG_SPELLDISPELLOG, 8 + 8 + 4 + count * 4);
-#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_8_4
+#if SUPPORTED_CLIENT_BUILD >= CLIENT_BUILD_1_12_1
             data << unitTarget->GetPackGUID();              // Victim GUID
             data << m_caster->GetPackGUID();                // Caster GUID
 #else
             data << unitTarget->GetGUID();              // Victim GUID
-            data << m_caster->GetGUID();                // Caster GUID
 #endif
             data << uint32(count);
             for (const auto& j : successList)
@@ -3383,7 +3382,7 @@ void Spell::EffectSummonWild(SpellEffectIndex effIdx)
 
     float radius = GetSpellRadius(sSpellRadiusStore.LookupEntry(m_spellInfo->EffectRadiusIndex[effIdx]));
     int32 duration = m_spellInfo->GetDuration();
-    TempSummonType summonType = (duration == 0) ? TEMPSUMMON_DEAD_DESPAWN : TEMPSUMMON_TIMED_COMBAT_OR_DEAD_DESPAWN;
+    TempSummonType summonType = (duration == 0) ? TEMPSUMMON_DEAD_DESPAWN : TEMPSUMMON_TIMED_DEATH_AND_DEAD_DESPAWN;
 
     int32 amount = damage > 0 ? damage : 1;
 
@@ -3932,7 +3931,7 @@ void Spell::EffectSummonPet(SpellEffectIndex effIdx)
 
 ObjectGuid Unit::EffectSummonPet(uint32 spellId, uint32 petEntry, uint32 petLevel)
 {
-    if (!UnsummonOldPetBeforeNewSummon(petEntry))
+    if (!UnsummonOldPetBeforeNewSummon(petEntry, true))
         return ObjectGuid();
 
     CreatureInfo const* cInfo = petEntry ? sCreatureStorage.LookupEntry<CreatureInfo>(petEntry) : nullptr;
