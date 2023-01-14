@@ -20,6 +20,7 @@ UPDATE `faction` SET `base_rep_race_mask1` = 255, `reputation_flags1` = 8, `repu
 UPDATE `faction` SET `base_rep_race_mask1` = 255, `reputation_flags1` = 8, `reputation_list_id` = 52 WHERE `id` = 108; -- Theramore
 UPDATE `faction` SET `base_rep_race_mask1` = 255, `reputation_flags1` = 8, `reputation_list_id` = 53 WHERE `id` = 189; -- Alliance Generic
 UPDATE `faction` SET `base_rep_race_mask1` = 255, `reputation_flags1` = 8, `reputation_list_id` = 55 WHERE `id` = 269; -- Silvermoon Remnant
+UPDATE `faction` SET `base_rep_race_mask1` = 255                                                     WHERE `id` = 890; -- Silverwing Sentinels
 
 UPDATE `game_graveyard_zone` SET `faction` = 0;
 
