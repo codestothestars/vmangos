@@ -402,7 +402,8 @@ struct npc_geolier_main_noireAI : public ScriptedAI
                 if (pTarget->IsWithinLOSInMap(m_creature) && !pTarget->HasAura(SPELL_PLAYER_MISE_EN_CAGE))
                 {
                     m_creature->CastSpell(pTarget, SPELL_PLAYER_MISE_EN_CAGE, false);
-                    MiseEnCage_Timer = urand(20000, 40000);
+                    auto scale = m_creature->GetMap()->GetPlayers().getSize() / 10.0;
+                    MiseEnCage_Timer = urand(20000, 40000) / scale;
                 }
             }
         }
