@@ -350,7 +350,7 @@ struct npc_geolier_main_noireAI : public ScriptedAI
 
     void Reset() override
     {
-        MiseEnCage_Timer = urand(10000, 80000);
+        MiseEnCage_Timer = urand(5000, 40000);
         Frappe_Timer     = urand(2000, 12100);
         fled = false;
     }
@@ -402,7 +402,8 @@ struct npc_geolier_main_noireAI : public ScriptedAI
                 if (pTarget->IsWithinLOSInMap(m_creature) && !pTarget->HasAura(SPELL_PLAYER_MISE_EN_CAGE))
                 {
                     m_creature->CastSpell(pTarget, SPELL_PLAYER_MISE_EN_CAGE, false);
-                    MiseEnCage_Timer = urand(40000, 80000);
+                    auto scale = m_creature->GetMap()->GetPlayers().getSize() / 10.0;
+                    MiseEnCage_Timer = urand(20000, 40000) / scale;
                 }
             }
         }
