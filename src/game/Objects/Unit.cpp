@@ -480,11 +480,11 @@ void Unit::ResetAttackTimer(WeaponAttackType type)
     m_attackTimer[type] = uint32(GetAttackTime(type) * m_modAttackSpeedPct[type]);
 }
 
-void Unit::RemoveSpellsCausingAura(AuraType auraType)
+void Unit::RemoveSpellsCausingAura(AuraType auraType, AuraRemoveMode mode)
 {
     for (AuraList::const_iterator iter = m_modAuras[auraType].begin(); iter != m_modAuras[auraType].end();)
     {
-        RemoveAurasDueToSpell((*iter)->GetId());
+        RemoveAurasDueToSpell((*iter)->GetId(), nullptr, mode);
         iter = m_modAuras[auraType].begin();
     }
 }
@@ -1051,13 +1051,6 @@ void Unit::Kill(Unit* pVictim, SpellEntry const* spellProto, bool durabilityLoss
 
     DEBUG_FILTER_LOG(LOG_FILTER_DAMAGE, "DealDamageAttackStop");
 
-    // before the stop of combat, the auras of type CM are withdrawn. We must be able to redirect the mobs to the caster.
-    // You should specify 'AURA_REMOVE_BY_DEATH', but this is not useful for these auras.
-    pVictim->RemoveCharmAuras();
-    // stop combat
-    pVictim->CombatStop();
-    pVictim->GetHostileRefManager().deleteReferences();
-
     bool damageFromSpiritOfRedemtionTalent = (spellProto && spellProto->Id == 27795);
 
     // if talent known but not triggered (check priest class for speedup check)
@@ -1091,6 +1084,15 @@ void Unit::Kill(Unit* pVictim, SpellEntry const* spellProto, bool durabilityLoss
         if (pPlayerVictim && pVictim->GetUInt32Value(PLAYER_SELF_RES_SPELL))
             pVictim->DirectSendPublicValueUpdate(PLAYER_SELF_RES_SPELL);
         pVictim->DirectSendPublicValueUpdate(UNIT_FIELD_HEALTH);
+    }
+    else
+    {
+        // Before the stop of combat, the auras of type MC are removed. We must be able to redirect the mobs to the caster.
+        pVictim->RemoveCharmAuras(AURA_REMOVE_BY_DEATH);
+
+        // stop combat
+        pVictim->CombatStop();
+        pVictim->GetHostileRefManager().deleteReferences();
     }
 
     // outdoor pvp things, do these after setting the death state, else the player activity notify won't work... doh...
@@ -4855,11 +4857,11 @@ void Unit::Uncharm()
     }
 }
 
-void Unit::RemoveCharmAuras()
+void Unit::RemoveCharmAuras(AuraRemoveMode mode)
 {
-    RemoveSpellsCausingAura(SPELL_AURA_MOD_POSSESS);
-    RemoveSpellsCausingAura(SPELL_AURA_MOD_CHARM);
-    RemoveSpellsCausingAura(SPELL_AURA_AOE_CHARM);
+    RemoveSpellsCausingAura(SPELL_AURA_MOD_POSSESS, mode);
+    RemoveSpellsCausingAura(SPELL_AURA_MOD_CHARM, mode);
+    RemoveSpellsCausingAura(SPELL_AURA_AOE_CHARM, mode);
 }
 
 void Unit::SetPet(Pet* pet)
@@ -4878,25 +4880,25 @@ void Unit::SetFactionTemplateId(uint32 faction)
 {
     SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, faction);
 
-    if (FactionTemplateEntry const* pFaction = sObjectMgr.GetFactionTemplateEntry(faction))
+    if (!HasUnitState(UNIT_STAT_AI_USES_MOVE_IN_LOS))
     {
-        if (pFaction->hostileMask ||
-            pFaction->HasFactionFlag(FACTION_TEMPLATE_BROADCAST_TO_ENEMIES_LOW_PRIO |
-                                     FACTION_TEMPLATE_BROADCAST_TO_ENEMIES_MED_PRIO |
-                                     FACTION_TEMPLATE_BROADCAST_TO_ENEMIES_HIG_PRIO))
-            ClearUnitState(UNIT_STAT_NO_BROADCAST_TO_OTHERS);
-        else
-            AddUnitState(UNIT_STAT_NO_BROADCAST_TO_OTHERS);
-
-        if (!HasUnitState(UNIT_STAT_AI_USES_MOVE_IN_LOS))
+        if (FactionTemplateEntry const* pFaction = sObjectMgr.GetFactionTemplateEntry(faction))
         {
             if (pFaction->hostileMask ||
+                pFaction->HasFactionFlag(FACTION_TEMPLATE_BROADCAST_TO_ENEMIES_LOW_PRIO |
+                                         FACTION_TEMPLATE_BROADCAST_TO_ENEMIES_MED_PRIO |
+                                         FACTION_TEMPLATE_BROADCAST_TO_ENEMIES_HIG_PRIO))
+                ClearUnitState(UNIT_STAT_NO_BROADCAST_TO_OTHERS);
+            else
+                AddUnitState(UNIT_STAT_NO_BROADCAST_TO_OTHERS);
+
+            if (pFaction->hostileMask ||
                 pFaction->HasFactionFlag(FACTION_TEMPLATE_SEARCH_FOR_ENEMIES_LOW_PRIO |
-                    FACTION_TEMPLATE_SEARCH_FOR_ENEMIES_MED_PRIO |
-                    FACTION_TEMPLATE_SEARCH_FOR_ENEMIES_HIG_PRIO |
-                    FACTION_TEMPLATE_SEARCH_FOR_FRIENDS_LOW_PRIO |
-                    FACTION_TEMPLATE_SEARCH_FOR_FRIENDS_MED_PRIO |
-                    FACTION_TEMPLATE_SEARCH_FOR_FRIENDS_HIG_PRIO))
+                                         FACTION_TEMPLATE_SEARCH_FOR_ENEMIES_MED_PRIO |
+                                         FACTION_TEMPLATE_SEARCH_FOR_ENEMIES_HIG_PRIO |
+                                         FACTION_TEMPLATE_SEARCH_FOR_FRIENDS_LOW_PRIO |
+                                         FACTION_TEMPLATE_SEARCH_FOR_FRIENDS_MED_PRIO |
+                                         FACTION_TEMPLATE_SEARCH_FOR_FRIENDS_HIG_PRIO))
                 ClearUnitState(UNIT_STAT_NO_SEARCH_FOR_OTHERS);
             else
                 AddUnitState(UNIT_STAT_NO_SEARCH_FOR_OTHERS);
@@ -5890,7 +5892,10 @@ void Unit::SetInCombatWithAggressor(Unit* pAggressor, bool touchOnly/* = false*/
             pCreature->UpdateLeashExtensionTime();
 
         if (Player* pOwner = ::ToPlayer(GetCharmerOrOwner()))
-            pOwner->SetInCombatWithAggressor(pAggressor, false);
+        {
+            if (pOwner->IsTargetableBy(pAggressor) && !pOwner->IsFeigningDeathSuccessfully())
+                pOwner->SetInCombatWithAggressor(pAggressor, false);
+        }
     }
 }
 
@@ -5963,7 +5968,14 @@ void Unit::SetInCombatWithVictim(Unit* pVictim, bool touchOnly/* = false*/, uint
         SetInCombatState(combatTimer, pVictim);
 
         if (Player* pOwner = ::ToPlayer(GetCharmerOrOwner()))
+        {
+            if (pOwner->IsTargetableBy(pVictim) && !pOwner->IsFeigningDeathSuccessfully())
+            {
+                pVictim->AddThreat(pOwner);
+                pVictim->SetInCombatWithAggressor(pOwner, false);
+            }
             pOwner->SetInCombatWithVictim(pVictim, false, combatTimer >= UNIT_PVP_COMBAT_TIMER ? combatTimer : UNIT_PVP_COMBAT_TIMER);
+        }
     }
 }
 
@@ -7124,6 +7136,10 @@ void Unit::SetDeathState(DeathState s)
 {
     if (s != ALIVE && s != JUST_ALIVED)
     {
+        // should be before combat stop so threat is transferred in case of MC
+        if (s == JUST_DIED)
+            RemoveCharmAuras(AURA_REMOVE_BY_DEATH);
+
         CombatStop();
         DeleteThreatList();
         ClearComboPointHolders();                           // any combo points pointed to unit lost at it death
@@ -8641,7 +8657,7 @@ void Unit::ProcSkillsAndReactives(bool isVictim, Unit* pTarget, uint32 procFlag,
     }
 }
 
-void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, uint32 procExtra, WeaponAttackType attType, SpellEntry const* procSpell, uint32 damage, ProcTriggeredList& triggeredList, std::list<SpellModifier*> const& appliedSpellModifiers, bool isSpellTriggeredByAura)
+void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, uint32 procExtra, WeaponAttackType attType, SpellEntry const* procSpell, uint32 damage, ProcTriggeredList& triggeredList, std::list<SpellModifier*> const& appliedSpellModifiers, bool isSpellTriggeredByAuraOrItem)
 {
     DEBUG_UNIT(this, DEBUG_PROCS, "PROC: Flags 0x%.5x Ex 0x%.3x Spell %5u %s", procFlag, procExtra, procSpell ? procSpell->Id : 0, isVictim ? "[victim]" : "");
 
@@ -8681,7 +8697,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, 
             continue;
 
         SpellProcEventEntry const* spellProcEvent = nullptr;
-        auto result = IsTriggeredAtSpellProcEvent(pTarget, itr.second, procSpell, procFlag, procExtra, attType, isVictim, spellProcEvent, isSpellTriggeredByAura);
+        auto result = IsTriggeredAtSpellProcEvent(pTarget, itr.second, procSpell, procFlag, procExtra, attType, isVictim, spellProcEvent, isSpellTriggeredByAuraOrItem);
         if (result != SPELL_PROC_TRIGGER_OK)
         {
             if (result == SPELL_PROC_TRIGGER_ROLL_FAILED &&
@@ -9819,7 +9835,8 @@ void Unit::HandleInterruptsOnMovement(bool positionChanged)
 
     // Fix bug after 1.11 where client doesn't send stand state update while casting.
     // Test case: Begin eating or drinking, then start casting Hearthstone and run.
-    SetStandState(UNIT_STAND_STATE_STAND);
+    if (HasUnitMovementFlag(MOVEFLAG_MASK_MOVING_OR_TURN)) // sitting on chair teleports you, so we need to check flags
+        SetStandState(UNIT_STAND_STATE_STAND);
 }
 
 void Unit::OnRelocated()
@@ -10216,7 +10233,7 @@ SpellAuraHolder* Unit::AddAura(uint32 spellId, uint32 addAuraFlags, Unit* pCaste
             if (addAuraFlags & ADD_AURA_POSITIVE)
                 aur->SetPositive(true);
             else if (addAuraFlags & ADD_AURA_NEGATIVE)
-                aur->SetPositive(true);
+                aur->SetPositive(false);
 
             holder->AddAura(aur, SpellEffectIndex(i));
         }
