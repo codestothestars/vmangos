@@ -449,8 +449,8 @@ void AddSC_boss_pyroguard_emberseer()
     pNewScript->GetAI = &GetAI_npc_geolier_main_noire;
     pNewScript->RegisterSelf();
 
-    pNewScript = new Script;
-    pNewScript->Name = "event_free_pyroguard_emberseer";
-    pNewScript->pProcessEventId = &ProcessEventId_event_free_pyroguard_emberseer;
-    pNewScript->RegisterSelf();
+    // pNewScript = new Script;
+    // pNewScript->Name = "event_free_pyroguard_emberseer";
+    // pNewScript->pProcessEventId = &ProcessEventId_event_free_pyroguard_emberseer;
+    // pNewScript->RegisterSelf();
 }
