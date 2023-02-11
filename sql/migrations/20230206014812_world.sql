@@ -17,7 +17,8 @@ INSERT `creature_ai_events`
 
 INSERT `creature_ai_scripts`
 (   `id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
-(1031601,       0,          0,        15,      15281,           0,           0,           0,             8,            9816,              30,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Encage Emberseer');
+(1031601,       0,          0,        15,      15281,           0,           0,           0,             8,            9816,              30,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Encage Emberseer'),
+(1031601,       0,          0,         4,         46,  0x00000300,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Set Immune Flags');
 
 -- Disable C++ scripts
 UPDATE `creature_template` SET `ai_name` = 'EventAI', `script_name` = '' WHERE `entry` IN (
@@ -36,12 +37,13 @@ SET
         0x02000000   -- UNIT_FLAG_NOT_SELECTABLE
 WHERE `entry` = 9816; -- Pyroguard Emberseer
 
-UPDATE `creature_template`
-SET
-    `unit_flags` =
-        0x00000100 | -- UNIT_FLAG_IMMUNE_TO_PLAYER
-        0x00000200   -- UNIT_FLAG_IMMUNE_TO_NPC
-WHERE `entry` = 10316; -- Blackhand Incarcerator
+-- No need to set these flags in the template because we have to set them when the fight resets anyway.
+-- UPDATE `creature_template`
+-- SET
+--     `unit_flags` =
+--         0x00000100 | -- UNIT_FLAG_IMMUNE_TO_PLAYER
+--         0x00000200   -- UNIT_FLAG_IMMUNE_TO_NPC
+-- WHERE `entry` = 10316; -- Blackhand Incarcerator
 
 DELETE FROM `event_scripts` WHERE id = 4884; -- Emberseer Start
 
@@ -51,7 +53,9 @@ INSERT `event_scripts`
 
 INSERT `generic_scripts`
 ( `id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
-(10316,       0,          0,         4,         46,  0x00000300,           2,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Remove Immune Flags');
+(10316,       0,          0,         4,         46,  0x00000300,           2,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Remove Immune Flags'),
+-- ubrs_ony_attunement_dump_classic_Wow(1.13.2.31882)-6072_1570347344.pkt - targets appeared totally random
+(10316,       0,          1,        26,          0,           0,           0,           0,            28,              50,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Attack Random Player');
 
 DELETE FROM `scripted_event_id` WHERE `id` = 4884; -- event_free_pyroguard_emberseer
 
