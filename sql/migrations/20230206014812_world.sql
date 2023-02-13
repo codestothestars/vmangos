@@ -25,9 +25,11 @@ INSERT `creature_ai_scripts`
 (1031601,       0,          0,        15,      15281,           0,           0,           0,             8,            9816,              30,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Encage Emberseer'),
 -- Need to set flags immediately upon reset, instead of waiting a second. Otherwise a feign-deathed hunter could re-aggro.
 (1031601,       0,          0,         4,         46,  0x00000300,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Set Immune Flags'),
-(1031602,       0,          0,        15,      15580,           1,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Strike'),
+-- Double-check CF_INTERRUPT_PREVIOUS against other sniffs.
+(1031602,       0,          0,        15,      15580,       0x001,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Strike'),
 -- Make sure this can target a totem.
-(1031603,       0,          0,        15,      16045,           0,           0,           0,             4,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Encage');
+-- Double-check CF_AURA_NOT_PRESENT against other sniffs.
+(1031603,       0,          0,        15,      16045,       0x020,           0,           0,             4,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Encage');
 
 -- Disable C++ scripts
 UPDATE `creature_template` SET `ai_name` = 'EventAI', `script_name` = '' WHERE `entry` IN (
@@ -37,7 +39,7 @@ UPDATE `creature_template` SET `ai_name` = 'EventAI', `script_name` = '' WHERE `
 
 UPDATE `creature_template`
 SET
-    `auras` = '15282 13377', -- Is setting auras in the template right to do?
+    `auras` = '15282 13377', -- Is setting the aura in the template right to do?
     `unit_flags` =
         -- Is setting initial flags in the template right to do?
         -- Need to double check these in the mass parse database.
