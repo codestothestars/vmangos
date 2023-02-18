@@ -9,13 +9,24 @@ IF v=0 THEN
 INSERT INTO `migrations` VALUES ('20230206014812');
 -- Add your query below.
 
+-- To-do
+-- Implement dynamic behavior of runes on floor.
+-- Make sure Incarcerators don't reset after killing their first target.
+-- Reset whole fight on combat end.
+-- Check through C++ script for unimplemented functionality.
+-- Check numbers against more sniffs.
+-- Check numbers against mass parse database.
+
 -- Blackhand Incarcerator in north-east corner wasn't standing on rune.
 UPDATE `creature` SET `position_x` = 162.327, `position_y` = -276.759, `position_z` = 91.6961, orientation = 2.32129 WHERE `guid` = 40452;
 
 INSERT `creature_ai_events`
 (   `id`, `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `action2_script`, `action3_script`, `comment`) VALUES
--- Upon first entering the instance, Emberseer is animated when he should be frozen.
+-- Upon first entering the instance, Emberseer is sometimes animated when he should be frozen.
 ( 981601,          9816,              0,            1,                          0,            100,             0,              0,              0,              0,              0,           981601,                0,                0, 'Pyroguard Emberseer - Encage'),
+-- Check more full sniffs and the mass sniff database for more delay numbers.
+( 981602,          9816,              0,            0,                          0,            100,             1,          16000,          16000,          11000,          11000,           981602,                0,                0, 'Pyroguard Emberseer - Cast Fire Nova'),
+( 981603,          9816,              0,            0,                          0,            100,             1,          10000,          10000,          10000,          10000,           981603,                0,                0, 'Pyroguard Emberseer - Cast Flame Buffet'),
 -- Need to set flags immediately upon reset, instead of waiting a second. Otherwise a feign-deathed hunter could re-aggro.
 (1031601,         10316,              0,            1,                          0,            100,             0,           1000,           1000,              0,              0,          1031601,                0,                0, 'Blackhand Incarcerator - Cast Encage Emberseer'),
 -- Need to check these timers against more sniffs.
@@ -25,8 +36,10 @@ INSERT `creature_ai_events`
 
 INSERT `creature_ai_scripts`
 (   `id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
-( 981601,       0,          0,         4,         46,  0x02000140,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Set Immune Flags'),
+( 981601,       0,          0,         4,         46,  0x02000140,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Set Immune Flags'),
 ( 981601,       0,          0,        74,      15282,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Add Encaged Emberseer'),
+( 981602,       0,          0,        15,      16079,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Fire Nova'),
+( 981603,       0,          0,        15,      16536,           0,           0,           0,             1,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Flame Buffet'),
 (1031601,       0,          0,        15,      15281,           0,           0,           0,             8,            9816,              30,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Encage Emberseer'),
 -- Need to set flags immediately upon reset, instead of waiting a second. Otherwise a feign-deathed hunter could re-aggro.
 (1031601,       0,          0,         4,         46,  0x00000300,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Set Immune Flags'),
@@ -67,7 +80,18 @@ DELETE FROM `event_scripts` WHERE id = 4884; -- Emberseer Start
 INSERT `event_scripts`
 (`id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
 (4884,       0,          0,        68,      10316,           2,       10316,          50,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on Incarcerators'),
-(4884,       2,          0,        39,       9816,           0,           0,           0,             8,            9816,              30,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on Pyroguard Emberseer');
+(4884,       2,          0,        39,       9816,           0,           0,           0,             8,            9816,              30,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on Pyroguard Emberseer'),
+-- Delay should actually be the same as the Pyroguard's script.
+(4884,      10,          0,        39,     175266,           0,           0,           0,            11,          175266,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on DarkIronDwarfRune (West)');
+
+-- DarkIronDwarfRune objects were swapped around.
+UPDATE `gameobject` SET `id` = 175266, `position_x` = 144.375, `position_y` = -240.826, `position_z` = 91.4713 WHERE `guid` = 397215; -- West
+UPDATE `gameobject` SET `id` = 175267, `position_x` = 126.354, `position_y` = -240.77 , `position_z` = 91.4701 WHERE `guid` = 397218; -- South-West
+UPDATE `gameobject` SET                `position_x` = 162.466, `position_y` = -240.765, `position_z` = 91.4688 WHERE `guid` = 397210; -- North-West
+UPDATE `gameobject` SET `id` = 175269, `position_x` = 126.296, `position_y` = -258.732, `position_z` = 91.4701 WHERE `guid` = 397219; -- South
+UPDATE `gameobject` SET `id` = 175270, `position_x` = 162.443, `position_y` = -258.904, `position_z` = 91.4701 WHERE `guid` = 397208; -- North
+UPDATE `gameobject` SET `id` = 175271, `position_x` = 126.402, `position_y` = -276.79 , `position_z` = 91.4701 WHERE `guid` = 397220; -- South-East
+UPDATE `gameobject` SET `id` = 175272, `position_x` = 162.401, `position_y` = -276.824, `position_z` = 91.4701 WHERE `guid` = 397203; -- North-East
 
 INSERT `generic_scripts`
 ( `id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
@@ -82,7 +106,11 @@ INSERT `generic_scripts`
 ( 9816,      60,          0,        14,      16245,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Remove Freeze Anim'),
 ( 9816,      60,          0,        15,      16047,       0x002,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Emberseer Full Strength'),
 ( 9816,      61,          0,         0,          1,           0,           0,           0,             0,               0,               0,            0,      5268,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Yell'),
--- Need to put Emberseer into combat, and possibly attack someone?
+-- Guessing we should also combat pulse the incarcerators? Otherwise they can probably de-aggro after killing their main target.
+( 9816,      65,          0,         4,         46,  0x00000800,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Set Flags'),
+( 9816,      65,          0,         4,         46,  0x02000100,           2,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Remove Immune Flags'),
+( 9816,      65,          0,        22,        754,           2,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Change Faction'),
+( 9816,      65,          1,        49,          1,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Combat Pulse'),
 (10316,       0,          0,         4,         46,  0x00000300,           2,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Remove Immune Flags'),
 -- ubrs_ony_attunement_dump_classic_Wow(1.13.2.31882)-6072_1570347344.pkt - targets appeared totally random. Two of three were channelers, one was standing further out but not casting.
 (10316,       0,          1,        26,          0,           0,           0,           0,            28,              50,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Attack Random Player');
