@@ -27,7 +27,9 @@ INSERT `creature_ai_events`
 ( 981603,          9816,              0,            0,                          0,            100,             1,          10000,          10000,          10000,          10000,           981603,                0,                0, 'Pyroguard Emberseer - Cast Flame Buffet'),
 ( 981604,          9816,              0,            6,                          0,            100,             0,              0,              0,              0,              0,           981604,                0,                0, 'Pyroguard Emberseer - Ready DarkIronDwarfRunes'),
 -- Need to set flags immediately upon reset, instead of waiting a second. Otherwise a feign-deathed hunter could re-aggro.
-(1031601,         10316,              0,            1,                          0,            100,             0,           1000,           1000,              0,              0,          1031601,                0,                0, 'Blackhand Incarcerator - Cast Encage Emberseer'),
+-- (1031601,         10316,              0,            1,                          0,            100,             0,           1000,           1000,              0,              0,          1031601,                0,                0, 'Blackhand Incarcerator - Cast Encage Emberseer'), -- EVENT_T_TIMER_OOC
+(1031601,         10316,              0,           11,                          0,            100,             0,              0,              0,              0,              0,          1031601,                0,                0, 'Blackhand Incarcerator - Cast Encage Emberseer'), -- EVENT_T_SPAWNED
+-- (1031601,         10316,              0,           10,                          0,            100,             0,           1000,           1000,              0,              0,          1031601,                0,                0, 'Blackhand Incarcerator - Cast Encage Emberseer'), -- EVENT_T_OOC_LOS
 -- Need to check these timers against more sniffs.
 (1031602,         10316,              0,            0,                          0,            100,             1,           6000,          12000,           7000,          18000,          1031602,                0,                0, 'Blackhand Incarcerator - Cast Strike'),
 (1031603,         10316,              0,            0,                          0,            100,             1,           6000,          25000,          16000,          30000,          1031603,                0,                0, 'Blackhand Incarcerator - Cast Encage'),
@@ -36,6 +38,7 @@ INSERT `creature_ai_events`
 INSERT `creature_ai_scripts`
 (   `id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
 ( 981601,       0,          0,         4,         46,  0x02000140,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Set Immune Flags'),
+( 981601,       0,          0,        68,     103161,           2,       10316,          30,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Encage Emberseer'),
 ( 981601,       0,          0,        74,      15282,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Add Encaged Emberseer'),
 ( 981602,       0,          0,        15,      16079,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Fire Nova'),
 ( 981603,       0,          0,        15,      16536,           0,           0,           0,             1,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Flame Buffet'),
@@ -47,7 +50,8 @@ INSERT `creature_ai_scripts`
 ( 981604,       0,          0,        39,     175268,           0,           0,           0,            11,          175271,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Ready DarkIronDwarfRune (South-East)'),
 ( 981604,       0,          0,        39,     175268,           0,           0,           0,            11,          175272,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Ready DarkIronDwarfRune (North-East)'),
 ( 981604,       0,          0,        39,     175268,           0,           0,           0,            11,          175187,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Ready DarkIronDwarfRune (Wall)'),
-(1031601,       0,          0,        15,      15281,           0,           0,           0,             8,            9816,              30,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Encage Emberseer'),
+-- (1031601,       0,          0,        15,      15281,           0,           0,           0,             8,            9816,              30,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Encage Emberseer'), -- EVENT_T_TIMER_OOC
+(1031601,       0,          0,        39,     103161,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Encage Emberseer'), -- EVENT_T_SPAWNED
 -- Need to set flags immediately upon reset, instead of waiting a second. Otherwise a feign-deathed hunter could re-aggro.
 (1031601,       0,          0,         4,         46,  0x00000300,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Set Immune Flags'),
 -- Double-check CF_INTERRUPT_PREVIOUS against other sniffs.
@@ -63,31 +67,33 @@ UPDATE `creature_template` SET `ai_name` = 'EventAI', `script_name` = '' WHERE `
     10316  -- Blackhand Incarcerator
 );
 
+-- Pyroguard Emberseer
 UPDATE `creature_template`
 SET
-    `auras` = '13377', -- Is setting the aura in the template right to do?
-    -- `unit_flags` =
+    `auras` = '13377' -- Is setting the aura in the template right to do?
+    -- ,`unit_flags` =
     --     -- Is setting initial flags in the template right to do?
     --     -- Need to double check these in the mass parse database.
     --     0x00000040 | -- UNIT_FLAG_UNK_6
     --     0x00000100 | -- UNIT_FLAG_IMMUNE_TO_PLAYER
     --     0x02000000   -- UNIT_FLAG_NOT_SELECTABLE
-WHERE `entry` = 9816; -- Pyroguard Emberseer
+WHERE `entry` = 9816;
 
+-- Blackhand Incarcerator
 -- No need to set these flags in the template because we have to set them when the fight resets anyway.
 -- UPDATE `creature_template`
 -- SET
 --     `unit_flags` =
 --         0x00000100 | -- UNIT_FLAG_IMMUNE_TO_PLAYER
 --         0x00000200   -- UNIT_FLAG_IMMUNE_TO_NPC
--- WHERE `entry` = 10316; -- Blackhand Incarcerator
+-- WHERE `entry` = 10316;
 
-DELETE FROM `event_scripts` WHERE id = 4884; -- Emberseer Start
+DELETE FROM `event_scripts` WHERE `id` = 4884; -- Emberseer Start
 
 INSERT `event_scripts`
 (`id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
 -- Should we instead use creature_ai_events with  event_type = EVENT_T_MAP_SCRIPT_EVENT (31)?
-(4884,       0,          0,        68,      10316,           2,       10316,          50,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on Incarcerators'),
+(4884,       0,          0,        68,     103162,           2,       10316,          50,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on Incarcerators'),
 (4884,       2,          0,        39,       9816,           0,           0,           0,             8,            9816,              30,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on Pyroguard Emberseer'),
 (4884,       2,          0,        39,     175266,           0,           0,           0,            11,          175266,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on DarkIronDwarfRune (West)'),
 (4884,       2,          0,        39,     175267,           0,           0,           0,            11,          175267,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on DarkIronDwarfRune (South-West)'),
@@ -130,9 +136,10 @@ INSERT `generic_scripts`
 (  9816,      65,          0,         4,         46,  0x02000100,           2,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Remove Immune Flags'),
 (  9816,      65,          0,        22,        754,           2,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Change Faction'),
 (  9816,      65,          1,        49,          1,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Combat Pulse'),
-( 10316,       0,          0,         4,         46,  0x00000300,           2,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Remove Immune Flags'),
+(103161,       0,          0,        15,      15281,           0,           0,           0,             8,            9816,              30,         0x10,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Encage Emberseer'),
+(103162,       0,          0,         4,         46,  0x00000300,           2,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Remove Immune Flags'),
 -- ubrs_ony_attunement_dump_classic_Wow(1.13.2.31882)-6072_1570347344.pkt - targets appeared totally random. Two of three were channelers, one was standing further out but not casting.
-( 10316,       0,          1,        26,          0,           0,           0,           0,            28,              50,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Attack Random Player'),
+(103162,       0,          1,        26,          0,           0,           0,           0,            28,              50,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Attack Random Player'),
 -- Delay should actually be 60.
 (175266,      10,          0,        13,          0,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'DarkIronDwarfRune (West) - Activate'),
 (175266,      11,          0,         4,          9,  0x00000001,           2,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'DarkIronDwarfRune (West) - Remove In Use Flag'),
@@ -140,11 +147,6 @@ INSERT `generic_scripts`
 (175268,       0,          0,        80,          1,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'DarkIronDwarfRune - Set State Ready');
 
 DELETE FROM `scripted_event_id` WHERE `id` = 4884; -- event_free_pyroguard_emberseer
-
--- Reset instances
-DELETE FROM character_instance;
-DELETE FROM group_instance;
-DELETE FROM instance;
 
 -- Set channelers required on Blackrock Altar to 1, for testing. Revert it to 3 when done.
 UPDATE gameobject_template SET data0 = 3 WHERE `entry` = 175706;
@@ -155,3 +157,14 @@ END??
 delimiter ; 
 CALL add_migration();
 DROP PROCEDURE IF EXISTS add_migration;
+
+-- Reset instances
+DELETE FROM character_instance;
+DELETE FROM group_instance;
+DELETE FROM instance;
+
+-- RESET ALL
+DELETE FROM generic_scripts WHERE id IN (9816, 103161, 103162, 175266, 175267, 175268);
+DELETE FROM gameobject WHERE `guid` = 397204;
+DELETE FROM creature_ai_scripts WHERE id IN (981601, 981602, 981603, 981604, 1031601, 1031602, 1031603, 1031604);
+DELETE FROM creature_ai_events WHERE id IN (981601, 981602, 981603, 981604, 1031601, 1031602, 1031603, 1031604);
