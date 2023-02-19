@@ -10,8 +10,6 @@ INSERT INTO `migrations` VALUES ('20230206014812');
 -- Add your query below.
 
 -- To-do
--- Implement dynamic behavior of runes on floor.
--- Make sure Incarcerators don't reset after killing their first target.
 -- Reset whole fight on combat end.
 -- Check through C++ script for unimplemented functionality.
 -- Check numbers against more sniffs.
@@ -27,6 +25,7 @@ INSERT `creature_ai_events`
 -- Check more full sniffs and the mass sniff database for more delay numbers.
 ( 981602,          9816,              0,            0,                          0,            100,             1,          16000,          16000,          11000,          11000,           981602,                0,                0, 'Pyroguard Emberseer - Cast Fire Nova'),
 ( 981603,          9816,              0,            0,                          0,            100,             1,          10000,          10000,          10000,          10000,           981603,                0,                0, 'Pyroguard Emberseer - Cast Flame Buffet'),
+( 981604,          9816,              0,            6,                          0,            100,             0,              0,              0,              0,              0,           981604,                0,                0, 'Pyroguard Emberseer - Ready DarkIronDwarfRunes'),
 -- Need to set flags immediately upon reset, instead of waiting a second. Otherwise a feign-deathed hunter could re-aggro.
 (1031601,         10316,              0,            1,                          0,            100,             0,           1000,           1000,              0,              0,          1031601,                0,                0, 'Blackhand Incarcerator - Cast Encage Emberseer'),
 -- Need to check these timers against more sniffs.
@@ -40,6 +39,14 @@ INSERT `creature_ai_scripts`
 ( 981601,       0,          0,        74,      15282,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Add Encaged Emberseer'),
 ( 981602,       0,          0,        15,      16079,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Fire Nova'),
 ( 981603,       0,          0,        15,      16536,           0,           0,           0,             1,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Flame Buffet'),
+( 981604,       0,          0,        39,     175268,           0,           0,           0,            11,          175266,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Ready DarkIronDwarfRune (West)'),
+( 981604,       0,          0,        39,     175268,           0,           0,           0,            11,          175267,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Ready DarkIronDwarfRune (South-West)'),
+( 981604,       0,          0,        39,     175268,           0,           0,           0,            11,          175268,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Ready DarkIronDwarfRune (North-West)'),
+( 981604,       0,          0,        39,     175268,           0,           0,           0,            11,          175269,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Ready DarkIronDwarfRune (South)'),
+( 981604,       0,          0,        39,     175268,           0,           0,           0,            11,          175270,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Ready DarkIronDwarfRune (North)'),
+( 981604,       0,          0,        39,     175268,           0,           0,           0,            11,          175271,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Ready DarkIronDwarfRune (South-East)'),
+( 981604,       0,          0,        39,     175268,           0,           0,           0,            11,          175272,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Ready DarkIronDwarfRune (North-East)'),
+( 981604,       0,          0,        39,     175268,           0,           0,           0,            11,          175187,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Ready DarkIronDwarfRune (Wall)'),
 (1031601,       0,          0,        15,      15281,           0,           0,           0,             8,            9816,              30,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Encage Emberseer'),
 -- Need to set flags immediately upon reset, instead of waiting a second. Otherwise a feign-deathed hunter could re-aggro.
 (1031601,       0,          0,         4,         46,  0x00000300,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Set Immune Flags'),
@@ -79,11 +86,24 @@ DELETE FROM `event_scripts` WHERE id = 4884; -- Emberseer Start
 
 INSERT `event_scripts`
 (`id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
+-- Should we instead use creature_ai_events with  event_type = EVENT_T_MAP_SCRIPT_EVENT (31)?
 (4884,       0,          0,        68,      10316,           2,       10316,          50,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on Incarcerators'),
 (4884,       2,          0,        39,       9816,           0,           0,           0,             8,            9816,              30,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on Pyroguard Emberseer'),
-(4884,       2,          0,        39,     175266,           0,           0,           0,            11,          175266,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on DarkIronDwarfRune (West)');
+(4884,       2,          0,        39,     175266,           0,           0,           0,            11,          175266,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on DarkIronDwarfRune (West)'),
+(4884,       2,          0,        39,     175267,           0,           0,           0,            11,          175267,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on DarkIronDwarfRune (South-West)'),
+(4884,       2,          0,        39,     175267,           0,           0,           0,            11,          175268,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on DarkIronDwarfRune (North-West)'),
+(4884,       2,          0,        39,     175267,           0,           0,           0,            11,          175269,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on DarkIronDwarfRune (South)'),
+(4884,       2,          0,        39,     175267,           0,           0,           0,            11,          175270,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on DarkIronDwarfRune (North)'),
+(4884,       2,          0,        39,     175267,           0,           0,           0,            11,          175271,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on DarkIronDwarfRune (South-East)'),
+(4884,       2,          0,        39,     175267,           0,           0,           0,            11,          175272,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on DarkIronDwarfRune (North-East)'),
+(4884,       2,          0,        39,     175267,           0,           0,           0,            11,          175187,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on DarkIronDwarfRune (Wall)');
 
--- DarkIronDwarfRune objects were incorrect/swapped around.
+-- Sniffs reveal an extra DarkIronDwarfRune in the wall, which is also activated during the fight.
+INSERT `gameobject`
+(`guid`,   `id`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecsmin`, `spawntimesecsmax`, `animprogress`, `state`, `spawn_flags`, `visibility_mod`, `patch_min`, `patch_max`) VALUES
+(397204, 175187,   229,       144.37,     -299.198,      91.4701,             0,           0,           0,           0,           1,                 25,                 25,            100,       1,             0,                0,           0,          10);
+
+-- Templates of most of the DarkIronDwarfRune objects in boss room were incorrect/swapped around. Also tweak positions from sniffs.
 UPDATE `gameobject` SET `id` = 175266, `position_x` = 144.375, `position_y` = -240.826, `position_z` = 91.4713 WHERE `guid` = 397215; -- West
 UPDATE `gameobject` SET `id` = 175267, `position_x` = 126.354, `position_y` = -240.77 , `position_z` = 91.4701 WHERE `guid` = 397218; -- South-West
 UPDATE `gameobject` SET                `position_x` = 162.466, `position_y` = -240.765, `position_z` = 91.4688 WHERE `guid` = 397210; -- North-West
@@ -114,7 +134,10 @@ INSERT `generic_scripts`
 -- ubrs_ony_attunement_dump_classic_Wow(1.13.2.31882)-6072_1570347344.pkt - targets appeared totally random. Two of three were channelers, one was standing further out but not casting.
 ( 10316,       0,          1,        26,          0,           0,           0,           0,            28,              50,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Attack Random Player'),
 -- Delay should actually be 60.
-(175266,      10,          0,       );
+(175266,      10,          0,        13,          0,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'DarkIronDwarfRune (West) - Activate'),
+(175266,      11,          0,         4,          9,  0x00000001,           2,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'DarkIronDwarfRune (West) - Remove In Use Flag'),
+(175267,      10,          0,        80,          0,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'DarkIronDwarfRune (Rest) - Set State Active'),
+(175268,       0,          0,        80,          1,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'DarkIronDwarfRune - Set State Ready');
 
 DELETE FROM `scripted_event_id` WHERE `id` = 4884; -- event_free_pyroguard_emberseer
 
