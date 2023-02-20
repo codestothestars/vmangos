@@ -95,7 +95,6 @@ DELETE FROM `event_scripts` WHERE `id` = 4884; -- Emberseer Start
 
 INSERT `event_scripts`
 (`id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
--- Should we instead use creature_ai_events with  event_type = EVENT_T_MAP_SCRIPT_EVENT (31)?
 (4884,       0,          0,        68,     103163,           2,       10316,          50,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on Incarcerators'),
 (4884,       2,          0,        39,      98161,           0,           0,           0,             8,            9816,              30,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on Pyroguard Emberseer'),
 (4884,       2,          0,        39,     175266,           0,           0,           0,            11,          175266,              50,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on DarkIronDwarfRune (West)'),
