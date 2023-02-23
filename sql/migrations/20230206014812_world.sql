@@ -36,8 +36,6 @@ INSERT `creature_ai_events`
 ( 981607,          9816,              0,            1,                        0x2,            100,             0,          62000,          62000,              0,              0,           981607,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 2 Growth 3)'),
 ( 981608,          9816,              0,            1,                        0x6,            100,             0,           1000,           1000,              0,              0,           981608,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 3 Yell)'),
 ( 981609,          9816,              0,            1,                        0x6,            100,             0,           5000,           5000,              0,              0,           981609,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 3 Attack Start)'),
--- Check again on whether Evade is necessary or if Out of Combat is enough.
-(1031601,         10316,              0,            7,                          0,            100,             0,              0,              0,              0,              0,          1031601,                0,                0, 'Blackhand Incarcerator - Evade'),
 (1031602,         10316,              0,            1,                          0,            100,             0,              0,              0,              0,              0,          1031602,                0,                0, 'Blackhand Incarcerator - Out of Combat'),
 -- Need to check these timers against more sniffs.
 (1031603,         10316,              0,            0,                          0,            100,             1,           6000,          12000,           7000,          18000,          1031603,                0,                0, 'Blackhand Incarcerator - Cast Strike'),
@@ -65,12 +63,12 @@ INSERT `creature_ai_scripts`
 ( 981609,       0,          0,         4,         46,  0x02000100,           2,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Remove Immune Flags'),
 ( 981609,       0,          0,        22,        754,           2,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Change Faction'),
 ( 981609,       0,          1,        49,          1,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Combat Pulse'),
-(1031601,       0,          0,        39,     103161,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Set Immune Flags'),
+-- (1031601,       0,          0,        39,     103161,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Set Immune Flags'),
 (1031602,       0,          0,        39,     103162,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Encage Emberseer'),
 -- Double-check CF_INTERRUPT_PREVIOUS against other sniffs.
 (1031603,       0,          0,        15,      15580,       0x001,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Strike'),
 -- Make sure this can target a totem.
--- Double-check CF_AURA_NOT_PRESENT against other sniffs.
+-- Double-check CF_AURA_NOT_PRESENT against other sniffs. Do they ever cast it on a player who's already afflicted?
 (1031604,       0,          0,        15,      16045,       0x020,           0,           0,             4,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Encage'),
 (1031605,       0,          0,        47,          0,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Flee'),
 (1031606,       0,          0,        39,     103161,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Set Immune Flags');
@@ -85,28 +83,12 @@ UPDATE `creature_template` SET `ai_name` = 'EventAI', `script_name` = '' WHERE `
 UPDATE `creature_template`
 SET
     `auras` = '13377' -- Is setting the aura in the template right to do?
-    -- ,`unit_flags` =
-    --     -- Is setting initial flags in the template right to do?
-    --     -- Need to double check these in the mass parse database.
-    --     0x00000040 | -- UNIT_FLAG_UNK_6
-    --     0x00000100 | -- UNIT_FLAG_IMMUNE_TO_PLAYER
-    --     0x02000000   -- UNIT_FLAG_NOT_SELECTABLE
 WHERE `entry` = 9816;
-
--- Blackhand Incarcerator
--- No need to set these flags in the template because we have to set them when the fight resets anyway.
--- UPDATE `creature_template`
--- SET
---     `unit_flags` =
---         0x00000100 | -- UNIT_FLAG_IMMUNE_TO_PLAYER
---         0x00000200   -- UNIT_FLAG_IMMUNE_TO_NPC
--- WHERE `entry` = 10316;
 
 DELETE FROM `event_scripts` WHERE `id` = 4884; -- Emberseer Start
 
 INSERT `event_scripts`
 (`id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
--- Does this need a condition that the event isn't already running?
 (4884,       0,          0,        61,       4884,        1200,           0,           0,             0,               0,               0,            0,         0,      48841,        239,      48842,   0,   0,   0,   0,              0, 'Emberseer Start - Start Map Event'),
 (4884,       0,          0,        80,          1,           0,           0,           0,            12,          260283,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Close Emberseer In'),
 (4884,       0,          0,        80,          1,           0,           0,           0,            12,          397205,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Close Doors'),
@@ -152,9 +134,9 @@ INSERT `generic_scripts`
 (103163,       0,          0,         4,         46,  0x00000300,           2,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Remove Immune Flags'),
 -- ubrs_ony_attunement_dump_classic_Wow(1.13.2.31882)-6072_1570347344.pkt - targets appeared totally random. Two of three were channelers, one was standing further out but not casting.
 (103163,       0,          1,        26,          0,           0,           0,           0,            28,              50,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Attack Random Player'),
+(103164,       0,          0,        39,     103161,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Set Immune Flags'),
 (103164,       0,          0,        71,          0,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Respawn'),
 (103165,       0,          0,        68,     103164,           2,       10316,         100,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Respawn Dead Incarcerators'),
--- This rune isn't lighting up after the first attempt.
 (175266,       0,          0,        13,          0,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'DarkIronDwarfRune (West) - Activate'),
 (175266,       1,          0,         4,          9,  0x00000001,           2,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'DarkIronDwarfRune (West) - Remove In Use Flag'),
 (175267,       0,          0,        80,          0,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'DarkIronDwarfRune (Rest) - Set State Active'),
