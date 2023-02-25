@@ -66,6 +66,7 @@ INSERT `creature_ai_scripts`
 -- (1031601,       0,          0,        39,     103161,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Set Immune Flags'),
 (1031602,       0,          0,        39,     103162,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Encage Emberseer'),
 -- Double-check CF_INTERRUPT_PREVIOUS against other sniffs.
+-- Admittedly it looks like there might be even more going on. I see evidence of the channel getting interrupted by the caster getting hit. Is it the channelInterruptFlags CHANNEL_FLAG_DAMAGE?
 (1031603,       0,          0,        15,      15580,       0x001,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Strike'),
 -- Make sure this can target a totem.
 -- Double-check CF_AURA_NOT_PRESENT against other sniffs. Do they ever cast it on a player who's already afflicted?

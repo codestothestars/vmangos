@@ -16,7 +16,6 @@ FROM (
         LEFT JOIN spell_cast_start previous_same ON previous.caster_guid = previous_same.caster_guid AND previous.spell_id = previous_same.spell_id AND previous.unixtimems > previous_same.unixtimems AND (previous.unixtimems - 2000) < previous_same.unixtimems
     WHERE `current`.caster_id = 10316 AND `current`.spell_id = 16045
     GROUP BY `current`.caster_guid, `current`.unixtimems
---     HAVING (current_action - 2000) > previous_action
 ) q
 ORDER BY caster_guid, current_action;
 
