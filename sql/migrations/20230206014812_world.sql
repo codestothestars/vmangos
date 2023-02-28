@@ -10,8 +10,6 @@ INSERT INTO `migrations` VALUES ('20230206014812');
 -- Add your query below.
 
 -- To-do
--- Convert the fight reset triggers to use a Map Event (command 61).
--- Check through C++ script for unimplemented functionality.
 -- Check numbers against more sniffs.
 -- Check numbers against mass parse database.
 
