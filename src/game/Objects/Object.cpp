@@ -2968,6 +2968,24 @@ Player* WorldObject::FindNearestFriendlyPlayer(float range) const
     return target;
 }
 
+Player* WorldObject::FindRandomPlayer(float range) const
+{
+    std::list<Player*> targets;
+    GetAlivePlayerListInRange(this, targets, range);
+
+    // no appropriate targets
+    if (targets.empty())
+        return nullptr;
+
+    // select random
+    uint32 rIdx = urand(0, targets.size() - 1);
+    std::list<Player*>::const_iterator tcIter = targets.begin();
+    for (uint32 i = 0; i < rIdx; ++i)
+        ++tcIter;
+
+    return *tcIter;
+}
+
 void WorldObject::GetGameObjectListWithEntryInGrid(std::list<GameObject*>& lList, uint32 uiEntry, float fMaxSearchRange) const
 {
     CellPair pair(MaNGOS::ComputeCellPair(GetPositionX(), GetPositionY()));
