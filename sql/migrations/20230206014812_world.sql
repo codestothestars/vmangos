@@ -161,15 +161,15 @@ INSERT `generic_scripts`
 
 DELETE FROM `scripted_event_id` WHERE `id` = 4884; -- event_free_pyroguard_emberseer
 
--- Set channelers required on Blackrock Altar to 1, for testing. Revert it to 3 when done.
-UPDATE gameobject_template SET data0 = 1 WHERE `entry` = 175706;
-
 -- End of migration.
 END IF;
 END??
 delimiter ; 
 CALL add_migration();
 DROP PROCEDURE IF EXISTS add_migration;
+
+-- Set channelers required on Blackrock Altar to 1, for testing. Revert it to 3 when done.
+UPDATE gameobject_template SET data0 = 1 WHERE `entry` = 175706;
 
 -- Reset instances
 DELETE FROM character_instance;
