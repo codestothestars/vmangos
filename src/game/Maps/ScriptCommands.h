@@ -1182,6 +1182,8 @@ enum ScriptTarget
     TARGET_T_RANDOM_GAMEOBJECT_WITH_ENTRY   = 27,           //Searches for random nearby gameobject with the given entry.
                                                             //Param1 = gameobject_entry
                                                             //Param2 = search_radius
+    TARGET_T_RANDOM_PLAYER                  = 28,           //Searches for random nearby player.
+                                                            //Param1 = search_radius
     TARGET_T_END
 };
 
