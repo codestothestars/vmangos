@@ -45,7 +45,6 @@ INSERT `creature_ai_scripts`
 (   `id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
 ( 981601,       0,          0,        44,          1,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Start Phase 1'),
 ( 981601,       0,          0,         4,         46,  0x02000140,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Set Immune Flags'),
-( 981601,       0,          0,        74,      15282,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Add Encaged Emberseer'),
 ( 981602,       0,          0,        15,      16079,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Fire Nova'),
 ( 981603,       0,          0,        15,      16536,           0,           0,           0,             1,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Flame Buffet'),
 ( 981604,       0,          0,        62,       4884,           1,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - End Map Event (Success)'),
@@ -79,7 +78,7 @@ UPDATE `creature_template` SET `ai_name` = 'EventAI', `script_name` = '' WHERE `
 -- Pyroguard Emberseer
 UPDATE `creature_template`
 SET
-    `auras` = '13377' -- Is setting the aura in the template right to do?
+    `auras` = '13377 15282'
 WHERE `entry` = 9816;
 
 DELETE FROM `event_scripts` WHERE `id` = 4884; -- Emberseer Start
@@ -157,7 +156,8 @@ INSERT `generic_scripts`
 (175705,       0,          0,        80,          0,           0,           0,           0,            12,          260283,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer In - Open'),
 (175705,       0,          0,        80,          0,           0,           0,           0,            12,          397205,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Doors - Open');
 
-DELETE FROM `scripted_event_id` WHERE `id` = 4884; -- event_free_pyroguard_emberseer
+ -- event_free_pyroguard_emberseer
+DELETE FROM `scripted_event_id` WHERE `id` = 4884;
 
 -- End of migration.
 END IF;
