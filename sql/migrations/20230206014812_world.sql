@@ -44,7 +44,8 @@ INSERT `creature_ai_events`
 INSERT `creature_ai_scripts`
 (   `id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
 ( 981601,       0,          0,        44,          1,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Start Phase 1'),
-( 981601,       0,          0,         4,         46,  0x02000140,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Set Immune Flags'),
+-- ( 981601,       0,          0,         4,         46,  0x02000140,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Set Immune Flags'),
+( 981601,       0,          0,         4,         46,  0x00000140,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Set Immune Flags'),
 ( 981602,       0,          0,        15,      16079,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Fire Nova'),
 ( 981603,       0,          0,        15,      16536,           0,           0,           0,             1,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Flame Buffet'),
 ( 981604,       0,          0,        62,       4884,           1,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - End Map Event (Success)'),
@@ -81,7 +82,8 @@ SET
     `auras` = '13377 15282'
 WHERE `entry` = 9816;
 
-DELETE FROM `event_scripts` WHERE `id` = 4884; -- Emberseer Start
+-- Emberseer Start
+DELETE FROM `event_scripts` WHERE `id` = 4884;
 
 INSERT `event_scripts`
 (`id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
@@ -119,7 +121,6 @@ INSERT `generic_scripts`
 ( 48842,       0,          0,        39,     103165,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Respawn Dead Incarcerators'),
 ( 48842,       0,          0,        39,     175270,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Ready Runes'),
 ( 48842,       0,          0,        39,     175705,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Open Doors'),
--- At this point in the sniff, Emberseer's size jumps a bit initially. Are we missing something?
 ( 98161,       0,          0,        14,      15282,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Remove Encaged Emberseer'),
 ( 98161,       0,          0,        15,      16048,       0x002,           0,           0,             6,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Emberseer Growing'),
 ( 98161,       0,          0,        15,      16245,       0x002,           0,           0,             6,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Freeze Anim'),

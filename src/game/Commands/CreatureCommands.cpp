@@ -131,6 +131,7 @@ bool ChatHandler::HandleNpcInfoCommand(char* /*args*/)
     PSendSysMessage(LANG_NPCINFO_POSITION, float(target->GetPositionX()), float(target->GetPositionY()), float(target->GetPositionZ()));
     PSendSysMessage(LANG_NPCINFO_AIINFO, target->GetAIName().c_str(), target->GetScriptName().c_str());
     PSendSysMessage(LANG_NPCINFO_ACTIVE_VISIBILITY, target->isActiveObject(), target->GetVisibilityModifier());
+    PSendSysMessage("Scale: %g", target->GetObjectScale());
 
     if ((npcflags & UNIT_NPC_FLAG_VENDOR))
         SendSysMessage(LANG_NPCINFO_VENDOR);
