@@ -24,7 +24,6 @@ UPDATE `creature` SET `position_x` = 162.327, `position_y` = -276.759, `position
 INSERT `creature_ai_events`
 (   `id`, `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `action2_script`, `action3_script`, `comment`) VALUES
 ( 981601,          9816,              0,            1,                          0,            100,             0,              0,              0,              0,              0,           981601,                0,                0, 'Pyroguard Emberseer - Out of Combat'),
--- Check more full sniffs and the mass sniff database for more delay numbers.
 ( 981602,          9816,              0,            0,                          0,            100,             1,          16000,          16000,          11000,          11000,           981602,                0,                0, 'Pyroguard Emberseer - In Combat (Fire Nova)'),
 ( 981603,          9816,              0,            0,                          0,            100,             1,          10000,          10000,          10000,          10000,           981603,                0,                0, 'Pyroguard Emberseer - In Combat (Flame Buffet)'),
 ( 981604,          9816,              0,            6,                          0,            100,             0,              0,              0,              0,              0,           981604,                0,                0, 'Pyroguard Emberseer - Death'),
