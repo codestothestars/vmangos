@@ -1,4 +1,4 @@
--- Get spell cast delays from previous, by creature guid.
+-- Get spell cast delays from previous for specified spell, by creature guid.
 -- First row is first cast diffed with aggro time.
 SELECT caster_guid, current_action, previous_action, current_action - previous_action delay
 FROM (
@@ -19,7 +19,7 @@ FROM (
 ) q
 ORDER BY caster_guid, current_action;
 
--- Get spell cast delays from previous, by spell.
+-- Get spell cast delays from previous for specified creature, by spell id.
 -- First row is first cast diffed with aggro time.
 SELECT spell_id, current_action, previous_action, current_action - previous_action delay
 FROM (
