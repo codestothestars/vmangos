@@ -25,8 +25,8 @@ INSERT `creature_ai_events`
 (   `id`, `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `action2_script`, `action3_script`, `comment`) VALUES
 ( 981601,          9816,              0,            1,                          0,            100,             0,              0,              0,              0,              0,           981601,                0,                0, 'Pyroguard Emberseer - Out of Combat'),
 ( 981602,          9816,              0,            0,                          0,            100,             1,          15000,          16000,          11000,          11000,           981602,                0,                0, 'Pyroguard Emberseer - In Combat (Fire Nova)'),
--- Current step - checked sniff 37
-( 981603,          9816,              0,            0,                          0,            100,             1,           6000,          10000,           4000,          10000,           981603,                0,                0, 'Pyroguard Emberseer - In Combat (Flame Buffet)'),
+( 981603,          9816,              0,            0,                          0,            100,             1,           3000,          11000,           4000,          10000,           981603,                0,                0, 'Pyroguard Emberseer - In Combat (Flame Buffet)'),
+-- Current step - checked sniff 
 ( 981604,          9816,              0,            6,                          0,            100,             0,              0,              0,              0,              0,           981604,                0,                0, 'Pyroguard Emberseer - Death'),
 ( 981605,          9816,              0,            1,                        0x2,            100,             0,           2000,           2000,              0,              0,           981605,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 2 Growth 1)'),
 ( 981606,          9816,              0,            1,                        0x2,            100,             0,          32000,          32000,              0,              0,           981606,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 2 Growth 2)'),
@@ -151,6 +151,7 @@ INSERT `generic_scripts`
 (175270,       0,          0,        39,     175268,           0,           0,           0,            12,          397220,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Ready DarkIronDwarfRune (South-East)'),
 (175270,       0,          0,        39,     175268,           0,           0,           0,            12,          397203,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Ready DarkIronDwarfRune (North-East)'),
 (175270,       0,          0,        39,     175268,           0,           0,           0,            12,          397204,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Ready DarkIronDwarfRune (Wall)'),
+-- Need to set instance data so the doors stay open.
 (175705,       0,          0,        80,          0,           0,           0,           0,            12,          260283,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer In - Open'),
 (175705,       0,          0,        80,          0,           0,           0,           0,            12,          397205,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Doors - Open');
 
