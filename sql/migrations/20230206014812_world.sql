@@ -26,9 +26,16 @@ INSERT `creature_ai_events`
 ( 981601,          9816,              0,            1,                          0,            100,             0,              0,              0,              0,              0,           981601,                0,                0, 'Pyroguard Emberseer - Out of Combat'),
 ( 981602,          9816,              0,            0,                          0,            100,             1,          15000,          16000,          11000,          11000,           981602,                0,                0, 'Pyroguard Emberseer - In Combat (Fire Nova)'),
 ( 981603,          9816,              0,            0,                          0,            100,             1,           3000,          11000,           4000,          10000,           981603,                0,                0, 'Pyroguard Emberseer - In Combat (Flame Buffet)'),
--- Current step - checked sniff 
 ( 981604,          9816,              0,            6,                          0,            100,             0,              0,              0,              0,              0,           981604,                0,                0, 'Pyroguard Emberseer - Death'),
-( 981605,          9816,              0,            1,                        0x2,            100,             0,           2000,           2000,              0,              0,           981605,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 2 Growth 1)'),
+( 981605,          9816,              0,            1,                        0x2,            100,             0,           5000,           5000,              0,              0,           981605,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 2 Growth 1)'),
+-- Current step - event_param1/2
+-- 0000 - sniff_lbrs_dump_classic_wow(1.13.2.31882)-6948_1570307474
+-- 0000 - sniff_lbrs_ubrs_full_(1.13.2.31830)_09-19-2019 (1)
+-- 0000 - sniff_lbrs_ubrs_full_(1.13.2.31830)_09-19-2019 (2)
+-- 0000 - sniff_lbrs_ubrs_lights_chaple_dump_classic_wow(1.13.2.31882)
+-- 0000 - sniff_ubrs_2_runs_and_dire_maul_west_part_1_dc_before_immolthar
+-- 0000 - sniff_ubrs_first_time_dump_classic_wowclassic(1.13.5.35000)-2480
+-- 0000 - sniff_ubrs_ony_attunement_dump_classic_wow(1.13.2.31882)-6072
 ( 981606,          9816,              0,            1,                        0x2,            100,             0,          32000,          32000,              0,              0,           981606,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 2 Growth 2)'),
 ( 981607,          9816,              0,            1,                        0x2,            100,             0,          62000,          62000,              0,              0,           981607,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 2 Growth 3)'),
 ( 981608,          9816,              0,            1,                        0x6,            100,             0,           1000,           1000,              0,              0,           981608,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 3 Yell)'),
@@ -157,6 +164,8 @@ INSERT `generic_scripts`
 
  -- event_free_pyroguard_emberseer
 DELETE FROM `scripted_event_id` WHERE `id` = 4884;
+
+-- Do we need to check the world_state_init table in sniffs?
 
 -- End of migration.
 END IF;
