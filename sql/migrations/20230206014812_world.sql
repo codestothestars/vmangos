@@ -30,6 +30,7 @@ INSERT `creature_ai_events`
 ( 981605,          9816,              0,            1,                        0x2,            100,             0,           5000,           5000,              0,              0,           981605,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 2 Growth 1)'),
 ( 981606,          9816,              0,            1,                        0x2,            100,             0,          35000,          35000,              0,              0,           981606,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 2 Growth 2)'),
 ( 981607,          9816,              0,            1,                        0x2,            100,             0,          65000,          65000,              0,              0,           981607,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 2 Growth 3)'),
+( 981608,          9816,              0,            1,                        0x6,            100,             0,           2000,           2000,              0,              0,           981608,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 3 Yell)'),
 -- Current step - event_param1/2
 -- 0000 - sniff_lbrs_dump_classic_wow(1.13.2.31882)-6948_1570307474
 -- 0000 - sniff_lbrs_ubrs_full_(1.13.2.31830)_09-19-2019 (1)
@@ -38,7 +39,6 @@ INSERT `creature_ai_events`
 -- 0000 - sniff_ubrs_2_runs_and_dire_maul_west_part_1_dc_before_immolthar
 -- 0000 - sniff_ubrs_first_time_dump_classic_wowclassic(1.13.5.35000)-2480
 -- 0000 - sniff_ubrs_ony_attunement_dump_classic_wow(1.13.2.31882)-6072
-( 981608,          9816,              0,            1,                        0x6,            100,             0,           1000,           1000,              0,              0,           981608,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 3 Yell)'),
 ( 981609,          9816,              0,            1,                        0x6,            100,             0,           5000,           5000,              0,              0,           981609,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 3 Attack Start)'),
 (1031602,         10316,              0,            1,                          0,            100,             0,              0,              0,              0,              0,          1031602,                0,                0, 'Blackhand Incarcerator - Out of Combat'),
 (1031603,         10316,              0,            0,                          0,            100,             1,           6000,          12000,           7000,          18000,          1031603,                0,                0, 'Blackhand Incarcerator - Cast Strike'),
