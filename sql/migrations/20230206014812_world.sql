@@ -24,14 +24,13 @@ UPDATE `creature` SET `position_x` = 162.327, `position_y` = -276.759, `position
 INSERT `creature_ai_events`
 (   `id`, `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `action2_script`, `action3_script`, `comment`) VALUES
 ( 981601,          9816,              0,            1,                          0,            100,             0,              0,              0,              0,              0,           981601,                0,                0, 'Pyroguard Emberseer - Out of Combat'),
-( 981602,          9816,              0,            0,                          0,            100,             1,          15000,          16000,          11000,          11000,           981602,                0,                0, 'Pyroguard Emberseer - In Combat (Fire Nova)'),
-( 981603,          9816,              0,            0,                          0,            100,             1,           3000,          11000,           4000,          10000,           981603,                0,                0, 'Pyroguard Emberseer - In Combat (Flame Buffet)'),
 ( 981604,          9816,              0,            6,                          0,            100,             0,              0,              0,              0,              0,           981604,                0,                0, 'Pyroguard Emberseer - Death'),
 ( 981605,          9816,              0,            1,                        0x2,            100,             0,           5000,           5000,              0,              0,           981605,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 2 Growth 1)'),
 ( 981606,          9816,              0,            1,                        0x2,            100,             0,          35000,          35000,              0,              0,           981606,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 2 Growth 2)'),
 ( 981607,          9816,              0,            1,                        0x2,            100,             0,          65000,          65000,              0,              0,           981607,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 2 Growth 3)'),
 ( 981608,          9816,              0,            1,                        0x6,            100,             0,           1000,           1000,              0,              0,           981608,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 3 Yell)'),
 ( 981609,          9816,              0,            1,                        0x6,            100,             0,           3000,           3000,              0,              0,           981609,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 3 Attack Start)'),
+(1031602,         10316,              0,            1,                          0,            100,             0,              0,              0,              0,              0,          1031602,                0,                0, 'Blackhand Incarcerator - Out of Combat'),
 -- Current step - event_param1/2
 -- 0000 - sniff_lbrs_dump_classic_wow(1.13.2.31882)-6948_1570307474
 -- 0000 - sniff_lbrs_ubrs_full_(1.13.2.31830)_09-19-2019 (1)
@@ -41,9 +40,6 @@ INSERT `creature_ai_events`
 -- 0000 - sniff_ubrs_2_runs_and_dire_maul_west_part_1_dc_before_immolthar (2)
 -- 0000 - sniff_ubrs_first_time_dump_classic_wowclassic(1.13.5.35000)-2480
 -- 0000 - sniff_ubrs_ony_attunement_dump_classic_wow(1.13.2.31882)-6072
-(1031602,         10316,              0,            1,                          0,            100,             0,              0,              0,              0,              0,          1031602,                0,                0, 'Blackhand Incarcerator - Out of Combat'),
-(1031603,         10316,              0,            0,                          0,            100,             1,           6000,          12000,           7000,          18000,          1031603,                0,                0, 'Blackhand Incarcerator - Cast Strike'),
-(1031604,         10316,              0,            0,                          0,            100,             1,           6000,          25000,          16000,          30000,          1031604,                0,                0, 'Blackhand Incarcerator - Cast Encage'),
 (1031605,         10316,              0,            2,                          0,            100,             0,             15,              0,              0,              0,          1031605,                0,                0, 'Blackhand Incarcerator - 15% Health'),
 (1031606,         10316,              0,           11,                          0,            100,             0,              0,              0,              0,              0,          1031606,                0,                0, 'Blackhand Incarcerator - Spawn');
 
@@ -51,8 +47,6 @@ INSERT `creature_ai_scripts`
 (   `id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
 ( 981601,       0,          0,        44,          1,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Start Phase 1'),
 ( 981601,       0,          0,         4,         46,  0x02000140,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Set Immune Flags'),
-( 981602,       0,          0,        15,      16079,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Fire Nova'),
-( 981603,       0,          0,        15,      16536,           0,           0,           0,             1,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Flame Buffet'),
 ( 981604,       0,          0,        62,       4884,           1,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - End Map Event (Success)'),
 ( 981605,       0,          0,        39,      98161,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Growth Start'),
 ( 981606,       0,          0,         0,          2,           0,           0,           0,             0,               0,               0,            0,      5566,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Growth Text 2'),
@@ -68,12 +62,16 @@ INSERT `creature_ai_scripts`
 ( 981609,       0,          1,        49,          1,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Combat Pulse'),
 (1031601,       0,          0,        39,     103161,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Set Immune Flags'),
 (1031602,       0,          0,        39,     103162,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Encage Emberseer'),
--- Double-check CF_INTERRUPT_PREVIOUS against other sniffs.
-(1031603,       0,          0,        15,      15580,       0x001,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Strike'),
--- Double-check CF_AURA_NOT_PRESENT against other sniffs. Do they ever cast it on a player who's already afflicted?
-(1031604,       0,          0,        15,      16045,       0x020,           0,           0,             4,           0x001,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Encage'),
 (1031605,       0,          0,        47,          0,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Flee'),
 (1031606,       0,          0,        39,     103161,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Set Immune Flags');
+
+INSERT `creature_spells`
+(`entry`, `name`,                   `spellId_1`, `probability_1`, `castTarget_1`, `targetParam1_1`, `targetParam2_1`, `castFlags_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `scriptId_1`, `spellId_2`, `probability_2`, `castTarget_2`, `targetParam1_2`, `targetParam2_2`, `castFlags_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `scriptId_2`) VALUES
+-- Already checked 9816 spells
+(   9816, 'Pyroguard Emberseer',          16079,             100,              0,                0,                0,             0,                  15,                  16,                 11,                 11,            0,       16536,             100,              1,                0,                0,             0,                   3,                  11,                  4,                 10,            0),
+-- Double-check 15580 CF_INTERRUPT_PREVIOUS against other sniffs.
+-- Double-check 16045 CF_AURA_NOT_PRESENT against other sniffs. Do they ever cast it on a player who's already afflicted?
+(  10316, 'Blackhand Incarcerator',       15580,             100,              0,                0,                0,         0x001,                   6,                  12,                  7,                 18,            0,       16045,             100,              4,            0x001,                0,         0x020,                   6,                  25,                 16,                 30,            0);
 
 -- Disable C++ scripts
 UPDATE `creature_template` SET `ai_name` = 'EventAI', `script_name` = '' WHERE `entry` IN (
