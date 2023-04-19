@@ -10,8 +10,8 @@ INSERT INTO `migrations` VALUES ('20230206014812');
 -- Add your query below.
 
 -- To-do
--- Check numbers against more sniffs.
--- Check numbers against mass parse database.
+-- Move generic_scripts into creature_ai_scripts where possible. No need for them to be in there if they're only used once.
+-- Clean up script IDs. Should be in chronological order where applicable.
 
 -- No players alive within 100 yards.
 INSERT `conditions`
@@ -37,16 +37,14 @@ INSERT `creature_ai_events`
 INSERT `creature_ai_scripts`
 (   `id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
 ( 981601,       0,          0,        44,          1,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Start Phase 1'),
--- Current step - 
---  - sniff_lbrs_dump_classic_wow(1.13.2.31882)-6948_1570307474
---  - sniff_lbrs_ubrs_full_(1.13.2.31830)_09-19-2019 (1)
---  - sniff_lbrs_ubrs_lights_chaple_dump_classic_wow(1.13.2.31882)
---  - sniff_ubrs_2_runs_and_dire_maul_west_part_1_dc_before_immolthar (1)
---  - sniff_ubrs_first_time_dump_classic_wowclassic(1.13.5.35000)-2480
---  - sniff_ubrs_ony_attunement_dump_classic_wow(1.13.2.31882)-6072
 ( 981601,       0,          0,         4,         46,  0x02000140,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Set Immune Flags'),
 ( 981604,       0,          0,        62,       4884,           1,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - End Map Event (Success)'),
-( 981605,       0,          0,        39,      98161,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Growth Start'),
+-- For the following four commands, don't think this needs to be a script.
+-- ( 981605,       0,          0,        39,      98161,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Growth Start'),
+( 981605,       0,          0,        14,      15282,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Remove Encaged Emberseer'),
+( 981605,       0,          0,        15,      16048,       0x002,           0,           0,             6,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Emberseer Growing'),
+( 981605,       0,          0,        15,      16245,       0x002,           0,           0,             6,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Freeze Anim'),
+( 981605,       0,          0,         0,          2,           0,           0,           0,             0,               0,               0,            0,      5565,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Growth Text 1'),
 ( 981606,       0,          0,         0,          2,           0,           0,           0,             0,               0,               0,            0,      5566,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Growth Text 2'),
 ( 981607,       0,          0,         0,          2,           0,           0,           0,             0,               0,               0,            0,      5567,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Growth Text 3'),
 ( 981607,       0,          0,        14,      16245,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Remove Freeze Anim'),
@@ -54,6 +52,13 @@ INSERT `creature_ai_scripts`
 ( 981607,       0,          0,        39,     175269,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Activate Runes'),
 ( 981607,       0,          0,        44,          3,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Start Phase 3'),
 ( 981608,       0,          0,         0,          1,           0,           0,           0,             0,               0,               0,            0,      5268,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Yell'),
+-- Current step - 
+--  - sniff_lbrs_dump_classic_wow(1.13.2.31882)-6948_1570307474
+--  - sniff_lbrs_ubrs_full_(1.13.2.31830)_09-19-2019 (1)
+--  - sniff_lbrs_ubrs_lights_chaple_dump_classic_wow(1.13.2.31882)
+--  - sniff_ubrs_2_runs_and_dire_maul_west_part_1_dc_before_immolthar (1)
+--  - sniff_ubrs_first_time_dump_classic_wowclassic(1.13.5.35000)-2480
+--  - sniff_ubrs_ony_attunement_dump_classic_wow(1.13.2.31882)-6072
 ( 981609,       0,          0,         4,         46,  0x00000800,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Set Flags'),
 ( 981609,       0,          0,         4,         46,  0x02000100,           2,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Remove Immune Flags'),
 ( 981609,       0,          0,        22,        754,           2,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Change Faction'),
@@ -122,10 +127,6 @@ INSERT `generic_scripts`
 ( 48842,       0,          0,        39,     103165,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Respawn Dead Incarcerators'),
 ( 48842,       0,          0,        39,     175270,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Ready Runes'),
 ( 48842,       0,          0,        39,     175705,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Open Doors'),
-( 98161,       0,          0,        14,      15282,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Remove Encaged Emberseer'),
-( 98161,       0,          0,        15,      16048,       0x002,           0,           0,             6,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Emberseer Growing'),
-( 98161,       0,          0,        15,      16245,       0x002,           0,           0,             6,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Freeze Anim'),
-( 98161,       0,          0,         0,          2,           0,           0,           0,             0,               0,               0,            0,      5565,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Growth Text 1'),
 ( 98162,       0,          0,        71,          1,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Respawn'),
 (103161,       0,          0,         4,         46,  0x00000300,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Set Immune Flags'),
 (103162,       0,          0,        15,      15281,           0,           0,           0,             8,            9816,              30,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Encage Emberseer'),
