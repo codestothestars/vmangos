@@ -52,6 +52,11 @@ INSERT `creature_ai_scripts`
 ( 981607,       0,          0,        39,     175269,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Activate Runes'),
 ( 981607,       0,          0,        44,          3,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Start Phase 3'),
 ( 981608,       0,          0,         0,          1,           0,           0,           0,             0,               0,               0,            0,      5268,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Yell'),
+-- This was only adding UNIT_FLAG_PET_IN_COMBAT, which I wouldn't expect the script to be responsible for adding.
+-- ( 981609,       0,          0,         4,         46,  0x00000800,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Set Flags'),
+( 981609,       0,          0,         4,         46,  0x02000100,           2,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Remove Immune Flags'),
+( 981609,       0,          0,        22,        754,           2,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Change Faction'),
+( 981609,       0,          1,        49,          1,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Combat Pulse'),
 -- Current step - 
 --  - sniff_lbrs_dump_classic_wow(1.13.2.31882)-6948_1570307474
 --  - sniff_lbrs_ubrs_full_(1.13.2.31830)_09-19-2019 (1)
@@ -59,11 +64,6 @@ INSERT `creature_ai_scripts`
 --  - sniff_ubrs_2_runs_and_dire_maul_west_part_1_dc_before_immolthar (1)
 --  - sniff_ubrs_first_time_dump_classic_wowclassic(1.13.5.35000)-2480
 --  - sniff_ubrs_ony_attunement_dump_classic_wow(1.13.2.31882)-6072
-( 981609,       0,          0,         4,         46,  0x00000800,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Set Flags'),
-( 981609,       0,          0,         4,         46,  0x02000100,           2,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Remove Immune Flags'),
-( 981609,       0,          0,        22,        754,           2,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Change Faction'),
-( 981609,       0,          1,        49,          1,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Combat Pulse'),
-(1031601,       0,          0,        39,     103161,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Set Immune Flags'),
 (1031602,       0,          0,        39,     103162,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Encage Emberseer'),
 (1031605,       0,          0,        47,          0,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Flee'),
 (1031606,       0,          0,        39,     103161,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Set Immune Flags');
