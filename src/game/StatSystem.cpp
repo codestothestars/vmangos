@@ -170,8 +170,7 @@ void Player::UpdateMaxHealth()
     value += GetModifierValue(unitMod, TOTAL_VALUE) + GetHealthBonusFromStamina(GetStat(STAT_STAMINA));
     value *= GetModifierValue(unitMod, TOTAL_PCT);
 
-    // ARIEL - for raiding
-    value /= 2;
+    value *= sWorld.getConfig(CONFIG_FLOAT_CODESTOTHESTARS_RATE_PLAYER_HP);
 
     SetMaxHealth(std::max(1, int(value)));
 }
@@ -757,8 +756,7 @@ void Creature::UpdateMaxHealth()
     {
         value += GetCreateHealth();
 
-        // ARIEL - For raiding.
-        if ((Player*)GetOwner()) value /= 2;
+        if ((Player*)GetOwner()) value *= sWorld.getConfig(CONFIG_FLOAT_CODESTOTHESTARS_RATE_PLAYER_HP);
     }
     value *= GetModifierValue(unitMod, BASE_PCT);
     value += GetModifierValue(unitMod, TOTAL_VALUE) + stamina * 10.0f;
