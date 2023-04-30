@@ -65,15 +65,15 @@ INSERT `creature_spells`
 (`entry`, `name`,                   `spellId_1`, `probability_1`, `castTarget_1`, `targetParam1_1`, `targetParam2_1`, `castFlags_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `scriptId_1`, `spellId_2`, `probability_2`, `castTarget_2`, `targetParam1_2`, `targetParam2_2`, `castFlags_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `scriptId_2`) VALUES
 -- Already checked 9816 spells
 (   9816, 'Pyroguard Emberseer',          16079,             100,              0,                0,                0,             0,                  15,                  16,                 11,                 11,            0,       16536,             100,              1,                0,                0,             0,                   3,                  11,                  4,                 10,            0),
--- Current step - Double-check 15580 CF_INTERRUPT_PREVIOUS against other sniffs.
--- Negative - sniff_lbrs_dump_classic_wow(1.13.2.31882)-6948_1570307474
+-- Current step - Double-check 16045 CF_AURA_NOT_PRESENT against other sniffs. Do they ever cast it on a player who's already afflicted?
+--  - sniff_lbrs_dump_classic_wow(1.13.2.31882)-6948_1570307474
 --  - sniff_lbrs_ubrs_full_(1.13.2.31830)_09-19-2019 (1)
 --  - sniff_lbrs_ubrs_lights_chaple_dump_classic_wow(1.13.2.31882)
 --  - sniff_ubrs_2_runs_and_dire_maul_west_part_1_dc_before_immolthar (1)
 --  - sniff_ubrs_first_time_dump_classic_wowclassic(1.13.5.35000)-2480
 --  - sniff_ubrs_ony_attunement_dump_classic_wow(1.13.2.31882)-6072
 -- Double-check 16045 CF_AURA_NOT_PRESENT against other sniffs. Do they ever cast it on a player who's already afflicted?
-(  10316, 'Blackhand Incarcerator',       15580,             100,              0,                0,                0,         0x001,                   6,                  12,                  7,                 18,            0,       16045,             100,              4,            0x001,                0,         0x022,                   6,                  25,                 16,                 30,            0);
+(  10316, 'Blackhand Incarcerator',       15580,             100,              0,                0,                0,             0,                   6,                  12,                  7,                 18,            0,       16045,             100,              4,            0x001,                0,         0x022,                   6,                  25,                 16,                 30,            0);
 
 -- Disable C++ scripts
 UPDATE `creature_template` SET `ai_name` = 'EventAI', `script_name` = '' WHERE `entry` IN (
