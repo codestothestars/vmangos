@@ -84,13 +84,6 @@ DELETE FROM `event_scripts` WHERE `id` = 4884;
 
 INSERT `event_scripts`
 (`id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
--- Current step - 
---  - sniff_lbrs_dump_classic_wow(1.13.2.31882)-6948_1570307474
---  - sniff_lbrs_ubrs_full_(1.13.2.31830)_09-19-2019 (1)
---  - sniff_lbrs_ubrs_lights_chaple_dump_classic_wow(1.13.2.31882)
---  - sniff_ubrs_2_runs_and_dire_maul_west_part_1_dc_before_immolthar (1)
---  - sniff_ubrs_first_time_dump_classic_wowclassic(1.13.5.35000)-2480
---  - sniff_ubrs_ony_attunement_dump_classic_wow(1.13.2.31882)-6072
 (4884,       0,          0,        61,       4884,        1200,           0,           0,             0,               0,               0,            0,         0,      48841,        239,      48842,   0,   0,   0,   0,              0, 'Emberseer Start - Start Map Event'),
 (4884,       0,          0,        80,          1,           0,           0,           0,            12,          260283,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Close Emberseer In'),
 (4884,       0,          0,        80,          1,           0,           0,           0,            12,          397205,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Close Doors'),
@@ -100,6 +93,13 @@ INSERT `event_scripts`
 -- Sniffs reveal an extra DarkIronDwarfRune in the wall, which is also activated during the fight.
 INSERT `gameobject`
 (`guid`,   `id`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecsmin`, `spawntimesecsmax`, `animprogress`, `state`, `spawn_flags`, `visibility_mod`, `patch_min`, `patch_max`) VALUES
+-- Current step - 
+--  - sniff_lbrs_dump_classic_wow(1.13.2.31882)-6948_1570307474
+--  - sniff_lbrs_ubrs_full_(1.13.2.31830)_09-19-2019 (1)
+--  - sniff_lbrs_ubrs_lights_chaple_dump_classic_wow(1.13.2.31882)
+--  - sniff_ubrs_2_runs_and_dire_maul_west_part_1_dc_before_immolthar (1)
+--  - sniff_ubrs_first_time_dump_classic_wowclassic(1.13.5.35000)-2480
+--  - sniff_ubrs_ony_attunement_dump_classic_wow(1.13.2.31882)-6072
 (397204, 175187,   229,       144.37,     -299.198,      91.4701,             0,           0,           0,           0,           1,                 25,                 25,            100,       1,             0,                0,           0,          10);
 
 -- Missing entry door
