@@ -86,13 +86,17 @@ INSERT `event_scripts`
 (`id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
 (4884,       0,          0,        61,       4884,        1200,           0,           0,             0,               0,               0,            0,         0,      48841,        239,      48842,   0,   0,   0,   0,              0, 'Emberseer Start - Start Map Event'),
 (4884,       0,          0,        80,          1,           0,           0,           0,            12,          260283,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Close Emberseer In'),
-(4884,       0,          0,        80,          1,           0,           0,           0,            12,          397205,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Close Doors'),
+(4884,       0,          0,        80,          1,           0,           0,           0,            12,          260284,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Close Doors'),
 (4884,       0,          0,        68,     103163,           2,       10316,          50,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on Incarcerators'),
 (4884,       0,          0,        44,          2,           0,           0,           0,             8,            9816,              30,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Phase 2 on Pyroguard Emberseer');
 
 -- Sniffs reveal an extra DarkIronDwarfRune in the wall, which is also activated during the fight.
 INSERT `gameobject`
 (`guid`,   `id`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecsmin`, `spawntimesecsmax`, `animprogress`, `state`, `spawn_flags`, `visibility_mod`, `patch_min`, `patch_max`) VALUES
+(397204, 175187,   229,       144.37,     -299.198,      91.4701,             0,           0,           0,           0,           1,                 25,                 25,            100,       1,             0,                0,           0,          10);
+
+INSERT `generic_scripts`
+(  `id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
 -- Current step - 
 --  - sniff_lbrs_dump_classic_wow(1.13.2.31882)-6948_1570307474
 --  - sniff_lbrs_ubrs_full_(1.13.2.31830)_09-19-2019 (1)
@@ -100,24 +104,6 @@ INSERT `gameobject`
 --  - sniff_ubrs_2_runs_and_dire_maul_west_part_1_dc_before_immolthar (1)
 --  - sniff_ubrs_first_time_dump_classic_wowclassic(1.13.5.35000)-2480
 --  - sniff_ubrs_ony_attunement_dump_classic_wow(1.13.2.31882)-6072
-(397204, 175187,   229,       144.37,     -299.198,      91.4701,             0,           0,           0,           0,           1,                 25,                 25,            100,       1,             0,                0,           0,          10);
-
--- Missing entry door
-INSERT `gameobject`
-(`guid`,   `id`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecsmin`, `spawntimesecsmax`, `animprogress`, `state`, `spawn_flags`, `visibility_mod`, `patch_min`, `patch_max`) VALUES
-(397205, 175705,   229,      175.127,     -258.945,      91.5603,             0,           0,           0,           0,           1,                 25,                 25,            100,       0,             0,                0,           0,          10);
-
--- Templates of most of the DarkIronDwarfRune objects in boss room were incorrect/swapped around. Also tweak positions from sniffs.
-UPDATE `gameobject` SET `id` = 175266, `position_x` = 144.375, `position_y` = -240.826, `position_z` = 91.4713 WHERE `guid` = 397215; -- West
-UPDATE `gameobject` SET `id` = 175267, `position_x` = 126.354, `position_y` = -240.77 , `position_z` = 91.4701 WHERE `guid` = 397218; -- South-West
-UPDATE `gameobject` SET                `position_x` = 162.466, `position_y` = -240.765, `position_z` = 91.4688 WHERE `guid` = 397210; -- North-West
-UPDATE `gameobject` SET `id` = 175269, `position_x` = 126.296, `position_y` = -258.732, `position_z` = 91.4701 WHERE `guid` = 397219; -- South
-UPDATE `gameobject` SET `id` = 175270, `position_x` = 162.443, `position_y` = -258.904, `position_z` = 91.4701 WHERE `guid` = 397208; -- North
-UPDATE `gameobject` SET `id` = 175271, `position_x` = 126.402, `position_y` = -276.79 , `position_z` = 91.4701 WHERE `guid` = 397220; -- South-East
-UPDATE `gameobject` SET `id` = 175272, `position_x` = 162.401, `position_y` = -276.824, `position_z` = 91.4701 WHERE `guid` = 397203; -- North-East
-
-INSERT `generic_scripts`
-(  `id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
 ( 48841,       0,          0,        39,     175270,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Ready Runes'),
 ( 48841,       0,          0,        39,     175705,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Open Doors'),
 ( 48841,       0,          0,        11,     261637,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Open Emberseer Out'),
@@ -156,7 +142,7 @@ INSERT `generic_scripts`
 (175270,       0,          0,        39,     175268,           0,           0,           0,            12,          397204,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Ready DarkIronDwarfRune (Wall)'),
 -- Need to set instance data so the doors stay open.
 (175705,       0,          0,        80,          0,           0,           0,           0,            12,          260283,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer In - Open'),
-(175705,       0,          0,        80,          0,           0,           0,           0,            12,          397205,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Doors - Open');
+(175705,       0,          0,        80,          0,           0,           0,           0,            12,          260284,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Doors - Open');
 
  -- event_free_pyroguard_emberseer
 DELETE FROM `scripted_event_id` WHERE `id` = 4884;
@@ -181,6 +167,6 @@ DELETE FROM instance;
 -- RESET ALL
 DELETE FROM conditions WHERE condition_entry = 239;
 DELETE FROM generic_scripts WHERE id LIKE '4884%' OR id LIKE '9816%' OR id LIKE '10316%' OR id LIKE '1752%' OR id = '175705';
-DELETE FROM gameobject WHERE `guid` IN (397204, 397205);
+DELETE FROM gameobject WHERE `guid` IN (397204);
 DELETE FROM creature_ai_scripts WHERE id LIKE '9816%' OR id LIKE '10316%';
 DELETE FROM creature_ai_events WHERE id LIKE '9816%' OR id LIKE '10316%';
