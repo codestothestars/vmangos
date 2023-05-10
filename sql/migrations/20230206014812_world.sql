@@ -97,13 +97,6 @@ INSERT `gameobject`
 
 INSERT `generic_scripts`
 (  `id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
--- Current step - 
---  - sniff_lbrs_dump_classic_wow(1.13.2.31882)-6948_1570307474
---  - sniff_lbrs_ubrs_full_(1.13.2.31830)_09-19-2019 (1)
---  - sniff_lbrs_ubrs_lights_chaple_dump_classic_wow(1.13.2.31882)
---  - sniff_ubrs_2_runs_and_dire_maul_west_part_1_dc_before_immolthar (1)
---  - sniff_ubrs_first_time_dump_classic_wowclassic(1.13.5.35000)-2480
---  - sniff_ubrs_ony_attunement_dump_classic_wow(1.13.2.31882)-6072
 ( 48841,       0,          0,        39,     175270,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Ready Runes'),
 ( 48841,       0,          0,        39,     175705,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Open Doors'),
 ( 48841,       0,          0,        11,     261637,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Open Emberseer Out'),
@@ -111,6 +104,13 @@ INSERT `generic_scripts`
 ( 48842,       0,          0,        39,     103165,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Respawn Dead Incarcerators'),
 ( 48842,       0,          0,        39,     175270,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Ready Runes'),
 ( 48842,       0,          0,        39,     175705,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Open Doors'),
+-- Current step - 
+--  - sniff_lbrs_dump_classic_wow(1.13.2.31882)-6948_1570307474
+--  - sniff_lbrs_ubrs_full_(1.13.2.31830)_09-19-2019 (1)
+--  - sniff_lbrs_ubrs_lights_chaple_dump_classic_wow(1.13.2.31882)
+--  - sniff_ubrs_2_runs_and_dire_maul_west_part_1_dc_before_immolthar (1)
+--  - sniff_ubrs_first_time_dump_classic_wowclassic(1.13.5.35000)-2480
+--  - sniff_ubrs_ony_attunement_dump_classic_wow(1.13.2.31882)-6072
 ( 98162,       0,          0,        71,          1,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Respawn'),
 (103161,       0,          0,         4,         46,  0x00000300,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Set Immune Flags'),
 (103162,       0,          0,        15,      15281,           0,           0,           0,             8,            9816,              30,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Encage Emberseer'),
