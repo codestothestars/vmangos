@@ -112,14 +112,6 @@ INSERT `generic_scripts`
 (103164,       0,          0,        39,     103161,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Set Immune Flags'),
 (103164,       0,          0,        71,          0,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Respawn'),
 (103165,       0,          0,        68,     103164,           2,       10316,         100,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Respawn Dead Incarcerators'),
--- Current step - 
---  - sniff_lbrs_dump_classic_wow(1.13.2.31882)-6948_1570307474
---  - sniff_lbrs_ubrs_full_(1.13.2.31830)_09-19-2019 (1)
---  - sniff_lbrs_ubrs_full_(1.13.2.31830)_09-19-2019 (2)
---  - sniff_lbrs_ubrs_lights_chaple_dump_classic_wow(1.13.2.31882)
---  - sniff_ubrs_2_runs_and_dire_maul_west_part_1_dc_before_immolthar (1)
---  - sniff_ubrs_first_time_dump_classic_wowclassic(1.13.5.35000)-2480
---  - sniff_ubrs_ony_attunement_dump_classic_wow(1.13.2.31882)-6072
 (175266,       0,          0,        13,          0,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'DarkIronDwarfRune (West) - Activate'),
 (175266,       1,          0,         4,          9,  0x00000001,           2,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'DarkIronDwarfRune (West) - Remove In Use Flag'),
 (175267,       0,          0,        80,          0,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'DarkIronDwarfRune (Rest) - Set State Active'),
