@@ -1397,6 +1397,9 @@ bool Pet::InitStatsForLevel(uint32 petlevel, Unit* owner)
         else
             scale = cFamily->minScale + float(GetLevel() - cFamily->minScaleLevel) / cFamily->maxScaleLevel * (cFamily->maxScale - cFamily->minScale);
 
+        if (cinfo->entry == 3237) // codestothestars - smaller Wooly Kodo
+            scale *= .75;
+        
         SetObjectScale(scale);
         UpdateModelData();
     }
