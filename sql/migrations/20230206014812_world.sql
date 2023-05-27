@@ -1,0 +1,164 @@
+DROP PROCEDURE IF EXISTS add_migration;
+delimiter ??
+CREATE PROCEDURE `add_migration`()
+BEGIN
+DECLARE v INT DEFAULT 1;
+
+SET v = (SELECT COUNT(*) FROM `migrations` WHERE `id`='20230206014812');
+IF v=0 THEN
+INSERT INTO `migrations` VALUES ('20230206014812');
+-- Add your query below.
+
+-- To-do
+-- Move generic_scripts into creature_ai_scripts where possible. No need for them to be in there if they're only used once.
+-- Clean up script IDs. Should be in chronological order where applicable.
+
+-- No players alive within 100 yards.
+INSERT `conditions`
+(`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES
+(              239,     56,        0,      100,        0,        0,       1);
+
+-- Blackhand Incarcerator in north-east corner wasn't standing on rune.
+UPDATE `creature` SET `position_x` = 162.327, `position_y` = -276.759, `position_z` = 91.6961, orientation = 2.32129 WHERE `guid` = 40452;
+
+INSERT `creature_ai_events`
+(   `id`, `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `action2_script`, `action3_script`, `comment`) VALUES
+( 981601,          9816,              0,            1,                          0,            100,             0,              0,              0,              0,              0,           981601,                0,                0, 'Pyroguard Emberseer - Out of Combat'),
+( 981604,          9816,              0,            6,                          0,            100,             0,              0,              0,              0,              0,           981604,                0,                0, 'Pyroguard Emberseer - Death'),
+( 981605,          9816,              0,            1,                        0x2,            100,             0,           5000,           5000,              0,              0,           981605,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 2 Growth 1)'),
+( 981606,          9816,              0,            1,                        0x2,            100,             0,          35000,          35000,              0,              0,           981606,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 2 Growth 2)'),
+( 981607,          9816,              0,            1,                        0x2,            100,             0,          65000,          65000,              0,              0,           981607,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 2 Growth 3)'),
+( 981608,          9816,              0,            1,                        0x6,            100,             0,           1000,           1000,              0,              0,           981608,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 3 Yell)'),
+( 981609,          9816,              0,            1,                        0x6,            100,             0,           3000,           3000,              0,              0,           981609,                0,                0, 'Pyroguard Emberseer - Out of Combat (Phase 3 Attack Start)'),
+(1031602,         10316,              0,            1,                          0,            100,             0,              0,              0,              0,              0,          1031602,                0,                0, 'Blackhand Incarcerator - Out of Combat'),
+(1031605,         10316,              0,            2,                          0,            100,             0,             15,              0,              0,              0,          1031605,                0,                0, 'Blackhand Incarcerator - 15% Health'),
+(1031606,         10316,              0,           11,                          0,            100,             0,              0,              0,              0,              0,          1031606,                0,                0, 'Blackhand Incarcerator - Spawn');
+
+INSERT `creature_ai_scripts`
+(   `id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
+( 981601,       0,          0,        44,          1,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Start Phase 1'),
+( 981601,       0,          0,         4,         46,  0x02000140,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Set Immune Flags'),
+( 981604,       0,          0,        62,       4884,           1,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - End Map Event (Success)'),
+-- For the following four commands, don't think this needs to be a script.
+-- ( 981605,       0,          0,        39,      98161,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Growth Start'),
+( 981605,       0,          0,        14,      15282,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Remove Encaged Emberseer'),
+( 981605,       0,          0,        15,      16048,       0x002,           0,           0,             6,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Emberseer Growing'),
+( 981605,       0,          0,        15,      16245,       0x002,           0,           0,             6,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Freeze Anim'),
+( 981605,       0,          0,         0,          2,           0,           0,           0,             0,               0,               0,            0,      5565,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Growth Text 1'),
+( 981606,       0,          0,         0,          2,           0,           0,           0,             0,               0,               0,            0,      5566,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Growth Text 2'),
+( 981607,       0,          0,         0,          2,           0,           0,           0,             0,               0,               0,            0,      5567,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Growth Text 3'),
+( 981607,       0,          0,        14,      16245,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Remove Freeze Anim'),
+( 981607,       0,          0,        15,      16047,       0x002,           0,           0,             6,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Cast Emberseer Full Strength'),
+( 981607,       0,          0,        39,     175269,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Activate Runes'),
+( 981607,       0,          0,        44,          3,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Start Phase 3'),
+( 981608,       0,          0,         0,          1,           0,           0,           0,             0,               0,               0,            0,      5268,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Yell'),
+-- This was only adding UNIT_FLAG_PET_IN_COMBAT, which I wouldn't expect the script to be responsible for adding.
+-- ( 981609,       0,          0,         4,         46,  0x00000800,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Set Flags'),
+( 981609,       0,          0,         4,         46,  0x02000100,           2,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Remove Immune Flags'),
+( 981609,       0,          0,        22,        754,           2,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Change Faction'),
+( 981609,       0,          1,        49,          1,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Combat Pulse'),
+(1031602,       0,          0,        39,     103162,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Encage Emberseer'),
+(1031605,       0,          0,        47,          0,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Flee'),
+(1031606,       0,          0,        39,     103161,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Set Immune Flags');
+
+INSERT `creature_spells`
+(`entry`, `name`,                   `spellId_1`, `probability_1`, `castTarget_1`, `targetParam1_1`, `targetParam2_1`, `castFlags_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `scriptId_1`, `spellId_2`, `probability_2`, `castTarget_2`, `targetParam1_2`, `targetParam2_2`, `castFlags_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `scriptId_2`) VALUES
+(   9816, 'Pyroguard Emberseer',          16079,             100,              0,                0,                0,             0,                  15,                  16,                 11,                 11,            0,       16536,             100,              1,                0,                0,             0,                   3,                  11,                  4,                 10,            0),
+-- Test whether 16045 CF_TRIGGERED is necessary for the spell to work.
+(  10316, 'Blackhand Incarcerator',       15580,             100,              0,                0,                0,             0,                   6,                  12,                  7,                 18,            0,       16045,             100,              4,            0x001,                0,         0x002,                   6,                  25,                 16,                 30,            0);
+
+-- Disable C++ scripts
+UPDATE `creature_template` SET `ai_name` = 'EventAI', `script_name` = '' WHERE `entry` IN (
+     9816, -- Pyroguard Emberseer
+    10316  -- Blackhand Incarcerator
+);
+
+-- Pyroguard Emberseer
+UPDATE `creature_template`
+SET
+    `auras` = '13377 15282'
+WHERE `entry` = 9816;
+
+-- Emberseer Start
+DELETE FROM `event_scripts` WHERE `id` = 4884;
+
+INSERT `event_scripts`
+(`id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
+(4884,       0,          0,        61,       4884,        1200,           0,           0,             0,               0,               0,            0,         0,      48841,        239,      48842,   0,   0,   0,   0,              0, 'Emberseer Start - Start Map Event'),
+(4884,       0,          0,        80,          1,           0,           0,           0,            12,          260283,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Close Emberseer In'),
+(4884,       0,          0,        80,          1,           0,           0,           0,            12,          260284,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Close Doors'),
+(4884,       0,          0,        68,     103163,           2,       10316,          50,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Script on Incarcerators'),
+(4884,       0,          0,        44,          2,           0,           0,           0,             8,            9816,              30,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Start - Start Phase 2 on Pyroguard Emberseer');
+
+-- Sniffs reveal an extra DarkIronDwarfRune in the wall, which is also activated during the fight.
+INSERT `gameobject`
+(`guid`,   `id`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecsmin`, `spawntimesecsmax`, `animprogress`, `state`, `spawn_flags`, `visibility_mod`, `patch_min`, `patch_max`) VALUES
+(397204, 175187,   229,       144.37,     -299.198,      91.4701,             0,           0,           0,           0,           1,                 25,                 25,            100,       1,             0,                0,           0,          10);
+
+INSERT `generic_scripts`
+(  `id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
+( 48841,       0,          0,        39,     175270,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Ready Runes'),
+( 48841,       0,          0,        39,     175705,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Open Doors'),
+( 48841,       0,          0,        11,     261637,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Open Emberseer Out'),
+( 48842,       0,          0,        39,      98162,           0,           0,           0,             8,            9816,              30,         0x02,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Respawn Pyroguard Emberseer'),
+( 48842,       0,          0,        39,     103165,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Respawn Dead Incarcerators'),
+( 48842,       0,          0,        39,     175270,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Ready Runes'),
+( 48842,       0,          0,        39,     175705,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer Event - Open Doors'),
+( 98162,       0,          0,        71,          1,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Pyroguard Emberseer - Respawn'),
+(103161,       0,          0,         4,         46,  0x00000300,           1,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Set Immune Flags'),
+(103162,       0,          0,        15,      15281,           0,           0,           0,             8,            9816,              30,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Cast Encage Emberseer'),
+(103163,       0,          0,         4,         46,  0x00000300,           2,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Remove Immune Flags'),
+(103163,       0,          1,        49,          1,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Combat Pulse'),
+(103164,       0,          0,        39,     103161,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Set Immune Flags'),
+(103164,       0,          0,        71,          0,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Respawn'),
+(103165,       0,          0,        68,     103164,           2,       10316,         100,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Blackhand Incarcerator - Respawn Dead Incarcerators'),
+(175266,       0,          0,        13,          0,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'DarkIronDwarfRune (West) - Activate'),
+(175266,       1,          0,         4,          9,  0x00000001,           2,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'DarkIronDwarfRune (West) - Remove In Use Flag'),
+(175267,       0,          0,        80,          0,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'DarkIronDwarfRune (Rest) - Set State Active'),
+(175268,       0,          0,        80,          1,           0,           0,           0,             0,               0,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'DarkIronDwarfRune - Set State Ready'),
+(175269,       0,          0,        39,     175266,           0,           0,           0,            12,          397215,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Activate DarkIronDwarfRune (West)'),
+(175269,       0,          0,        39,     175267,           0,           0,           0,            12,          397218,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Activate DarkIronDwarfRune (South-West)'),
+(175269,       0,          0,        39,     175267,           0,           0,           0,            12,          397210,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Activate DarkIronDwarfRune (North-West)'),
+(175269,       0,          0,        39,     175267,           0,           0,           0,            12,          397219,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Activate DarkIronDwarfRune (South)'),
+(175269,       0,          0,        39,     175267,           0,           0,           0,            12,          397208,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Activate DarkIronDwarfRune (North)'),
+(175269,       0,          0,        39,     175267,           0,           0,           0,            12,          397220,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Activate DarkIronDwarfRune (South-East)'),
+(175269,       0,          0,        39,     175267,           0,           0,           0,            12,          397203,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Activate DarkIronDwarfRune (North-East)'),
+(175269,       0,          0,        39,     175267,           0,           0,           0,            12,          397204,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Activate DarkIronDwarfRune (Wall)'),
+(175270,       0,          0,        87,     175268,           0,           0,           0,            12,          397215,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Ready DarkIronDwarfRune (West)'),
+(175270,       0,          0,        39,     175268,           0,           0,           0,            12,          397218,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Ready DarkIronDwarfRune (South-West)'),
+(175270,       0,          0,        39,     175268,           0,           0,           0,            12,          397210,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Ready DarkIronDwarfRune (North-West)'),
+(175270,       0,          0,        39,     175268,           0,           0,           0,            12,          397219,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Ready DarkIronDwarfRune (South)'),
+(175270,       0,          0,        39,     175268,           0,           0,           0,            12,          397208,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Ready DarkIronDwarfRune (North)'),
+(175270,       0,          0,        39,     175268,           0,           0,           0,            12,          397220,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Ready DarkIronDwarfRune (South-East)'),
+(175270,       0,          0,        39,     175268,           0,           0,           0,            12,          397203,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Ready DarkIronDwarfRune (North-East)'),
+(175270,       0,          0,        39,     175268,           0,           0,           0,            12,          397204,               0,            0,       100,          0,          0,          0,   0,   0,   0,   0,              0, 'Ready DarkIronDwarfRune (Wall)'),
+-- Need to set instance data so the doors stay open.
+(175705,       0,          0,        80,          0,           0,           0,           0,            12,          260283,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Emberseer In - Open'),
+(175705,       0,          0,        80,          0,           0,           0,           0,            12,          260284,               0,            0,         0,          0,          0,          0,   0,   0,   0,   0,              0, 'Doors - Open');
+
+ -- event_free_pyroguard_emberseer
+DELETE FROM `scripted_event_id` WHERE `id` = 4884;
+
+-- Do we need to check the world_state_init table in sniffs?
+
+-- End of migration.
+END IF;
+END??
+delimiter ; 
+CALL add_migration();
+DROP PROCEDURE IF EXISTS add_migration;
+
+-- Set channelers required on Blackrock Altar to 1, for testing. Revert it to 3 when done.
+UPDATE gameobject_template SET data0 = 1 WHERE `entry` = 175706;
+
+-- Reset instances
+DELETE FROM character_instance;
+DELETE FROM group_instance;
+DELETE FROM instance;
+
+-- RESET ALL
+DELETE FROM conditions WHERE condition_entry = 239;
+DELETE FROM generic_scripts WHERE id LIKE '4884%' OR id LIKE '9816%' OR id LIKE '10316%' OR id LIKE '1752%' OR id = '175705';
+DELETE FROM gameobject WHERE `guid` IN (397204);
+DELETE FROM creature_ai_scripts WHERE id LIKE '9816%' OR id LIKE '10316%';
+DELETE FROM creature_ai_events WHERE id LIKE '9816%' OR id LIKE '10316%';
