@@ -317,12 +317,12 @@ int MangosSocket<SessionType, SocketName, Crypt>::handle_input_header(void)
 
     header.size -= 4;
 
-    ACE_NEW_RETURN(m_RecvWPct, WorldPacket((uint16) header.cmd, header.size), -1);
+    ACE_NEW_RETURN(m_RecvWPct, WorldPacket((uint16) header.cmd, header.size), -1); // here the socket sets the packet's opcode from the message
 
     if (header.size > 0)
     {
         m_RecvWPct->resize(header.size);
-        m_RecvPct.base((char*) m_RecvWPct->contents(), m_RecvWPct->size());
+        m_RecvPct.base((char*) m_RecvWPct->contents(), m_RecvWPct->size()); // here the socket points the packet to the message's contents
     }
     else
         MANGOS_ASSERT(m_RecvPct.space() == 0);
@@ -340,7 +340,7 @@ int MangosSocket<SessionType, SocketName, Crypt>::handle_input_payload(void)
     MANGOS_ASSERT(m_Header.space() == 0);
     MANGOS_ASSERT(m_RecvWPct != nullptr);
 
-    const int ret = ((SocketName*)this)->ProcessIncoming(m_RecvWPct);
+    const int ret = ((SocketName*)this)->ProcessIncoming(m_RecvWPct); // here the socket processes the packet contents
 
     m_RecvPct.base(nullptr, 0);
     m_RecvPct.reset();

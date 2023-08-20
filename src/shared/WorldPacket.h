@@ -33,15 +33,20 @@ class WorldPacket : public ByteBuffer
                                                             // just container for later use
         WorldPacket()                                       : ByteBuffer(0), m_opcode(0), m_recvdTime(0)
         {
+            uint32 asdf = 0;
         }
-        explicit WorldPacket(uint16 opcode, size_t res=200) : ByteBuffer(res), m_opcode(opcode), m_recvdTime(0) { }
+        explicit WorldPacket(uint16 opcode, size_t res=200) : ByteBuffer(res), m_opcode(opcode), m_recvdTime(0) {
+            uint32 asdf = 0;
+        }
                                                             // copy constructor
         WorldPacket(WorldPacket const& packet)              : ByteBuffer(packet), m_opcode(packet.m_opcode), m_recvdTime(0)
         {
+            uint32 asdf = 0;
         }
 
         WorldPacket(WorldPacket&& packet) : ByteBuffer(std::move(packet)), m_opcode(packet.m_opcode), m_recvdTime(packet.m_recvdTime)
         {
+            uint32 asdf = 0;
         }
 
         WorldPacket& operator=(WorldPacket&& rhs)

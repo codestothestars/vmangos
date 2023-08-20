@@ -68,7 +68,7 @@ int WorldSocket::ProcessIncoming(WorldPacket* new_pct)
                     return -1;
                 }
 
-                return HandleAuthSession(*new_pct);
+                return HandleAuthSession(*new_pct); // handler specific to the authentication packet
             default:
             {
                 GuardType lock(m_SessionLock);

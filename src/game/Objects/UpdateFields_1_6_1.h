@@ -2,6 +2,12 @@
 // Patch: 1.6.1
 // Build: 4544
 
+// Defines property fields of seemingly all objects in the game.
+// Hierarchical.
+// Every Item is an Object that defines its own properties, which come after the base Object properties.
+// Every Container is an Item that defines its own properties, which come after the base Item properties.
+// Every Player is a Unit that defines its own properties, which come after the base Unit properties.
+
 enum EObjectFields
 {
     OBJECT_FIELD_GUID                                = 0x0,                // 0x000 - Size: 2 - Type: GUID - Flags: PUBLIC

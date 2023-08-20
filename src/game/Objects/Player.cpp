@@ -104,7 +104,7 @@ enum CharacterFlags
     CHARACTER_FLAG_UNK2                 = 0x00000002,
     CHARACTER_LOCKED_FOR_TRANSFER       = 0x00000004,
     CHARACTER_FLAG_UNK4                 = 0x00000008,
-    CHARACTER_FLAG_UNK5                 = 0x00000010,
+    CHARACTER_FLAG_UNK5                 = 0x00000010, // could 1.5 require these? doubt it, these look like the character select screen.
     CHARACTER_FLAG_UNK6                 = 0x00000020,
     CHARACTER_FLAG_UNK7                 = 0x00000040,
     CHARACTER_FLAG_UNK8                 = 0x00000080,
@@ -112,7 +112,7 @@ enum CharacterFlags
     CHARACTER_FLAG_UNK10                = 0x00000200,
     CHARACTER_FLAG_HIDE_HELM            = 0x00000400,
     CHARACTER_FLAG_HIDE_CLOAK           = 0x00000800,
-    CHARACTER_FLAG_UNK13                = 0x00001000,
+    CHARACTER_FLAG_UNK13                = 0x00001000, // could 1.5 require these? doubt it, these look like the character select screen.
     CHARACTER_FLAG_GHOST                = 0x00002000,
     CHARACTER_FLAG_RENAME               = 0x00004000,
     CHARACTER_FLAG_UNK16                = 0x00008000,
@@ -700,6 +700,9 @@ Player::Player(WorldSession* session) : Unit(),
     m_cheatOptions = 0x0;
 
     m_lastFromClientCastedSpellID = 0;
+#if SUPPORTED_CLIENT_BUILD < CLIENT_BUILD_1_6_1
+    m_resurrectionSpellId = 0;
+#endif
 
     // Anti undermap
     m_undermapPosValid = false;
@@ -1918,12 +1921,18 @@ void Player::SetDeathState(DeathState s)
         if (ObjectGuid lootGuid = GetLootGuid())
             GetSession()->DoLootRelease(lootGuid);
 
+// World of Warcraft Client Patch 1.6.0 (2005-07-12)
+// - Self-resurrection spells show their name on the button in the release spirit dialog.
+#if SUPPORTED_CLIENT_BUILD >= CLIENT_BUILD_1_6_1
         // save value before aura remove in Unit::SetDeathState
         ressSpellId = GetUInt32Value(PLAYER_SELF_RES_SPELL);
 
         // passive spell
         if (!ressSpellId)
             ressSpellId = GetResurrectionSpellId();
+#else
+        ressSpellId = GetResurrectionSpellId();
+#endif
 
         if (m_zoneScript)
             m_zoneScript->OnPlayerDeath(this);
@@ -1931,14 +1940,26 @@ void Player::SetDeathState(DeathState s)
 
     Unit::SetDeathState(s);
 
-    // restore resurrection spell id for player after aura remove
     if (s == JUST_DIED && cur && ressSpellId)
+    {
+#if SUPPORTED_CLIENT_BUILD >= CLIENT_BUILD_1_6_1
+        // restore resurrection spell id for player after aura remove
         SetUInt32Value(PLAYER_SELF_RES_SPELL, ressSpellId);
+#else
+        m_resurrectionSpellId = ressSpellId;
+        SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_CAN_SELF_RESURRECT);
+#endif
+    }
 
     if (IsAlive() && !cur)
     {
-        //clear aura case after resurrection by another way (spells will be applied before next death)
+        //clear self-res state after resurrection by another way (spells will be applied before next death)
+#if SUPPORTED_CLIENT_BUILD >= CLIENT_BUILD_1_6_1
         SetUInt32Value(PLAYER_SELF_RES_SPELL, 0);
+#else
+        ClearResurrectionSpellId();
+        RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_CAN_SELF_RESURRECT);
+#endif
 
         UpdatePvPContested(false, true);
     }
@@ -3740,8 +3761,10 @@ void Player::InitStatsForLevel(bool reapplyMods)
     // one form stealth modified bytes
     RemoveByteFlag(UNIT_FIELD_BYTES_1, UNIT_BYTES_1_OFFSET_VIS_FLAG, UNIT_VIS_FLAGS_ALL);
 
+#if SUPPORTED_CLIENT_BUILD >= CLIENT_BUILD_1_6_1
     // restore if need some important flags
     SetUInt32Value(PLAYER_FIELD_BYTES2, 0);                 // flags empty by default
+#endif
 
     if (reapplyMods)                                        //reapply stats values only on .reset stats (level) command
         _ApplyAllStatBonuses();
@@ -19961,6 +19984,11 @@ void Player::RemoveItemDependentAurasAndCasts(Item* pItem)
 
 uint32 Player::GetResurrectionSpellId() const
 {
+#if SUPPORTED_CLIENT_BUILD < CLIENT_BUILD_1_6_1
+    if (m_resurrectionSpellId)
+        return m_resurrectionSpellId;
+#endif
+
     // search priceless resurrection possibilities
     uint32 prio = 0;
     uint32 spellId = 0;
