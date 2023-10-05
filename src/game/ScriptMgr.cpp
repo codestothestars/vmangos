@@ -31,6 +31,7 @@
 #include "GameEventMgr.h"
 #include "CreatureGroups.h"
 #include "InstanceData.h"
+using namespace std;
 
 typedef std::vector<Script*> ScriptVector;
 int num_sc_scripts;
@@ -663,11 +664,11 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, char const* tablename)
                 }
                 break;
             }
-            case SCRIPT_COMMAND_SEND_TAXI_PATH:
+            case SCRIPT_COMMAND_SEND_TAXI_NODE:
             {
-                if (!sTaxiPathStore.LookupEntry(tmp.sendTaxiPath.taxiPathId))
+                if (!sObjectMgr.GetTaxiNodeEntry(tmp.sendTaxiNode.taxiNodeId))
                 {
-                    sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "Table `%s` has datalong = %u in SCRIPT_COMMAND_SEND_TAXI_PATH for script id %u, but this taxi path does not exist.", tablename, tmp.sendTaxiPath.taxiPathId, tmp.id);
+                    sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "Table `%s` has datalong = %u in SCRIPT_COMMAND_SEND_TAXI_NODE for script id %u, but this taxi path does not exist.", tablename, tmp.sendTaxiNode.taxiNodeId, tmp.id);
                     continue;
                 }
                 break;
