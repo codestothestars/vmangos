@@ -1342,6 +1342,15 @@ bool ScriptMgr::CheckScriptTargets(uint32 targetType, uint32 targetParam1, uint3
                 sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "Table `%s` has target_param2 = %u with target_type = %u for id %u, but this parameter is unused.", tableName, targetParam2, targetType, tableEntry);
             break;
         }
+        case TARGET_T_RANDOM_PLAYER:
+        {
+            if (!targetParam1)
+            {
+                sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "Table `%s` has target_param1 = %u for id %u, but search radius is expected.", tableName, targetParam1, tableEntry);
+                return false;
+            }
+            break;
+        }
         case TARGET_T_FRIENDLY:
         {
             if (targetParam2 > 1)
@@ -2952,6 +2961,13 @@ WorldObject* GetTargetByType(WorldObject* pSource, WorldObject* pTarget, Map* pM
             if (Unit* pUnitSource = ToUnit(pSource))
                 return pUnitSource->FindNearestFriendlyPlayer(param1);
             break;
+        case TARGET_T_RANDOM_PLAYER:
+        {
+            WorldObject* pSearcher;
+            if (!((pSearcher = pSource) || (pSearcher = pTarget)))
+                return nullptr;
+            return pSearcher->FindRandomPlayer(param1);
+        }
     }
     return nullptr;
 }
