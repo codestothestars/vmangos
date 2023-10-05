@@ -1311,8 +1311,13 @@ float SpellCaster::SpellDamageBonusDone(Unit* pVictim, SpellEntry const* spellPr
     Item* pWeapon = GetTypeId() == TYPEID_PLAYER ? ((Player*)this)->GetWeaponForAttack(BASE_ATTACK, true, false) : nullptr;
 
     // Creature damage
-    if (GetTypeId() == TYPEID_UNIT && !((Creature*)this)->IsPet())
-        DoneTotalMod *= Creature::_GetSpellDamageMod(((Creature*)this)->GetCreatureInfo()->rank);
+    SpellCaster* creature = nullptr;
+    if (GetTypeId() == TYPEID_UNIT)
+        creature = this;
+    else if (spell && spell->GetCodestothestarsAuraCaster() && spell->GetCodestothestarsAuraCaster()->GetTypeId() == TYPEID_UNIT)
+        creature = spell->GetCodestothestarsAuraCaster();
+    if (creature && !((Creature*)this)->IsPet())
+        DoneTotalMod *= Creature::_GetSpellDamageMod(((Creature*)creature)->GetCreatureInfo()->rank);
 
     if (pUnit)
     {
@@ -1957,7 +1962,7 @@ SpellCastResult SpellCaster::CastSpell(SpellCaster* pTarget, SpellEntry const* s
     Spell* spell;
 
     if (Unit* pUnit = ToUnit())
-        spell = new Spell(pUnit, spellInfo, triggered, originalCaster, triggeredBy, nullptr, triggeredByParent);
+        spell = new Spell(pUnit, spellInfo, triggered, originalCaster, triggeredBy, nullptr, triggeredByParent, triggeredByAura ? triggeredByAura->GetCaster() : nullptr);
     else if (GameObject* pGameObject = ToGameObject())
         spell = new Spell(pGameObject, spellInfo, triggered, originalCaster, triggeredBy, nullptr, triggeredByParent);
     else

@@ -323,7 +323,7 @@ class Spell
         void EffectNostalrius(SpellEffectIndex effIdx);
         void HandleAddTargetTriggerAuras();
 
-        Spell(Unit* caster, SpellEntry const* info, bool triggered, ObjectGuid originalCasterGUID = ObjectGuid(), SpellEntry const* triggeredBy = nullptr, Unit* victim = nullptr, SpellEntry const* triggeredByParent = nullptr);
+        Spell(Unit* caster, SpellEntry const* info, bool triggered, ObjectGuid originalCasterGUID = ObjectGuid(), SpellEntry const* triggeredBy = nullptr, Unit* victim = nullptr, SpellEntry const* triggeredByParent = nullptr, Unit* const codestothestarsAuraCaster = nullptr);
         Spell(GameObject* caster, SpellEntry const* info, bool triggered, ObjectGuid originalCasterGUID = ObjectGuid(), SpellEntry const* triggeredBy = nullptr, Unit* victim = nullptr, SpellEntry const* triggeredByParent = nullptr);
         ~Spell();
 
@@ -439,6 +439,7 @@ class Spell
         Unit* GetAffectiveCaster() const { return m_originalCasterGUID ? m_originalCaster : m_casterUnit; }
         // m_originalCasterGUID can store GO guid, and in this case this is visual caster
         SpellCaster* GetCastingObject() const;
+        Unit* GetCodestothestarsAuraCaster() const { return m_codestothestarsAuraCaster; }
 
         uint32 GetPowerCost() const { return m_powerCost; }
 
@@ -495,6 +496,7 @@ class Spell
         SpellCaster* const m_caster = nullptr;
         Unit* const m_casterUnit = nullptr;
         GameObject* const m_casterGo = nullptr;
+        Unit* const m_codestothestarsAuraCaster = nullptr;
 
         ObjectGuid m_originalCasterGUID;                    // real source of cast (aura caster/etc), used for spell targets selection
                                                             // e.g. damage around area spell trigered by victim aura and damage enemies of aura caster
