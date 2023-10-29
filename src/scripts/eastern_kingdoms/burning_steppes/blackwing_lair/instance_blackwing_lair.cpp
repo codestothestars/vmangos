@@ -1406,15 +1406,15 @@ void AddSC_instance_blackwing_lair()
     pNewscript->GetInstanceData = &GetInstanceData_instance_blackwing_lair;
     pNewscript->RegisterSelf();
 
-    pNewscript = new Script;
-    pNewscript->Name = "go_orbe_domination";
-    pNewscript->pGOHello = &GOHello_go_orbe_domination;
-    pNewscript->RegisterSelf();
+    // pNewscript = new Script;
+    // pNewscript->Name = "go_orbe_domination";
+    // pNewscript->pGOHello = &GOHello_go_orbe_domination;
+    // pNewscript->RegisterSelf();
 
-    pNewscript = new Script;
-    pNewscript->Name = "go_oeuf_raz";
-    pNewscript->GOGetAI = &GetAIgo_oeuf_raz;
-    pNewscript->RegisterSelf();
+    // pNewscript = new Script;
+    // pNewscript->Name = "go_oeuf_raz";
+    // pNewscript->GOGetAI = &GetAIgo_oeuf_raz;
+    // pNewscript->RegisterSelf();
 
     pNewscript = new Script;
     pNewscript->Name = "go_engin_suppression";
