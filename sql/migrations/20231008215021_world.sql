@@ -53,13 +53,16 @@ UPDATE `gameobject_template` SET `script_name` = '' WHERE `entry` = 177808;
 REPLACE `creature_spells`
 (`entry`, `name`,                  `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `spellId_3`, `probability_3`, `castTarget_3`, `targetParam1_3`, `targetParam2_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`) VALUES
 ( 124160, 'Blackwing Legionnaire',       15580,             100,              1,                   3,                  16,                  5,                 16,       15754,             100,              1,                   0,                  15,                  6,                 13,       23967,             100,              8,            12435,                5,                   1,                  24,                  6,                 27);
+-- 15580 - Strike
+-- 15754 - Cleave
 -- 23967 - Dragonbane
 
 -- Events list for Blackwing Mage
 REPLACE `creature_spells`
 (`entry`, `name`,           `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`) VALUES
-( 124200, 'Blackwing Mage',       17290,             100,              ?,                   ?,                   ?,                  ?,                  ?,       22271,             100,              ?,                   ?,                   ?,                  ?,                  ?);
+( 124200, 'Blackwing Mage',       17290,             100,              1,                   0,                   0,                  ?,                  ?,       22271,             100,              ?,                   ?,                   ?,                  ?,                  ?);
 -- 17290 - Fireball
+-- Contains initial delays between 4 and 12 seconds, but the vast majority are 0. The delays look like outliers, but why? Look at what these creatures are doing in the fight.
 -- 22271 - Arcane Explosion
 
 -- Events list for Death Talon Dragonspawn
