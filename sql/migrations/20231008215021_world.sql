@@ -60,7 +60,7 @@ REPLACE `creature_spells`
 -- Events list for Blackwing Mage
 REPLACE `creature_spells`
 (`entry`, `name`,           `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`) VALUES
-( 124200, 'Blackwing Mage',       17290,             100,              1,                   0,                   0,                  ?,                  ?,       22271,             100,              ?,                   ?,                   ?,                  ?,                  ?);
+( 124200, 'Blackwing Mage',       17290,             100,              1,                   0,                   0,                  3,                 12,       22271,             100,              ?,                   ?,                   ?,                  ?,                  ?);
 -- 17290 - Fireball
 -- Contains initial delays between 4 and 12 seconds, but the vast majority are 0. The delays look like outliers, but why? Look at what these creatures are doing in the fight.
 -- 22271 - Arcane Explosion
