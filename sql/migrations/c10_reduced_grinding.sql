@@ -14,5 +14,5 @@ UPDATE `quest_template` SET `RewRepValue1` = 1600 WHERE `entry` = 6131; -- Timbe
 UPDATE `quest_template` SET `RewRepValue1` =  600 WHERE `entry` = 6241; -- Winterfall Activity
 UPDATE `quest_template` SET `RewRepValue1` = 1600 WHERE `entry` = 7736; -- Restoring Fiery Flux Supplies via Kingsblood
 UPDATE `quest_template` SET `RewRepValue1` = 3200 WHERE `entry` = 7737; -- Gaining Acceptance
-UPDATE `quest_template` SET `RewRepValue1` =  400 WHERE `entry` = 7832; -- Additional Runecloth
+UPDATE `quest_template` SET `RewRepValue1` =  200 WHERE `entry` = 7832; -- Additional Runecloth
 UPDATE `quest_template` SET `RewRepValue1` = 9600 WHERE `entry` = 8464; -- Winterfall Activity
