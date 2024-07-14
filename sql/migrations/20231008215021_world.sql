@@ -28,6 +28,8 @@ INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `flags`) VAL
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `flags`) VALUES (548, -2,   541, 547, 0x0);
 -- 549: Instance data 0 (Razorgore) equals 0 (not started).
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `flags`) VALUES (549, 34,     0,   0, 0x0);
+-- 550: Hostile unit within 10 yards
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `flags`) VALUES (550, 59,    10,   0, 0x0);
 
 -- Correct Blackwing Guardsman positions.
 UPDATE `creature` SET `position_x` = -7619.66, `position_y` = -1025.14, `position_z` = 413.465, `orientation` = 3.68265  WHERE `guid` = 84390;
@@ -37,6 +39,12 @@ UPDATE `creature` SET `position_x` = -7615.01, `position_y` = -1021.55, `positio
 INSERT INTO `creature`
 (`guid`,  `id`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecsmin`, `spawntimesecsmax`, `wander_distance`, `health_percent`, `mana_percent`) VALUES
 (   113, 14449,   469,     -7615.51,     -1025.58,      413.465,       5.23599,             604800,             604800,                 0,              100,            100);
+
+-- Daribon pointed out creature 14459 (Nefarian's Troops) which emotes during the fight
+
+-- Notice in sniff_36035_bwl_stopped_before_dragons when the group wipes,
+-- all creatures appear to leave combat and run back to their spawn locations.
+-- Did Razorgore become unattackable?
 
 -- Creature entry 14453 (Orb of Domination) had script_name trigger_orb_of_command. What's this creature's function?
 -- On wipe, do the creatures respawn or simply run back?
@@ -53,25 +61,23 @@ UPDATE `gameobject_template` SET `script_name` = '' WHERE `entry` = 177808;
 REPLACE `creature_spells`
 (`entry`, `name`,                  `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `spellId_3`, `probability_3`, `castTarget_3`, `targetParam1_3`, `targetParam2_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`) VALUES
 ( 124160, 'Blackwing Legionnaire',       15580,             100,              1,                   3,                  16,                  5,                 16,       15754,             100,              1,                   0,                  15,                  6,                 13,       23967,             100,              8,            12435,                5,                   1,                  24,                  6,                 27);
--- 15580 - Strike
--- 15754 - Cleave
--- 23967 - Dragonbane
 
 -- Events list for Blackwing Mage
 REPLACE `creature_spells`
-(`entry`, `name`,           `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`) VALUES
-( 124200, 'Blackwing Mage',       17290,             100,              1,                   0,                   0,                  3,                 12,       22271,             100,              6,                   ?,                   ?,                  ?,                  ?);
--- 17290 - Fireball
--- 22271 - Arcane Explosion
--- Some didn't cast this until very long into combat even though they were casting other spells. Probably depends on an enemy being within radius?
+(`entry`, `name`,           `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`) VALUES
+( 124200, 'Blackwing Mage',       17290,             100,              1,                   0,                   0,                  3,                 12);
+INSERT `creature_ai_events`
+(  `id`,  `creature_id`, `condition_id`, `event_type`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
+(1242001,         12420,            550,            0,          0x01,              0,          22000,           3000,          22000,          1242001, 'Blackwing Mage - In Combat (periodic)');
+-- Need to remove the existing events.
+INSERT `creature_ai_scripts`
+(   `id`, `command`, `datalong`, `datalong2`, `target_type`, `condition_id`, `comments`) VALUES
+(1242001,        15,      22271,       0x000,             6,              0, 'Blackwing Mage - Cast Arcane Explosion');
 
 -- Events list for Death Talon Dragonspawn
 REPLACE `creature_spells`
 (`entry`, `name`,                    `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `spellId_3`, `probability_3`, `castTarget_3`, `targetParam1_3`, `targetParam2_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`) VALUES
 ( 124220, 'Death Talon Dragonspawn',       15580,             100,              1,                   0,                  32,                  4,                  27,       15663,             100,              1,                  0,                  32,                 13,                 36,       23967,             100,              8,            12435,                5,                   0,                  34,                  6,                 36);
--- 15580 - Strike
--- 15663 - Cleave
--- 23967 - Dragonbane
 
 -- Events list for Razorgore the Untamed
 INSERT `creature_ai_events`
