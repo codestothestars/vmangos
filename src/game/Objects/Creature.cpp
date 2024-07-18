@@ -1655,6 +1655,7 @@ float Creature::_GetHealthMod(int32 rank)
         // 229, // Lower Blackrock Spire
         230, // Blackrock Depths
         289, // Scholomance
+        329, // Stratholme
         349, // Maraudon
         429  // Dire Maul
     };
