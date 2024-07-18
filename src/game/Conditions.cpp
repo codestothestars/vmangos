@@ -651,6 +651,16 @@ bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, 
 
             return true;
         }
+        case CONDITION_NEARBY_HOSTILE:
+        {
+            if (target->IsCreature())
+            {
+                // If this crashes or something, can probably add a Creature::HasVictimInRange.
+                return (bool)((Creature*)target)->GetVictimInRange(0, m_value1);
+            }
+
+            return false;
+        }
     }
     return false;
 }
@@ -1313,6 +1323,15 @@ bool ConditionEntry::IsValid()
                     sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "CONDITION_CREATURE_GROUP_MEMBER (entry %u, type %d) uses non-existent guid %u in value1, skipped", m_entry, m_condition, m_value1);
                     return false;
                 }
+            }
+            break;
+        }
+        case CONDITION_NEARBY_HOSTILE:
+        {
+            if (m_value1 <= 0)
+            {
+                sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "CONDITION_NEARBY_HOSTILE (entry %u, type %d) does not have max distance set in value1, skipped", m_entry, m_condition);
+                return false;
             }
             break;
         }

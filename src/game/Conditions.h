@@ -257,6 +257,9 @@ enum ConditionType
                                                             // Value1: leader_guid (optional)
     CONDITION_CREATURE_GROUP_DEAD   = 58,                   // Checks if creature's group is dead.
                                                             // Requirement: Creature Source
+    CONDITION_NEARBY_HOSTILE        = 59,                   // Checks if there is a nearby enemy on the threat list.
+                                                            // Requirement: Creature Target
+                                                            // Value1: search_radius
 };
 
 enum ConditionFlags
