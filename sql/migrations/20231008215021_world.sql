@@ -42,6 +42,12 @@ INSERT INTO `creature`
 
 -- Daribon pointed out creature 14459 (Nefarian's Troops) which emotes during the fight
 
+-- Note that the player-cast Possess spell 19832 starts event 8302,
+-- which presumably should govern the rest of the fight.
+
+-- Double check this, but in at least one sniff Grethok and his guards aggro at the exact same time.
+-- Does this mean they're in a linked group that we need to create?
+
 -- Notice in sniff_36035_bwl_stopped_before_dragons when the group wipes,
 -- all creatures appear to leave combat and run back to their spawn locations.
 -- Did Razorgore become unattackable?
@@ -91,6 +97,10 @@ INSERT INTO `creature`
 --   However, a quirk is that some of these, apparently the ones spawned in the corners instead of
 --   near the gates, have 0 for demon_creator_guid.
 -- * Located in the four alcoves adjacent the entry and exit gates.
+-- * Best I can tell, this creature doesn't actually do anything.
+--   However it looks like the creatures may be spawned from each location according to the cooldown on the spell,
+--   and sometimes (always?) in pairs, one at the location of the generator and the other from a corner
+--   (presumably the nearby corner but need to check).
 -- 16604 - Blackwing Spell Marker
 -- * Located in the four corners, close to each corner of the daises, the dead center of the room,
 --   behind Razorgore, and behind Grethok.
@@ -126,6 +136,13 @@ REPLACE `creature_spells`
 (`entry`, `name`,                    `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `spellId_3`, `probability_3`, `castTarget_3`, `targetParam1_3`, `targetParam2_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`) VALUES
 ( 124220, 'Death Talon Dragonspawn',       15580,             100,              1,                   0,                  32,                  4,                  27,       15663,             100,              1,                  0,                  32,                 13,                 36,       23967,             100,              8,            12435,                5,                   0,                  34,                  6,                 36);
 
+-- Events list for Monster Generator (Blackwing)
+INSERT `creature_ai_events`
+-- Need to determine whether there should be a condition_id on phase or something.
+-- Do units stop spawning after some time?
+(`entry`, `creature_id`, ) VALUES
+(1243401,         12434, );
+
 -- Events list for Razorgore the Untamed
 INSERT `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
@@ -143,16 +160,21 @@ UPDATE `creature_template` SET `ai_name` = 'EventAI', `auras` = '18943', `script
 
 -- Events list for Grethok the Controller
 INSERT `creature_ai_events`
-(  `id`,  `creature_id`, `condition_id`, `event_type`, `action1_script`, `comment`) VALUES
-(1255701,         12557,            549,            1,          1255701, 'Grethok the Controller - Out of Combat'),
-(1255702,         12557,              0,            4,          1255702, 'Grethok the Controller - Aggro');
+(  `id`,  `creature_id`, `condition_id`, `event_type`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
+(1255701,         12557,            549,            1,              0,              0,          1255701, 'Grethok the Controller - Out of Combat'),
+(1255702,         12557,              0,            4,              0,              0,          1255702, 'Grethok the Controller - Aggro'),
+(1255703,         12557,              0,            0,           1000,           5000,          1255703, 'Grethok the Controller - In Combat');
 INSERT `creature_ai_scripts`
-(   `id`, `command`, `datalong`, `datalong2`, `target_type`, `dataint`, `comments`) VALUES
-(1255701,        15,      23018,           0,             6,         0, 'Grethok the Controller - Cast Use Dragon Orb'),
-(1255702,        49,          1,           0,             0,         0, 'Grethok the Controller - Combat Pulse'),
-(1255702,         0,          1,           0,             0,      9958, 'Grethok the Controller - Yell'),
--- This action a candidate for an event script, if we find there's an event.
-(1255702,        37,          0,           4,             0,         0, 'Grethok the Controller - Set Instance Data (Encounter Special)');
+(   `id`, `command`, `datalong`, `datalong2`, `target_type`, `dataint`, `dataint4`,      `x`,      `y`,     `z`,     `o`, `comments`) VALUES
+(1255701,        15,      23018,           0,             6,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Cast Use Dragon Orb'),
+(1255702,        49,          1,           0,             0,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Combat Pulse'),
+(1255702,         0,          1,           0,             0,      9958,          0,        0,        0,       0,       0, 'Grethok the Controller - Yell'),
+-- This line should go into the event script.
+(1255702,        37,          0,           4,             0,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Set Instance Data (Encounter Special)'),
+(1255703,        10,      12434,           0,             0,         0,          8, -7643.39, -1064.69, 407.288, 1.71042, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
+(1255703,        10,      12434,           0,             0,         0,          8, -7623.1,  -1094.06, 407.288, 1.44862, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
+(1255703,        10,      12434,           0,             0,         0,          8, -7568.61, -1012.67, 407.288, 1.51844, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
+(1255703,        10,      12434,           0,             0,         0,          8, -7548.46, -1041.98, 407.288, 2.02458, 'Grethok the Controller - Summon Monster Generator (Blackwing)');
 REPLACE `creature_spells`
 (`entry`, `name`,                   `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `spellId_3`, `probability_3`, `castTarget_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`, `spellId_4`, `probability_4`, `castTarget_4`, `delayInitialMin_4`, `delayInitialMax_4`, `delayRepeatMin_4`, `delayRepeatMax_4`) VALUES
 ( 125570, 'Grethok the Controller',       13747,             100,              6,                  12,                  22,                 12,                 22,       14515,             100,              4,                   6,                  14,                  6,                 14,       22272,             100,              4,                   0,                  16,                 10,                 18,       22274,             100,              4,                   2,                  18,                  7,                 11);
