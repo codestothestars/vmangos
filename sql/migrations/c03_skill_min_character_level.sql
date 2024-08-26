@@ -6,6 +6,7 @@ SET reqlevel = 0
 WHERE spell IN (
      1847, -- One-Handed Swords
      2021, -- Journeyman Blacksmith
+     2582, -- Journeyman Miner
      3539, -- Expert Blacksmith
      4041, -- Expert Engineer
      9786, -- Artisan Blacksmith
