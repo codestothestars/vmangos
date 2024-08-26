@@ -45,7 +45,7 @@ enum
     DATA_DOOR_NEFARIAN          = 23,
     DATA_SCEPTER_CHAMPION       = 24,
     DATA_SCEPTER_RUN_TIME       = 25,
-    DATA_HOW_RAZORGORE_TROOPS   = 26, // must set in script when spawning, dying, and resetting.
+    DATA_HOW_RAZORGORE_TROOPS   = 26, // must set in script when dying and resetting.
     MAX_DATAS                   = 27
 };
 
