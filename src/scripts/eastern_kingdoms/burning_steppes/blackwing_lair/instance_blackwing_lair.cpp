@@ -927,6 +927,7 @@ bool GOHello_go_orbe_domination(Player* pPlayer, GameObject* pGo)
     return true;
 }
 
+// need to remove this
 struct go_oeuf_razAI: public GameObjectAI
 {
     go_oeuf_razAI(GameObject* pGo) : GameObjectAI(pGo) {}
