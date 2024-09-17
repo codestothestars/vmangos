@@ -576,18 +576,18 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
 
                     static ScriptInfo scriptTroopsFleeLegionnaire;
                     scriptTroopsFleeLegionnaire.command = SCRIPT_COMMAND_START_SCRIPT_FOR_ALL;
-                    scriptTroopsFleeLegionnaire.condition = 8303;
+                    scriptTroopsFleeLegionnaire.condition = 8304;
                     scriptTroopsFleeLegionnaire.startScriptForAll.objectEntry = 12416;
                     scriptTroopsFleeLegionnaire.startScriptForAll.objectType = SO_STARTFORALL_CREATURES;
-                    scriptTroopsFleeLegionnaire.startScriptForAll.scriptId = 8302142; // need to create
+                    scriptTroopsFleeLegionnaire.startScriptForAll.scriptId = 8302141; // need to create
                     scriptTroopsFleeLegionnaire.startScriptForAll.searchRadius = radius;
 
                     static ScriptInfo scriptTroopsFleeMage;
                     scriptTroopsFleeMage.command = SCRIPT_COMMAND_START_SCRIPT_FOR_ALL;
-                    scriptTroopsFleeMage.condition = 8303;
+                    scriptTroopsFleeMage.condition = 8304;
                     scriptTroopsFleeMage.startScriptForAll.objectEntry = 12420;
                     scriptTroopsFleeMage.startScriptForAll.objectType = SO_STARTFORALL_CREATURES;
-                    scriptTroopsFleeMage.startScriptForAll.scriptId = 8302142; // need to create
+                    scriptTroopsFleeMage.startScriptForAll.scriptId = 8302141; // need to create
                     scriptTroopsFleeMage.startScriptForAll.searchRadius = radius;
 
                     static ScriptInfo scriptTroopsFleeEmote;
