@@ -565,6 +565,19 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                     // note that the creature spawning scripts need to check for an egg to see whether to spawn.
 
                     float radius = GetSpellRadius(sSpellRadiusStore.LookupEntry(m_spellInfo->EffectRadiusIndex[effIdx]));
+                    
+                    static ScriptInfo scriptRazorgoreYell;
+                    scriptRazorgoreYell.command = SCRIPT_COMMAND_TALK;
+                    scriptRazorgoreYell.condition = 560;
+                    scriptRazorgoreYell.talk.chatType = CHAT_TYPE_YELL;
+                    scriptRazorgoreYell.talk.textId[0] = 9961;
+                    scriptRazorgoreYell.talk.textId[1] = 9962;
+                    scriptRazorgoreYell.talk.textId[2] = 9963;
+                    
+                    static ScriptInfo scriptRazorgoreYellToggle;
+                    scriptRazorgoreYellToggle.command = SCRIPT_COMMAND_SET_INST_DATA;
+                    scriptRazorgoreYellToggle.setData.data = !unitTarget->GetMap()->GetInstanceData()->GetData(DATA_RAZORGORE_EGG_YELLED);
+                    scriptRazorgoreYellToggle.setData.field = DATA_RAZORGORE_EGG_YELLED;
 
                     static ScriptInfo scriptTroopsFleeDragonspawn;
                     scriptTroopsFleeDragonspawn.command = SCRIPT_COMMAND_START_SCRIPT_FOR_ALL;
@@ -579,7 +592,7 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                     scriptTroopsFleeLegionnaire.condition = 8304;
                     scriptTroopsFleeLegionnaire.startScriptForAll.objectEntry = 12416;
                     scriptTroopsFleeLegionnaire.startScriptForAll.objectType = SO_STARTFORALL_CREATURES;
-                    scriptTroopsFleeLegionnaire.startScriptForAll.scriptId = 8302141; // need to create
+                    scriptTroopsFleeLegionnaire.startScriptForAll.scriptId = 8302141;
                     scriptTroopsFleeLegionnaire.startScriptForAll.searchRadius = radius;
 
                     static ScriptInfo scriptTroopsFleeMage;
@@ -587,7 +600,7 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                     scriptTroopsFleeMage.condition = 8304;
                     scriptTroopsFleeMage.startScriptForAll.objectEntry = 12420;
                     scriptTroopsFleeMage.startScriptForAll.objectType = SO_STARTFORALL_CREATURES;
-                    scriptTroopsFleeMage.startScriptForAll.scriptId = 8302141; // need to create
+                    scriptTroopsFleeMage.startScriptForAll.scriptId = 8302141;
                     scriptTroopsFleeMage.startScriptForAll.searchRadius = radius;
 
                     static ScriptInfo scriptTroopsFleeEmote;
@@ -596,6 +609,18 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                     scriptTroopsFleeEmote.talk.chatType = CHAT_TYPE_BOSS_EMOTE;
                     scriptTroopsFleeEmote.talk.textId[0] = 9592;
 
+                    unitTarget->GetMap()->ScriptCommandStart(
+                        scriptRazorgoreYell,
+                        0,
+                        m_caster->GetObjectGuid(),
+                        m_caster->GetObjectGuid()
+                    );
+                    unitTarget->GetMap()->ScriptCommandStart(
+                        scriptRazorgoreYellToggle,
+                        0,
+                        m_caster->GetObjectGuid(),
+                        m_caster->GetObjectGuid()
+                    );
                     unitTarget->GetMap()->ScriptCommandStart(
                         scriptTroopsFleeDragonspawn,
                         1,
