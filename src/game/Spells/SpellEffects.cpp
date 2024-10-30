@@ -562,10 +562,10 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                     return;
                 }
                 case 19873: // Destroy Egg
-                    // note that the creature spawning scripts need to check for an egg to see whether to spawn.
+                {
+                    // // note that the creature spawning scripts need to check for an egg to see whether to spawn.
+                    // float radius = GetSpellRadius(sSpellRadiusStore.LookupEntry(m_spellInfo->EffectRadiusIndex[effIdx]));
 
-                    float radius = GetSpellRadius(sSpellRadiusStore.LookupEntry(m_spellInfo->EffectRadiusIndex[effIdx]));
-                    
                     static ScriptInfo scriptRazorgoreYell;
                     scriptRazorgoreYell.command = SCRIPT_COMMAND_TALK;
                     scriptRazorgoreYell.condition = 560;
@@ -573,12 +573,87 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                     scriptRazorgoreYell.talk.textId[0] = 9961;
                     scriptRazorgoreYell.talk.textId[1] = 9962;
                     scriptRazorgoreYell.talk.textId[2] = 9963;
-                    
+
                     static ScriptInfo scriptRazorgoreYellToggle;
                     scriptRazorgoreYellToggle.command = SCRIPT_COMMAND_SET_INST_DATA;
                     scriptRazorgoreYellToggle.setData.data = !unitTarget->GetMap()->GetInstanceData()->GetData(DATA_RAZORGORE_EGG_YELLED);
                     scriptRazorgoreYellToggle.setData.field = DATA_RAZORGORE_EGG_YELLED;
 
+                    // static ScriptInfo scriptTroopsFleeDragonspawn;
+                    // scriptTroopsFleeDragonspawn.command = SCRIPT_COMMAND_START_SCRIPT_FOR_ALL;
+                    // scriptTroopsFleeDragonspawn.condition = 8303;
+                    // scriptTroopsFleeDragonspawn.startScriptForAll.objectEntry = 12422;
+                    // scriptTroopsFleeDragonspawn.startScriptForAll.objectType = SO_STARTFORALL_CREATURES;
+                    // scriptTroopsFleeDragonspawn.startScriptForAll.scriptId = 1242201;
+                    // scriptTroopsFleeDragonspawn.startScriptForAll.searchRadius = radius;
+
+                    // static ScriptInfo scriptTroopsFleeLegionnaire;
+                    // scriptTroopsFleeLegionnaire.command = SCRIPT_COMMAND_START_SCRIPT_FOR_ALL;
+                    // scriptTroopsFleeLegionnaire.condition = 8304;
+                    // scriptTroopsFleeLegionnaire.startScriptForAll.objectEntry = 12416;
+                    // scriptTroopsFleeLegionnaire.startScriptForAll.objectType = SO_STARTFORALL_CREATURES;
+                    // scriptTroopsFleeLegionnaire.startScriptForAll.scriptId = 8302141;
+                    // scriptTroopsFleeLegionnaire.startScriptForAll.searchRadius = radius;
+
+                    // static ScriptInfo scriptTroopsFleeMage;
+                    // scriptTroopsFleeMage.command = SCRIPT_COMMAND_START_SCRIPT_FOR_ALL;
+                    // scriptTroopsFleeMage.condition = 8304;
+                    // scriptTroopsFleeMage.startScriptForAll.objectEntry = 12420;
+                    // scriptTroopsFleeMage.startScriptForAll.objectType = SO_STARTFORALL_CREATURES;
+                    // scriptTroopsFleeMage.startScriptForAll.scriptId = 8302141;
+                    // scriptTroopsFleeMage.startScriptForAll.searchRadius = radius;
+
+                    // static ScriptInfo scriptTroopsFleeEmote;
+                    // scriptTroopsFleeEmote.command = SCRIPT_COMMAND_TALK;
+                    // scriptTroopsFleeEmote.condition = 8303;
+                    // scriptTroopsFleeEmote.talk.chatType = CHAT_TYPE_BOSS_EMOTE;
+                    // scriptTroopsFleeEmote.talk.textId[0] = 9592;
+
+                    unitTarget->GetMap()->ScriptCommandStart(
+                        scriptRazorgoreYell,
+                        0,
+                        m_caster->GetObjectGuid(),
+                        m_caster->GetObjectGuid()
+                    );
+                    unitTarget->GetMap()->ScriptCommandStart(
+                        scriptRazorgoreYellToggle,
+                        0,
+                        m_caster->GetObjectGuid(),
+                        m_caster->GetObjectGuid()
+                    );
+                    // unitTarget->GetMap()->ScriptCommandStart(
+                    //     scriptTroopsFleeDragonspawn,
+                    //     1,
+                    //     unitTarget->GetObjectGuid(),
+                    //     unitTarget->GetObjectGuid()
+                    // );
+                    // unitTarget->GetMap()->ScriptCommandStart(
+                    //     scriptTroopsFleeLegionnaire,
+                    //     1,
+                    //     unitTarget->GetObjectGuid(),
+                    //     unitTarget->GetObjectGuid()
+                    // );
+                    // unitTarget->GetMap()->ScriptCommandStart(
+                    //     scriptTroopsFleeMage,
+                    //     1,
+                    //     unitTarget->GetObjectGuid(),
+                    //     unitTarget->GetObjectGuid()
+                    // );
+                    // unitTarget->GetMap()->ScriptCommandStart(
+                    //     scriptTroopsFleeEmote,
+                    //     2,
+                    //     unitTarget->FindNearestCreature(14459, 100)->GetObjectGuid(),
+                    //     unitTarget->FindNearestCreature(12435, 100)->GetObjectGuid()
+                    // );
+                    return;
+                }
+                case 23024: // Fireball
+                {
+                    if (effIdx == 0) unitTarget->CastSpell(nullptr, 20037, false);
+                    return;
+                }
+                case 23032: // Nefarian's Troops Flee
+                {
                     static ScriptInfo scriptTroopsFleeDragonspawn;
                     scriptTroopsFleeDragonspawn.command = SCRIPT_COMMAND_START_SCRIPT_FOR_ALL;
                     scriptTroopsFleeDragonspawn.condition = 8303;
@@ -610,18 +685,6 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                     scriptTroopsFleeEmote.talk.textId[0] = 9592;
 
                     unitTarget->GetMap()->ScriptCommandStart(
-                        scriptRazorgoreYell,
-                        0,
-                        m_caster->GetObjectGuid(),
-                        m_caster->GetObjectGuid()
-                    );
-                    unitTarget->GetMap()->ScriptCommandStart(
-                        scriptRazorgoreYellToggle,
-                        0,
-                        m_caster->GetObjectGuid(),
-                        m_caster->GetObjectGuid()
-                    );
-                    unitTarget->GetMap()->ScriptCommandStart(
                         scriptTroopsFleeDragonspawn,
                         1,
                         unitTarget->GetObjectGuid(),
@@ -645,7 +708,9 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                         unitTarget->FindNearestCreature(14459, 100)->GetObjectGuid(),
                         unitTarget->FindNearestCreature(12435, 100)->GetObjectGuid()
                     );
+                    
                     return;
+                }
                 case 20863: // Muglash's Brazier Trap
                 {
                     if (unitTarget && unitTarget->IsCreature())
