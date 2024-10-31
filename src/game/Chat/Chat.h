@@ -203,6 +203,10 @@ class ChatHandler
         bool HandleCheatWallclimbCommand(char* args);
 
         //Custom
+        bool HandleHealCommand(char* args);
+        bool HandleHealFollowCommand(char*);
+        bool HandleHealSelfCommand(char* args);
+        bool HandleHealTargetCommand(char* args);
         bool HandleSendSpellVisualCommand(char *);
         bool HandleSendSpellImpactCommand(char *);
         bool HandleDebugTimeCommand(char *);

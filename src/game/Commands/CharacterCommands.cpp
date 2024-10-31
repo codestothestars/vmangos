@@ -1063,6 +1063,143 @@ bool ChatHandler::HandleUnLearnCommand(char* args)
     return true;
 }
 
+bool ChatHandler::HandleHealCommand(char* args)
+{
+    Player* player = m_session->GetPlayer();
+
+    Group* group = player->GetGroup();
+
+    if (!group) return true;
+
+    GroupReference* groupIterator = group->GetFirstMember();
+
+    uint32 button;
+    uint32 targetIndex;
+    
+    if (!ExtractUInt32(&args, targetIndex)) return false;
+    if (!ExtractUInt32(&args, button)) return false;
+
+    Player* healer = groupIterator->getSource();
+
+    groupIterator = groupIterator->next();
+
+    Unit* groupMember1 = groupIterator->getSource();
+
+    if (!groupMember1 || !healer) return true;
+
+    Unit* target;
+
+    if (targetIndex == 1)
+        target = healer;
+    else if (targetIndex == 2)
+        target = player;
+    else if (targetIndex == 3)
+        target = groupMember1;
+    else
+        target = groupMember1->GetPet();
+
+    ActionButtonList& actions = healer->GetSession()->GetMasterPlayer()->GetActionButtons();
+    for (auto& action : actions)
+    {
+        if (action.first != button - 1) continue;
+
+        uint32 spell = action.second.GetAction();
+        healer->CastSpell(target, spell, false);
+        break;
+    }
+
+    return true;
+}
+
+bool ChatHandler::HandleHealFollowCommand(char*)
+{
+    Player* player = m_session->GetPlayer();
+
+    Group* group = player->GetGroup();
+
+    if (!group) return true;
+
+    GroupReference* groupIterator = group->GetFirstMember();
+
+    Player* healer = groupIterator->getSource();
+
+    if (healer)
+    {
+        MotionMaster* motionMaster = healer->GetMotionMaster();
+        
+        if (motionMaster->GetCurrentMovementGeneratorType() == FOLLOW_MOTION_TYPE)
+            motionMaster->Clear(true);
+        else
+            motionMaster->MoveFollow(player, 5, 0);
+    }
+
+    return true;
+}
+
+bool ChatHandler::HandleHealSelfCommand(char* args)
+{
+    Player* player = m_session->GetPlayer();
+
+    Group* group = player->GetGroup();
+
+    if (!group) return true;
+
+    GroupReference* groupIterator = group->GetFirstMember();
+
+    uint32 button;
+    
+    if (!ExtractUInt32(&args, button)) return false;
+
+    Player* healer = groupIterator->getSource();
+
+    if (!healer) return true;
+
+    ActionButtonList& actions = healer->GetSession()->GetMasterPlayer()->GetActionButtons();
+    for (auto& action : actions)
+    {
+        if (action.first != button - 1) continue;
+
+        uint32 spell = action.second.GetAction();
+        healer->CastSpell(healer, spell, false);
+        break;
+    }
+
+    return true;
+}
+
+bool ChatHandler::HandleHealTargetCommand(char* args)
+{
+    Player* player = m_session->GetPlayer();
+
+    Unit* target = player->GetMap()->GetUnit(player->GetTargetGuid());
+
+    Group* group = player->GetGroup();
+
+    if (!group || !target) return true;
+
+    GroupReference* groupIterator = group->GetFirstMember();
+
+    uint32 button;
+    
+    if (!ExtractUInt32(&args, button)) return false;
+
+    Player* healer = groupIterator->getSource();
+
+    if (!healer) return true;
+
+    ActionButtonList& actions = healer->GetSession()->GetMasterPlayer()->GetActionButtons();
+    for (auto& action : actions)
+    {
+        if (action.first != button - 1) continue;
+
+        uint32 spell = action.second.GetAction();
+        healer->CastSpell(target, spell, false);
+        break;
+    }
+
+    return true;
+}
+
 bool ChatHandler::HandleGroupInfoCommand(char* args)
 {
     Player* target;

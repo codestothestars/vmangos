@@ -429,6 +429,8 @@ void WorldSession::HandleZoneUpdateOpcode(WorldPacket& recv_data)
 
 void WorldSession::HandleSetTargetOpcode(WorldPacket& recv_data)
 {
+// codestothestars - inadvertently clears target after it is set
+#if SUPPORTED_CLIENT_BUILD <= CLIENT_BUILD_1_5_1
     // When this packet send?
     ObjectGuid guid ;
     recv_data >> guid;
@@ -442,6 +444,7 @@ void WorldSession::HandleSetTargetOpcode(WorldPacket& recv_data)
 
     if (FactionTemplateEntry const* factionTemplateEntry = sObjectMgr.GetFactionTemplateEntry(unit->GetFactionTemplateId()))
         _player->GetReputationMgr().SetVisible(factionTemplateEntry);
+#endif
 }
 
 void WorldSession::HandleSetSelectionOpcode(WorldPacket& recv_data)
