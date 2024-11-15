@@ -1079,13 +1079,30 @@ bool ChatHandler::HandleHealCommand(char* args)
     if (!ExtractUInt32(&args, targetIndex)) return false;
     if (!ExtractUInt32(&args, button)) return false;
 
-    Player* healer = groupIterator->getSource();
+    Player* groupMemberLast = groupIterator->getSource();
+    Player* healer = nullptr;
+    Player* healer2 = nullptr;
 
     groupIterator = groupIterator->next();
 
-    Unit* groupMember1 = groupIterator->getSource();
+    switch (group->GetMembersCount())
+    {
+        case 4:
+            if (groupMemberLast->GetClass() == CLASS_PRIEST) healer2 = groupMemberLast;
 
-    if (!groupMember1 || !healer) return true;
+            healer = groupIterator->getSource();
+            groupIterator = groupIterator->next();
+            break;
+        case 3:
+            healer = groupMemberLast;
+            break;
+        default:
+            return true;
+    }
+
+    Unit* dps = groupIterator->getSource();
+
+    if (!dps || !healer) return true;
 
     Unit* target;
 
@@ -1094,9 +1111,11 @@ bool ChatHandler::HandleHealCommand(char* args)
     else if (targetIndex == 2)
         target = player;
     else if (targetIndex == 3)
-        target = groupMember1;
+        target = dps;
+    else if (targetIndex == 4)
+        target = dps->GetPet();
     else
-        target = groupMember1->GetPet();
+        target = groupMemberLast;
 
     ActionButtonList& actions = healer->GetSession()->GetMasterPlayer()->GetActionButtons();
     for (auto& action : actions)
@@ -1106,6 +1125,19 @@ bool ChatHandler::HandleHealCommand(char* args)
         uint32 spell = action.second.GetAction();
         healer->CastSpell(target, spell, false);
         break;
+    }
+
+    if (healer2)
+    {
+        ActionButtonList& actions = healer2->GetSession()->GetMasterPlayer()->GetActionButtons();
+        for (auto& action : actions)
+        {
+            if (action.first != button - 1) continue;
+    
+            uint32 spell = action.second.GetAction();
+            healer2->CastSpell(target, spell, false);
+            break;
+        }
     }
 
     return true;
