@@ -1838,6 +1838,14 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                             caster->CastSpell(caster, 13360, true);
                         return;
                     }
+                    case 23018: // Use Dragon Orb
+                    {
+                        // see if a newer parsed spawn gives any more hint
+                        // as to whether it would be done this way
+                        target->CastSpell(target, 23014, true); // Possess
+                        target->FindNearestCreature(12435, 100)->AddAura(23021); // Dragon Orb
+                        return;
+                    }
                     case 24596: // Intoxicating Venom
                     {
                         if (target)
@@ -2032,6 +2040,14 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                     if (pCreature->IsAlive() && !pCreature->HasCreatureState(CSTATE_DESPAWNING))
                         pCreature->DespawnOrUnsummon(2000);
                 }
+                return;
+            }
+            case 23018:                                     // Use Dragon Orb
+            {
+                target->InterruptSpell(CURRENT_CHANNELED_SPELL); // Possess
+                target->FindNearestCreature(12435, 100)->RemoveAura(23021, EFFECT_INDEX_0); // Dragon Orb
+                // target->RemoveAura(23021, EFFECT_INDEX_1); // do we also need 1 and 2?
+                // target->RemoveAura(23021, EFFECT_INDEX_2);
                 return;
             }
             case 24906:                                     // Emeriss Aura
