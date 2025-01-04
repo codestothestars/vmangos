@@ -260,6 +260,9 @@ enum ConditionType
     CONDITION_NEARBY_HOSTILE        = 59,                   // Checks if there is a nearby enemy on the threat list.
                                                             // Requirement: Creature Target
                                                             // Value1: search_radius
+    CONDITION_UNIT_STATE            = 60,                   // Checks if the unit has the specified state flags.
+                                                            // Requirement: Unit Target
+                                                            // Value1: enum UnitState
 };
 
 enum ConditionFlags
