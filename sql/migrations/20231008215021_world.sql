@@ -67,11 +67,21 @@ UPDATE `creature_template` SET `ai_name` = 'EventAI', `auras` = '18943', `script
 -- Events list for Grethok the Controller
 INSERT `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `action1_script`, `comment`) VALUES
-(1255701,         12557,            549,            1,          1255701, 'Grethok the Controller - Out of Combat');
+(1255701,         12557,            549,            1,          1255701, 'Grethok the Controller - Out of Combat'),
+(1255702,         12557,              0,            4,          1255702, 'Grethok the Controller - Aggro'); -- should this have condition 549?
 INSERT `creature_ai_scripts`
-(   `id`, `command`, `datalong`, `target_type`, `comments`) VALUES
-(1255701,        15,      23018,             6, 'Grethok the Controller - Cast Use Dragon Orb');
+(   `id`, `command`, `datalong`, `target_type`, `dataint`, `comments`) VALUES
+(1255701,        15,      23018,             6,         0, 'Grethok the Controller - Cast Use Dragon Orb'),
+(1255702,        49,          1,             0,         0, 'Grethok the Controller - Combat Pulse'),
+(1255702,         0,          1,             0,      9958, 'Grethok the Controller - Yell');
+REPLACE `creature_spells`
+(`entry`, `name`,                   `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `spellId_3`, `probability_3`, `castTarget_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`, `spellId_4`, `probability_4`, `castTarget_4`, `delayInitialMin_4`, `delayInitialMax_4`, `delayRepeatMin_4`, `delayRepeatMax_4`) VALUES
+( 125570, 'Grethok the Controller',       13747,             100,              ?,                  12,                  15,                 12,                 15,       14515,             100,              ?,                   6,                  12,                  6,                 12,       22272,             100,              0,                   2,                  16,                 10,                 13,       22274,             100,              0,                   1,                  11,                  7,                  7);
 UPDATE `creature_template` SET `auras` = '18950' WHERE `entry` = 12557;
+-- spells
+-- Need to check spell targets against what's in the current list.
+-- Current list has 22273 (Arcane Missiles), but that is just a component of 22272.
+-- No data for repeating delays on spells 13747 and 14515. Only one data point for 22274.
 
 -- Events list for Blackwing Orb Trigger
 -- INSERT `creature_ai_events`
@@ -108,3 +118,21 @@ DELETE FROM creature WHERE id IN (14449);
 DELETE FROM creature_ai_events WHERE id LIKE '12435%' OR id LIKE '12557%' OR id LIKE '14449%';
 DELETE FROM creature_ai_scripts WHERE id LIKE '12435%' OR id LIKE '12557%' OR id LIKE '14449%';
 DELETE FROM creature_movement_template WHERE `entry` = 12435;
+
+-- Delay of creature's each movement from the previous.
+-- SELECT current.unixtimems, current.point, current.orientation, ROUND((current.unixtimems - previous.unixtimems) / 1000) delay
+-- FROM creature_movement_server current
+--   JOIN creature_movement_server previous ON current.guid = previous.guid AND current.point - 1 = previous.point
+--   JOIN creature ON current.guid = creature.guid
+-- WHERE creature.id = 12435
+-- ORDER BY current.unixtimems, current.point
+
+-- Min and max delay of creature's movement from the previous.
+-- SELECT
+--   MIN(ROUND((current.unixtimems - previous.unixtimems) / 1000)) min_delay,
+--   MAX(ROUND((current.unixtimems - previous.unixtimems) / 1000)) max_delay
+-- FROM creature_movement_server current
+--   JOIN creature_movement_server previous ON current.guid = previous.guid AND current.point - 1 = previous.point
+--   JOIN creature ON current.guid = creature.guid
+-- WHERE creature.id = 12435 AND (current.unixtimems - previous.unixtimems) > 3000
+-- ORDER BY current.unixtimems, current.point
