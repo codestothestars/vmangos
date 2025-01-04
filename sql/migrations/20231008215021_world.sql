@@ -51,6 +51,53 @@ INSERT INTO `creature`
 -- Need to set the encounter status to SPECIAL (4) on event start.
 -- What is DATA_EGG used for in the existing razorgore script?
 
+-- Random spells seen
+--  6660
+-- 14443
+-- 14515
+-- 14897
+-- 15580
+-- 15663
+-- 15754
+-- 16806
+-- 17290
+-- 19632
+-- 19872
+-- 19873
+-- 20037
+-- 20038
+-- 21389
+-- 22271
+-- 22272
+-- 22273
+-- 22313
+-- 22425
+-- 22458
+-- 23014
+-- 23023
+-- 23024
+-- 23967
+-- 24375
+-- 25139
+
+-- summon_spell entries seen
+-- 19826 - Summon Blackwing Legionnaire
+-- 19827 - Summon Blackwing Mage
+
+-- Random creatures seen
+-- 12434 - Monster Generator (Blackwing)
+-- * Appears to spawn when the players aggro Grethok.
+-- * creature_guid_values for 12416, 12420, and 12422 show this ID as demon_creator_id.
+--   However, a quirk is that some of these, apparently the ones spawned in the corners instead of
+--   near the gates, have 0 for demon_creator_guid.
+-- * Located in the four alcoves adjacent the entry and exit gates.
+-- 16604 - Blackwing Spell Marker
+-- * Located in the four corners, close to each corner of the daises, the dead center of the room,
+--   behind Razorgore, and behind Grethok.
+-- * Casts 20038 (Explosion), the spell that kills everyone to wipe.
+--   This creature apparently is a valid hit target for 20038, but every cast I've seen misses.
+-- * Gets hit at some point by spell 20037 (Explode Orb Effect), cast by Blackwing Orb Trigger.
+
 -- Remove C++ script from Black Dragon Egg.
 UPDATE `gameobject_template` SET `script_name` = '' WHERE `entry` = 177807;
 
@@ -100,10 +147,12 @@ INSERT `creature_ai_events`
 (1255701,         12557,            549,            1,          1255701, 'Grethok the Controller - Out of Combat'),
 (1255702,         12557,              0,            4,          1255702, 'Grethok the Controller - Aggro');
 INSERT `creature_ai_scripts`
-(   `id`, `command`, `datalong`, `target_type`, `dataint`, `comments`) VALUES
-(1255701,        15,      23018,             6,         0, 'Grethok the Controller - Cast Use Dragon Orb'),
-(1255702,        49,          1,             0,         0, 'Grethok the Controller - Combat Pulse'),
-(1255702,         0,          1,             0,      9958, 'Grethok the Controller - Yell');
+(   `id`, `command`, `datalong`, `datalong2`, `target_type`, `dataint`, `comments`) VALUES
+(1255701,        15,      23018,           0,             6,         0, 'Grethok the Controller - Cast Use Dragon Orb'),
+(1255702,        49,          1,           0,             0,         0, 'Grethok the Controller - Combat Pulse'),
+(1255702,         0,          1,           0,             0,      9958, 'Grethok the Controller - Yell'),
+-- This action a candidate for an event script, if we find there's an event.
+(1255702,        37,          0,           4,             0,         0, 'Grethok the Controller - Set Instance Data (Encounter Special)');
 REPLACE `creature_spells`
 (`entry`, `name`,                   `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `spellId_3`, `probability_3`, `castTarget_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`, `spellId_4`, `probability_4`, `castTarget_4`, `delayInitialMin_4`, `delayInitialMax_4`, `delayRepeatMin_4`, `delayRepeatMax_4`) VALUES
 ( 125570, 'Grethok the Controller',       13747,             100,              6,                  12,                  22,                 12,                 22,       14515,             100,              4,                   6,                  14,                  6,                 14,       22272,             100,              4,                   0,                  16,                 10,                 18,       22274,             100,              4,                   2,                  18,                  7,                 11);
