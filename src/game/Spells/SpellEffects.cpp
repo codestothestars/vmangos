@@ -564,12 +564,11 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                 }
                 case 19873: // Destroy Egg
                 {
-                    // // note that the creature spawning scripts need to check for an egg to see whether to spawn.
                     float radius = GetSpellRadius(sSpellRadiusStore.LookupEntry(m_spellInfo->EffectRadiusIndex[effIdx]));
 
                     static ScriptInfo scriptNefariansTroopsFlee;
                     scriptNefariansTroopsFlee.command = SCRIPT_COMMAND_START_SCRIPT_FOR_ALL;
-                    scriptNefariansTroopsFlee.condition = 8303;
+                    scriptNefariansTroopsFlee.condition = 8304;
                     scriptNefariansTroopsFlee.startScriptForAll.objectEntry = 16604;
                     scriptNefariansTroopsFlee.startScriptForAll.objectType = SO_STARTFORALL_CREATURES;
                     scriptNefariansTroopsFlee.startScriptForAll.scriptId = 1660401;
@@ -577,7 +576,7 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
 
                     static ScriptInfo scriptRazorgoreYell;
                     scriptRazorgoreYell.command = SCRIPT_COMMAND_TALK;
-                    scriptRazorgoreYell.condition = 560;
+                    scriptRazorgoreYell.condition = 559;
                     scriptRazorgoreYell.talk.chatType = CHAT_TYPE_YELL;
                     scriptRazorgoreYell.talk.textId[0] = 9961;
                     scriptRazorgoreYell.talk.textId[1] = 9962;
@@ -608,8 +607,15 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                     );
                     return;
                 }
+                case 20037: // Explode Orb Effect
+                {
+                    // Make sure 20038 "activates" the Black Dragon Eggs and misses the Blackwing Spell Markers
+                    unitTarget->CastSpell(nullptr, 20038, false);
+                    return;
+                }
                 case 23024: // Fireball
                 {
+                    // Make sure that the Orb of Domination despawns, and does so with its "falling apart" animation as in sniffs.
                     if (effIdx == 0) unitTarget->CastSpell(nullptr, 20037, false);
                     return;
                 }
@@ -623,7 +629,7 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                             case 12420: // Blackwing Mage
                                 static ScriptInfo scriptFlee;
                                 scriptFlee.command = SCRIPT_COMMAND_START_SCRIPT;
-                                scriptFlee.condition = 562;
+                                scriptFlee.condition = 560;
                                 scriptFlee.startScript.scriptId[0] = 8302141;
                                 creature->GetMap()->ScriptCommandStart(
                                     scriptFlee,
