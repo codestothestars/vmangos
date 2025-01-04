@@ -828,6 +828,23 @@ REPLACE `creature_ai_events`
 (1241601,         12416,              0,            6,                        0x0,            100,          0x00,              0,              0,              0,              0,          1241601, 'Blackwing Legionnaire - Death'),
 (1241602,         12416,           8304,            0,                        0x1,            100,          0x01,           1000,           1000,           1000,           1000,          1242002, 'Blackwing Legionnaire - In Combat (periodic)'),
 -- this was the existing one
+-- Next thing is to verify "reach home" behavior for all the adds.
+-- Dragonspawn doesn't run home. It stands wherever it was and despawns after a few seconds.
+-- We have a potential issue. In sniff_36035_bwl_stopped_before_dragons the last player dies and then Razorgore resets.
+-- But in sniff_33302_bwl_first_boss_try_wipe the fight continues until Razorgore is dead.
+-- Need to check all the wipes and note when Razorgore resets vs fighting to the death.
+-- sniff_33302_bwl_first_boss_try_wipe       1 - Fight continues. Razorgore was free for a while and the last player was running around.
+-- sniff_33302_bwl_first_second_boss_and_ony 1 - Indeterminate (client released before wipe)
+-- sniff_33302_bwl_progression_raid          1 - Fight continues. Last player alive is possessor.
+-- sniff_36035_bwl_stopped_before_dragons    1 - Fight resets. Last player alive is possessor. Maybe look at Razorgore's values around the reset time?
+-- * 5m24s fight
+-- Note that he yells "I'm free!" when resetting.
+-- Check threat numbers. Maybe somehow no creatures had threat on him when the last player died?
+-- sniff_36035_bwl_stopped_before_dragons    2 - Fight continues. Last player alive is possessor.
+-- * 5m41s fight
+-- Last player bubbles and then the creatures immediately start getting threat on Razorgore.
+-- Looks like the player only gets threat info for some creatures, presumably ones that they have engaged.
+
 (1241604,         12416,              0,           21,                        0x0,            100,          0x00,              0,              0,              0,              0,          1241604, 'Blackwing Legionnaire - Despawn On ReachHome (Ustaag)');
 REPLACE `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `datalong2`, `datalong3`, `dataint`, `comments`) VALUES
@@ -862,14 +879,13 @@ REPLACE `creature_spells`
 REPLACE `creature_ai_events`
 (   `id`,  `creature_id`, `event_type`, `action1_script`, `comment`) VALUES
 -- existing
-(1242204,          12422, ,         21,          1242204, 'Death Talon Dragonspawn - Despawn on ReachHome (Ustaag)');
+(1242204,          12422,           21,          1242204, 'Death Talon Dragonspawn - Despawn on ReachHome (Ustaag)');
 REPLACE `creature_ai_scripts`
 (   `id`, `command`, `comments`) VALUES
 -- existing
 (1242204,        18, 'Death Talon Dragonspawn - Despawn Self');
-REPLACE `generic_scripts`
-(   `id`, `command`, `comments`) VALUES
-(1242201,        18, 'Death Talon Dragonspawn - Despawn');
+-- REPLACE `generic_scripts`
+-- (   `id`, `command`, `comments`) VALUES;
 
 -- Events list for Razorgore the Untamed
 -- Note that effect 1 of spell 19873 has a misc value of Disturb (activate gameobject trap). In the sniff does the object do something to the caster?
@@ -963,6 +979,11 @@ INSERT INTO `creature_movement_template`
 REPLACE `creature_spells`
 (`entry`, `name`,                                 `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`) VALUES
 ( 144560, 'Blackwing Lair - Blackwing Guardsman',       15580,             100,              1,                   5,                  23,                  1,                 16,       15754,             100,              1,                   3,                  24,                  8,                 11);
+
+-- Events list for Blackwing Spell Marker
+REPLACE `generic_scripts`
+(   `id`, `command`, `datalong`, `comments`) VALUES
+(1660401,        15,      23032, 'Blackwing Spell Marker - Cast Nefarian''s Troops Flee');
 
 -- Portcullis (Entry: 176964 Guid: 232301) Open Script
 INSERT `generic_scripts`

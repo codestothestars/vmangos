@@ -107,7 +107,11 @@ enum
     GO_ORBE_DOMINATION          = 177808,
 
     // Raz
+    MOB_BLACKWING_LEGIONNAIRE   = 12416,
+    MOB_BLACKWING_MAGE          = 12420,
+    MOB_DEATH_TALON_DRAGONSPAWN = 12422,
     MOB_RAZ_TRIGGER             = 14453,
+    MOB_NEFARIANS_TROOPS        = 14459,
     MOB_GRETHOK                 = 12557,
     MOB_GARDE_AILE_NOIRE        = 14456,
     // Vael
