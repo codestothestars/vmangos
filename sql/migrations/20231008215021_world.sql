@@ -76,16 +76,21 @@ INSERT `creature_ai_scripts`
 (1255702,         0,          1,             0,      9958, 'Grethok the Controller - Yell');
 REPLACE `creature_spells`
 (`entry`, `name`,                   `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `spellId_3`, `probability_3`, `castTarget_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`, `spellId_4`, `probability_4`, `castTarget_4`, `delayInitialMin_4`, `delayInitialMax_4`, `delayRepeatMin_4`, `delayRepeatMax_4`) VALUES
-( 125570, 'Grethok the Controller',       13747,             100,              6,                  12,                  15,                 12,                 15,       14515,             100,              ?,                   6,                  12,                  6,                 12,       22272,             100,              0,                   2,                  16,                 10,                 13,       22274,             100,              0,                   1,                  11,                  7,                  7);
+( 125570, 'Grethok the Controller',       13747,             100,              6,                  12,                  22,                 12,                 21,       14515,             100,              ?,                   6,                  14,                  6,                 14,       22272,             100,              0,                   0,                  16,                 10,                 18,       22274,             100,              0,                   2,                  18,                  7,                 12);
 UPDATE `creature_template` SET `auras` = '18950' WHERE `entry` = 12557;
 -- spells
 -- Need to check spell targets against what's in the current list.
 -- Current list has 22273 (Arcane Missiles), but that is just a component of 22272.
 -- No data for repeating delays on spells 13747 and 14515. Only one data point for 22274.
 -- 13747
--- Has implicit target A - TARGET_LOCATION_CASTER_SRC
--- Has implicit target B - TARGET_ENUM_UNITS_ENEMY_AOE_AT_SRC_LOC
+-- Implicit target A - TARGET_LOCATION_CASTER_SRC
+-- Implicit target B - TARGET_ENUM_UNITS_ENEMY_AOE_AT_SRC_LOC
 -- Test and make sure it affects all players in a radius.
+-- No data for repeat delay. Used the initial delay.
+-- 14515
+-- Appears to be random hostile target.
+-- 22272
+-- Appears to be random hostile target.
 
 -- Events list for Blackwing Orb Trigger
 -- INSERT `creature_ai_events`
