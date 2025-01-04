@@ -68,7 +68,7 @@ UPDATE `creature_template` SET `ai_name` = 'EventAI', `auras` = '18943', `script
 INSERT `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `action1_script`, `comment`) VALUES
 (1255701,         12557,            549,            1,          1255701, 'Grethok the Controller - Out of Combat'),
-(1255702,         12557,              0,            4,          1255702, 'Grethok the Controller - Aggro'); -- should this have condition 549?
+(1255702,         12557,              0,            4,          1255702, 'Grethok the Controller - Aggro');
 INSERT `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `target_type`, `dataint`, `comments`) VALUES
 (1255701,        15,      23018,             6,         0, 'Grethok the Controller - Cast Use Dragon Orb'),
@@ -76,7 +76,7 @@ INSERT `creature_ai_scripts`
 (1255702,         0,          1,             0,      9958, 'Grethok the Controller - Yell');
 REPLACE `creature_spells`
 (`entry`, `name`,                   `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `spellId_3`, `probability_3`, `castTarget_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`, `spellId_4`, `probability_4`, `castTarget_4`, `delayInitialMin_4`, `delayInitialMax_4`, `delayRepeatMin_4`, `delayRepeatMax_4`) VALUES
-( 125570, 'Grethok the Controller',       13747,             100,              6,                  12,                  22,                 12,                 21,       14515,             100,              4,                   6,                  14,                  6,                 14,       22272,             100,              4,                   0,                  16,                 10,                 18,       22274,             100,              4,                   2,                  18,                  7,                 12);
+( 125570, 'Grethok the Controller',       13747,             100,              6,                  12,                  22,                 12,                 22,       14515,             100,              4,                   6,                  14,                  6,                 14,       22272,             100,              4,                   0,                  16,                 10,                 18,       22274,             100,              4,                   2,                  18,                  7,                 11);
 UPDATE `creature_template` SET `auras` = '18950' WHERE `entry` = 12557;
 -- spells
 -- Need to check spell targets against what's in the current list.
@@ -96,6 +96,11 @@ UPDATE `creature_template` SET `auras` = '18950' WHERE `entry` = 12557;
 
 -- Events list for Orb of Domination
 UPDATE `creature_template` SET `script_name` = '' WHERE `entry` = 14453;
+
+-- Events list for Blackwing Guardsman
+REPLACE `creature_spells`
+(`entry`, `name`,                                 `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`) VALUES
+( 144560, 'Blackwing Lair - Blackwing Guardsman',       15580,             100,              1,                   5,                  23,                  1,                 16,       15754,             100,              1,                   3,                  24,                  8,                 11);
 
 -- Waypoints for Razorgore the Untamed
 INSERT INTO `creature_movement_template`
