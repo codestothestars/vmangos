@@ -8,9 +8,6 @@ IF v=0 THEN
 INSERT INTO `migrations` VALUES ('20231008215021');
 -- Add your query below.
 
--- Add to max condition parameters.
-ALTER TABLE `conditions` ADD `value5` INT NOT NULL DEFAULT '0' COMMENT 'data field five for the condition' AFTER `value4`;
-
 --  240: No player alive within 150 yards.
 --  Test whether it works when standing in corners.
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 240, 56,          0,  150, 0, 0x1);
@@ -85,42 +82,6 @@ INSERT INTO `creature`
 (`guid`,  `id`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecsmin`, `spawntimesecsmax`, `wander_distance`, `health_percent`, `mana_percent`) VALUES
 (   113, 14449,   469,     -7615.51,     -1025.58,      413.465,       5.23599,             604800,             604800,                 0,              100,            100);
 
--- Random spells seen
--- 22458
--- 23014
--- 23023
--- 23024
--- 23967
--- 24375
--- 25139
-
--- Random creature seen
--- 16604 - Blackwing Spell Marker
--- * Located in the four corners, close to each corner of the daises, the dead center of the room,
---   behind Razorgore, and behind Grethok. Make sure they're spawned.
--- * Casts 20038 (Explosion), the spell that kills everyone to wipe.
---   This creature apparently is a valid hit target for 20038, but every cast I've seen misses.
--- * Gets hit at some point by spell 20037 (Explode Orb Effect), cast by Blackwing Orb Trigger.
--- On vmangos has UNIT_FLAG_PVP, but not in sniff, so remove that flag.
--- Gains UNIT_FLAG_IN_COMBAT for about 8 seconds per sniff. What's going on at this time?
-
--- Creatures stop spawning once the last egg is destroyed.
--- Each location always has the same initial delay from the event start, either 45 or 75 seconds.
--- Notice that in sniff_35000_bwl_full_run the initial times are lower by 6 seconds or so.
--- Every location then repeats spawns, most every 15 seconds,
--- but each fourth, fifth, or sixth (random) will be 30 seconds.
--- Any pair of creatures can spawn. The current script prevents two Deathtalon Dragonspawns,
--- but there's an example of that in sniff_33302_bwl_first_boss_try_wipe.
--- The adjacent location pairs are not tied to each other, contrary to what the current script does,
--- which you can tell comparing the timings between sniff_33302_bwl_first_boss_try_wipe and
--- sniff_33302_bwl_first_second_boss_and_ony. On some 15-second intervals neither location spawns a creature,
--- and the timestamps are not identical between the pairs.
--- Comparing all eight locations' timings reveals that there are no synchronized pairs.
--- They're not always spawned with the same orientation.
--- Different orientations appear to correspond to different initial movement paths.
--- While there are at least 25 creatures alive, each location has a 75% chance to not spawn every 2nd 15-second interval.
--- (test this on the Cataclysm PTR)
-
 -- Remove C++ script from Black Dragon Egg.
 UPDATE `gameobject_template` SET `script_name` = '' WHERE `entry` = 177807;
 
@@ -134,7 +95,6 @@ DELETE FROM `event_scripts` WHERE `id` = 8302;
 INSERT `event_scripts`
 (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `condition_id`, `comments`) VALUES
 -- Removed condition 240.
--- sniff_36035_bwl_stopped_before_dragons makes it look like the event fails (and the gate opens) when Razorgore casts the fireball that triggers the explosion.
 (8302,       0,        61,       8302,        1200,           0,           0,             0,               0,               0,            0,         0,     830201,          0,     830202,              0, 'Razorgore Event - Start Map Event'),
 (8302,      75,        39,    8302045,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8302, 'Razorgore Event - Start Spawning Adds (North)'),
 (8302,      75,        39,    8302057,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8302, 'Razorgore Event - Start Spawning Adds (East)'),
@@ -759,9 +719,6 @@ INSERT INTO `creature_movement_special`
 (830211,      43,     -7611.79,     -1022.45,      413.597),
 (830211,      44,     -7611.79,     -1022.45,      413.597);
 
--- On wipe on Cata PTR, Razorgore yells "I'm free!" etc. and then kills Grethok etc. with a fireball/explosion.
--- Actually, sniff_36035 apparently has this.
-
 -- Events list for Blackwing Legionnaire
 REPLACE `creature_spells`
 (`entry`, `name`,                  `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `spellId_3`, `probability_3`, `castTarget_3`, `targetParam1_3`, `targetParam2_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`) VALUES
@@ -815,42 +772,43 @@ REPLACE `creature_ai_scripts`
 INSERT `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
 (1243501,         12435,             540,           1,                          0,          0x01,           6000,          16000,           6000,          16000,          1243501, 'Razorgore the Untamed - Out of Combat (periodic)'),
+(1243502,         12435,               0,          23,                          0,          0x01,          19832,              1,              0,              0,          1243502, 'Razorgore the Untamed - Aura'),
 -- Not sure if this needs a phase, but it will be obvious if so.
-(1243502,         12435,               0,          21,                          0,          0x00,              0,              0,              0,              0,          1243502, 'Razorgore the Untamed - Reached Home'),
-(1243503,         12435,             241,           6,                        0b1,          0x00,              0,              0,              0,              0,          1243503, 'Razorgore the Untamed - Death (eggs remain, phase 1)'),
-(1243504,         12435,             241,           6,                          0,          0x00,              0,              0,              0,              0,          1243504, 'Razorgore the Untamed - Death (eggs remain, any phase)'),
-(1243505,         12435,             242,           6,                          0,          0x00,              0,              0,              0,              0,          1243505, 'Razorgore the Untamed - Death (eggs destroyed)');
+(1243503,         12435,               0,          21,                          0,          0x00,              0,              0,              0,              0,          1243503, 'Razorgore the Untamed - Reached Home'),
+(1243504,         12435,             241,           6,                        0b1,          0x00,              0,              0,              0,              0,          1243504, 'Razorgore the Untamed - Death (eggs remain, phase 1)'),
+(1243505,         12435,             241,           6,                          0,          0x00,              0,              0,              0,              0,          1243505, 'Razorgore the Untamed - Death (eggs remain, any phase)'),
+(1243506,         12435,             242,           6,                          0,          0x00,              0,              0,              0,              0,          1243506, 'Razorgore the Untamed - Death (eggs destroyed)');
 INSERT `creature_ai_scripts`
-(   `id`, `command`, `datalong`, `datalong2`, `target_param1`, `target_param2`, `target_type`, `dataint`, `condition_id`, `comments`) VALUES
-(1243501,        15,      21389,       0x002,               0,               0,             6,         0,            548, 'Razorgore the Untamed - Cast Fire Channeling'),
-(1243501,        60,          0,           1,               0,               0,             0,         0,            548, 'Razorgore the Untamed - Start Waypoint 1'),
-(1243501,        60,          0,           2,               0,               0,             0,         0,            542, 'Razorgore the Untamed - Start Waypoint 2'),
-(1243501,        60,          0,           3,               0,               0,             0,         0,            543, 'Razorgore the Untamed - Start Waypoint 3'),
-(1243501,        60,          0,           4,               0,               0,             0,         0,            544, 'Razorgore the Untamed - Start Waypoint 4'),
-(1243501,        60,          0,           5,               0,               0,             0,         0,            545, 'Razorgore the Untamed - Start Waypoint 5'),
-(1243501,        60,          0,           6,               0,               0,             0,         0,            546, 'Razorgore the Untamed - Start Waypoint 6'),
-(1243502,         0,          1,           0,               0,               0,             0,      7980,              0, 'Razorgore the Untamed - Yell (reached home)'),
-(1243502,        39,    1243501,           0,               0,               0,             0,       100,              0, 'Razorgore the Untamed - Cast Fireball')
-(1243503,         0,          1,           0,               0,               0,             0,      9591,              0, 'Razorgore the Untamed - Yell (death)'),
+(   `id`, `command`, `datalong`, `datalong2`, `datalong3`, `target_param1`, `target_param2`, `target_type`, `dataint`, `condition_id`, `comments`) VALUES
+(1243501,        15,      21389,       0x002,           0,               0,               0,             6,         0,            548, 'Razorgore the Untamed - Cast Fire Channeling'),
+(1243501,        60,          0,           1,           0,               0,               0,             0,         0,            548, 'Razorgore the Untamed - Start Waypoint 1'),
+(1243501,        60,          0,           2,           0,               0,               0,             0,         0,            542, 'Razorgore the Untamed - Start Waypoint 2'),
+(1243501,        60,          0,           3,           0,               0,               0,             0,         0,            543, 'Razorgore the Untamed - Start Waypoint 3'),
+(1243501,        60,          0,           4,           0,               0,               0,             0,         0,            544, 'Razorgore the Untamed - Start Waypoint 4'),
+(1243501,        60,          0,           5,           0,               0,               0,             0,         0,            545, 'Razorgore the Untamed - Start Waypoint 5'),
+(1243501,        60,          0,           6,           0,               0,               0,             0,         0,            546, 'Razorgore the Untamed - Start Waypoint 6'),
+(1243502,        37,         27,           0,           0,               0,               0,             0,         0,              0, 'Razorgore the Untamed - Set instance data'),
+(1243503,         0,          1,           0,           0,               0,               0,             0,      7980,              0, 'Razorgore the Untamed - Yell (reached home)'),
+(1243503,        39,    1243501,           0,           0,               0,               0,             0,       100,              0, 'Razorgore the Untamed - Cast Fireball')
+(1243504,         0,          1,           0,           0,               0,               0,             0,      9591,              0, 'Razorgore the Untamed - Yell (death)'),
 -- might need a spell_script_target of Blackwing Orb Trigger for this.
-(1243503,        39,    1243501,           0,               0,               0,             0,       100,              0, 'Razorgore the Untamed - Cast Fireball'),
-(1243504,        62,       8302,           0,               0,               0,             0,         0,              0, 'Razorgore the Untamed - End Map Event (Failure)'),
--- Need to do other stuff like raise gates. Also yell?
-(1243505,        62,       8302,           1,               0,               0,             0,         0,              0, 'Razorgore the Untamed - End Map Event (Success)');
+(1243504,        39,    1243501,           0,           0,               0,               0,             0,       100,              0, 'Razorgore the Untamed - Cast Fireball'),
+(1243505,        62,       8302,           0,           0,               0,               0,             0,         0,              0, 'Razorgore the Untamed - End Map Event (Failure)'),
+(1243506,        62,       8302,           1,           0,               0,               0,             0,         0,              0, 'Razorgore the Untamed - End Map Event (Success)');
 REPLACE `creature_spells`
 (`entry`, `name`,
                                    `spellId_1`, `castTarget_1`, `targetParam1_1`, `targetParam2_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, 
                                    `spellId_2`, `castTarget_2`, `targetParam1_2`, `targetParam2_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`,
                                    `spellId_3`, `castTarget_3`, `targetParam1_3`, `targetParam2_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`) VALUES
 -- Need to get initial delays from Cata PTR if possible. Otherwise will have to just use the repeat delays for them.
--- Still doing these spells.
 ( 124350, 'Razorgore the Untamed',       19632,              1,                0,                0,                   ?,                   ?,                  8,                 28,
                                          19872,             26,            12422,               60,                   ?,                   ?,                  6,                 38,
                                          22425,              6,                0,                0,                   ?,                   ?,                 18,                 44,
-                                         23023,              6,                0,                0,                   ?,                   ?,                 13,                 42);
+                                         23023,              6,                0,                0,                   ?,                   ?,                 13,                 42),
+                                         24375,              6,                0,                0,                   ?,                   ?,                 22,                 43);
 REPLACE `generic_scripts`
 (   `id`, `priority`, `command`, `datalong`, `comments`) VALUES
-(1243501,          0,        44,          1, 'Razorgore the Untamed - Set Phase 2'),
+(1243501,          0,        44,          1, 'Razorgore the Untamed - Set Phase 1'),
 (1243501,          1,        15,      23024, 'Razorgore the Untamed - Cast Fireball');
 UPDATE `creature_template` SET `ai_name` = 'EventAI', `auras` = '18943', `script_name` = '', `spell_list_id` = 124350 WHERE `entry` = 12435;
 
@@ -886,7 +844,6 @@ REPLACE `creature_spells`
 UPDATE `creature_template` SET `auras` = '18950' WHERE `entry` = 12557;
 -- spells
 -- Need to check spell targets against what's in the current list.
--- Current list has 22273 (Arcane Missiles), but that is just a component of 22272.
 -- No data for repeating delays on spells 13747 and 14515. Only one data point for 22274.
 -- 13747
 -- Implicit target A - TARGET_LOCATION_CASTER_SRC
@@ -899,9 +856,6 @@ UPDATE `creature_template` SET `auras` = '18950' WHERE `entry` = 12557;
 -- INSERT `creature_ai_scripts`
 -- (   `id`, `command`, `datalong`, `comments`) VALUES;
 UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry` = 14449;
-
--- Player's Possess on Razorgore needs to reset DATA_RAZORGORE_EGG_YELLED to 0
--- so that he always yells on the first Destroy Egg.
 
 -- Events list for Orb of Domination
 UPDATE `creature_template` SET `script_name` = '' WHERE `entry` = 14453;
@@ -920,6 +874,26 @@ INSERT INTO `creature_movement_template`
 REPLACE `creature_spells`
 (`entry`, `name`,                                 `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`) VALUES
 ( 144560, 'Blackwing Lair - Blackwing Guardsman',       15580,             100,              1,                   5,                  23,                  1,                 16,       15754,             100,              1,                   3,                  24,                  8,                 11);
+
+-- Add missing Blackwing Spell Marker spawns
+INSERT `creature`
+-- make sure they spawn right away instead of after the default of 120 seconds
+-- make sure they don't actually wander by wander_distance
+(`guid`,  `id`, `map`, `position_x`, `position_y`, `position_z`,  `orientation`, `patch_min`) VALUES
+(  4817, 16604,   469,     -7659.47,     -1043.87,      407.282,       1.65806 ,           4),
+(  4818, 16604,   469,     -7626.67,     -1009.63,      413.465,       3.19395 ,           4),
+(  4819, 16604,   469,     -7619.05,     -1048.82,      408.24 ,       0.680678,           4),
+(  4820, 16604,   469,     -7607.38,     -1115.99,      407.282,       4.92183 ,           4),
+(  4821, 16604,   469,     -7599.65,     -1077.8 ,      408.24 ,       3.54302 ,           4),
+(  4822, 16604,   469,     -7595.42,     -1053.45,      408.24 ,       3.89208 ,           4),
+(  4823, 16604,   469,     -7592.7 ,     -1029.95,      408.24 ,       5.32325 ,           4),
+(  4824, 16604,   469,     -7583.24,     - 990.03,      407.282,       2.89725 ,           4),
+(  4825, 16604,   469,     -7571.81,     -1058.2 ,      408.24 ,       5.74213 ,           4),
+(  4826, 16604,   469,     -7566.78,     -1095.09,      413.465,       4.71239 ,           4),
+(  4827, 16604,   469,     -7532.15,     -1062.56,      407.282,       4.72984 ,           4);
+
+-- Remove PVP flag from Blackwing Spell Marker
+UPDATE `creature_template` SET `unit_flags` = `unit_flags` & ~0x00001000 WHERE `entry` = 16604;
 
 -- Events list for Blackwing Spell Marker
 REPLACE `generic_scripts`
@@ -1875,8 +1849,8 @@ WHERE creature.id = 12435;
 
 -- Razorgore spell delays after final Possess
 SET @encounter_creature_id = 12435;
-SET @radius = 40;
-SET @target_spell_id = 22425;
+SET @radius = 15;
+SET @target_spell_id = 24375;
 DROP TABLE IF EXISTS encounter;
 DROP TABLE IF EXISTS event_unit_closest_enemy_distance;
 DROP TABLE IF EXISTS event_unit_enemy_distance;
