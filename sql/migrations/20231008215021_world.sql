@@ -49,6 +49,12 @@ UPDATE `gameobject_template` SET `script_name` = '' WHERE `entry` = 177807;
 -- Remove C++ script from Orb of Domination.
 UPDATE `gameobject_template` SET `script_name` = '' WHERE `entry` = 177808;
 
+-- Events list for Blackwing Legionnaire
+REPLACE `creature_spells`
+(`entry`, `name`,                   `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `spellId_3`, `probability_3`, `castTarget_3`, `targetParam1_3`, `targetParam2_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`) VALUES
+( 124160, 'Blackwing Legionnaire',        15580,             100,              1,                   3,                  16,                  5,                 16,       15754,             100,              1,                   0,                  15,                  6,                 13,       23967,             100,              8,            12435,                5,                   1,                  24,                  6,                 27);
+-- 23967 - Dragonbane
+
 -- Events list for Razorgore the Untamed
 INSERT `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
@@ -97,11 +103,6 @@ UPDATE `creature_template` SET `auras` = '18950' WHERE `entry` = 12557;
 -- Events list for Orb of Domination
 UPDATE `creature_template` SET `script_name` = '' WHERE `entry` = 14453;
 
--- Events list for Blackwing Guardsman
-REPLACE `creature_spells`
-(`entry`, `name`,                                 `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`) VALUES
-( 144560, 'Blackwing Lair - Blackwing Guardsman',       15580,             100,              1,                   5,                  23,                  1,                 16,       15754,             100,              1,                   3,                  24,                  8,                 11);
-
 -- Waypoints for Razorgore the Untamed
 INSERT INTO `creature_movement_template`
 (`entry`, `point`, `position_x`, `position_y`, `position_z`, `orientation`, `waittime`) VALUES
@@ -111,6 +112,11 @@ INSERT INTO `creature_movement_template`
 (  12435,       4,     -7571.69,     -1088.25,      413.465,      0.139626,      20000),
 (  12435,       5,     -7571.69,     -1088.25,      413.465,      1.309   ,      20000),
 (  12435,       6,     -7571.69,     -1088.25,      413.465,      4.64258 ,      20000);
+
+-- Events list for Blackwing Guardsman
+REPLACE `creature_spells`
+(`entry`, `name`,                                 `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`) VALUES
+( 144560, 'Blackwing Lair - Blackwing Guardsman',       15580,             100,              1,                   5,                  23,                  1,                 16,       15754,             100,              1,                   3,                  24,                  8,                 11);
 
 -- Correct target for spell Use Dragon Orb.
 UPDATE `spell_script_target` SET `targetEntry` = 14449, `type` = 1 WHERE `entry` = 23018;
