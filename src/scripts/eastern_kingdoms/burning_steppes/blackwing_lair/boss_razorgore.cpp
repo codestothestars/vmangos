@@ -20,7 +20,7 @@
 // Razorgore Phase 2 Script
 enum
 {
-    MOB_RAZ_TRIGGER            = 14453,
+    MOB_RAZ_TRIGGER            = 14453, // not present at all in sniffs
     MOB_GRETHOK                = 12557,
     MOB_GARDE_AILE_NOIRE       = 14456,
     BLACKWING_LEGGIONAIRE      = 12416,
