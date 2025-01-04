@@ -449,13 +449,9 @@ INSERT `generic_scripts`
 (8302139,      15,        39,    8302140,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8305, 'Razorgore Event Spawning Adds - Summon Creature - North West 5 - Summon Next'),
 (8302140,      15,        39,    8302044,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8305, 'Razorgore Event Spawning Adds - Summon Creature - North West 6 - Summon Delayed'),
 (8302140,      30,        39,    8302129,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8305, 'Razorgore Event Spawning Adds - Summon Creature - North West 6 - Summon First'),
--- Make sure the movement persists even if interrupted by CC.
--- Add SCRIPT_COMMAND_SET_COMBAT_MOVEMENT? - Probably not necessary, but could try switching off.
-(8302141,       0,        44,          1,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event - Nefarian''s Troops - Set Phase 1'),
- -- Do we need movement_options? Note that in sniffs they run off ledges instead of down stairs.
-(8302141,       0,        20,          2,           0,      830212,           1,             0,               0,               0,         0x00,         0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event - Nefarian''s Troops - Flee'),
-(8302141,       0,        67,          2,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event - Nefarian''s Troops - Set Default Movement (Waypoint)'),
-(8302141,      15,        18,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event - Nefarian''s Troops - Despawn');
+(8302141,       0,        34,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0, -7556.65, -1025.56 , 408.56 ,  0 ,              0, 'Razorgore Event - Nefarian''s Troops - Set Home Position'),
+(8302141,       0,        59,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event - Nefarian''s Troops - Set React State'),
+(8302141,       0,        67,          7,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event - Nefarian''s Troops - Set Default Movement');
 
 -- Waypoints for Blackwing Legionnaire, Blackwing Mage, Deathtalon Dragonspawn (North)
 INSERT INTO `creature_movement_special`
@@ -811,11 +807,6 @@ INSERT INTO `creature_movement_special`
 (830211,      43,     -7611.79,     -1022.45,      413.597),
 (830211,      44,     -7611.79,     -1022.45,      413.597);
 
--- Waypoints for Blackwing Legionnaire, Blackwing Mage (Flee)
-INSERT INTO `creature_movement_special`
-(  `id`, `point`, `position_x`, `position_y`, `position_z`) VALUES
-(830212,       1,     -7556.65,     -1025.56,       408.56);
-
 -- On wipe on Cata PTR, Razorgore yells "I'm free!" etc. and then kills Grethok etc. with a fireball/explosion.
 -- Actually, sniff_36035 apparently has this.
 
@@ -826,32 +817,12 @@ REPLACE `creature_spells`
 REPLACE `creature_ai_events`
 (   `id`, `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
 (1241601,         12416,              0,            6,                        0x0,            100,          0x00,              0,              0,              0,              0,          1241601, 'Blackwing Legionnaire - Death'),
-(1241602,         12416,           8304,            0,                        0x1,            100,          0x01,           1000,           1000,           1000,           1000,          1242002, 'Blackwing Legionnaire - In Combat (periodic)'),
--- this was the existing one
--- Next thing is to verify "reach home" behavior for all the adds.
--- Dragonspawn doesn't run home. It stands wherever it was and despawns after a few seconds.
--- We have a potential issue. In sniff_36035_bwl_stopped_before_dragons the last player dies and then Razorgore resets.
--- But in sniff_33302_bwl_first_boss_try_wipe the fight continues until Razorgore is dead.
--- Need to check all the wipes and note when Razorgore resets vs fighting to the death.
--- sniff_33302_bwl_first_boss_try_wipe       1 - Fight continues. Razorgore was free for a while and the last player was running around.
--- sniff_33302_bwl_first_second_boss_and_ony 1 - Indeterminate (client released before wipe)
--- sniff_33302_bwl_progression_raid          1 - Fight continues. Last player alive is possessor.
--- sniff_36035_bwl_stopped_before_dragons    1 - Fight resets. Last player alive is possessor. Maybe look at Razorgore's values around the reset time?
--- * 5m24s fight
--- Note that he yells "I'm free!" when resetting.
--- Check threat numbers. Maybe somehow no creatures had threat on him when the last player died?
--- sniff_36035_bwl_stopped_before_dragons    2 - Fight continues. Last player alive is possessor.
--- * 5m41s fight
--- Last player bubbles and then the creatures immediately start getting threat on Razorgore.
--- Looks like the player only gets threat info for some creatures, presumably ones that they have engaged.
-
-(1241604,         12416,              0,           21,                        0x0,            100,          0x00,              0,              0,              0,              0,          1241604, 'Blackwing Legionnaire - Despawn On ReachHome (Ustaag)');
+-- Lower this ID at the end as needed.
+(1241604,         12416,              0,           21,                        0x0,            100,          0x00,              0,              0,              0,              0,          1241604, 'Blackwing Legionnaire - Reached Home');
 REPLACE `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `datalong2`, `datalong3`, `dataint`, `comments`) VALUES
 (1241601,        37,         26,           1,           2,         0, 'Blackwing Legionnaire - Decrement Creature Count'),
-(1241602,        39,    8302141,           0,           0,       100, 'Blackwing Legionnaire - Flee'),
--- this was the existing one
-(1241604,        18,          0,           0,           0,         0, 'Blackwing Legionnaire - Despawn Self');
+(1241604,        18,          0,           0,           0,         0, 'Blackwing Legionnaire - Despawn');
 
 -- Events list for Blackwing Mage
 REPLACE `creature_spells`
@@ -861,16 +832,13 @@ DELETE FROM `creature_ai_events` WHERE `id` = 1242002;
 REPLACE `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
 (1242001,         12420,            556,            0,                        0x1,          0x01,              0,          22000,           3000,          22000,          1242001, 'Blackwing Mage - In Combat (periodic)'),
-(1242002,         12420,           8304,            0,                        0x1,          0x01,           1000,           1000,           1000,           1000,          1242002, 'Blackwing Mage - In Combat (periodic) (change to Phase 1)'),
--- existing
-(1242003,         12420,              0,           21,                        0x0,          0x00,              0,              0,              0,              0,          1242003, 'Blackwing Mage - Despawn on ReachHome (Ustaag)');
+-- Lower this ID at the end as needed.
+(1242003,         12420,              0,           21,                        0x0,          0x00,              0,              0,              0,              0,          1242003, 'Blackwing Mage - Reached Home');
 DELETE FROM `creature_ai_scripts` WHERE `id` = 1242002;
 REPLACE `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `datalong2`, `target_type`, `dataint`, `comments`) VALUES
 (1242001,        15,      22271,       0x000,             6,         0, 'Blackwing Mage - Cast Arcane Explosion'),
-(1242002,        39,    8302141,           0,             0,       100, 'Blackwing Mage - Flee'),
--- existing
-(1242003,        18,          0,       0x000,             0,         0, 'Blackwing Mage - Despawn Self');
+(1242003,        18,          0,       0x000,             0,         0, 'Blackwing Mage - Despawn');
 
 -- Events list for Death Talon Dragonspawn
 REPLACE `creature_spells`
@@ -878,12 +846,13 @@ REPLACE `creature_spells`
 ( 124220, 'Death Talon Dragonspawn',       15580,             100,              1,                   0,                  32,                  4,                  27,       15663,             100,              1,                  0,                  32,                 13,                 36,       23967,             100,              8,            12435,                5,                   0,                  34,                  6,                 36);
 REPLACE `creature_ai_events`
 (   `id`,  `creature_id`, `event_type`, `action1_script`, `comment`) VALUES
--- existing
-(1242204,          12422,           21,          1242204, 'Death Talon Dragonspawn - Despawn on ReachHome (Ustaag)');
+(1242201,          12422,            7,          1242201, 'Death Talon Dragonspawn - Evade'),
+-- Lower this ID at the end as needed.
+(1242204,          12422,           21,          1242204, 'Death Talon Dragonspawn - Reached Home');
 REPLACE `creature_ai_scripts`
-(   `id`, `command`, `comments`) VALUES
--- existing
-(1242204,        18, 'Death Talon Dragonspawn - Despawn Self');
+(   `id`, `command`, `datalong`, `comments`) VALUES
+(1242201,        34,          1, 'Death Talon Dragonspawn - Set Home Position'),
+(1242204,        18,          0, 'Death Talon Dragonspawn - Despawn');
 -- REPLACE `generic_scripts`
 -- (   `id`, `command`, `comments`) VALUES;
 
@@ -1883,7 +1852,7 @@ WHERE creature.id IN (12416, 12420)
   AND creature_text.entry = 14459
 ORDER BY unixtimems, guid, point;
 
--- Adds time spent fleeing before despawn.
+-- Creature time spent fleeing before despawn.
 SELECT creature_movement_server_combat.*, creature_destroy_time.unixtimems - creature_movement_server_combat.unixtimems time_fleeing
 FROM creature_movement_server_combat
 JOIN (SELECT guid, MAX(unixtimems) unixtimems FROM creature_movement_server_combat GROUP BY guid) creature_last_movement_time
@@ -1897,3 +1866,25 @@ WHERE creature.id IN (12416, 12420)
   AND creature_movement_server_combat.unixtimems > creature_text.unixtimems - 2000
   AND creature_text.entry = 14459
 ORDER BY unixtimems, guid, point;
+
+-- Creature time to despawn after fleeing.
+SELECT
+  creature.guid,
+  creature_destroy_time.unixtimems,
+  CAST(creature_destroy_time.unixtimems AS SIGNED INT)
+    - (CAST(last_movement_time.unixtimems AS SIGNED INT) + CAST(creature_movement_server_combat.move_time AS SIGNED INT))
+    delay
+FROM creature
+JOIN (SELECT guid, MAX(unixtimems) unixtimems FROM creature_movement_server_combat GROUP BY guid) last_movement_time
+  ON creature.guid = last_movement_time.guid
+JOIN creature_movement_server_combat
+  ON creature.guid = creature_movement_server_combat.guid
+  AND last_movement_time.unixtimems = creature_movement_server_combat.unixtimems
+JOIN creature_destroy_time
+  ON creature.guid = creature_destroy_time.guid
+LEFT JOIN creature_values_update creature_death
+  ON creature.guid = creature_death.guid AND creature_death.current_health < 2
+WHERE creature.id IN (12416, 12420)
+  AND creature_death.unixtimems IS NULL
+  AND last_movement_time.unixtimems > ((SELECT unixtimems FROM creature_text WHERE entry = 14459) - 2000)
+ORDER BY unixtimems;
