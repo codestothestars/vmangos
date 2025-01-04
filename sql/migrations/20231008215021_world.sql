@@ -92,8 +92,6 @@ INSERT INTO `creature`
 (   113, 14449,   469,     -7615.51,     -1025.58,      413.465,       5.23599,             604800,             604800,                 0,              100,            100);
 
 -- Random spells seen
--- 16806
--- 17290
 -- 19632
 -- 19872
 -- 19873
@@ -857,9 +855,13 @@ INSERT `creature_ai_scripts`
 -- Need to do other stuff like raise gates. Also yell?
 (1243505,        62,       8302,           1,               0,               0,             0,         0,              0, 'Razorgore the Untamed - End Map Event (Success)');
 REPLACE `creature_spells`
-(`entry`, `name`,                  `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `spellId_3`, `probability_3`, `castTarget_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`) VALUES
+(`entry`, `name`,
+                                   `spellId_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, 
+                                   `spellId_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `spellId_3`, `probability_3`, `castTarget_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`) VALUES
 -- Need to get initial delays from Cata PTR if possible. Otherwise will have to just use the repeat delays for them.
-( 124350, 'Razorgore the Untamed',       23023,             100,              6,                   ?,                   ?,                 13,                 42,       22272,             100,              4,                   0,                  16,                 10,                 18,       22274,             100,              4,                   2,                  18,                  7,                 11);
+-- Still doing these spells.
+( 124350, 'Razorgore the Untamed',       23023,              6,                   ?,                   ?,                 13,                 42, 
+                                         22272,              4,                   0,                  16,                 10,                 18,       22274,             100,              4,                   2,                  18,                  7,                 11);
 REPLACE `generic_scripts`
 (   `id`, `priority`, `command`, `datalong`, `comments`) VALUES
 (1243501,          0,        44,          1, 'Razorgore the Untamed - Set Phase 2'),
