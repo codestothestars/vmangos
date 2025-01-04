@@ -46,7 +46,8 @@ enum
     DATA_SCEPTER_CHAMPION       = 24,
     DATA_SCEPTER_RUN_TIME       = 25,
     DATA_RAZORGORE_TROOPS       = 26, // must set in script when dying and resetting.
-    MAX_DATAS                   = 27
+    DATA_RAZORGORE_EGG_YELLED   = 27,
+    MAX_DATAS                   = 28
 };
 
 #endif
