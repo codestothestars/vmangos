@@ -142,20 +142,15 @@ INSERT INTO `creature`
 -- 24375
 -- 25139
 
--- summon_spell entries seen
--- 19826 - Summon Blackwing Legionnaire
--- 19827 - Summon Blackwing Mage
-
--- Random creatures seen
--- 12434 - Monster Generator (Blackwing)
--- * Appears to spawn when the players aggro Grethok.
--- * Located in the four alcoves adjacent the entry and exit gates.
+-- Random creature seen
 -- 16604 - Blackwing Spell Marker
 -- * Located in the four corners, close to each corner of the daises, the dead center of the room,
 --   behind Razorgore, and behind Grethok.
 -- * Casts 20038 (Explosion), the spell that kills everyone to wipe.
 --   This creature apparently is a valid hit target for 20038, but every cast I've seen misses.
 -- * Gets hit at some point by spell 20037 (Explode Orb Effect), cast by Blackwing Orb Trigger.
+-- On vmangos has UNIT_FLAG_PVP, but not in sniff, so remove that flag.
+-- Gains UNIT_FLAG_IN_COMBAT for about 8 seconds per sniff. What's going on at this time?
 
 -- Creatures stop spawning once the last egg is destroyed.
 -- Each location always has the same initial delay from the event start, either 45 or 75 seconds.
@@ -186,7 +181,9 @@ DELETE FROM `event_scripts` WHERE `id` = 8302;
 -- Make sure to test that casting Possess subsequent times doesn't start additional instances of the scripts.
 INSERT `event_scripts`
 (`id`, `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `condition_id`, `comments`) VALUES
-(8302,       0,        61,       8302,        1200,           0,           0,             0,               0,               0,            0,         0,     830201,        240,     830202,              0, 'Razorgore Event - Start Map Event'),
+-- Removed condition 240.
+-- sniff_36035_bwl_stopped_before_dragons makes it look like the event fails (and the gate opens) when Razorgore casts the fireball that triggers the explosion.
+(8302,       0,        61,       8302,        1200,           0,           0,             0,               0,               0,            0,         0,     830201,          0,     830202,              0, 'Razorgore Event - Start Map Event'),
 (8302,      75,        39,    8302045,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8302, 'Razorgore Event - Start Spawning Adds (North)'),
 (8302,      75,        39,    8302057,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8302, 'Razorgore Event - Start Spawning Adds (East)'),
 (8302,      45,        39,    8302069,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8302, 'Razorgore Event - Start Spawning Adds (East South)'),
@@ -198,16 +195,14 @@ INSERT `event_scripts`
 
 -- Success Script for Scripted Map Event
 INSERT `generic_scripts`
-(  `id`, `command`, `datalong`, `datalong2`, `dataint`, `comments`) VALUES
-(830201,        39,     175270,           0,       100, 'Emberseer Event - Ready Runes');
+(  `id`, `delay`, `command`, `datalong`, `datalong2`, `dataint`, `comments`) VALUES
+(830201,       4,        39,     176964,           0,       100, 'Razorgore Event - Open Portcullis (entrance)'),
+(830201,       4,        39,     176965,           0,       100, 'Razorgore Event - Open Portcullis (exit)');
 
 -- Fail Script for Scripted Map Event
 INSERT `generic_scripts`
-(  `id`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `comments`) VALUES
-(830202,        71,          1,           0,           0,           0,             8,            9816,              30,         0x02,         0, 'Emberseer Event - Respawn Pyroguard Emberseer'),
-(830202,        68,     103163,           2,       10316,         100,             0,               0,               0,            0,         0, 'Emberseer Event - Respawn Dead Blackhand Incarcerators'),
-(830202,        39,     175270,           0,           0,           0,             0,               0,               0,            0,       100, 'Emberseer Event - Ready Runes'),
-(830202,        39,     175705,           0,           0,           0,             0,               0,               0,            0,       100, 'Emberseer Event - Open Doors');
+(  `id`, `command`, `datalong`, `comments`) VALUES
+(830202,        39,     176964, 'Razorgore Event - Open Portcullis');
 
 -- Spawning Adds
 INSERT `generic_scripts`
@@ -882,8 +877,8 @@ REPLACE `generic_scripts`
 INSERT `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
 (1243501,         12435,             540,           1,          0x01,           6000,          16000,           6000,          16000,          1243501, 'Razorgore the Untamed - Out of Combat (periodic)'),
--- Death Explosion
-(1243502,         12435,             241,           6,          0x00,              0,              0,              0,              0,          1243502, 'Razorgore the Untamed - Death (Eggs remain)');
+(1243502,         12435,             241,           6,          0x00,              0,              0,              0,              0,          1243502, 'Razorgore the Untamed - Death (Eggs remain)'),
+(1243503,         12435,             242,           6,          0x00,              0,              0,              0,              0,          1243503, 'Razorgore the Untamed - Death (Eggs destroyed)');
 INSERT `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `datalong2`, `target_param1`, `target_param2`, `target_type`, `dataint`, `condition_id`, `comments`) VALUES
 (1243501,        15,      21389,       0x002,               0,               0,             6,         0,            548, 'Razorgore the Untamed - Cast Fire Channeling'),
@@ -894,7 +889,11 @@ INSERT `creature_ai_scripts`
 (1243501,        60,          0,           5,               0,               0,             0,         0,            545, 'Razorgore the Untamed - Start Waypoint 5'),
 (1243501,        60,          0,           6,               0,               0,             0,         0,            546, 'Razorgore the Untamed - Start Waypoint 6'),
 (1243502,         0,          1,           0,               0,               0,             0,      9591,              0, 'Razorgore the Untamed - Yell (Death)'),
-(1243502,        85,       8302,           1,           14449,             100,             8,         0,              0, 'Razorgore the Untamed - Send Script Event to Blackwing Orb Trigger'); -- make sure 100-yard target search is enough
+-- might need a spell_script_target of Blackwing Orb Trigger for this.
+(1243502,        15,      23024,           0,               0,               0,             0,         0,              0, 'Razorgore the Untamed - Cast Fireball'),
+(1243502,        62,       8302,           0,               0,               0,             0,         0,              0, 'Razorgore the Untamed - End Map Event (Failure)'),
+-- Need to do other stuff like raise gates. Also yell?
+(1243503,        62,       8302,           1,               0,               0,             0,         0,              0, 'Razorgore the Untamed - End Map Event (Success)');
 UPDATE `creature_template` SET `ai_name` = 'EventAI', `auras` = '18943', `script_name` = '' WHERE `entry` = 12435;
 
 -- Events list for Grethok the Controller
@@ -937,9 +936,8 @@ UPDATE `creature_template` SET `auras` = '18950' WHERE `entry` = 12557;
 -- Test and make sure it affects all players in a radius.
 
 -- Events list for Blackwing Orb Trigger
-INSERT `creature_ai_events`
-(   `id`,  `creature_id`, `condition_id`, `event_type`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
-(1444901,          14449,              0,           31,           8302,              1,          1444901, 'Blackwing Orb Trigger - Map Event (Razorgore death)');
+-- INSERT `creature_ai_events`
+-- (   `id`,  `creature_id`, `condition_id`, `event_type`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES;
 INSERT `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `comments`) VALUES
 (1444901,        15,      20037, 'Blackwing Orb Trigger - Cast Explode Orb Effect'); -- Need to code the script effects.
@@ -965,6 +963,16 @@ INSERT INTO `creature_movement_template`
 REPLACE `creature_spells`
 (`entry`, `name`,                                 `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`) VALUES
 ( 144560, 'Blackwing Lair - Blackwing Guardsman',       15580,             100,              1,                   5,                  23,                  1,                 16,       15754,             100,              1,                   3,                  24,                  8,                 11);
+
+-- Portcullis (Entry: 176964 Guid: 232301) Open Script
+INSERT `generic_scripts`
+(  `id`, `command`, `datalong`, `comments`) VALUES
+(176964,        11,     232301, 'Portcullis - Open');
+
+-- Portcullis (Entry: 176965 Guid: 232302) Open Script
+INSERT `generic_scripts`
+(  `id`, `command`, `datalong`, `comments`) VALUES
+(176965,        11,     232302, 'Portcullis - Open');
 
 -- Correct target for spell Use Dragon Orb.
 UPDATE `spell_script_target` SET `targetEntry` = 14449, `type` = 1 WHERE `entry` = 23018;
