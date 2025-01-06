@@ -1,11 +1,11 @@
 DROP PROCEDURE IF EXISTS add_migration;
-delimiter ??
+DELIMITER ??
 CREATE PROCEDURE `add_migration`()
 BEGIN
 DECLARE v INT DEFAULT 1;
-SET v = (SELECT COUNT(*) FROM `migrations` WHERE `id`='20231008215021');
-IF v=0 THEN
-INSERT INTO `migrations` VALUES ('20231008215021');
+SET v = (SELECT COUNT(*) FROM `migrations` WHERE `id`='20250104150419');
+IF v = 0 THEN
+INSERT INTO `migrations` VALUES ('20250104150419');
 -- Add your query below.
 
 --  240: No player alive within 150 yards.
@@ -16,56 +16,56 @@ INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `f
 --  242: No Black Dragon Egg within 100 yards.
 --  Test whether it works when standing in corners.
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 242, 21,     177807,  100, 0, 0x1);
---  540: Has aura Possess.
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 540,  1,      23014,    0, 0, 0x2);
---  541: Last waypoint equals 0.
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 541, 32,          0,    0, 0, 0x0);
---  542: Last waypoint equals 1.
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 542, 32,          1,    0, 0, 0x0);
---  543: Last waypoint equals 2.
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 543, 32,          2,    0, 0, 0x0);
---  544: Last waypoint equals 3.
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 544, 32,          3,    0, 0, 0x0);
---  545: Last waypoint equals 4.
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 545, 32,          4,    0, 0, 0x0);
---  546: Last waypoint equals 5.
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 546, 32,          5,    0, 0, 0x0);
---  547: Last waypoint equals 6.
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 547, 32,          6,    0, 0, 0x0);
---  548: (541: Last waypoint equals 0) Or (547: Last waypoint equals 6).
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 548, -2,        541,  547, 0, 0x0);
---  549: Instance data 0 (Razorgore) equals 0 (not started).
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 549, 34,          0,    0, 0, 0x0);
---  550: Nearby Razorgore within 90 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 550, 20,      12435,   90, 0, 0x0);
---  551: No nearby Razorgore within 90 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 551, 20,      12435,   90, 0, 0x1);
---  552: Nearby Razorgore within 70 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 552, 20,      12435,   70, 0, 0x0);
---  553: No nearby Razorgore within 70 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 553, 20,      12435,   70, 0, 0x1);
---  554: Nearby Razorgore within 50 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 554, 20,      12435,   50, 0, 0x0);
---  555: No nearby Razorgore within 50 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 555, 20,      12435,   50, 0, 0x1);
---  556: Hostile unit within 10 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 556, 59,         10,    0, 0, 0x0);
---  557: Instance data 26 equal or less than 24
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 557, 34,         26,   24, 2, 0x0);
---  558: Instance data 26 equal or higher than 25
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 558, 34,         26,   25, 1, 0x0);
---  559: Instance data 27 equal to 1
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 559, 34,         27,    1, 0, 0x0);
---  560: Does not have unit state CONFUSED | POSSESSED | STUNNED
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 560, 60, 0x00000248,    0, 0, 0x1);
+--  572: Has aura Possess.
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 572,  1,      23014,    0, 0, 0x2);
+--  573: Last waypoint equals 0.
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 573, 32,          0,    0, 0, 0x0);
+--  574: Last waypoint equals 1.
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 574, 32,          1,    0, 0, 0x0);
+--  575: Last waypoint equals 2.
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 575, 32,          2,    0, 0, 0x0);
+--  576: Last waypoint equals 3.
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 576, 32,          3,    0, 0, 0x0);
+--  577: Last waypoint equals 4.
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 577, 32,          4,    0, 0, 0x0);
+--  578: Last waypoint equals 5.
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 578, 32,          5,    0, 0, 0x0);
+--  579: Last waypoint equals 6.
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 579, 32,          6,    0, 0, 0x0);
+--  580: (573: Last waypoint equals 0) Or (579: Last waypoint equals 6).
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 580, -2,        573,  579, 0, 0x0);
+--  581: Instance data 0 (Razorgore) equals 0 (not started).
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 581, 34,          0,    0, 0, 0x0);
+--  582: Nearby Razorgore within 90 yards
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 582, 20,      12435,   90, 0, 0x0);
+--  583: No nearby Razorgore within 90 yards
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 583, 20,      12435,   90, 0, 0x1);
+--  584: Nearby Razorgore within 70 yards
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 584, 20,      12435,   70, 0, 0x0);
+--  585: No nearby Razorgore within 70 yards
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 585, 20,      12435,   70, 0, 0x1);
+--  586: Nearby Razorgore within 50 yards
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 586, 20,      12435,   50, 0, 0x0);
+--  587: No nearby Razorgore within 50 yards
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 587, 20,      12435,   50, 0, 0x1);
+--  588: Hostile unit within 10 yards
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 588, 59,         10,    0, 0, 0x0);
+--  589: Instance data 26 equal or less than 24
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 589, 34,         26,   24, 2, 0x0);
+--  590: Instance data 26 equal or higher than 25
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 590, 34,         26,   25, 1, 0x0);
+--  591: Instance data 27 equal to 1
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 591, 34,         27,    1, 0, 0x0);
+--  592: Does not have unit state CONFUSED | POSSESSED | STUNNED
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 592, 60, 0x00000248,    0, 0, 0x1);
 -- 8302: Map event 8302 (Razorgore) is active
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES (8302, 36,       8302,    0, 0, 0x0);
 -- 8303: (241: Black Dragon Egg within 100 yards) And (8302: Map event 8302 (Razorgore) is active)
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES (8303, -1,        241, 8302, 0, 0x0);
 -- 8304: (242: No Black Dragon Egg within 100 yards) And (8302: Map event 8302 (Razorgore) is active)
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES (8304, -1,        242, 8302, 0, 0x0);
--- 8305: (557: Instance data 26 equal or less than 24) And (8303: (241: Black Dragon Egg within 100 yards) And (8302: Map event 8302 (Razorgore) is active))
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES (8305, -1,        557, 8303, 0, 0x0);
+-- 8305: (589: Instance data 26 equal or less than 24) And (8303: (241: Black Dragon Egg within 100 yards) And (8302: Map event 8302 (Razorgore) is active))
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES (8305, -1,        589, 8303, 0, 0x0);
 
 -- Correct Portcullis values.
 -- There's also a gameobject_addon for this object with these rotation values negated. Make sure it actually looks right.
@@ -80,7 +80,7 @@ UPDATE `creature` SET `position_x` = -7615.01, `position_y` = -1021.55, `positio
 -- Add missing Blackwing Orb Trigger spawn.
 INSERT INTO `creature`
 (`guid`,  `id`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecsmin`, `spawntimesecsmax`, `wander_distance`, `health_percent`, `mana_percent`) VALUES
-(   113, 14449,   469,     -7615.51,     -1025.58,      413.465,       5.23599,             604800,             604800,                 0,              100,            100);
+(  1881, 14449,   469,     -7615.51,     -1025.58,      413.465,       5.23599,             604800,             604800,                 0,              100,            100);
 
 -- Remove C++ script from Black Dragon Egg.
 UPDATE `gameobject_template` SET `script_name` = '' WHERE `entry` = 177807;
@@ -120,22 +120,22 @@ INSERT `generic_scripts`
 INSERT `generic_scripts`
 (  `id` , `delay`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`,    `x`  ,    `y`   ,  `z`   , `o`, `condition_id`, `comments`) VALUES
 (8302003,       0,         3,          2,           0,       0x000,         0x0,             8,           12435,             150,         0x00,         0,          0,          0,     5   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Move to Razorgore'),
-(8302004,       0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            550, 'Razorgore Event Spawning Adds - Initial Movement (North) - Move to Razorgore'),
-(8302004,       0,        60,          3,           1,           0,           0,             0,               0,               0,         0x00,         0,     830204,          0,     0   ,     0    ,   0    ,  0 ,            551, 'Razorgore Event Spawning Adds - Initial Movement (North) - Move to Altar'),
-(8302005,       0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            550, 'Razorgore Event Spawning Adds - Initial Movement (East) - Move to Razorgore'),
-(8302005,       0,        60,          3,           1,           0,           0,             0,               0,               0,         0x00,         0,     830205,          0,     0   ,     0    ,   0    ,  0 ,            551, 'Razorgore Event Spawning Adds - Initial Movement (East) - Move to Altar'),
-(8302006,       0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            552, 'Razorgore Event Spawning Adds - Initial Movement (East South) - Move to Razorgore'),
-(8302006,       0,        60,          3,           1,           0,           0,             0,               0,               0,         0x00,         0,     830206,          0,     0   ,     0    ,   0    ,  0 ,            553, 'Razorgore Event Spawning Adds - Initial Movement (East South) - Move to Altar'),
-(8302007,       0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            554, 'Razorgore Event Spawning Adds - Initial Movement (South East) - Move to Razorgore'),
-(8302007,       0,        60,          3,           1,           0,           0,             0,               0,               0,         0x00,         0,     830207,          0,     0   ,     0    ,   0    ,  0 ,            555, 'Razorgore Event Spawning Adds - Initial Movement (South East) - Move to Altar'),
-(8302008,       0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            554, 'Razorgore Event Spawning Adds - Initial Movement (South) - Move to Razorgore'),
-(8302008,       0,        60,          3,           1,           0,           0,             0,               0,               0,         0x00,         0,     830208,          0,     0   ,     0    ,   0    ,  0 ,            555, 'Razorgore Event Spawning Adds - Initial Movement (South) - Move to Altar'),
-(8302009,       0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            554, 'Razorgore Event Spawning Adds - Initial Movement (West) - Move to Razorgore'),
-(8302009,       0,        60,          3,           1,           0,           0,             0,               0,               0,         0x00,         0,     830209,          0,     0   ,     0    ,   0    ,  0 ,            555, 'Razorgore Event Spawning Adds - Initial Movement (West) - Move to Altar'),
-(8302010,       0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            554, 'Razorgore Event Spawning Adds - Initial Movement (West North) - Move to Razorgore'),
-(8302010,       0,        60,          3,           1,           0,           0,             0,               0,               0,         0x00,         0,     830210,          0,     0   ,     0    ,   0    ,  0 ,            555, 'Razorgore Event Spawning Adds - Initial Movement (West North) - Move to Altar'),
-(8302011,       0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            552, 'Razorgore Event Spawning Adds - Initial Movement (North West) - Move to Razorgore'),
-(8302011,       0,        60,          3,           1,           0,           0,             0,               0,               0,         0x00,         0,     830211,          0,     0   ,     0    ,   0    ,  0 ,            553, 'Razorgore Event Spawning Adds - Initial Movement (North West) - Move to Altar'),
+(8302004,       0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            582, 'Razorgore Event Spawning Adds - Initial Movement (North) - Move to Razorgore'),
+(8302004,       0,        60,          3,           1,           0,           0,             0,               0,               0,         0x00,         0,     830204,          0,     0   ,     0    ,   0    ,  0 ,            583, 'Razorgore Event Spawning Adds - Initial Movement (North) - Move to Altar'),
+(8302005,       0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            582, 'Razorgore Event Spawning Adds - Initial Movement (East) - Move to Razorgore'),
+(8302005,       0,        60,          3,           1,           0,           0,             0,               0,               0,         0x00,         0,     830205,          0,     0   ,     0    ,   0    ,  0 ,            583, 'Razorgore Event Spawning Adds - Initial Movement (East) - Move to Altar'),
+(8302006,       0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            584, 'Razorgore Event Spawning Adds - Initial Movement (East South) - Move to Razorgore'),
+(8302006,       0,        60,          3,           1,           0,           0,             0,               0,               0,         0x00,         0,     830206,          0,     0   ,     0    ,   0    ,  0 ,            585, 'Razorgore Event Spawning Adds - Initial Movement (East South) - Move to Altar'),
+(8302007,       0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            586, 'Razorgore Event Spawning Adds - Initial Movement (South East) - Move to Razorgore'),
+(8302007,       0,        60,          3,           1,           0,           0,             0,               0,               0,         0x00,         0,     830207,          0,     0   ,     0    ,   0    ,  0 ,            587, 'Razorgore Event Spawning Adds - Initial Movement (South East) - Move to Altar'),
+(8302008,       0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            586, 'Razorgore Event Spawning Adds - Initial Movement (South) - Move to Razorgore'),
+(8302008,       0,        60,          3,           1,           0,           0,             0,               0,               0,         0x00,         0,     830208,          0,     0   ,     0    ,   0    ,  0 ,            587, 'Razorgore Event Spawning Adds - Initial Movement (South) - Move to Altar'),
+(8302009,       0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            586, 'Razorgore Event Spawning Adds - Initial Movement (West) - Move to Razorgore'),
+(8302009,       0,        60,          3,           1,           0,           0,             0,               0,               0,         0x00,         0,     830209,          0,     0   ,     0    ,   0    ,  0 ,            587, 'Razorgore Event Spawning Adds - Initial Movement (West) - Move to Altar'),
+(8302010,       0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            586, 'Razorgore Event Spawning Adds - Initial Movement (West North) - Move to Razorgore'),
+(8302010,       0,        60,          3,           1,           0,           0,             0,               0,               0,         0x00,         0,     830210,          0,     0   ,     0    ,   0    ,  0 ,            587, 'Razorgore Event Spawning Adds - Initial Movement (West North) - Move to Altar'),
+(8302011,       0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            584, 'Razorgore Event Spawning Adds - Initial Movement (North West) - Move to Razorgore'),
+(8302011,       0,        60,          3,           1,           0,           0,             0,               0,               0,         0x00,         0,     830211,          0,     0   ,     0    ,   0    ,  0 ,            585, 'Razorgore Event Spawning Adds - Initial Movement (North West) - Move to Altar'),
 (8302012,       0,        10,      12416,           0,           0,           0,             0,               0,               0,         0x00,      0x00,    8302004,          0, -7659.81, -1043.81 , 407.366,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Blackwing Legionnaire - North'),
 (8302013,       0,        10,      12416,           0,           0,           0,             0,               0,               0,         0x00,      0x00,    8302005,          0, -7607.78, -1116.17 , 407.366,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Blackwing Legionnaire - East'),
 (8302014,       0,        10,      12416,           0,           0,           0,             0,               0,               0,         0x00,      0x00,    8302006,          0, -7623.1 , -1094.06 , 407.371,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Blackwing Legionnaire - East South'),
@@ -177,11 +177,11 @@ INSERT `generic_scripts`
 (8302043,       0,        39,    8302036,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Increment Creature Count - West North'),
 (8302044,       0,        39,    8302019,     8302027,     8302035,           0,             0,               0,               0,         0x00,        39,         39,         22,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Creature - North West'),
 (8302045,      15,        39,    8302046,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - North 1 - Summon Next'),
-(8302046,       0,        39,    8302037,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            557, 'Razorgore Event Spawning Adds - Summon Creature - North 2 (fewer than 25 alive) - Summon'),
+(8302046,       0,        39,    8302037,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            589, 'Razorgore Event Spawning Adds - Summon Creature - North 2 (fewer than 25 alive) - Summon'),
 (8302046,      15,        39,    8302049,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8305, 'Razorgore Event Spawning Adds - Summon Creature - North 2 (fewer than 25 alive) - Summon Next'),
 (8302044,       0,        39,    8302036,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Increment Creature Count - North West'),
 (8302045,       0,        39,    8302037,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Creature - North 1 - Summon'),
-(8302046,       0,        39,    8302047,     8302048,           0,           0,             0,               0,               0,         0x00,        75,         25,          0,     0   ,     0    ,   0    ,  0 ,            558, 'Razorgore Event Spawning Adds - Summon Creature - North 2 (25 or more alive) - Summon Delayed or Immediately'),
+(8302046,       0,        39,    8302047,     8302048,           0,           0,             0,               0,               0,         0x00,        75,         25,          0,     0   ,     0    ,   0    ,  0 ,            590, 'Razorgore Event Spawning Adds - Summon Creature - North 2 (25 or more alive) - Summon Delayed or Immediately'),
 (8302047,      15,        39,    8302037,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - North 2 (25 or more alive) - Summon Delayed'),
 (8302047,      30,        39,    8302045,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - North 2 (25 or more alive) - Summon First'),
 (8302048,       0,        39,    8302037,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Creature - North 2 (25 or more alive) - Summon Immediately'),
@@ -200,11 +200,11 @@ INSERT `generic_scripts`
 (8302055,      15,        39,    8302056,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - North 5 - Summon Next'),
 (8302056,      15,        39,    8302037,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - North 6 - Summon Delayed'),
 (8302057,      15,        39,    8302058,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - East 1 - Summon Next'),
-(8302058,       0,        39,    8302038,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            557, 'Razorgore Event Spawning Adds - Summon Creature - East 2 (fewer than 25 alive) - Summon'),
+(8302058,       0,        39,    8302038,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            589, 'Razorgore Event Spawning Adds - Summon Creature - East 2 (fewer than 25 alive) - Summon'),
 (8302058,      15,        39,    8302061,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8305, 'Razorgore Event Spawning Adds - Summon Creature - East 2 (fewer than 25 alive) - Summon Next'),
 (8302056,      30,        39,    8302045,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - North 6 - Summon First'),
 (8302057,       0,        39,    8302038,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Creature - East 1 - Summon'),
-(8302058,       0,        39,    8302059,     8302060,           0,           0,             0,               0,               0,         0x00,        75,         25,          0,     0   ,     0    ,   0    ,  0 ,            558, 'Razorgore Event Spawning Adds - Summon Creature - East 2 (25 or more alive) - Summon Delayed or Immediately'),
+(8302058,       0,        39,    8302059,     8302060,           0,           0,             0,               0,               0,         0x00,        75,         25,          0,     0   ,     0    ,   0    ,  0 ,            590, 'Razorgore Event Spawning Adds - Summon Creature - East 2 (25 or more alive) - Summon Delayed or Immediately'),
 (8302059,      15,        39,    8302038,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - East 2 (25 or more alive) - Summon Delayed'),
 (8302059,      30,        39,    8302057,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - East 2 (25 or more alive) - Summon First'),
 (8302060,       0,        39,    8302038,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Creature - East 2 (25 or more alive) - Summon Immediately'),
@@ -223,11 +223,11 @@ INSERT `generic_scripts`
 (8302067,      15,        39,    8302068,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - East 5 - Summon Next'),
 (8302068,      15,        39,    8302038,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - East 6 - Summon Delayed'),
 (8302069,      15,        39,    8302070,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - East South 1 - Summon Next'),
-(8302070,       0,        39,    8302039,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            557, 'Razorgore Event Spawning Adds - Summon Creature - East South 2 (fewer than 25 alive) - Summon'),
+(8302070,       0,        39,    8302039,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            589, 'Razorgore Event Spawning Adds - Summon Creature - East South 2 (fewer than 25 alive) - Summon'),
 (8302070,      15,        39,    8302073,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8305, 'Razorgore Event Spawning Adds - Summon Creature - East South 2 (fewer than 25 alive) - Summon Next'),
 (8302068,      30,        39,    8302057,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - East 6 - Summon First'),
 (8302069,       0,        39,    8302039,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Creature - East South 1 - Summon'),
-(8302070,       0,        39,    8302071,     8302072,           0,           0,             0,               0,               0,         0x00,        75,         25,          0,     0   ,     0    ,   0    ,  0 ,            558, 'Razorgore Event Spawning Adds - Summon Creature - East South 2 (25 or more alive) - Summon Delayed or Immediately'),
+(8302070,       0,        39,    8302071,     8302072,           0,           0,             0,               0,               0,         0x00,        75,         25,          0,     0   ,     0    ,   0    ,  0 ,            590, 'Razorgore Event Spawning Adds - Summon Creature - East South 2 (25 or more alive) - Summon Delayed or Immediately'),
 (8302071,      15,        39,    8302039,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - East South 2 (25 or more alive) - Summon Delayed'),
 (8302071,      30,        39,    8302069,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - East South 2 (25 or more alive) - Summon First'),
 (8302072,       0,        39,    8302039,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Creature - East South 2 (25 or more alive) - Summon Immediately'),
@@ -246,11 +246,11 @@ INSERT `generic_scripts`
 (8302079,      15,        39,    8302080,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - East South 5 - Summon Next'),
 (8302080,      15,        39,    8302039,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - East South 6 - Summon Delayed'),
 (8302081,      15,        39,    8302082,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - South East 1 - Summon Next'),
-(8302082,       0,        39,    8302040,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            557, 'Razorgore Event Spawning Adds - Summon Creature - South East 2 (fewer than 25 alive) - Summon'),
+(8302082,       0,        39,    8302040,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            589, 'Razorgore Event Spawning Adds - Summon Creature - South East 2 (fewer than 25 alive) - Summon'),
 (8302082,      15,        39,    8302085,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8305, 'Razorgore Event Spawning Adds - Summon Creature - South East 2 (fewer than 25 alive) - Summon Next'),
 (8302080,      30,        39,    8302069,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - East South 6 - Summon First'),
 (8302081,       0,        39,    8302040,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Creature - South East 1 - Summon'),
-(8302082,       0,        39,    8302083,     8302084,           0,           0,             0,               0,               0,         0x00,        75,         25,          0,     0   ,     0    ,   0    ,  0 ,            558, 'Razorgore Event Spawning Adds - Summon Creature - South East 2 (25 or more alive) - Summon Delayed or Immediately'),
+(8302082,       0,        39,    8302083,     8302084,           0,           0,             0,               0,               0,         0x00,        75,         25,          0,     0   ,     0    ,   0    ,  0 ,            590, 'Razorgore Event Spawning Adds - Summon Creature - South East 2 (25 or more alive) - Summon Delayed or Immediately'),
 (8302083,      15,        39,    8302040,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - South East 2 (25 or more alive) - Summon Delayed'),
 (8302083,      30,        39,    8302081,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - South East 2 (25 or more alive) - Summon First'),
 (8302084,       0,        39,    8302040,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Creature - South East 2 (25 or more alive) - Summon Immediately'),
@@ -269,11 +269,11 @@ INSERT `generic_scripts`
 (8302091,      15,        39,    8302092,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - South East 5 - Summon Next'),
 (8302092,      15,        39,    8302040,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - South East 6 - Summon Delayed'),
 (8302093,      15,        39,    8302094,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - South 1 - Summon Next'),
-(8302094,       0,        39,    8302041,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            557, 'Razorgore Event Spawning Adds - Summon Creature - South 2 (fewer than 25 alive) - Summon'),
+(8302094,       0,        39,    8302041,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            589, 'Razorgore Event Spawning Adds - Summon Creature - South 2 (fewer than 25 alive) - Summon'),
 (8302094,      15,        39,    8302097,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8305, 'Razorgore Event Spawning Adds - Summon Creature - South 2 (fewer than 25 alive) - Summon Next'),
 (8302092,      30,        39,    8302081,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - South East 6 - Summon First'),
 (8302093,       0,        39,    8302041,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Creature - South 1 - Summon'),
-(8302094,       0,        39,    8302095,     8302096,           0,           0,             0,               0,               0,         0x00,        75,         25,          0,     0   ,     0    ,   0    ,  0 ,            558, 'Razorgore Event Spawning Adds - Summon Creature - South 2 (25 or more alive) - Summon Delayed or Immediately'),
+(8302094,       0,        39,    8302095,     8302096,           0,           0,             0,               0,               0,         0x00,        75,         25,          0,     0   ,     0    ,   0    ,  0 ,            590, 'Razorgore Event Spawning Adds - Summon Creature - South 2 (25 or more alive) - Summon Delayed or Immediately'),
 (8302095,      15,        39,    8302041,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - South 2 (25 or more alive) - Summon Delayed'),
 (8302095,      30,        39,    8302093,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - South 2 (25 or more alive) - Summon First'),
 (8302096,       0,        39,    8302041,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Creature - South 2 (25 or more alive) - Summon Immediately'),
@@ -292,11 +292,11 @@ INSERT `generic_scripts`
 (8302103,      15,        39,    8302104,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - South 5 - Summon Next'),
 (8302104,      15,        39,    8302041,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - South 6 - Summon Delayed'),
 (8302105,      15,        39,    8302106,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - West 1 - Summon Next'),
-(8302106,       0,        39,    8302042,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            557, 'Razorgore Event Spawning Adds - Summon Creature - West 2 (fewer than 25 alive) - Summon'),
+(8302106,       0,        39,    8302042,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            589, 'Razorgore Event Spawning Adds - Summon Creature - West 2 (fewer than 25 alive) - Summon'),
 (8302106,      15,        39,    8302109,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8305, 'Razorgore Event Spawning Adds - Summon Creature - West 2 (fewer than 25 alive) - Summon Next'),
 (8302104,      30,        39,    8302093,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - South 6 - Summon First'),
 (8302105,       0,        39,    8302042,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Creature - West 1 - Summon'),
-(8302106,       0,        39,    8302107,     8302108,           0,           0,             0,               0,               0,         0x00,        75,         25,          0,     0   ,     0    ,   0    ,  0 ,            558, 'Razorgore Event Spawning Adds - Summon Creature - West 2 (25 or more alive) - Summon Delayed or Immediately'),
+(8302106,       0,        39,    8302107,     8302108,           0,           0,             0,               0,               0,         0x00,        75,         25,          0,     0   ,     0    ,   0    ,  0 ,            590, 'Razorgore Event Spawning Adds - Summon Creature - West 2 (25 or more alive) - Summon Delayed or Immediately'),
 (8302107,      15,        39,    8302042,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - West 2 (25 or more alive) - Summon Delayed'),
 (8302107,      30,        39,    8302105,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - West 2 (25 or more alive) - Summon First'),
 (8302108,       0,        39,    8302042,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Creature - West 2 (25 or more alive) - Summon Immediately'),
@@ -315,11 +315,11 @@ INSERT `generic_scripts`
 (8302115,      15,        39,    8302116,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - West 5 - Summon Next'),
 (8302116,      15,        39,    8302042,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - West 6 - Summon Delayed'),
 (8302117,      15,        39,    8302118,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - West North 1 - Summon Next'),
-(8302118,       0,        39,    8302043,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            557, 'Razorgore Event Spawning Adds - Summon Creature - West North 2 (fewer than 25 alive) - Summon'),
+(8302118,       0,        39,    8302043,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            589, 'Razorgore Event Spawning Adds - Summon Creature - West North 2 (fewer than 25 alive) - Summon'),
 (8302118,      15,        39,    8302121,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8305, 'Razorgore Event Spawning Adds - Summon Creature - West North 2 (fewer than 25 alive) - Summon Next'),
 (8302116,      30,        39,    8302105,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - West 6 - Summon First'),
 (8302117,       0,        39,    8302043,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Creature - West North 1 - Summon'),
-(8302118,       0,        39,    8302119,     8302120,           0,           0,             0,               0,               0,         0x00,        75,         25,          0,     0   ,     0    ,   0    ,  0 ,            558, 'Razorgore Event Spawning Adds - Summon Creature - West North 2 (25 or more alive) - Summon Delayed or Immediately'),
+(8302118,       0,        39,    8302119,     8302120,           0,           0,             0,               0,               0,         0x00,        75,         25,          0,     0   ,     0    ,   0    ,  0 ,            590, 'Razorgore Event Spawning Adds - Summon Creature - West North 2 (25 or more alive) - Summon Delayed or Immediately'),
 (8302119,      15,        39,    8302043,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - West North 2 (25 or more alive) - Summon Delayed'),
 (8302119,      30,        39,    8302117,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - West North 2 (25 or more alive) - Summon First'),
 (8302120,       0,        39,    8302043,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Creature - West North 2 (25 or more alive) - Summon Immediately'),
@@ -338,11 +338,11 @@ INSERT `generic_scripts`
 (8302127,      15,        39,    8302128,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - West North 5 - Summon Next'),
 (8302128,      15,        39,    8302043,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - West North 6 - Summon Delayed'),
 (8302129,      15,        39,    8302130,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - North West 1 - Summon Next'),
-(8302130,       0,        39,    8302044,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            557, 'Razorgore Event Spawning Adds - Summon Creature - North West 2 (fewer than 25 alive) - Summon'),
+(8302130,       0,        39,    8302044,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,            589, 'Razorgore Event Spawning Adds - Summon Creature - North West 2 (fewer than 25 alive) - Summon'),
 (8302130,      15,        39,    8302133,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8305, 'Razorgore Event Spawning Adds - Summon Creature - North West 2 (fewer than 25 alive) - Summon Next'),
 (8302128,      30,        39,    8302117,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - West North 6 - Summon First'),
 (8302129,       0,        39,    8302044,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Creature - North West 1 - Summon'),
-(8302130,       0,        39,    8302131,     8302132,           0,           0,             0,               0,               0,         0x00,        75,         25,          0,     0   ,     0    ,   0    ,  0 ,            558, 'Razorgore Event Spawning Adds - Summon Creature - North West 2 (25 or more alive) - Summon Delayed or Immediately'),
+(8302130,       0,        39,    8302131,     8302132,           0,           0,             0,               0,               0,         0x00,        75,         25,          0,     0   ,     0    ,   0    ,  0 ,            590, 'Razorgore Event Spawning Adds - Summon Creature - North West 2 (25 or more alive) - Summon Delayed or Immediately'),
 (8302131,      15,        39,    8302044,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - North West 2 (25 or more alive) - Summon Delayed'),
 (8302131,      30,        39,    8302129,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - North West 2 (25 or more alive) - Summon First'),
 (8302132,       0,        39,    8302044,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Creature - North West 2 (25 or more alive) - Summon Immediately'),
@@ -723,7 +723,8 @@ INSERT INTO `creature_movement_special`
 REPLACE `creature_spells`
 (`entry`, `name`,                  `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `spellId_3`, `probability_3`, `castTarget_3`, `targetParam1_3`, `targetParam2_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`) VALUES
 ( 124160, 'Blackwing Legionnaire',       15580,             100,              1,                   3,                  16,                  5,                 16,       15754,             100,              1,                   0,                  15,                  6,                 13,       23967,             100,              8,            12435,                5,                   1,                  24,                  6,                 27);
-REPLACE `creature_ai_events`
+DELETE FROM `creature_ai_events` WHERE `creature_id` = 12416;
+INSERT `creature_ai_events`
 (   `id`, `creature_id`, `condition_id`, `event_type`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
 (1241601,         12416,              0,            6,            100,          0x00,              0,              0,              0,              0,          1241601, 'Blackwing Legionnaire - Death'),
 -- Lower this ID at the end as needed.
@@ -737,10 +738,10 @@ REPLACE `creature_ai_scripts`
 REPLACE `creature_spells`
 (`entry`, `name`,           `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`) VALUES
 ( 124200, 'Blackwing Mage',       17290,             100,              1,                   0,                   0,                  3,                 12);
-DELETE FROM `creature_ai_events` WHERE `id` = 1242002;
-REPLACE `creature_ai_events`
+DELETE FROM `creature_ai_events` WHERE `creature_id` = 12420;
+INSERT `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
-(1242001,         12420,            556,            0,                        0x1,          0x01,              0,          22000,           3000,          22000,          1242001, 'Blackwing Mage - In Combat (periodic)'),
+(1242001,         12420,            588,            0,                        0x1,          0x01,              0,          22000,           3000,          22000,          1242001, 'Blackwing Mage - In Combat (periodic)'),
 -- Lower this ID at the end as needed.
 (1242003,         12420,              0,           21,                        0x0,          0x00,              0,              0,              0,              0,          1242003, 'Blackwing Mage - Reached Home');
 DELETE FROM `creature_ai_scripts` WHERE `id` = 1242002;
@@ -753,6 +754,7 @@ REPLACE `creature_ai_scripts`
 REPLACE `creature_spells`
 (`entry`, `name`,                    `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `spellId_3`, `probability_3`, `castTarget_3`, `targetParam1_3`, `targetParam2_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`) VALUES
 ( 124220, 'Death Talon Dragonspawn',       15580,             100,              1,                   0,                  32,                  4,                  27,       15663,             100,              1,                  0,                  32,                 13,                 36,       23967,             100,              8,            12435,                5,                   0,                  34,                  6,                 36);
+DELETE FROM `creature_ai_events` WHERE `creature_id` = 12422;
 REPLACE `creature_ai_events`
 (   `id`,  `creature_id`, `event_type`, `action1_script`, `comment`) VALUES
 (1242201,          12422,            7,          1242201, 'Death Talon Dragonspawn - Evade'),
@@ -769,9 +771,10 @@ REPLACE `creature_ai_scripts`
 -- Note that effect 1 of spell 19873 has a misc value of SPELL_EFFECT_ACTIVATE_OBJECT with implicit target TARGET_GAMEOBJECT_SCRIPT_NEAR_CASTER.
 -- Already has a spell_script_target of 177807 (Black Dragon Egg).
 -- Video shows that while possessing, an electric beam connects Razorgore to (apparently) the orb. Make sure this is implemented.
+DELETE FROM `creature_ai_events` WHERE `creature_id` = 12435;
 INSERT `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
-(1243501,         12435,             540,           1,                          0,          0x01,           6000,          16000,           6000,          16000,          1243501, 'Razorgore the Untamed - Out of Combat (periodic)'),
+(1243501,         12435,             572,           1,                          0,          0x01,           6000,          16000,           6000,          16000,          1243501, 'Razorgore the Untamed - Out of Combat (periodic)'),
 (1243502,         12435,               0,          23,                          0,          0x01,          19832,              1,              0,              0,          1243502, 'Razorgore the Untamed - Aura'),
 -- Not sure if this needs a phase, but it will be obvious if so.
 (1243503,         12435,               0,          21,                          0,          0x00,              0,              0,              0,              0,          1243503, 'Razorgore the Untamed - Reached Home'),
@@ -780,16 +783,16 @@ INSERT `creature_ai_events`
 (1243506,         12435,             242,           6,                          0,          0x00,              0,              0,              0,              0,          1243506, 'Razorgore the Untamed - Death (eggs destroyed)');
 INSERT `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `datalong2`, `datalong3`, `target_param1`, `target_param2`, `target_type`, `dataint`, `condition_id`, `comments`) VALUES
-(1243501,        15,      21389,       0x002,           0,               0,               0,             6,         0,            548, 'Razorgore the Untamed - Cast Fire Channeling'),
-(1243501,        60,          0,           1,           0,               0,               0,             0,         0,            548, 'Razorgore the Untamed - Start Waypoint 1'),
-(1243501,        60,          0,           2,           0,               0,               0,             0,         0,            542, 'Razorgore the Untamed - Start Waypoint 2'),
-(1243501,        60,          0,           3,           0,               0,               0,             0,         0,            543, 'Razorgore the Untamed - Start Waypoint 3'),
-(1243501,        60,          0,           4,           0,               0,               0,             0,         0,            544, 'Razorgore the Untamed - Start Waypoint 4'),
-(1243501,        60,          0,           5,           0,               0,               0,             0,         0,            545, 'Razorgore the Untamed - Start Waypoint 5'),
-(1243501,        60,          0,           6,           0,               0,               0,             0,         0,            546, 'Razorgore the Untamed - Start Waypoint 6'),
+(1243501,        15,      21389,       0x002,           0,               0,               0,             6,         0,            580, 'Razorgore the Untamed - Cast Fire Channeling'),
+(1243501,        60,          0,           1,           0,               0,               0,             0,         0,            580, 'Razorgore the Untamed - Start Waypoint 1'),
+(1243501,        60,          0,           2,           0,               0,               0,             0,         0,            574, 'Razorgore the Untamed - Start Waypoint 2'),
+(1243501,        60,          0,           3,           0,               0,               0,             0,         0,            575, 'Razorgore the Untamed - Start Waypoint 3'),
+(1243501,        60,          0,           4,           0,               0,               0,             0,         0,            576, 'Razorgore the Untamed - Start Waypoint 4'),
+(1243501,        60,          0,           5,           0,               0,               0,             0,         0,            577, 'Razorgore the Untamed - Start Waypoint 5'),
+(1243501,        60,          0,           6,           0,               0,               0,             0,         0,            578, 'Razorgore the Untamed - Start Waypoint 6'),
 (1243502,        37,         27,           0,           0,               0,               0,             0,         0,              0, 'Razorgore the Untamed - Set instance data'),
 (1243503,         0,          1,           0,           0,               0,               0,             0,      7980,              0, 'Razorgore the Untamed - Yell (reached home)'),
-(1243503,        39,    1243501,           0,           0,               0,               0,             0,       100,              0, 'Razorgore the Untamed - Cast Fireball')
+(1243503,        39,    1243501,           0,           0,               0,               0,             0,       100,              0, 'Razorgore the Untamed - Cast Fireball'),
 (1243504,         0,          1,           0,           0,               0,               0,             0,      9591,              0, 'Razorgore the Untamed - Yell (death)'),
 -- might need a spell_script_target of Blackwing Orb Trigger for this.
 (1243504,        39,    1243501,           0,           0,               0,               0,             0,       100,              0, 'Razorgore the Untamed - Cast Fireball'),
@@ -799,13 +802,15 @@ REPLACE `creature_spells`
 (`entry`, `name`,
                                    `spellId_1`, `castTarget_1`, `targetParam1_1`, `targetParam2_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, 
                                    `spellId_2`, `castTarget_2`, `targetParam1_2`, `targetParam2_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`,
-                                   `spellId_3`, `castTarget_3`, `targetParam1_3`, `targetParam2_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`) VALUES
--- Need to get initial delays from Cata PTR if possible. Otherwise will have to just use the repeat delays for them.
-( 124350, 'Razorgore the Untamed',       19632,              1,                0,                0,                   ?,                   ?,                  8,                 28,
-                                         19872,             26,            12422,               60,                   ?,                   ?,                  6,                 38,
-                                         22425,              6,                0,                0,                   ?,                   ?,                 18,                 44,
-                                         23023,              6,                0,                0,                   ?,                   ?,                 13,                 42),
-                                         24375,              6,                0,                0,                   ?,                   ?,                 22,                 43);
+                                   `spellId_3`, `castTarget_3`, `targetParam1_3`, `targetParam2_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`,
+                                   `spellId_4`, `castTarget_4`, `targetParam1_4`, `targetParam2_4`, `delayInitialMin_4`, `delayInitialMax_4`, `delayRepeatMin_4`, `delayRepeatMax_4`,
+                                   `spellId_5`, `castTarget_5`, `targetParam1_5`, `targetParam2_5`, `delayInitialMin_5`, `delayInitialMax_5`, `delayRepeatMin_5`, `delayRepeatMax_5`) VALUES
+-- STILL NEED TO GET INITIAL DELAYS FROM CATA PTR IF POSSIBLE. Using the repeat delays for now.
+( 124350, 'Razorgore the Untamed',       19632,              1,                0,                0,                   8,                  28,                  8,                 28,
+                                         19872,             26,            12422,               60,                   6,                  38,                  6,                 38,
+                                         22425,              6,                0,                0,                  18,                  44,                 18,                 44,
+                                         23023,              6,                0,                0,                  13,                  42,                 13,                 42,
+                                         24375,              6,                0,                0,                  22,                  43,                 22,                 43);
 REPLACE `generic_scripts`
 (   `id`, `priority`, `command`, `datalong`, `comments`) VALUES
 (1243501,          0,        44,          1, 'Razorgore the Untamed - Set Phase 1'),
@@ -813,9 +818,10 @@ REPLACE `generic_scripts`
 UPDATE `creature_template` SET `ai_name` = 'EventAI', `auras` = '18943', `script_name` = '', `spell_list_id` = 124350 WHERE `entry` = 12435;
 
 -- Events list for Grethok the Controller
+DELETE FROM `creature_ai_events` WHERE `creature_id` = 12557;
 INSERT `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
-(1255701,         12557,            549,            1,          0x00,              0,              0,              0,              0,          1255701, 'Grethok the Controller - Out of Combat'),
+(1255701,         12557,            581,            1,          0x00,              0,              0,              0,              0,          1255701, 'Grethok the Controller - Out of Combat'),
 (1255702,         12557,              0,            0,          0x01,           6000,           6000,          14000,          14000,          1255702, 'Grethlok the Controller - Cast Dominate Mind'),
 (1255703,         12557,              0,            4,          0x00,              0,              0,              0,              0,          1255703, 'Grethok the Controller - Aggro'),
 (1255704,         12557,              0,            0,          0x00,            800,            800,              0,              0,          1255704, 'Grethok the Controller - In Combat (Close Portcullis)'),
@@ -892,9 +898,6 @@ INSERT `creature`
 (  4826, 16604,   469,     -7566.78,     -1095.09,      413.465,       4.71239 ,           4),
 (  4827, 16604,   469,     -7532.15,     -1062.56,      407.282,       4.72984 ,           4);
 
--- Remove PVP flag from Blackwing Spell Marker
-UPDATE `creature_template` SET `unit_flags` = `unit_flags` & ~0x00001000 WHERE `entry` = 16604;
-
 -- Events list for Blackwing Spell Marker
 REPLACE `generic_scripts`
 (   `id`, `command`, `datalong`, `comments`) VALUES
@@ -916,11 +919,11 @@ UPDATE `spell_script_target` SET `targetEntry` = 14449, `type` = 1 WHERE `entry`
 -- End of migration.
 END IF;
 END??
-delimiter ; 
+DELIMITER ;
 CALL add_migration();
 DROP PROCEDURE IF EXISTS add_migration;
 
-DELETE FROM conditions WHERE condition_entry BETWEEN 540 AND 549;
+DELETE FROM conditions WHERE condition_entry BETWEEN 572 AND 592;
 DELETE FROM creature WHERE id IN (14449);
 DELETE FROM creature_ai_events WHERE id LIKE '12435%' OR id LIKE '12557%' OR id LIKE '14449%';
 DELETE FROM creature_ai_scripts WHERE id LIKE '12435%' OR id LIKE '12557%' OR id LIKE '14449%';

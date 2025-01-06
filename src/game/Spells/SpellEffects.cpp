@@ -576,7 +576,7 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
 
                     static ScriptInfo scriptRazorgoreYell;
                     scriptRazorgoreYell.command = SCRIPT_COMMAND_TALK;
-                    scriptRazorgoreYell.condition = 559;
+                    scriptRazorgoreYell.condition = 591;
                     scriptRazorgoreYell.talk.chatType = CHAT_TYPE_YELL;
                     scriptRazorgoreYell.talk.textId[0] = 9961;
                     scriptRazorgoreYell.talk.textId[1] = 9962;
@@ -629,7 +629,7 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                             case 12420: // Blackwing Mage
                                 static ScriptInfo scriptFlee;
                                 scriptFlee.command = SCRIPT_COMMAND_START_SCRIPT;
-                                scriptFlee.condition = 560;
+                                scriptFlee.condition = 592;
                                 scriptFlee.startScript.scriptId[0] = 8302141;
                                 creature->GetMap()->ScriptCommandStart(
                                     scriptFlee,
