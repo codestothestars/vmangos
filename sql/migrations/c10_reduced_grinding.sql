@@ -1,4 +1,5 @@
-UPDATE `creature_loot_template` SET `maxcount` = 2, `mincountOrRef` = 2 WHERE `item` = 8153; -- Wildvine
+UPDATE `creature_loot_template` SET `ChanceOrQuestChance` = `ChanceOrQuestChance` * 2 WHERE `ChanceOrQuestChance` < 10 AND `item` = 14256; -- Felcloth
+UPDATE `creature_loot_template` SET `maxcount` = 2, `mincountOrRef` = 2               WHERE                                `item` =  8153; -- Wildvine
 
 UPDATE `creature_onkill_reputation` SET `RewOnKillRepValue1` =  80 WHERE `creature_id` IN (7153, 7154, 7155);   -- Deadwood Warrior, Gardener, Pathfinder
 UPDATE `creature_onkill_reputation` SET `RewOnKillRepValue1` = 320 WHERE `creature_id` IN (7440, 7441);         -- Winterfall Den Watcher, Totemic
