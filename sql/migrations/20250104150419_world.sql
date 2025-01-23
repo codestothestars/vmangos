@@ -10,12 +10,12 @@ INSERT INTO `migrations` VALUES ('20250104150419');
 
 --  240: No player alive within 150 yards.
 --  Test whether it works when standing in corners.
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 240, 56,          0,  150, 0, 0x1);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 240, 56,          0,  150, 0, 0x3);
 --  241: Black Dragon Egg within 100 yards.
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 241, 21,     177807,  100, 0, 0x0);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 241, 21,     177807,  100, 0, 0x2);
 --  242: No Black Dragon Egg within 100 yards.
 --  Test whether it works when standing in corners.
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 242, 21,     177807,  100, 0, 0x1);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 242, 21,     177807,  100, 0, 0x3);
 --  572: Has aura Possess.
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 572,  1,      23014,    0, 0, 0x2);
 --  573: Last waypoint equals 0.
@@ -37,35 +37,42 @@ INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `f
 --  581: Instance data 0 (Razorgore) equals 0 (not started).
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 581, 34,          0,    0, 0, 0x0);
 --  582: Nearby Razorgore within 90 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 582, 20,      12435,   90, 0, 0x0);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 582, 20,      12435,   90, 0, 0x2);
 --  583: No nearby Razorgore within 90 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 583, 20,      12435,   90, 0, 0x1);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 583, 20,      12435,   90, 0, 0x3);
 --  584: Nearby Razorgore within 70 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 584, 20,      12435,   70, 0, 0x0);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 584, 20,      12435,   70, 0, 0x2);
 --  585: No nearby Razorgore within 70 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 585, 20,      12435,   70, 0, 0x1);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 585, 20,      12435,   70, 0, 0x3);
 --  586: Nearby Razorgore within 50 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 586, 20,      12435,   50, 0, 0x0);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 586, 20,      12435,   50, 0, 0x2);
 --  587: No nearby Razorgore within 50 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 587, 20,      12435,   50, 0, 0x1);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 587, 20,      12435,   50, 0, 0x3);
 --  588: Hostile unit within 10 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 588, 59,         10,    0, 0, 0x0);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 588, 59,         10,    0, 0, 0x2);
 --  589: Instance data 26 equal or less than 24
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 589, 34,         26,   24, 2, 0x0);
 --  590: Instance data 26 equal or higher than 25
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 590, 34,         26,   25, 1, 0x0);
---  591: Instance data 27 equal to 1
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 591, 34,         27,    1, 0, 0x0);
---  592: Does not have unit state CONFUSED | POSSESSED | STUNNED
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 592, 60, 0x00000248,    0, 0, 0x1);
 -- 8302: Map event 8302 (Razorgore) is active
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES (8302, 36,       8302,    0, 0, 0x0);
 -- 8303: (241: Black Dragon Egg within 100 yards) And (8302: Map event 8302 (Razorgore) is active)
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES (8303, -1,        241, 8302, 0, 0x0);
 -- 8304: (242: No Black Dragon Egg within 100 yards) And (8302: Map event 8302 (Razorgore) is active)
+-- Make sure we actually need 8302 in here.
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES (8304, -1,        242, 8302, 0, 0x0);
 -- 8305: (589: Instance data 26 equal or less than 24) And (8303: (241: Black Dragon Egg within 100 yards) And (8302: Map event 8302 (Razorgore) is active))
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES (8305, -1,        589, 8303, 0, 0x0);
+-- 8306: (4018: WowPatch >= 8) And (8304: (242: No Black Dragon Egg within 100 yards) And (8302: Map event 8302 (Razorgore) is active))
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES (8306, -1,       4018, 8304, 0, 0x0);
+-- 8307: (4027: WowPatch <= 7) And (8304: (242: No Black Dragon Egg within 100 yards) And (8302: Map event 8302 (Razorgore) is active))
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES (8307, -1,       4027, 8304, 0, 0x0);
+
+-- Define targets for Destroy Egg.
+-- I don't think we actually want to do this because in sniffs Destroy Egg only hits eggs.
+-- INSERT INTO `spell_script_target`
+-- (`entry`, `type`, `targetEntry`, `conditionId`, `inverseEffectMask`, `build_min`, `build_max`) VALUES
+-- (  19873, 1, 11263, 0, 0, 0, 5875);
 
 -- Correct Portcullis values.
 -- There's also a gameobject_addon for this object with these rotation values negated. Make sure it actually looks right.
@@ -80,7 +87,15 @@ UPDATE `creature` SET `position_x` = -7615.01, `position_y` = -1021.55, `positio
 -- Add missing Blackwing Orb Trigger spawn.
 INSERT INTO `creature`
 (`guid`,  `id`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecsmin`, `spawntimesecsmax`, `wander_distance`, `health_percent`, `mana_percent`) VALUES
-(  1881, 14449,   469,     -7615.51,     -1025.58,      413.465,       5.23599,             604800,             604800,                 0,              100,            100);
+(  1881, 14449,   469,     -7615.51,     -1025.58,      413.465,       5.23599,                  0,                  0,                 0,              100,            100);
+
+-- Add missing Nefarian's Troops spawn.
+INSERT INTO `creature`
+(`guid`,  `id`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecsmin`, `spawntimesecsmax`, `wander_distance`, `health_percent`, `mana_percent`) VALUES
+(  1882, 14459,   469,     -7644.52,     -1081.53,      408.574,        5.2709,                  0,                  0,                 0,              100,            100);
+
+-- Add missing Nefarian's Troops flags.
+UPDATE `creature_template` SET `static_flags1` = `static_flags1` | 0x00000260 WHERE `entry` = 14459;
 
 -- Remove C++ script from Black Dragon Egg.
 UPDATE `gameobject_template` SET `script_name` = '' WHERE `entry` = 177807;
@@ -107,14 +122,14 @@ INSERT `event_scripts`
 
 -- Success Script for Scripted Map Event
 INSERT `generic_scripts`
-(  `id`, `delay`, `command`, `datalong`, `datalong2`, `dataint`, `comments`) VALUES
-(830201,       4,        39,     176964,           0,       100, 'Razorgore Event - Open Portcullis (entrance)'),
-(830201,       4,        39,     176965,           0,       100, 'Razorgore Event - Open Portcullis (exit)');
+(  `id`, `delay`, `command`, `datalong`, `dataint`, `comments`) VALUES
+(830201,       4,        39,     176964,       100, 'Razorgore Event - Open Portcullis (entrance)'),
+(830201,       4,        39,     176965,       100, 'Razorgore Event - Open Portcullis (exit)');
 
 -- Fail Script for Scripted Map Event
 INSERT `generic_scripts`
-(  `id`, `command`, `datalong`, `comments`) VALUES
-(830202,        39,     176964, 'Razorgore Event - Open Portcullis');
+(  `id`, `command`, `datalong`, `dataint`, `comments`) VALUES
+(830202,        39,     176964,       100, 'Razorgore Event - Open Portcullis');
 
 -- Spawning Adds
 INSERT `generic_scripts`
@@ -360,10 +375,7 @@ INSERT `generic_scripts`
 (8302139,       0,        39,    8302044,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Creature - North West 5 - Summon Immediately'),
 (8302139,      15,        39,    8302140,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - North West 5 - Summon Next'),
 (8302140,      15,        39,    8302044,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - North West 6 - Summon Delayed'),
-(8302140,      30,        39,    8302129,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - North West 6 - Summon First'),
-(8302141,       0,        34,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0, -7556.65, -1025.56 , 408.56 ,  0 ,              0, 'Razorgore Event - Nefarian''s Troops - Set Home Position'),
-(8302141,       0,        59,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event - Nefarian''s Troops - Set React State'),
-(8302141,       0,        67,          7,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event - Nefarian''s Troops - Set Default Movement');
+(8302140,      30,        39,    8302129,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,     0   ,     0    ,   0    ,  0 ,           8303, 'Razorgore Event Spawning Adds - Summon Creature - North West 6 - Summon First');
 
 -- Waypoints for Blackwing Legionnaire, Blackwing Mage, Deathtalon Dragonspawn (North)
 INSERT INTO `creature_movement_special`
@@ -768,36 +780,42 @@ REPLACE `creature_ai_scripts`
 -- (   `id`, `command`, `comments`) VALUES;
 
 -- Events list for Razorgore the Untamed
--- Note that effect 1 of spell 19873 has a misc value of SPELL_EFFECT_ACTIVATE_OBJECT with implicit target TARGET_GAMEOBJECT_SCRIPT_NEAR_CASTER.
--- Already has a spell_script_target of 177807 (Black Dragon Egg).
 -- Video shows that while possessing, an electric beam connects Razorgore to (apparently) the orb. Make sure this is implemented.
 DELETE FROM `creature_ai_events` WHERE `creature_id` = 12435;
 INSERT `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
-(1243501,         12435,             572,           1,                          0,          0x01,           6000,          16000,           6000,          16000,          1243501, 'Razorgore the Untamed - Out of Combat (periodic)'),
-(1243502,         12435,               0,          23,                          0,          0x01,          19832,              1,              0,              0,          1243502, 'Razorgore the Untamed - Aura'),
+(1243501,         12435,             572,           1,                      0b000,          0x01,           6000,          16000,           6000,          16000,          1243501, 'Razorgore the Untamed - Out of Combat (periodic)'),
+(1243502,         12435,               0,          23,                      0b000,          0x01,          19832,              1,              0,              0,          1243502, 'Razorgore the Untamed - Aura'),
+(1243503,         12435,               0,          36,                      0b000,          0x01,          19873,             -1,              0,              0,          1243503, 'Razorgore the Untamed - Spell Hit Target (any phase)'),
+(1243504,         12435,               0,          36,                      0b010,          0x00,          19873,             -1,              0,              0,          1243504, 'Razorgore the Untamed - Spell Hit Target (phase 1)'),
+(1243505,         12435,               0,          36,                      0b001,          0x00,          19873,             -1,              0,              0,          1243505, 'Razorgore the Untamed - Spell Hit Target (phase 2)'),
 -- Not sure if this needs a phase, but it will be obvious if so.
-(1243503,         12435,               0,          21,                          0,          0x00,              0,              0,              0,              0,          1243503, 'Razorgore the Untamed - Reached Home'),
-(1243504,         12435,             241,           6,                        0b1,          0x00,              0,              0,              0,              0,          1243504, 'Razorgore the Untamed - Death (eggs remain, phase 1)'),
-(1243505,         12435,             241,           6,                          0,          0x00,              0,              0,              0,              0,          1243505, 'Razorgore the Untamed - Death (eggs remain, any phase)'),
-(1243506,         12435,             242,           6,                          0,          0x00,              0,              0,              0,              0,          1243506, 'Razorgore the Untamed - Death (eggs destroyed)');
+(1243506,         12435,               0,          21,                      0b000,          0x00,              0,              0,              0,              0,          1243506, 'Razorgore the Untamed - Reached Home'),
+(1243507,         12435,             241,           6,                      0b100,          0x00,              0,              0,              0,              0,          1243507, 'Razorgore the Untamed - Death (eggs remain, before phase 3)'),
+(1243508,         12435,             241,           6,                      0b000,          0x00,              0,              0,              0,              0,          1243508, 'Razorgore the Untamed - Death (eggs remain, any phase)'),
+(1243509,         12435,             242,           6,                      0b000,          0x00,              0,              0,              0,              0,          1243509, 'Razorgore the Untamed - Death (eggs destroyed)');
 INSERT `creature_ai_scripts`
-(   `id`, `command`, `datalong`, `datalong2`, `datalong3`, `target_param1`, `target_param2`, `target_type`, `dataint`, `condition_id`, `comments`) VALUES
-(1243501,        15,      21389,       0x002,           0,               0,               0,             6,         0,            580, 'Razorgore the Untamed - Cast Fire Channeling'),
-(1243501,        60,          0,           1,           0,               0,               0,             0,         0,            580, 'Razorgore the Untamed - Start Waypoint 1'),
-(1243501,        60,          0,           2,           0,               0,               0,             0,         0,            574, 'Razorgore the Untamed - Start Waypoint 2'),
-(1243501,        60,          0,           3,           0,               0,               0,             0,         0,            575, 'Razorgore the Untamed - Start Waypoint 3'),
-(1243501,        60,          0,           4,           0,               0,               0,             0,         0,            576, 'Razorgore the Untamed - Start Waypoint 4'),
-(1243501,        60,          0,           5,           0,               0,               0,             0,         0,            577, 'Razorgore the Untamed - Start Waypoint 5'),
-(1243501,        60,          0,           6,           0,               0,               0,             0,         0,            578, 'Razorgore the Untamed - Start Waypoint 6'),
-(1243502,        37,         27,           0,           0,               0,               0,             0,         0,              0, 'Razorgore the Untamed - Set instance data'),
-(1243503,         0,          1,           0,           0,               0,               0,             0,      7980,              0, 'Razorgore the Untamed - Yell (reached home)'),
-(1243503,        39,    1243501,           0,           0,               0,               0,             0,       100,              0, 'Razorgore the Untamed - Cast Fireball'),
-(1243504,         0,          1,           0,           0,               0,               0,             0,      9591,              0, 'Razorgore the Untamed - Yell (death)'),
+(   `id`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `dataint`, `dataint2`, `dataint3`, `condition_id`, `comments`) VALUES
+(1243501,        15,      21389,       0x002,           0,           0,               0,               0,             6,         0,          0,          0,            580, 'Razorgore the Untamed - Cast Fire Channeling'),
+(1243501,        60,          0,           1,           0,           0,               0,               0,             0,         0,          0,          0,            580, 'Razorgore the Untamed - Start Waypoint 1'),
+(1243501,        60,          0,           2,           0,           0,               0,               0,             0,         0,          0,          0,            574, 'Razorgore the Untamed - Start Waypoint 2'),
+(1243501,        60,          0,           3,           0,           0,               0,               0,             0,         0,          0,          0,            575, 'Razorgore the Untamed - Start Waypoint 3'),
+(1243501,        60,          0,           4,           0,           0,               0,               0,             0,         0,          0,          0,            576, 'Razorgore the Untamed - Start Waypoint 4'),
+(1243501,        60,          0,           5,           0,           0,               0,               0,             0,         0,          0,          0,            577, 'Razorgore the Untamed - Start Waypoint 5'),
+(1243501,        60,          0,           6,           0,           0,               0,               0,             0,         0,          0,          0,            578, 'Razorgore the Untamed - Start Waypoint 6'),
+(1243502,        37,         27,           0,           0,           0,               0,               0,             0,         0,          0,          0,              0, 'Razorgore the Untamed - Set instance data'),
+(1243503,        68,    1660401,           2,       14459,         100,               0,               0,             0,         0,          0,          0,           8307, 'Razorgore the Untamed - Nefarian''s Troops Flee (Nefarian''s Troops) (choice of 14459 before patch 1.10 is guessed)'),
+(1243503,        68,    1660401,           2,       16604,         100,               0,               0,             0,         0,          0,          0,           8306, 'Razorgore the Untamed - Nefarian''s Troops Flee (Blackwing Spell Marker)'),
+(1243504,         0,          1,           0,           0,           0,               0,               0,             0,      9961,       9962,       9963,              0, 'Razorgore the Untamed - Yell (destroyed egg)'),
+(1243504,        44,          2,           0,           0,           0,               0,               0,             0,         0,          0,          0,              0, 'Razorgore the Untamed - Set Phase 2'),
+(1243505,        44,          1,           0,           0,           0,               0,               0,             0,         0,          0,          0,              0, 'Razorgore the Untamed - Set Phase 1'),
+(1243506,         0,          1,           0,           0,           0,               0,               0,             0,      7980,          0,          0,              0, 'Razorgore the Untamed - Yell (reached home)'),
+(1243506,        39,    1243501,           0,           0,           0,               0,               0,             0,       100,          0,          0,              0, 'Razorgore the Untamed - Cast Fireball'),
+(1243507,         0,          1,           0,           0,           0,               0,               0,             0,      9591,          0,          0,              0, 'Razorgore the Untamed - Yell (death)'),
 -- might need a spell_script_target of Blackwing Orb Trigger for this.
-(1243504,        39,    1243501,           0,           0,               0,               0,             0,       100,              0, 'Razorgore the Untamed - Cast Fireball'),
-(1243505,        62,       8302,           0,           0,               0,               0,             0,         0,              0, 'Razorgore the Untamed - End Map Event (Failure)'),
-(1243506,        62,       8302,           1,           0,               0,               0,             0,         0,              0, 'Razorgore the Untamed - End Map Event (Success)');
+(1243507,        39,    1243501,           0,           0,           0,               0,               0,             0,       100,          0,          0,              0, 'Razorgore the Untamed - Cast Fireball'),
+(1243508,        62,       8302,           0,           0,           0,               0,               0,             0,         0,          0,          0,              0, 'Razorgore the Untamed - End Map Event (Failure)'),
+(1243509,        62,       8302,           1,           0,           0,               0,               0,             0,         0,          0,          0,              0, 'Razorgore the Untamed - End Map Event (Success)');
 REPLACE `creature_spells`
 (`entry`, `name`,
                                    `spellId_1`, `castTarget_1`, `targetParam1_1`, `targetParam2_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, 
@@ -813,7 +831,7 @@ REPLACE `creature_spells`
                                          24375,              6,                0,                0,                  22,                  43,                 22,                 43);
 REPLACE `generic_scripts`
 (   `id`, `priority`, `command`, `datalong`, `comments`) VALUES
-(1243501,          0,        44,          1, 'Razorgore the Untamed - Set Phase 1'),
+(1243501,          0,        44,          1, 'Razorgore the Untamed - Set Phase 3'),
 (1243501,          1,        15,      23024, 'Razorgore the Untamed - Cast Fireball');
 UPDATE `creature_template` SET `ai_name` = 'EventAI', `auras` = '18943', `script_name` = '', `spell_list_id` = 124350 WHERE `entry` = 12435;
 
@@ -837,7 +855,7 @@ INSERT `creature_ai_scripts`
 (1255703,        49,          1,           0,             0,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Combat Pulse'),
 (1255703,         0,          1,           0,             0,      9958,          0,        0,        0,       0,       0, 'Grethok the Controller - Yell'),
 (1255703,        37,          0,           4,             0,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Set Instance Data (Encounter Special)'),
-(1255704,        12,     232301,           0,             0,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Close Portcullis'),
+(1255704,        12,     234783,           0,             0,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Close Portcullis'),
 (1255705,        10,      12434,         400,             0,         0,          3, -7643.39, -1064.69, 407.288, 1.71042, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
 (1255705,        10,      12434,         400,             0,         0,          3, -7623.1,  -1094.06, 407.288, 1.44862, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
 (1255705,        10,      12434,         400,             0,         0,          3, -7568.61, -1012.67, 407.288, 1.51844, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
@@ -861,7 +879,7 @@ UPDATE `creature_template` SET `auras` = '18950' WHERE `entry` = 12557;
 -- (   `id`,  `creature_id`, `condition_id`, `event_type`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES;
 -- INSERT `creature_ai_scripts`
 -- (   `id`, `command`, `datalong`, `comments`) VALUES;
-UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry` = 14449;
+-- UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry` = 14449;
 
 -- Events list for Orb of Domination
 UPDATE `creature_template` SET `script_name` = '' WHERE `entry` = 14453;
@@ -886,32 +904,32 @@ INSERT `creature`
 -- make sure they spawn right away instead of after the default of 120 seconds
 -- make sure they don't actually wander by wander_distance
 (`guid`,  `id`, `map`, `position_x`, `position_y`, `position_z`,  `orientation`, `patch_min`) VALUES
-(  4817, 16604,   469,     -7659.47,     -1043.87,      407.282,       1.65806 ,           4),
-(  4818, 16604,   469,     -7626.67,     -1009.63,      413.465,       3.19395 ,           4),
-(  4819, 16604,   469,     -7619.05,     -1048.82,      408.24 ,       0.680678,           4),
-(  4820, 16604,   469,     -7607.38,     -1115.99,      407.282,       4.92183 ,           4),
-(  4821, 16604,   469,     -7599.65,     -1077.8 ,      408.24 ,       3.54302 ,           4),
-(  4822, 16604,   469,     -7595.42,     -1053.45,      408.24 ,       3.89208 ,           4),
-(  4823, 16604,   469,     -7592.7 ,     -1029.95,      408.24 ,       5.32325 ,           4),
-(  4824, 16604,   469,     -7583.24,     - 990.03,      407.282,       2.89725 ,           4),
-(  4825, 16604,   469,     -7571.81,     -1058.2 ,      408.24 ,       5.74213 ,           4),
-(  4826, 16604,   469,     -7566.78,     -1095.09,      413.465,       4.71239 ,           4),
-(  4827, 16604,   469,     -7532.15,     -1062.56,      407.282,       4.72984 ,           4);
+(  4817, 16604,   469,     -7659.47,     -1043.87,      407.282,       1.65806 ,           8),
+(  4818, 16604,   469,     -7626.67,     -1009.63,      413.465,       3.19395 ,           8),
+(  4819, 16604,   469,     -7619.05,     -1048.82,      408.24 ,       0.680678,           8),
+(  4820, 16604,   469,     -7607.38,     -1115.99,      407.282,       4.92183 ,           8),
+(  4821, 16604,   469,     -7599.65,     -1077.8 ,      408.24 ,       3.54302 ,           8),
+(  4822, 16604,   469,     -7595.42,     -1053.45,      408.24 ,       3.89208 ,           8),
+(  4823, 16604,   469,     -7592.7 ,     -1029.95,      408.24 ,       5.32325 ,           8),
+(  4824, 16604,   469,     -7583.24,     - 990.03,      407.282,       2.89725 ,           8),
+(  4825, 16604,   469,     -7571.81,     -1058.2 ,      408.24 ,       5.74213 ,           8),
+(  4826, 16604,   469,     -7566.78,     -1095.09,      413.465,       4.71239 ,           8),
+(  4827, 16604,   469,     -7532.15,     -1062.56,      407.282,       4.72984 ,           8);
 
 -- Events list for Blackwing Spell Marker
 REPLACE `generic_scripts`
 (   `id`, `command`, `datalong`, `comments`) VALUES
 (1660401,        15,      23032, 'Blackwing Spell Marker - Cast Nefarian''s Troops Flee');
 
--- Portcullis (Entry: 176964 Guid: 232301) Open Script
+-- Portcullis (Entry: 176964 Guid: 234783) Open Script
 INSERT `generic_scripts`
 (  `id`, `command`, `datalong`, `comments`) VALUES
-(176964,        11,     232301, 'Portcullis - Open');
+(176964,        11,     234783, 'Portcullis - Open');
 
--- Portcullis (Entry: 176965 Guid: 232302) Open Script
+-- Portcullis (Entry: 176965 Guid: 234784) Open Script
 INSERT `generic_scripts`
 (  `id`, `command`, `datalong`, `comments`) VALUES
-(176965,        11,     232302, 'Portcullis - Open');
+(176965,        11,     234784, 'Portcullis - Open');
 
 -- Correct target for spell Use Dragon Orb.
 UPDATE `spell_script_target` SET `targetEntry` = 14449, `type` = 1 WHERE `entry` = 23018;
@@ -923,7 +941,7 @@ DELIMITER ;
 CALL add_migration();
 DROP PROCEDURE IF EXISTS add_migration;
 
-DELETE FROM conditions WHERE condition_entry BETWEEN 572 AND 592;
+DELETE FROM conditions WHERE condition_entry BETWEEN 572 AND 590;
 DELETE FROM creature WHERE id IN (14449);
 DELETE FROM creature_ai_events WHERE id LIKE '12435%' OR id LIKE '12557%' OR id LIKE '14449%';
 DELETE FROM creature_ai_scripts WHERE id LIKE '12435%' OR id LIKE '12557%' OR id LIKE '14449%';

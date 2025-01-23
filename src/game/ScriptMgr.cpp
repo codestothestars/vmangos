@@ -562,7 +562,8 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, char const* tablename)
                             break;
                         default:
                         {
-                            sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "Table `%s` has datalong2 = %u in SCRIPT_COMMAND_SET_FACTION for script id %u, but this faction does not exist.", tablename, tmp.faction.factionId, tmp.id);
+                            // datalong2 was a typo
+                            sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "Table `%s` has datalong = %u in SCRIPT_COMMAND_SET_FACTION for script id %u, but this faction does not exist.", tablename, tmp.faction.factionId, tmp.id);
                             continue;
                         }
                     }

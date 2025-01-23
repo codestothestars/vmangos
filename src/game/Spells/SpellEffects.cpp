@@ -562,51 +562,6 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                         pRanshalla->ForcedDespawn();
                     return;
                 }
-                case 19873: // Destroy Egg
-                {
-                    float radius = GetSpellRadius(sSpellRadiusStore.LookupEntry(m_spellInfo->EffectRadiusIndex[effIdx]));
-
-                    static ScriptInfo scriptNefariansTroopsFlee;
-                    scriptNefariansTroopsFlee.command = SCRIPT_COMMAND_START_SCRIPT_FOR_ALL;
-                    scriptNefariansTroopsFlee.condition = 8304;
-                    scriptNefariansTroopsFlee.startScriptForAll.objectEntry = 16604;
-                    scriptNefariansTroopsFlee.startScriptForAll.objectType = SO_STARTFORALL_CREATURES;
-                    scriptNefariansTroopsFlee.startScriptForAll.scriptId = 1660401;
-                    scriptNefariansTroopsFlee.startScriptForAll.searchRadius = radius;
-
-                    static ScriptInfo scriptRazorgoreYell;
-                    scriptRazorgoreYell.command = SCRIPT_COMMAND_TALK;
-                    scriptRazorgoreYell.condition = 591;
-                    scriptRazorgoreYell.talk.chatType = CHAT_TYPE_YELL;
-                    scriptRazorgoreYell.talk.textId[0] = 9961;
-                    scriptRazorgoreYell.talk.textId[1] = 9962;
-                    scriptRazorgoreYell.talk.textId[2] = 9963;
-
-                    static ScriptInfo scriptRazorgoreYellToggle;
-                    scriptRazorgoreYellToggle.command = SCRIPT_COMMAND_SET_INST_DATA;
-                    scriptRazorgoreYellToggle.setData.data = !unitTarget->GetMap()->GetInstanceData()->GetData(DATA_RAZORGORE_EGG_YELLED);
-                    scriptRazorgoreYellToggle.setData.field = DATA_RAZORGORE_EGG_YELLED;
-
-                    unitTarget->GetMap()->ScriptCommandStart(
-                        scriptNefariansTroopsFlee,
-                        0,
-                        unitTarget->GetObjectGuid(),
-                        unitTarget->GetObjectGuid()
-                    );
-                    unitTarget->GetMap()->ScriptCommandStart(
-                        scriptRazorgoreYell,
-                        0,
-                        m_caster->GetObjectGuid(),
-                        m_caster->GetObjectGuid()
-                    );
-                    unitTarget->GetMap()->ScriptCommandStart(
-                        scriptRazorgoreYellToggle,
-                        0,
-                        m_caster->GetObjectGuid(),
-                        m_caster->GetObjectGuid()
-                    );
-                    return;
-                }
                 case 20037: // Explode Orb Effect
                 {
                     // Make sure 20038 "activates" the Black Dragon Eggs and misses the Blackwing Spell Markers
@@ -616,7 +571,13 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                 case 23024: // Fireball
                 {
                     // Make sure that the Orb of Domination despawns, and does so with its "falling apart" animation as in sniffs.
-                    if (effIdx == 0) unitTarget->CastSpell(nullptr, 20037, false);
+                    if (effIdx == 0) unitTarget->CastSpell(
+                        nullptr,
+                        sWorld.GetWowPatch() >= WOW_PATCH_110
+                            ? 20037
+                            : 20038, // Choice of spell 20038 (Explosion) before patch 1.10 is guessed.
+                        false
+                    );
                     return;
                 }
                 case 23032: // Nefarian's Troops Flee
@@ -627,16 +588,8 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                         {
                             case 12416: // Blackwing Legionnaire
                             case 12420: // Blackwing Mage
-                                static ScriptInfo scriptFlee;
-                                scriptFlee.command = SCRIPT_COMMAND_START_SCRIPT;
-                                scriptFlee.condition = 592;
-                                scriptFlee.startScript.scriptId[0] = 8302141;
-                                creature->GetMap()->ScriptCommandStart(
-                                    scriptFlee,
-                                    1,
-                                    creature->GetObjectGuid(),
-                                    creature->GetObjectGuid()
-                                );
+                                creature->SetCreatureReactState(REACT_PASSIVE);
+                                creature->SetHomePosition(-7556.65, -1025.56, 408.56, 100);
                                 return;
                             case 12422: // Death Talon Dragonspawn
                                 creature->DespawnOrUnsummon();
