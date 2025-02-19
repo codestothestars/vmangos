@@ -229,7 +229,7 @@ void Spell::EffectResurrectNew(SpellEffectIndex effIdx)
         pet->SetUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_NONE);
         pet->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
         pet->SetDeathState(ALIVE);
-        pet->ClearUnitState(UNIT_STAT_ALL_DYN_STATES);
+        pet->ClearUnitState(UNIT_STATE_ALL_DYN_STATES);
         pet->SetHealth(pet->GetMaxHealth() > health ? health : pet->GetMaxHealth());
 
         pet->AIM_Initialize();
@@ -522,7 +522,7 @@ void Spell::EffectSchoolDMG(SpellEffectIndex effect_idx)
                 else if (m_spellInfo->SpellIconID == 561)
                 {
                     // base damage halved if target not stunned.
-                    if (!unitTarget->HasUnitState(UNIT_STAT_STUNNED | UNIT_STAT_PENDING_STUNNED))
+                    if (!unitTarget->HasUnitState(UNIT_STATE_STUNNED | UNIT_STATE_PENDING_STUNNED))
                         damage = damage * 0.5f;
 
                     damage = m_caster->SpellDamageBonusDone(unitTarget, m_spellInfo, effect_idx, damage, SPELL_DIRECT_DAMAGE);
@@ -765,15 +765,6 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                             unitTarget->CastSpell(unitTarget, 27782, true);
                             break;
                     }
-                    return;
-                }
-                case 24531: // Refocus : "Instantly clears the cooldowns of Aimed Shot, Multishot, Volley, and Arcane Shot."
-                {
-                    if (!m_caster->IsPlayer())
-                        return;
-                    uint32 spellid = m_spellInfo->Id;
-                    auto cdCheck = [spellid](SpellEntry const & spellEntry) -> bool { return (spellEntry.IsFitToFamily<SPELLFAMILY_HUNTER, CF_HUNTER_ARCANE_SHOT, CF_HUNTER_MULTI_SHOT, CF_HUNTER_VOLLEY, CF_HUNTER_AIMED_SHOT>() && spellEntry.Id != spellid && spellEntry.GetRecoveryTime() > 0); };
-                    static_cast<Player*>(m_caster)->RemoveSomeCooldown(cdCheck);
                     return;
                 }
                 case 8344: // Universal Remote
@@ -1533,7 +1524,7 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                     //m_casterUnit->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FEING_DEATH);
                     m_casterUnit->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SPAWNING);
                     m_casterUnit->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
-                    m_casterUnit->AddUnitState(UNIT_STAT_FEIGN_DEATH);
+                    m_casterUnit->AddUnitState(UNIT_STATE_FEIGN_DEATH);
 
                     // Summon globs
                     m_casterUnit->CastSpell(m_casterUnit, 25885, true);
@@ -1989,19 +1980,6 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
             break;
         case SPELLFAMILY_HUNTER:
         {
-            switch (m_spellInfo->Id)
-            {
-                case 23989:                                 // Readiness talent
-                {
-                    if (m_caster->GetTypeId() != TYPEID_PLAYER)
-                        return;
-
-                    // immediately finishes the cooldown for hunter abilities
-                    auto cdCheck = [](SpellEntry const & spellEntry) -> bool { return (spellEntry.SpellFamilyName == SPELLFAMILY_HUNTER && spellEntry.Id != 23989 && spellEntry.GetRecoveryTime() > 0); };
-                    static_cast<Player*>(m_caster)->RemoveSomeCooldown(cdCheck);
-                    return;
-                }
-            }
             break;
         }
         case SPELLFAMILY_PALADIN:
@@ -3437,11 +3415,11 @@ void Spell::EffectDistract(SpellEffectIndex effIdx)
         return;
 
     // target must be OK to do this
-    if (unitTarget->HasUnitState(UNIT_STAT_CAN_NOT_REACT))
+    if (unitTarget->HasUnitState(UNIT_STATE_CAN_NOT_REACT))
         return;
 
     unitTarget->SetFacingTo(unitTarget->GetAngle(m_targets.m_destX, m_targets.m_destY));
-    unitTarget->ClearUnitState(UNIT_STAT_MOVING);
+    unitTarget->ClearUnitState(UNIT_STATE_MOVING);
 
     if (unitTarget->GetTypeId() == TYPEID_UNIT)
         unitTarget->GetMotionMaster()->MoveDistract(damage * IN_MILLISECONDS);
@@ -5039,7 +5017,7 @@ void Spell::EffectScriptEffect(SpellEffectIndex effIdx)
                         return;
 
                     // Guard spellIds map [Pledge of Friendship , Pledge of Adoration]
-                    std::map<uint32, std::vector<uint32>> loveAirSpellsMapForFaction = {
+                    static std::map<uint32, std::vector<uint32>> const loveAirSpellsMapForFaction = {
                             {11, {27242, 27510}},   // Stormwind
                             {85, {27247, 27507}},   // Orgrimmar
                             {57, {27244, 27506}},   // Ironforge
@@ -5092,15 +5070,23 @@ void Spell::EffectScriptEffect(SpellEffectIndex effIdx)
                         return;
 
                     // Civilian spellIds map [Gift of Friendship , Gift of Adoration]
-                    std::map<uint32, std::vector<uint32>> loveAirSpellsMapForFaction = {
-                            {12, {27525, 27509}},   // Stormwind
-                            {29, {27523, 27505}},   // Orgrimmar orcs
-                            {55, {27520, 27503}},   // Ironforge dwarves
-                            {68, {27529, 27512}},   // Undercity
-                            {80, {27519, 26901}},   // Darnassus
-                            {104, {27524, 27511}},  // Thunderbluff
-                            {126, {27523, 27505}},  // Orgrimmar trolls
-                            {875, {27520, 27503}}   // Ironforge gnomes
+                    static std::map<uint32, std::vector<uint32>> const loveAirSpellsMapForFaction = {
+                        { 12,{ 27525, 27509 } },   // Stormwind
+                        { 29,{ 27523, 27505 } },   // Orgrimmar orcs
+                        { 55,{ 27520, 27503 } },   // Ironforge dwarves
+                        { 57,{ 27520, 27503 } },   // Ironforge dwarves
+                        { 68,{ 27529, 27512 } },   // Undercity
+                        { 80,{ 27519, 26901 } },   // Darnassus
+                        { 83,{ 27523, 27505 } },   // Orgrimmar orcs
+                        { 85,{ 27523, 27505 } },   // Orgrimmar orcs
+                        { 104,{ 27524, 27511 } },  // Thunderbluff
+                        { 105,{ 27524, 27511 } },  // Thunderbluff
+                        { 123,{ 27525, 27509 } },  // Stormwind
+                        { 126,{ 27523, 27505 } },  // Orgrimmar trolls
+                        { 412,{ 27524, 27511 } },  // Thunderbluff
+                        { 875,{ 27520, 27503 } },  // Ironforge gnomes
+                        { 876,{ 27523, 27505 } },  // Orgrimmar trolls
+                        { 1215,{ 27523, 27505 } }  // Orgrimmar orcs
                     };
 
                     auto itr = loveAirSpellsMapForFaction.find(m_caster->GetFactionTemplateId());
@@ -6613,7 +6599,7 @@ void Spell::EffectSummonDeadPet(SpellEffectIndex /*effIdx*/)
     pet->SetUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_NONE);
     pet->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
     pet->SetDeathState(ALIVE);
-    pet->ClearUnitState(UNIT_STAT_ALL_DYN_STATES);
+    pet->ClearUnitState(UNIT_STATE_ALL_DYN_STATES);
     pet->SetHealth(uint32(pet->GetMaxHealth() * (damage / 100)));
 
     pet->AIM_Initialize();

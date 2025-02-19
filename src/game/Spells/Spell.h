@@ -651,7 +651,7 @@ class Spell
         void DoAllEffectOnTarget(ItemTargetInfo *target);
         bool HasValidUnitPresentInTargetList();
         SpellCastResult CanOpenLock(SpellEffectIndex effIndex, uint32 lockid, SkillType& skillid, int32& reqSkillValue, int32& skillValue);
-        uint32 GetSpellBatchingEffectDelay(SpellCaster const* pTarget) const;
+        uint32 GetSpellBatchingEffectDelay(SpellCaster const* pTarget, SpellEffectIndex effIndex) const;
         // -------------------------------------------
 
         //List For Triggered Spells
@@ -804,7 +804,7 @@ class ChannelResetEvent : public BasicEvent
     public:
         ChannelResetEvent(Unit* caster) : m_caster(caster)
         {
-            caster->AddUnitState(UNIT_STAT_PENDING_CHANNEL_RESET);
+            caster->AddUnitState(UNIT_STATE_PENDING_CHANNEL_RESET);
         }
         ~ChannelResetEvent() override {}
 

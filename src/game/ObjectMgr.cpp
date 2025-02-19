@@ -121,8 +121,23 @@ T IdGenerator<T>::Generate()
     return m_nextGuid++;
 }
 
+template<typename T>
+void IdGenerator<T>::SetMaxUsedGuid(T val, char const* guidType)
+{
+    if (val == std::numeric_limits<T>::max())
+    {
+        sLog.Out(LOG_BASIC, LOG_LVL_ERROR, "%s guids have been exhausted! Aborting startup.", guidType);
+        Log::WaitBeforeContinueIfNeed();
+        exit(1);
+    }
+    m_nextGuid = val + 1;
+}
+
 template uint32 IdGenerator<uint32>::Generate();
 template uint64 IdGenerator<uint64>::Generate();
+
+template void IdGenerator<uint32>::SetMaxUsedGuid(uint32, char const*);
+template void IdGenerator<uint64>::SetMaxUsedGuid(uint64, char const*);
 
 ObjectMgr::ObjectMgr() :
     m_GuildIds("Guild ids"),
@@ -6648,52 +6663,50 @@ public:
         {
             Field* fields = result->Fetch();
 
-            Mail* m = new Mail;
-            m->messageID = fields[0].GetUInt32();
-            m->messageType = fields[1].GetUInt8();
-            m->sender = fields[2].GetUInt32();
-            m->receiverGuid = ObjectGuid(HIGHGUID_PLAYER, fields[3].GetUInt32());
+            Mail m = Mail();
+            m.messageID = fields[0].GetUInt32();
+            m.messageType = fields[1].GetUInt8();
+            m.sender = fields[2].GetUInt32();
+            m.receiverGuid = ObjectGuid(HIGHGUID_PLAYER, fields[3].GetUInt32());
             bool has_items = fields[5].GetBool();
-            m->expire_time = (time_t)fields[6].GetUInt64();
-            m->deliver_time = 0;
-            m->COD = fields[7].GetUInt32();
-            m->checked = fields[8].GetUInt32();
-            m->mailTemplateId = fields[9].GetInt16();
+            m.expire_time = (time_t)fields[6].GetUInt64();
+            m.deliver_time = 0;
+            m.COD = fields[7].GetUInt32();
+            m.checked = fields[8].GetUInt32();
+            m.mailTemplateId = fields[9].GetInt16();
 
-            if (serverUp && sObjectAccessor.FindPlayerNotInWorld(m->receiverGuid))
+            if (serverUp && sObjectAccessor.FindPlayerNotInWorld(m.receiverGuid))
             {
                 // Online player. We wait for him to logout to send the mail back (ie next call)
                 ++skippedCount;
-                delete m;
                 continue;
             }
-            //delete or return mail:
+
+            // delete or return mail:
             if (has_items)
             {
                 SingleMailReturner* returner = new SingleMailReturner();
                 // if it is mail from non-player, or if it's already return mail, it shouldn't be returned, but deleted
-                if (m->messageType != MAIL_NORMAL || (m->checked & (MAIL_CHECK_MASK_COD_PAYMENT | MAIL_CHECK_MASK_RETURNED)))
+                if (m.messageType != MAIL_NORMAL || (m.checked & (MAIL_CHECK_MASK_COD_PAYMENT | MAIL_CHECK_MASK_RETURNED)))
                     returner->returnToLowGuid = 0;
                 else
                 {
                     returner->basetime = basetime;
-                    returner->returnToLowGuid = m->sender;
+                    returner->returnToLowGuid = m.sender;
                 }
-                returner->receiverGuid = m->receiverGuid;
-                returner->itemTextId = m->itemTextId;
-                returner->messageID = m->messageID;
-                CharacterDatabase.AsyncPQueryUnsafe(returner, &SingleMailReturner::Callback, "SELECT `item_guid` FROM `mail_items` WHERE `mail_id`='%u'", m->messageID);
-                delete m;
+                returner->receiverGuid = m.receiverGuid;
+                returner->itemTextId = m.itemTextId;
+                returner->messageID = m.messageID;
+                CharacterDatabase.AsyncPQueryUnsafe(returner, &SingleMailReturner::Callback, "SELECT `item_guid` FROM `mail_items` WHERE `mail_id`='%u'", m.messageID);
                 continue;
             }
 
-            if (m->itemTextId)
-                CharacterDatabase.PExecute("DELETE FROM `item_text` WHERE `id` = '%u'", m->itemTextId);
+            if (m.itemTextId)
+                CharacterDatabase.PExecute("DELETE FROM `item_text` WHERE `id` = '%u'", m.itemTextId);
 
             // deletemail = true;
-            // delmails << m->messageID << ", ";
-            CharacterDatabase.PExecute("DELETE FROM `mail` WHERE `id` = '%u'", m->messageID);
-            delete m;
+            // delmails << m.messageID << ", ";
+            CharacterDatabase.PExecute("DELETE FROM `mail` WHERE `id` = '%u'", m.messageID);
             
         }
         while (result->NextRow());
@@ -7540,7 +7553,7 @@ void ObjectMgr::PackGroupIds()
         bar.step();
     }
 
-    m_GroupIds.Set(groupId);
+    m_GroupIds.SetMaxUsedGuid(groupId, "Group");
 
     sLog.Out(LOG_BASIC, LOG_LVL_MINIMAL, "");
     sLog.Out(LOG_BASIC, LOG_LVL_MINIMAL, ">> Group Ids remapped, next group id is %u", groupId);
@@ -7550,15 +7563,11 @@ void ObjectMgr::SetHighestGuids()
 {
     std::unique_ptr<QueryResult> result(CharacterDatabase.Query("SELECT MAX(`guid`) FROM `characters`"));
     if (result)
-        m_CharGuids.Set((*result)[0].GetUInt32() + 1);
-
-    result = WorldDatabase.Query("SELECT MAX(`guid`) FROM `creature`");
-    if (result)
-        m_FirstTemporaryCreatureGuid = (*result)[0].GetUInt32() + 1;
+        m_CharGuids.SetMaxUsedGuid((*result)[0].GetUInt32(), "Character");
 
     result = CharacterDatabase.Query("SELECT MAX(`guid`) FROM `item_instance`");
     if (result)
-        m_ItemGuids.Set((*result)[0].GetUInt32() + 1);
+        m_ItemGuids.SetMaxUsedGuid((*result)[0].GetUInt32(), "Item");
 
     // Cleanup other tables from nonexistent guids (>=m_hiItemGuid)
     CharacterDatabase.BeginTransaction();
@@ -7567,9 +7576,13 @@ void ObjectMgr::SetHighestGuids()
     CharacterDatabase.PExecute("DELETE FROM `auction` WHERE `item_guid` >= '%u'", m_ItemGuids.GetNextAfterMaxUsed());
     CharacterDatabase.CommitTransaction();
 
+    result = WorldDatabase.Query("SELECT MAX(`guid`) FROM `creature`");
+    if (result)
+        m_FirstTemporaryCreatureGuid = (*result)[0].GetUInt32();
+
     result = WorldDatabase.Query("SELECT MAX(`guid`) FROM `gameobject`");
     if (result)
-        m_FirstTemporaryGameObjectGuid = (*result)[0].GetUInt32() + 1;
+        m_FirstTemporaryGameObjectGuid = (*result)[0].GetUInt32();
 
     result = CharacterDatabase.Query("SELECT `id` FROM `auction`");
     if (result)
@@ -7584,33 +7597,33 @@ void ObjectMgr::SetHighestGuids()
 
     result = CharacterDatabase.Query("SELECT MAX(`id`) FROM `mail`");
     if (result)
-        m_MailIds.Set((*result)[0].GetUInt32() + 1);
+        m_MailIds.SetMaxUsedGuid((*result)[0].GetUInt32(), "Mail");
 
     result = CharacterDatabase.Query("SELECT MAX(`id`) FROM `item_text`");
     if (result)
-        m_ItemTextIds.Set((*result)[0].GetUInt32() + 1);
+        m_ItemTextIds.SetMaxUsedGuid((*result)[0].GetUInt32(), "Item Text");
 
     result = CharacterDatabase.Query("SELECT MAX(`guid`) FROM `corpse`");
     if (result)
-        m_CorpseGuids.Set((*result)[0].GetUInt32() + 1);
+        m_CorpseGuids.SetMaxUsedGuid((*result)[0].GetUInt32(), "Corpse");
 
     result = CharacterDatabase.Query("SELECT MAX(`guild_id`) FROM `guild`");
     if (result)
-        m_GuildIds.Set((*result)[0].GetUInt32() + 1);
+        m_GuildIds.SetMaxUsedGuid((*result)[0].GetUInt32(), "Guild");
 
     result = CharacterDatabase.Query("SELECT MAX(`group_id`) FROM `groups`");
     if (result)
-        m_GroupIds.Set((*result)[0].GetUInt32() + 1);
+        m_GroupIds.SetMaxUsedGuid((*result)[0].GetUInt32(), "Group");
 
     result = CharacterDatabase.Query("SELECT MAX(`petition_guid`) FROM `petition`");
     if (result)
-        m_PetitionIds.Set((*result)[0].GetUInt32() + 1);
+        m_PetitionIds.SetMaxUsedGuid((*result)[0].GetUInt32(), "Petition");
 
     // setup reserved ranges for static guids spawn
-    m_StaticCreatureGuids.Set(m_FirstTemporaryCreatureGuid);
+    m_StaticCreatureGuids.SetMaxUsedGuid(m_FirstTemporaryCreatureGuid, "Creature");
     m_FirstTemporaryCreatureGuid += sWorld.getConfig(CONFIG_UINT32_GUID_RESERVE_SIZE_CREATURE);
 
-    m_StaticGameObjectGuids.Set(m_FirstTemporaryGameObjectGuid);
+    m_StaticGameObjectGuids.SetMaxUsedGuid(m_FirstTemporaryGameObjectGuid, "GameObject");
     m_FirstTemporaryGameObjectGuid += sWorld.getConfig(CONFIG_UINT32_GUID_RESERVE_SIZE_GAMEOBJECT);
 }
 
@@ -9452,7 +9465,7 @@ void ObjectMgr::LoadBroadcastTexts()
         {
             if (!sEmotesStore.LookupEntry(bct.emoteId1))
             {
-                sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "BroadcastText (Id: %u) in table `broadcast_text` has emoteId2 %u but emote does not exist.", bct.entry, bct.emoteId1);
+                sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "BroadcastText (Id: %u) in table `broadcast_text` has EmoteId2 %u but emote does not exist.", bct.entry, bct.emoteId1);
                 bct.emoteId1 = 0;
             }
         }
@@ -9461,7 +9474,7 @@ void ObjectMgr::LoadBroadcastTexts()
         {
             if (!sEmotesStore.LookupEntry(bct.emoteId2))
             {
-                sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "BroadcastText (Id: %u) in table `broadcast_text` has emoteId3 %u but emote does not exist.", bct.entry, bct.emoteId2);
+                sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "BroadcastText (Id: %u) in table `broadcast_text` has EmoteId3 %u but emote does not exist.", bct.entry, bct.emoteId2);
                 bct.emoteId2 = 0;
             }
         }

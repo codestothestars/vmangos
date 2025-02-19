@@ -1858,6 +1858,16 @@ SpellScript* ScriptMgr::GetSpellScript(SpellEntry const* pSpell)
     return pTempScript->GetSpellScript(pSpell);
 }
 
+AuraScript* ScriptMgr::GetAuraScript(SpellEntry const* pSpell)
+{
+    Script* pTempScript = m_scripts[pSpell->ScriptId];
+
+    if (!pTempScript || !pTempScript->GetAuraScript)
+        return nullptr;
+
+    return pTempScript->GetAuraScript(pSpell);
+}
+
 bool ScriptMgr::OnGossipHello(Player* pPlayer, Creature* pCreature)
 {
     Script* pTempScript = m_scripts[pCreature->GetScriptId()];
@@ -2010,10 +2020,10 @@ bool ScriptMgr::OnGameObjectOpen(Player* pPlayer, GameObject* pGameObject)
 {
     Script* pTempScript = m_scripts[pGameObject->GetGOInfo()->ScriptId];
 
-    if (!pTempScript || !pTempScript->GOOpen)
+    if (!pTempScript || !pTempScript->pGOOpen)
         return false;
 
-    return pTempScript->GOOpen(pPlayer, pGameObject);
+    return pTempScript->pGOOpen(pPlayer, pGameObject);
 }
 
 bool ScriptMgr::OnGameObjectUse(Player* pPlayer, GameObject* pGameObject)
