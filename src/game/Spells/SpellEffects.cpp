@@ -564,20 +564,15 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                 }
                 case 20037: // Explode Orb Effect
                 {
-                    // Make sure 20038 "activates" the Black Dragon Eggs and misses the Blackwing Spell Markers
+                    const char *name = unitTarget->GetName();
+                    // Make sure 20038 "activates" the Black Dragon Eggs and misses the Orbs of Domination and Blackwing Spell Markers
                     unitTarget->CastSpell(nullptr, 20038, false);
                     return;
                 }
                 case 23024: // Fireball
                 {
                     // Make sure that the Orb of Domination despawns, and does so with its "falling apart" animation as in sniffs.
-                    if (effIdx == 0) unitTarget->CastSpell(
-                        nullptr,
-                        sWorld.GetWowPatch() >= WOW_PATCH_110
-                            ? 20037
-                            : 20038, // Choice of spell 20038 (Explosion) before patch 1.10 is guessed.
-                        false
-                    );
+                    if (effIdx == 0) unitTarget->CastSpell(nullptr, 20037, false);
                     return;
                 }
                 case 23032: // Nefarian's Troops Flee
