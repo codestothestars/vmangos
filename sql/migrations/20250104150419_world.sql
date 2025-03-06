@@ -54,14 +54,6 @@ INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `f
 -- 8307: (4027: WowPatch <= 7) And (8304: (242: No Black Dragon Egg within 100 yards) And (8302: Map event 8302 (Razorgore) is active))
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES (8307, -1,       4027, 8304, 0, 0x0);
 
--- Define targets for Destroy Egg.
--- I don't think we actually want to do this because in sniffs Destroy Egg only hits eggs.
--- INSERT INTO `spell_script_target`
--- (`entry`, `type`, `targetEntry`, `conditionId`, `inverseEffectMask`, `build_min`, `build_max`) VALUES
--- (  19873, 1, 11263, 0, 0, 0, 5875);
-
--- Notice that Blackwing Orb Trigger is also killed by Explosion and respawns when everyone else does.
-
 -- Define targets for Explode Orb Effect.
 INSERT `spell_script_target`
 (`entry`, `type`, `targetEntry`, `inverseEffectMask`) VALUES
@@ -71,14 +63,16 @@ INSERT `spell_script_target`
 -- Define targets for Explosion.
 INSERT `spell_script_target`
 (`entry`, `type`, `targetEntry`, `inverseEffectMask`) VALUES
+(  20038,      0,        177807,                0b01),
 (  20038,      1,         12416,                0b10),
 (  20038,      1,         12420,                0b10),
 (  20038,      1,         12422,                0b10),
 (  20038,      1,         12435,                0b10),
 (  20038,      1,         12557,                0b10),
 (  20038,      1,         14449,                0b10),
+(  20038,      1,         14453,                0b10),
 (  20038,      1,         14456,                0b10),
-(  20038,      1,         16604,                0b10), -- must "miss" 16604 (or resist, whatever)
+(  20038,      1,         16604,                0b10),
 (  20038,      3,             0,                0b10);
 
 -- Define targets for Fireball.
@@ -832,48 +826,49 @@ DELETE FROM `creature_ai_events` WHERE `creature_id` = 12435;
 INSERT `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
 -- is repeat flag necessary now?
-(1243501,         12435,             572,           1,                    0b11110,          0x01,           6000,          16000,           6000,          16000,          1243501, 'Razorgore the Untamed - Out of Combat (periodic) (phase 0)'),
-(1243502,         12435,             572,           1,                    0b11101,          0x01,           6000,          16000,           6000,          16000,          1243502, 'Razorgore the Untamed - Out of Combat (periodic) (phase 1)'),
-(1243503,         12435,             572,           1,                    0b11011,          0x01,           6000,          16000,           6000,          16000,          1243503, 'Razorgore the Untamed - Out of Combat (periodic) (phase 2)'),
-(1243504,         12435,             572,           1,                    0b10111,          0x01,           6000,          16000,           6000,          16000,          1243504, 'Razorgore the Untamed - Out of Combat (periodic) (phase 3)'),
-(1243505,         12435,             572,           1,                    0b01111,          0x01,           6000,          16000,           6000,          16000,          1243505, 'Razorgore the Untamed - Out of Combat (periodic) (phase 4)'),
-(1243506,         12435,               0,           4,                      0b000,          0x00,              0,              0,              0,              0,          1243506, 'Razorgore the Untamed - Aggro'),
-(1243507,         12435,               0,          23,                      0b000,          0x01,          19832,              1,              0,              0,          1243507, 'Razorgore the Untamed - Aura'),
-(1243508,         12435,               0,          36,                      0b000,          0x01,          19873,             -1,              0,              0,          1243508, 'Razorgore the Untamed - Spell Hit Target (any phase)'),
-(1243509,         12435,               0,          36,                      0b010,          0x00,          19873,             -1,              0,              0,          1243509, 'Razorgore the Untamed - Spell Hit Target (phase 1)'),
-(1243510,         12435,               0,          36,                      0b001,          0x00,          19873,             -1,              0,              0,          1243506, 'Razorgore the Untamed - Spell Hit Target (phase 2)'),
--- Not sure if this needs a phase, but it will be obvious if so.
-(1243511,         12435,               0,          21,                      0b000,          0x00,              0,              0,              0,              0,          1243511, 'Razorgore the Untamed - Reached Home'),
-(1243512,         12435,             241,           6,                      0b100,          0x00,              0,              0,              0,              0,          1243512, 'Razorgore the Untamed - Death (eggs remain, before phase 3)'),
-(1243513,         12435,             241,           6,                      0b000,          0x00,              0,              0,              0,              0,          1243513, 'Razorgore the Untamed - Death (eggs remain, any phase)'),
-(1243514,         12435,             242,           6,                      0b000,          0x00,              0,              0,              0,              0,          1243514, 'Razorgore the Untamed - Death (eggs destroyed)');
+(1243501,         12435,             572,           1,                   0b011110,          0x01,           6000,          16000,           6000,          16000,          1243501, 'Razorgore the Untamed - Out of Combat (periodic) (phase 0)'),
+(1243502,         12435,             572,           1,                   0b011101,          0x01,           6000,          16000,           6000,          16000,          1243502, 'Razorgore the Untamed - Out of Combat (periodic) (phase 1)'),
+(1243503,         12435,             572,           1,                   0b011011,          0x01,           6000,          16000,           6000,          16000,          1243503, 'Razorgore the Untamed - Out of Combat (periodic) (phase 2)'),
+(1243504,         12435,             572,           1,                   0b010111,          0x01,           6000,          16000,           6000,          16000,          1243504, 'Razorgore the Untamed - Out of Combat (periodic) (phase 3)'),
+(1243505,         12435,             572,           1,                   0b001111,          0x01,           6000,          16000,           6000,          16000,          1243505, 'Razorgore the Untamed - Out of Combat (periodic) (phase 4)'),
+(1243506,         12435,               0,           4,                   0b100000,          0x00,              0,              0,              0,              0,          1243506, 'Razorgore the Untamed - Aggro'),
+(1243507,         12435,               0,          23,                   0b000000,          0x01,          19832,              1,              0,              0,          1243507, 'Razorgore the Untamed - Aura'),
+(1243508,         12435,               0,          36,                   0b000000,          0x01,          19873,             -1,              0,              0,          1243508, 'Razorgore the Untamed - Spell Hit Target (any phase)'),
+(1243509,         12435,               0,          36,                   0b000010,          0x00,          19873,             -1,              0,              0,          1243509, 'Razorgore the Untamed - Spell Hit Target (phase 0)'),
+(1243510,         12435,               0,          36,                   0b000001,          0x00,          19873,             -1,              0,              0,          1243506, 'Razorgore the Untamed - Spell Hit Target (phase 1)'),
+(1243511,         12435,               0,          21,                   0b000000,          0x00,              0,              0,              0,              0,          1243511, 'Razorgore the Untamed - Reached Home'),
+(1243512,         12435,             241,           6,                   0b100000,          0x00,              0,              0,              0,              0,          1243512, 'Razorgore the Untamed - Death (eggs remain, before phase 5)'),
+(1243513,         12435,             241,           6,                   0b000000,          0x00,              0,              0,              0,              0,          1243513, 'Razorgore the Untamed - Death (eggs remain, any phase)'),
+(1243514,         12435,             242,           6,                   0b000000,          0x00,              0,              0,              0,              0,          1243514, 'Razorgore the Untamed - Death (eggs destroyed)');
 INSERT `creature_ai_scripts`
 (   `id`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `dataint`, `dataint2`, `dataint3`,      `o`, `condition_id`, `comments`) VALUES
 (1243501,          0,        35,          1,           0,           0,           0,               0,               0,             0,         0,          0,          0, 4.64258 ,              0, 'Razorgore the Untamed - Turn to Point 5'),
-(1243501,          1,        15,      21389,       0x003,           0,           0,               0,               0,             6,         0,          0,          0,        0,              0, 'Razorgore the Untamed - Cast Fire Channeling'),
+(1243501,          1,        15,      21389,       0x003,           0,           0,               0,               0,             6,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Cast Fire Channeling'),
 (1243501,          1,        35,          1,           0,           0,           0,               0,               0,             0,         0,          0,          0, 2.44346 ,              0, 'Razorgore the Untamed - Turn to Point 1'),
-(1243501,          1,        39,    1243502,           0,           0,           0,               0,               0,             0,       100,          0,          0,        0,              0, 'Razorgore the Untamed - Increment Phase (point 1)'),
+(1243501,          1,        39,    1243502,           0,           0,           0,               0,               0,             0,       100,          0,          0, 0       ,              0, 'Razorgore the Untamed - Increment Phase (point 1)'),
 (1243502,          0,        35,          1,           0,           0,           0,               0,               0,             0,         0,          0,          0, 3.33358 ,              0, 'Razorgore the Untamed - Turn to Point 2'),
-(1243502,          0,        39,    1243502,           0,           0,           0,               0,               0,             0,       100,          0,          0,        0,              0, 'Razorgore the Untamed - Increment Phase (point 2)'),
+(1243502,          0,        39,    1243502,           0,           0,           0,               0,               0,             0,       100,          0,          0, 0       ,              0, 'Razorgore the Untamed - Increment Phase (point 2)'),
 (1243503,          0,        35,          1,           0,           0,           0,               0,               0,             0,         0,          0,          0, 0.139626,              0, 'Razorgore the Untamed - Turn to Point 3'),
-(1243503,          0,        39,    1243502,           0,           0,           0,               0,               0,             0,       100,          0,          0,        0,              0, 'Razorgore the Untamed - Increment Phase (point 3)'),
+(1243503,          0,        39,    1243502,           0,           0,           0,               0,               0,             0,       100,          0,          0, 0       ,              0, 'Razorgore the Untamed - Increment Phase (point 3)'),
 (1243504,          0,        35,          1,           0,           0,           0,               0,               0,             0,         0,          0,          0, 1.309   ,              0, 'Razorgore the Untamed - Turn to Point 4'),
-(1243504,          0,        39,    1243502,           0,           0,           0,               0,               0,             0,       100,          0,          0,        0,              0, 'Razorgore the Untamed - Increment Phase (point 4)'),
+(1243504,          0,        39,    1243502,           0,           0,           0,               0,               0,             0,       100,          0,          0, 0       ,              0, 'Razorgore the Untamed - Increment Phase (point 4)'),
 (1243505,          0,        35,          1,           0,           0,           0,               0,               0,             0,         0,          0,          0, 4.64258 ,              0, 'Razorgore the Untamed - Turn to Point 5'),
-(1243505,          0,        44,          0,           0,           0,           0,               0,               0,             0,         0,          0,          0,        0,              0, 'Razorgore the Untamed - Set Phase 0'),
-(1243506,          0,        44,          1,           0,           0,           0,               0,               0,             0,         0,          0,          0,        0,              0, 'Razorgore the Untamed - Set Phase 1'),
-(1243507,          0,        37,         27,           0,           0,           0,               0,               0,             0,         0,          0,          0,        0,              0, 'Razorgore the Untamed - Set instance data'),
-(1243508,          0,        68,    1660401,           2,       14459,         100,               0,               0,             0,         0,          0,          0,        0,           8307, 'Razorgore the Untamed - Nefarian''s Troops Flee (Nefarian''s Troops) (choice of 14459 before patch 1.10 is guessed)'),
-(1243508,          0,        68,    1660401,           2,       16604,         100,               0,               0,             0,         0,          0,          0,        0,           8306, 'Razorgore the Untamed - Nefarian''s Troops Flee (Blackwing Spell Marker)'),
-(1243509,          0,         0,          1,           0,           0,           0,               0,               0,             0,      9961,       9962,       9963,        0,              0, 'Razorgore the Untamed - Yell (destroyed egg)'),
-(1243509,          0,        44,          2,           0,           0,           0,               0,               0,             0,         0,          0,          0,        0,              0, 'Razorgore the Untamed - Set Phase 2'),
-(1243511,          0,         0,          1,           0,           0,           0,               0,               0,             0,      7980,          0,          0,        0,              0, 'Razorgore the Untamed - Yell (reached home)'),
-(1243511,          0,        39,    1243503,           0,           0,           0,               0,               0,             0,       100,          0,          0,        0,              0, 'Razorgore the Untamed - Cast Fireball'),
-(1243512,          0,         0,          1,           0,           0,           0,               0,               0,             0,      9591,          0,          0,        0,              0, 'Razorgore the Untamed - Yell (death)'),
-(1243512,          0,        39,    1243503,           0,           0,           0,               0,               0,             0,       100,          0,          0,        0,              0, 'Razorgore the Untamed - Cast Fireball'),
-(1243513,          0,        62,       8302,           0,           0,           0,               0,               0,             0,         0,          0,          0,        0,              0, 'Razorgore the Untamed - End Map Event (Failure)'),
-(1243513,          0,        39,    1243504,           0,           0,           0,               0,               0,             0,       100,          0,          0,        0,              0, 'Razorgore the Untamed - Respawn encounter'),
-(1243514,          0,        62,       8302,           1,           0,           0,               0,               0,             0,         0,          0,          0,        0,              0, 'Razorgore the Untamed - End Map Event (Success)');
+(1243505,          0,        44,          0,           0,           0,           0,               0,               0,             0,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Set Phase 0 (Out of Combat)'),
+(1243506,          0,        44,          0,           0,           0,           0,               0,               0,             0,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Set Phase 0 (In Combat)'),
+(1243507,          0,        37,         27,           0,           0,           0,               0,               0,             0,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Set instance data'),
+(1243508,          0,        68,    1660401,           2,       14459,         100,               0,               0,             0,         0,          0,          0, 0       ,           8307, 'Razorgore the Untamed - Nefarian''s Troops Flee (Nefarian''s Troops) (choice of 14459 before patch 1.10 is guessed)'),
+(1243508,          0,        68,    1660401,           2,       16604,         100,               0,               0,             0,         0,          0,          0, 0       ,           8306, 'Razorgore the Untamed - Nefarian''s Troops Flee (Blackwing Spell Marker)'),
+(1243509,          0,         0,          1,           0,           0,           0,               0,               0,             0,      9961,       9962,       9963, 0       ,              0, 'Razorgore the Untamed - Yell (destroyed egg)'),
+(1243509,          0,        44,          1,           0,           0,           0,               0,               0,             0,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Set Phase 1'),
+(1243511,          0,         0,          1,           0,           0,           0,               0,               0,             0,      7980,          0,          0, 0       ,              0, 'Razorgore the Untamed - Yell (reached home)'),
+(1243511,          0,        18,      20000,           0,           0,           0,               0,               0,             0,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Despawn (reached home)'),
+(1243511,          0,        39,    1243503,           0,           0,           0,               0,               0,             0,       100,          0,          0, 0       ,              0, 'Razorgore the Untamed - Cast Fireball (reached home)'),
+(1243512,          0,         0,          1,           0,           0,           0,               0,               0,             0,      9591,          0,          0, 0       ,              0, 'Razorgore the Untamed - Yell (death)'),
+(1243512,          0,        18,       4000,           0,           0,           0,               0,               0,             0,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Despawn (death)'),
+(1243512,          0,        39,    1243503,           0,           0,           0,               0,               0,             0,       100,          0,          0, 0       ,              0, 'Razorgore the Untamed - Cast Fireball (death)'),
+(1243513,          0,        62,       8302,           0,           0,           0,               0,               0,             0,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - End Map Event (Failure)'),
+(1243513,          0,        39,    1243504,           0,           0,           0,               0,               0,             0,       100,          0,          0, 0       ,              0, 'Razorgore the Untamed - Respawn encounter'),
+(1243514,          0,        62,       8302,           1,           0,           0,               0,               0,             0,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - End Map Event (Success)');
 REPLACE `creature_spells`
 (`entry`, `name`,
                                    `spellId_1`, `castTarget_1`, `targetParam1_1`, `targetParam2_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, 
@@ -887,38 +882,47 @@ REPLACE `creature_spells`
                                          23023,              6,                0,                0,                  11,                  39,                 13,                 42,
                                          24375,              6,                0,                0,                   8,                  29,                 22,                 43);
 REPLACE `generic_scripts`
-(   `id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `target_type`, `target_param1`, `comments`) VALUES
-(1243502,       0,          0,        44,          1,           1,             0,               0, 'Razorgore the Untamed - Increment Phase'),
-(1243503,       0,          0,        44,          3,           0,             0,               0, 'Razorgore the Untamed - Set Phase 3'),
-(1243503,       0,          1,        15,      23024,           0,             6,               0, 'Razorgore the Untamed - Cast Fireball'),
-(1243504,      60,          0,        71,          0,           0,             9,           12784, 'Razorgore the Untamed - Respawn Blackwing Orb Trigger'),
-(1243504,      60,          0,        71,          0,           0,             9,           12785, 'Razorgore the Untamed - Respawn Orb of Domination 1'),
-(1243504,      60,          0,        71,          0,           0,             9,           12786, 'Razorgore the Untamed - Respawn Orb of Domination 2'),
-(1243504,      60,          0,        71,          0,           0,             9,           12787, 'Razorgore the Untamed - Respawn Orb of Domination 3'),
-(1243504,      60,          0,        71,          0,           0,             9,           12788, 'Razorgore the Untamed - Respawn Orb of Domination 4'),
-(1243504,      60,          0,        71,          0,           0,             9,           12789, 'Razorgore the Untamed - Respawn Orb of Domination 5'),
-(1243504,      60,          0,        71,          0,           0,             9,           12790, 'Razorgore the Untamed - Respawn Orb of Domination 6'),
-(1243504,      60,          0,        71,          0,           0,             9,           12791, 'Razorgore the Untamed - Respawn Orb of Domination 7'),
-(1243504,      60,          0,        71,          0,           0,             9,           12792, 'Razorgore the Untamed - Respawn Orb of Domination 8'),
-(1243504,      60,          0,        71,          0,           0,             9,           12793, 'Razorgore the Untamed - Respawn Orb of Domination 9'),
-(1243504,      60,          0,        71,          0,           0,             9,           12794, 'Razorgore the Untamed - Respawn Orb of Domination 10'),
-(1243504,      60,          0,        71,          0,           0,             9,           12795, 'Razorgore the Untamed - Respawn Orb of Domination 11'),
-(1243504,      60,          0,        71,          0,           0,             9,           12796, 'Razorgore the Untamed - Respawn Nefarian''s Troops'),
-(1243504,      60,          0,        71,          0,           0,             9,           12797, 'Razorgore the Untamed - Respawn Blackwing Spell Marker 1'),
-(1243504,      60,          0,        71,          0,           0,             9,           12798, 'Razorgore the Untamed - Respawn Blackwing Spell Marker 2'),
-(1243504,      60,          0,        71,          0,           0,             9,           12799, 'Razorgore the Untamed - Respawn Blackwing Spell Marker 3'),
-(1243504,      60,          0,        71,          0,           0,             9,           12800, 'Razorgore the Untamed - Respawn Blackwing Spell Marker 4'),
-(1243504,      60,          0,        71,          0,           0,             9,           12801, 'Razorgore the Untamed - Respawn Blackwing Spell Marker 5'),
-(1243504,      60,          0,        71,          0,           0,             9,           12802, 'Razorgore the Untamed - Respawn Blackwing Spell Marker 6'),
-(1243504,      60,          0,        71,          0,           0,             9,           12803, 'Razorgore the Untamed - Respawn Blackwing Spell Marker 7'),
-(1243504,      60,          0,        71,          0,           0,             9,           12804, 'Razorgore the Untamed - Respawn Blackwing Spell Marker 8'),
-(1243504,      60,          0,        71,          0,           0,             9,           12805, 'Razorgore the Untamed - Respawn Blackwing Spell Marker 9'),
-(1243504,      60,          0,        71,          0,           0,             9,           12806, 'Razorgore the Untamed - Respawn Blackwing Spell Marker 10'),
-(1243504,      60,          0,        71,          0,           0,             9,           12807, 'Razorgore the Untamed - Respawn Blackwing Spell Marker 11'),
-(1243504,      60,          0,        71,          0,           0,             9,           84388, 'Razorgore the Untamed - Respawn Razorgore the Untamed'),
-(1243504,      60,          0,        71,          0,           0,             9,           84389, 'Razorgore the Untamed - Respawn Grethok the Controller'),
-(1243504,      60,          0,        71,          0,           0,             9,           84390, 'Razorgore the Untamed - Respawn Blackwing Guardsman 1'),
-(1243504,      60,          0,        71,          0,           0,             9,           84391, 'Razorgore the Untamed - Respawn Blackwing Guardsman 2');
+(   `id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `target_type`, `data_flags`, `target_param1`, `comments`) VALUES
+(1243502,       0,          0,        44,          1,           1,             0,         0x00,               0, 'Razorgore the Untamed - Increment Phase'),
+(1243503,       0,          0,        44,          5,           0,             0,         0x00,               0, 'Razorgore the Untamed - Set Phase 5'),
+(1243503,       0,          1,        15,      23024,           0,             6,         0x00,               0, 'Razorgore the Untamed - Cast Fireball'),
+(1243504,      60,          0,         9,     234786,           0,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 1'),
+(1243504,       0,          0,         9,     234787,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 2'),
+(1243504,       0,          0,         9,     234788,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 3'),
+(1243504,       0,          0,         9,     234789,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 4'),
+(1243504,       0,          0,         9,     234790,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 5'),
+(1243504,       0,          0,         9,     234791,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 6'),
+(1243504,       0,          0,         9,     234792,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 7'),
+(1243504,       0,          0,         9,     234793,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 8'),
+(1243504,       0,          0,         9,     234794,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 9'),
+(1243504,       0,          0,         9,     234795,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 10'),
+(1243504,       0,          0,         9,     234796,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 11'),
+(1243504,       0,          0,         9,     234797,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 12'),
+(1243504,       0,          0,         9,     234798,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 13'),
+(1243504,       0,          0,         9,     234799,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 14'),
+(1243504,       0,          0,         9,     234800,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 15'),
+(1243504,       0,          0,         9,     234801,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 16'),
+(1243504,       0,          0,         9,     234802,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 17'),
+(1243504,       0,          0,         9,     234803,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 18'),
+(1243504,       0,          0,         9,     234804,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 19'),
+(1243504,       0,          0,         9,     234805,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 20'),
+(1243504,       0,          0,         9,     234806,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 21'),
+(1243504,       0,          0,         9,     234807,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 22'),
+(1243504,       0,          0,         9,     234808,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 23'),
+(1243504,       0,          0,         9,     234809,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 24'),
+(1243504,       0,          0,         9,     234810,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 25'),
+(1243504,       0,          0,         9,     234811,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 26'),
+(1243504,       0,          0,         9,     234812,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 27'),
+(1243504,       0,          0,         9,     234813,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 28'),
+(1243504,       0,          0,         9,     234814,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 29'),
+(1243504,       0,          0,         9,     234815,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 30'),
+(1243504,      60,          0,        71,          0,           0,             9,         0x00,           12784, 'Razorgore the Untamed - Respawn Blackwing Orb Trigger'),
+(1243504,      60,          0,        71,          0,           0,             9,         0x00,           84388, 'Razorgore the Untamed - Respawn Razorgore the Untamed'),
+(1243504,      60,          1,        71,          0,           0,             9,         0x02,           84389, 'Razorgore the Untamed - Respawn Grethok the Controller'),
+(1243504,      60,          0,        71,          0,           0,             9,         0x02,           84390, 'Razorgore the Untamed - Respawn Blackwing Guardsman 1'),
+(1243504,      60,          1,        91,      84390,           0,             0,         0x00,               0, 'Razorgore the Untamed - Load Blackwing Guardsman 1 Spawn'),
+(1243504,      60,          0,        71,          0,           0,             9,         0x02,           84391, 'Razorgore the Untamed - Respawn Blackwing Guardsman 2'),
+(1243504,      60,          1,        91,      84391,           0,             0,         0x00,               0, 'Razorgore the Untamed - Load Blackwing Guardsman 2 Spawn');
 UPDATE `creature_template` SET `ai_name` = 'EventAI', `auras` = '18943', `script_name` = '', `spell_list_id` = 124350 WHERE `entry` = 12435;
 
 -- Events list for Grethok the Controller
@@ -930,8 +934,8 @@ INSERT `creature_ai_events`
 (1255703,         12557,              0,            4,          0x00,              0,              0,              0,              0,          1255703, 'Grethok the Controller - Aggro'),
 (1255704,         12557,              0,            0,          0x00,            800,            800,              0,              0,          1255704, 'Grethok the Controller - In Combat (Close Portcullis)'),
 (1255705,         12557,              0,            0,          0x00,           1000,           5000,              0,              0,          1255705, 'Grethok the Controller - In Combat (Summon Monster Generators)'),
--- existing. Verified visually on Cata Classic, though a sniff would be good.
-(1255706,         12557,              0,           21,          0x00,              0,              0,              0,              0,          1255706, 'Grethlok the Controller - On ReachHome Sound');
+(1255706,         12557,              0,           21,          0x00,              0,              0,              0,              0,          1255706, 'Grethok the Controller - Reached Home'),
+(1255707,         12557,              0,            6,          0x00,              0,              0,              0,              0,          1255707, 'Grethok the Controller - Death');
 INSERT `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `datalong2`, `target_type`, `dataint`, `dataint4`,      `x`,      `y`,     `z`,     `o`, `comments`) VALUES
 (1255701,        15,      23018,           0,             6,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Cast Use Dragon Orb'),
@@ -944,11 +948,11 @@ INSERT `creature_ai_scripts`
 (1255704,        12,     234783,           0,             0,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Close Portcullis'),
 -- Need to despawn these a few seconds later. Check sniffs.
 (1255705,        10,      12434,         400,             0,         0,          3, -7643.39, -1064.69, 407.288, 1.71042, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
-(1255705,        10,      12434,         400,             0,         0,          3, -7623.1,  -1094.06, 407.288, 1.44862, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
+(1255705,        10,      12434,         400,             0,         0,          3, -7623.1 , -1094.06, 407.288, 1.44862, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
 (1255705,        10,      12434,         400,             0,         0,          3, -7568.61, -1012.67, 407.288, 1.51844, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
 (1255705,        10,      12434,         400,             0,         0,          3, -7548.46, -1041.98, 407.288, 2.02458, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
--- existing. Verified visually on Cata Classic, though a sniff would be good.
-(1255706,        16,       8274,           0,             0,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Play Sound 8274');
+(1255706,        16,       8274,           0,             0,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Play Sound 8274'),
+(1255707,        18,       4000,           0,             0,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Despawn');
 REPLACE `creature_spells`
 (`entry`, `name`,                   `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`,
                                     `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`,
@@ -976,6 +980,14 @@ UPDATE `creature_template` SET `auras` = '18950' WHERE `entry` = 12557;
 UPDATE `creature_template` SET `script_name` = '' WHERE `entry` = 14453;
 
 -- Events list for Blackwing Guardsman
+DELETE FROM `creature_ai_events` WHERE `creature_id` = 14456;
+DELETE FROM `creature_ai_scripts` WHERE `id` = 1445601;
+INSERT `creature_ai_events`
+(   `id`, `creature_id`, `condition_id`, `event_type`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
+(1445601,        14456,              0,            6,          0x00,              0,              0,              0,              0,          1445601, 'Blackwing Guardsman - Death');
+INSERT `creature_ai_scripts`
+(   `id`, `command`, `datalong`, `comments`) VALUES
+(1445601,        18,     300000, 'Blackwing Guardsman - Despawn');
 REPLACE `creature_spells`
 (`entry`, `name`,                                 `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`) VALUES
 ( 144560, 'Blackwing Lair - Blackwing Guardsman',       15580,             100,              1,                   5,                  23,                  1,                 16,       15754,             100,              1,                   3,                  24,                  8,                 11);
@@ -997,6 +1009,14 @@ INSERT `generic_scripts`
 
 -- Correct target for spell Use Dragon Orb.
 UPDATE `spell_script_target` SET `targetEntry` = 14449, `type` = 1 WHERE `entry` = 23018;
+
+-- CODESTOTHESTARS
+UPDATE item_template SET name = 'Duchess' WHERE entry = 5665;
+UPDATE item_template SET name = 'Puchao' WHERE entry = 8591;
+UPDATE item_template SET name = 'Twinkleberry' WHERE entry = 13335;
+UPDATE item_template SET name = 'Butterball' WHERE entry = 15290;
+UPDATE item_template SET name = 'Craggle' WHERE entry = 18795;
+UPDATE `quest_template` SET `RewRepValue1` =  100 WHERE `entry` = 5201; -- Winterfall Intrusion
 
 -- End of migration.
 END IF;
