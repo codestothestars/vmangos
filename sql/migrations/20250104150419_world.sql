@@ -81,9 +81,7 @@ INSERT `spell_script_target`
 (  23024,      1,         14449);
 
 -- Correct Portcullis values.
--- There's also a gameobject_addon for this object with these rotation values negated. Make sure it actually looks right.
 UPDATE `gameobject` SET `orientation` = 3.75246, `rotation2` = -0.953716, `rotation3` = 0.300708 WHERE `id` = 176964;
--- Existing vmangos flags are 0x04, meaning cannot interact. Make sure this change doesn't cause incorrect behavior.
 UPDATE `gameobject_template` SET `faction` = 114, `flags` = 0x20 WHERE `entry` = 176964;
 
 -- Correct Blackwing Guardsman positions.
@@ -166,9 +164,9 @@ INSERT `generic_scripts`
 (830201,       4,        39,     176965,       100, 'Razorgore Event - Open Portcullis (exit)');
 
 -- Fail Script for Scripted Map Event
-INSERT `generic_scripts`
-(  `id`, `command`, `datalong`, `dataint`, `comments`) VALUES
-(830202,        39,     176964,       100, 'Razorgore Event - Open Portcullis');
+-- INSERT `generic_scripts`
+-- (  `id`, `command`, `datalong`, `dataint`, `comments`) VALUES
+-- (830202, );
 
 -- Spawning Adds
 INSERT `generic_scripts`
@@ -882,47 +880,48 @@ REPLACE `creature_spells`
                                          23023,              6,                0,                0,                  11,                  39,                 13,                 42,
                                          24375,              6,                0,                0,                   8,                  29,                 22,                 43);
 REPLACE `generic_scripts`
-(   `id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `target_type`, `data_flags`, `target_param1`, `comments`) VALUES
-(1243502,       0,          0,        44,          1,           1,             0,         0x00,               0, 'Razorgore the Untamed - Increment Phase'),
-(1243503,       0,          0,        44,          5,           0,             0,         0x00,               0, 'Razorgore the Untamed - Set Phase 5'),
-(1243503,       0,          1,        15,      23024,           0,             6,         0x00,               0, 'Razorgore the Untamed - Cast Fireball'),
-(1243504,      60,          0,         9,     234786,           0,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 1'),
-(1243504,       0,          0,         9,     234787,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 2'),
-(1243504,       0,          0,         9,     234788,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 3'),
-(1243504,       0,          0,         9,     234789,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 4'),
-(1243504,       0,          0,         9,     234790,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 5'),
-(1243504,       0,          0,         9,     234791,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 6'),
-(1243504,       0,          0,         9,     234792,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 7'),
-(1243504,       0,          0,         9,     234793,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 8'),
-(1243504,       0,          0,         9,     234794,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 9'),
-(1243504,       0,          0,         9,     234795,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 10'),
-(1243504,       0,          0,         9,     234796,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 11'),
-(1243504,       0,          0,         9,     234797,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 12'),
-(1243504,       0,          0,         9,     234798,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 13'),
-(1243504,       0,          0,         9,     234799,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 14'),
-(1243504,       0,          0,         9,     234800,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 15'),
-(1243504,       0,          0,         9,     234801,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 16'),
-(1243504,       0,          0,         9,     234802,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 17'),
-(1243504,       0,          0,         9,     234803,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 18'),
-(1243504,       0,          0,         9,     234804,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 19'),
-(1243504,       0,          0,         9,     234805,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 20'),
-(1243504,       0,          0,         9,     234806,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 21'),
-(1243504,       0,          0,         9,     234807,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 22'),
-(1243504,       0,          0,         9,     234808,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 23'),
-(1243504,       0,          0,         9,     234809,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 24'),
-(1243504,       0,          0,         9,     234810,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 25'),
-(1243504,       0,          0,         9,     234811,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 26'),
-(1243504,       0,          0,         9,     234812,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 27'),
-(1243504,       0,          0,         9,     234813,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 28'),
-(1243504,       0,          0,         9,     234814,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 29'),
-(1243504,       0,          0,         9,     234815,          60,             0,         0x00,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 30'),
-(1243504,      60,          0,        71,          0,           0,             9,         0x00,           12784, 'Razorgore the Untamed - Respawn Blackwing Orb Trigger'),
-(1243504,      60,          0,        71,          0,           0,             9,         0x00,           84388, 'Razorgore the Untamed - Respawn Razorgore the Untamed'),
-(1243504,      60,          1,        71,          0,           0,             9,         0x02,           84389, 'Razorgore the Untamed - Respawn Grethok the Controller'),
-(1243504,      60,          0,        71,          0,           0,             9,         0x02,           84390, 'Razorgore the Untamed - Respawn Blackwing Guardsman 1'),
-(1243504,      60,          1,        91,      84390,           0,             0,         0x00,               0, 'Razorgore the Untamed - Load Blackwing Guardsman 1 Spawn'),
-(1243504,      60,          0,        71,          0,           0,             9,         0x02,           84391, 'Razorgore the Untamed - Respawn Blackwing Guardsman 2'),
-(1243504,      60,          1,        91,      84391,           0,             0,         0x00,               0, 'Razorgore the Untamed - Load Blackwing Guardsman 2 Spawn');
+(   `id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `target_type`, `data_flags`, `dataint`, `target_param1`, `comments`) VALUES
+(1243502,       0,          0,        44,          1,           1,             0,         0x00,         0,               0, 'Razorgore the Untamed - Increment Phase'),
+(1243503,       0,          0,        44,          5,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Set Phase 5'),
+(1243503,       0,          1,        15,      23024,           0,             6,         0x00,         0,               0, 'Razorgore the Untamed - Cast Fireball'),
+(1243503,       1,          0,        39,     176964,           0,             0,         0x00,       100,               0, 'Razorgore the Untamed - Open Portcullis'),
+(1243504,      60,          0,         9,     234786,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 1'),
+(1243504,       0,          0,         9,     234787,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 2'),
+(1243504,       0,          0,         9,     234788,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 3'),
+(1243504,       0,          0,         9,     234789,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 4'),
+(1243504,       0,          0,         9,     234790,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 5'),
+(1243504,       0,          0,         9,     234791,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 6'),
+(1243504,       0,          0,         9,     234792,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 7'),
+(1243504,       0,          0,         9,     234793,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 8'),
+(1243504,       0,          0,         9,     234794,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 9'),
+(1243504,       0,          0,         9,     234795,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 10'),
+(1243504,       0,          0,         9,     234796,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 11'),
+(1243504,       0,          0,         9,     234797,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 12'),
+(1243504,       0,          0,         9,     234798,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 13'),
+(1243504,       0,          0,         9,     234799,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 14'),
+(1243504,       0,          0,         9,     234800,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 15'),
+(1243504,       0,          0,         9,     234801,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 16'),
+(1243504,       0,          0,         9,     234802,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 17'),
+(1243504,       0,          0,         9,     234803,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 18'),
+(1243504,       0,          0,         9,     234804,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 19'),
+(1243504,       0,          0,         9,     234805,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 20'),
+(1243504,       0,          0,         9,     234806,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 21'),
+(1243504,       0,          0,         9,     234807,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 22'),
+(1243504,       0,          0,         9,     234808,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 23'),
+(1243504,       0,          0,         9,     234809,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 24'),
+(1243504,       0,          0,         9,     234810,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 25'),
+(1243504,       0,          0,         9,     234811,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 26'),
+(1243504,       0,          0,         9,     234812,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 27'),
+(1243504,       0,          0,         9,     234813,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 28'),
+(1243504,       0,          0,         9,     234814,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 29'),
+(1243504,       0,          0,         9,     234815,          60,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 30'),
+(1243504,      60,          0,        71,          0,           0,             9,         0x00,         0,           12784, 'Razorgore the Untamed - Respawn Blackwing Orb Trigger'),
+(1243504,      60,          0,        71,          0,           0,             9,         0x00,         0,           84388, 'Razorgore the Untamed - Respawn Razorgore the Untamed'),
+(1243504,      60,          1,        71,          0,           0,             9,         0x02,         0,           84389, 'Razorgore the Untamed - Respawn Grethok the Controller'),
+(1243504,      60,          0,        71,          0,           0,             9,         0x02,         0,           84390, 'Razorgore the Untamed - Respawn Blackwing Guardsman 1'),
+(1243504,      60,          1,        91,      84390,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Load Blackwing Guardsman 1 Spawn'),
+(1243504,      60,          0,        71,          0,           0,             9,         0x02,         0,           84391, 'Razorgore the Untamed - Respawn Blackwing Guardsman 2'),
+(1243504,      60,          1,        91,      84391,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Load Blackwing Guardsman 2 Spawn');
 UPDATE `creature_template` SET `ai_name` = 'EventAI', `auras` = '18943', `script_name` = '', `spell_list_id` = 124350 WHERE `entry` = 12435;
 
 -- Events list for Grethok the Controller
@@ -932,27 +931,26 @@ INSERT `creature_ai_events`
 (1255701,         12557,            581,            1,          0x00,              0,              0,              0,              0,          1255701, 'Grethok the Controller - Out of Combat'),
 (1255702,         12557,              0,            0,          0x01,           6000,           6000,          18000,          29000,          1255702, 'Grethok the Controller - Cast Dominate Mind'),
 (1255703,         12557,              0,            4,          0x00,              0,              0,              0,              0,          1255703, 'Grethok the Controller - Aggro'),
-(1255704,         12557,              0,            0,          0x00,            800,            800,              0,              0,          1255704, 'Grethok the Controller - In Combat (Close Portcullis)'),
-(1255705,         12557,              0,            0,          0x00,           1000,           5000,              0,              0,          1255705, 'Grethok the Controller - In Combat (Summon Monster Generators)'),
-(1255706,         12557,              0,           21,          0x00,              0,              0,              0,              0,          1255706, 'Grethok the Controller - Reached Home'),
-(1255707,         12557,              0,            6,          0x00,              0,              0,              0,              0,          1255707, 'Grethok the Controller - Death');
+(1255704,         12557,              0,            0,          0x00,           1000,           5000,              0,              0,          1255704, 'Grethok the Controller - In Combat (Summon Monster Generators)'),
+(1255705,         12557,              0,           21,          0x00,              0,              0,              0,              0,          1255705, 'Grethok the Controller - Reached Home'),
+(1255706,         12557,              0,            6,          0x00,              0,              0,              0,              0,          1255706, 'Grethok the Controller - Death');
 INSERT `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `datalong2`, `target_type`, `dataint`, `dataint4`,      `x`,      `y`,     `z`,     `o`, `comments`) VALUES
 (1255701,        15,      23018,           0,             6,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Cast Use Dragon Orb'),
 -- double check target for Dominate Mind
 (1255702,        15,      14515,           0,             4,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Cast Spell Dominate Mind'),
 (1255702,         0,          1,           0,             0,      9960,          0,        0,        0,       0,       0, 'Grethok the Controller - Say Text'),
+(1255703,        39,    1255701,           0,             0,       100,          0,        0,        0,       0,       0, 'Grethok the Controller - Close Portcullis'),
 (1255703,        49,          1,           0,             0,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Combat Pulse'),
 (1255703,         0,          1,           0,             0,      9958,          0,        0,        0,       0,       0, 'Grethok the Controller - Yell'),
 (1255703,        37,          0,           4,             0,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Set Instance Data (Encounter Special)'),
-(1255704,        12,     234783,           0,             0,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Close Portcullis'),
 -- Need to despawn these a few seconds later. Check sniffs.
-(1255705,        10,      12434,         400,             0,         0,          3, -7643.39, -1064.69, 407.288, 1.71042, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
-(1255705,        10,      12434,         400,             0,         0,          3, -7623.1 , -1094.06, 407.288, 1.44862, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
-(1255705,        10,      12434,         400,             0,         0,          3, -7568.61, -1012.67, 407.288, 1.51844, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
-(1255705,        10,      12434,         400,             0,         0,          3, -7548.46, -1041.98, 407.288, 2.02458, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
-(1255706,        16,       8274,           0,             0,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Play Sound 8274'),
-(1255707,        18,       4000,           0,             0,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Despawn');
+(1255704,        10,      12434,         400,             0,         0,          3, -7643.39, -1064.69, 407.288, 1.71042, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
+(1255704,        10,      12434,         400,             0,         0,          3, -7623.1 , -1094.06, 407.288, 1.44862, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
+(1255704,        10,      12434,         400,             0,         0,          3, -7568.61, -1012.67, 407.288, 1.51844, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
+(1255704,        10,      12434,         400,             0,         0,          3, -7548.46, -1041.98, 407.288, 2.02458, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
+(1255705,        16,       8274,           0,             0,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Play Sound 8274'),
+(1255706,        18,       4000,           0,             0,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Despawn');
 REPLACE `creature_spells`
 (`entry`, `name`,                   `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`,
                                     `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`,
@@ -960,6 +958,9 @@ REPLACE `creature_spells`
 ( 125570, 'Grethok the Controller',       13747,             100,              6,                   8,                  22,                 20,                 37,
                                           22272,             100,              4,                   0,                  16,                 10,                 18,
                                           22274,             100,              4,                   2,                  20,                  3,                 42);
+REPLACE `generic_scripts`
+(   `id`, `delay`, `command`, `datalong`, `target_param1`, `target_type`, `comments`) VALUES
+(1255701,       1,        80,          1,          234783,            12, 'Grethok the Controller - Close Portcullis');
 UPDATE `creature_template` SET `auras` = '18950' WHERE `entry` = 12557;
 -- spells
 -- Need to check spell targets against what's in the current list.
@@ -999,8 +1000,8 @@ REPLACE `generic_scripts`
 
 -- Portcullis (Entry: 176964 Guid: 234783) Open Script
 INSERT `generic_scripts`
-(  `id`, `command`, `datalong`, `comments`) VALUES
-(176964,        11,     234783, 'Portcullis - Open');
+(  `id`, `command`, `datalong`, `target_param1`, `target_type`, `comments`) VALUES
+(176964,        80,          0,          234783,            12, 'Portcullis - Open');
 
 -- Portcullis (Entry: 176965 Guid: 234784) Open Script
 INSERT `generic_scripts`
@@ -1030,6 +1031,32 @@ DELETE FROM creature WHERE id IN (14449);
 DELETE FROM creature_ai_events WHERE id LIKE '12435%' OR id LIKE '12557%' OR id LIKE '14449%';
 DELETE FROM creature_ai_scripts WHERE id LIKE '12435%' OR id LIKE '12557%' OR id LIKE '14449%';
 DELETE FROM creature_movement_template WHERE `entry` = 12435;
+
+-- Delay from Grethok aggro to Portcullis close.
+SELECT
+  grethok_aggro.unixtimems aggro_unixtimems,
+  portcullis_close.gameobject_update_unixtimems close_unixtimems,
+  portcullis_close.gameobject_update_unixtimems - grethok_aggro.unixtimems delay_ms
+FROM (
+  SELECT guid, MIN(unixtimems) unixtimems
+  FROM creature_guid_values_update
+  WHERE creature_guid_values_update.field_name = 'Target'
+  GROUP BY guid
+) grethok_aggro
+JOIN creature grethok ON grethok_aggro.guid = grethok.guid
+JOIN (
+  SELECT
+    creature_guid_values_update.unixtimems creature_update_unixtimems,
+    gameobject_values_update.guid object_guid,
+    MIN(gameobject_values_update.unixtimems) gameobject_update_unixtimems
+  FROM creature_guid_values_update
+  JOIN gameobject_values_update
+  WHERE creature_guid_values_update.unixtimems < gameobject_values_update.unixtimems
+  GROUP BY creature_guid_values_update.unixtimems, gameobject_values_update.guid
+) portcullis_close ON grethok_aggro.unixtimems = portcullis_close.creature_update_unixtimems
+JOIN gameobject portcullis ON portcullis_close.object_guid = portcullis.guid
+WHERE grethok.id = 12557 AND portcullis.id = 176964
+ORDER BY aggro_unixtimems;
 
 -- Creature spawn delays from Possess and previous spawn.
 WITH
@@ -2943,6 +2970,26 @@ LEFT JOIN proximity_interval_start_event previous_start_event
   AND (previous_end_event.unit_type IS NULL OR previous_start_event.unixtimems >= previous_end_event.end_unixtimems)
 WHERE previous_start_event.unit_type IS NULL
 ORDER BY duration, start_unixtimems, start_event.guid;
+
+-- Delay from Fireball to Portcullis open
+SELECT
+  fireball.unixtimems fireball_unixtimems,
+  portcullis_open.update_unixtimems open_unixtimems,
+  portcullis_open.update_unixtimems - fireball.unixtimems delay_ms
+FROM spell_cast_go fireball
+JOIN (
+  SELECT
+    spell_cast_go.unixtimems spell_unixtimems,
+    gameobject_values_update.guid object_guid,
+    MIN(gameobject_values_update.unixtimems) update_unixtimems
+  FROM spell_cast_go
+  JOIN gameobject_values_update
+  WHERE gameobject_values_update.unixtimems > spell_cast_go.unixtimems
+  GROUP BY spell_cast_go.unixtimems, gameobject_values_update.guid
+) portcullis_open ON fireball.unixtimems = portcullis_open.spell_unixtimems
+JOIN gameobject portcullis ON portcullis_open.object_guid = portcullis.guid
+WHERE fireball.spell_id = 23024 AND portcullis.id = 176964
+ORDER BY fireball_unixtimems;
 
 -- Boss respawn time
 SELECT
