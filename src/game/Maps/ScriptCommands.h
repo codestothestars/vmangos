@@ -74,7 +74,8 @@ enum eScriptCommand
     SCRIPT_COMMAND_RESPAWN_GAMEOBJECT       = 9,            // source = Map
                                                             // target = GameObject (from datalong, provided source or target)
                                                             // datalong = db_guid
-                                                            // datalong2 = despawn_delay
+                                                            // datalong2 = respawn_delay
+                                                            // datalong3 = next_respawn_delay
     SCRIPT_COMMAND_TEMP_SUMMON_CREATURE     = 10,           // source = WorldObject (from provided source or buddy)
                                                             // datalong = creature_entry
                                                             // datalong2 = despawn_delay
@@ -600,7 +601,8 @@ struct ScriptInfo
         struct                                              // SCRIPT_COMMAND_RESPAWN_GAMEOBJECT (9)
         {
             uint32 goGuid;                                  // datalong
-            int32 despawnDelay;                             // datalong2
+            int32 respawnDelay;                             // datalong2
+            int32 nextRespawnDelay;                         // datalong3
         } respawnGo;
 
         struct                                              // SCRIPT_COMMAND_TEMP_SUMMON_CREATURE (10)

@@ -1796,7 +1796,7 @@ bool EffectDummyGameObj_go_mark_of_detonation(WorldObject* pCaster, uint32 uiSpe
                     ScriptInfo script;
                     script.id = uiSpellId;
                     script.command = SCRIPT_COMMAND_RESPAWN_GAMEOBJECT;
-                    script.respawnGo.despawnDelay = 12;
+                    script.respawnGo.respawnDelay = 12;
                     for (auto const& goGuid : itr->second)
                     {
                         script.respawnGo.goGuid = goGuid;

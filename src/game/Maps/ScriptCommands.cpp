@@ -378,7 +378,7 @@ bool Map::ScriptCommand_RespawnGameObject(ScriptInfo const& script, WorldObject*
         return ShouldAbortScript(script);
     }
 
-    int32 time_to_despawn = script.respawnGo.despawnDelay < 5 ? 5 : script.respawnGo.despawnDelay;
+    int32 time_to_respawn = script.respawnGo.respawnDelay < 5 ? 5 : script.respawnGo.respawnDelay;
 
     if (pGo->GetGoType() == GAMEOBJECT_TYPE_FISHINGNODE ||
         pGo->GetGoType() == GAMEOBJECT_TYPE_DOOR)
@@ -391,7 +391,10 @@ bool Map::ScriptCommand_RespawnGameObject(ScriptInfo const& script, WorldObject*
         return ShouldAbortScript(script);          //gameobject already spawned
 
     pGo->SetLootState(GO_READY);
-    pGo->SetRespawnTime(time_to_despawn);        //despawn object in ? seconds
+    pGo->SetRespawnTime(time_to_respawn);        //respawn object in ? seconds
+
+    if (script.respawnGo.nextRespawnDelay)
+        pGo->SetRespawnDelay(script.respawnGo.nextRespawnDelay);
 
     Add(pGo);
 
