@@ -359,6 +359,37 @@ bool Map::ScriptCommand_RespawnGameObject(ScriptInfo const& script, WorldObject*
     GameObject* pGo = nullptr;
     uint32 guidlow = script.respawnGo.goGuid;
 
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234786) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 01 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234787) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 02 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234788) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 03 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234789) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 04 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234790) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 05 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234791) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 06 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234792) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 07 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234793) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 08 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234794) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 09 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234795) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 10 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234796) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 11 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234797) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 12 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234798) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 13 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234799) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 14 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234800) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 15 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234801) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 16 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234802) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 17 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234803) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 18 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234804) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 19 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234805) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 20 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234806) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 21 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234807) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 22 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234808) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 23 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234809) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 24 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234810) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 25 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234811) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 26 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234812) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 27 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234813) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 28 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234814) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 29 - start"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234815) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 30 - start"); }
+
     if (guidlow)
     {
         GameObjectData const* goData = sObjectMgr.GetGOData(guidlow);
@@ -388,15 +419,77 @@ bool Map::ScriptCommand_RespawnGameObject(ScriptInfo const& script, WorldObject*
     }
 
     if (pGo->isSpawned())
+    {
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234786) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 01 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234787) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 02 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234788) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 03 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234789) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 04 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234790) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 05 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234791) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 06 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234792) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 07 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234793) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 08 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234794) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 09 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234795) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 10 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234796) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 11 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234797) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 12 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234798) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 13 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234799) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 14 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234800) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 15 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234801) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 16 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234802) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 17 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234803) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 18 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234804) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 19 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234805) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 20 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234806) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 21 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234807) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 22 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234808) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 23 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234809) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 24 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234810) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 25 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234811) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 26 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234812) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 27 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234813) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 28 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234814) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 29 - abort"); }
+        if (script.id == 1243504 && script.respawnGo.goGuid == 234815) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 30 - abort"); }
         return ShouldAbortScript(script);          //gameobject already spawned
+    }
 
     pGo->SetLootState(GO_READY);
     pGo->SetRespawnTime(time_to_respawn);        //respawn object in ? seconds
 
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234786) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 01 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234787) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 02 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234788) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 03 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234789) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 04 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234790) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 05 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234791) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 06 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234792) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 07 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234793) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 08 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234794) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 09 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234795) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 10 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234796) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 11 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234797) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 12 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234798) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 13 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234799) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 14 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234800) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 15 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234801) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 16 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234802) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 17 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234803) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 18 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234804) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 19 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234805) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 20 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234806) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 21 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234807) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 22 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234808) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 23 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234809) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 24 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234810) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 25 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234811) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 26 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234812) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 27 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234813) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 28 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234814) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 29 - Add(pGo)"); }
+    if (script.id == 1243504 && script.respawnGo.goGuid == 234815) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Black Dragon Egg 30 - Add(pGo)"); }
+    Add(pGo);
+
     if (script.respawnGo.nextRespawnDelay)
         pGo->SetRespawnDelay(script.respawnGo.nextRespawnDelay);
-
-    Add(pGo);
 
     return false;
 }
@@ -608,6 +701,8 @@ bool Map::ScriptCommand_CastSpell(ScriptInfo const& script, WorldObject* source,
 {
     SpellCaster* pTarget = ToSpellCaster(target);
 
+    if (script.id == 1243503 && script.castSpell.spellId == 23024) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Cast Fireball"); }
+
     if (!source)
     {
         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_CAST_SPELL (script id %u) call for a nullptr source, skipping.", script.id);
@@ -635,7 +730,10 @@ bool Map::ScriptCommand_CastSpell(ScriptInfo const& script, WorldObject* source,
     if (pCreatureSource && pUnitTarget)
         result = pCreatureSource->TryToCast(pUnitTarget, script.castSpell.spellId, script.castSpell.flags, 0u);
     else
+    {
+        if (script.id == 1243503 && script.castSpell.spellId == 23024) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Cast Fireball - CastSpell"); }
         result = pSource->CastSpell(pTarget, script.castSpell.spellId, (script.castSpell.flags & CF_TRIGGERED) != 0);
+    }
 
     if (result != SPELL_CAST_OK)
         return ShouldAbortScript(script);
@@ -1317,7 +1415,21 @@ bool Map::ScriptCommand_StartScript(ScriptInfo const& script, WorldObject* sourc
     uint32 const scriptId = ChooseScriptIdToStart(script);
 
     if (scriptId)
+    {
+        if (script.id == 1243511 && scriptId == 1243503)
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Cast Fireball (reached home)");
+        }
+        if (script.id == 1243512 && scriptId == 1243503)
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Cast Fireball (death)");
+        }
+        if (scriptId == 1243504)
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn encounter");
+        }
         ScriptsStart(sGenericScripts, scriptId, source ? source->GetObjectGuid() : ObjectGuid(), target ? target->GetObjectGuid() : ObjectGuid());
+    }
     else
         return ShouldAbortScript(script);
 
@@ -2076,6 +2188,15 @@ bool Map::ScriptCommand_RespawnCreature(ScriptInfo const& script, WorldObject* s
 {
     Creature* pSource = ToCreature(source);
 
+    if (script.id == 1243504) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn creature"); }
+    if (script.id == 1243504 && !pSource) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn creature - !pSource"); }
+    if (script.id == 1243504 && pSource) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn creature - %u", pSource->GetEntry()); }
+
+    if (script.id == 1243504 && pSource && pSource->GetEntry() == 12435) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Razorgore the Untamed"); }
+    if (script.id == 1243504 && pSource && pSource->GetEntry() == 14456) {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Blackwing Guardsman");
+    }
+
     if (!pSource)
     {
         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_RESPAWN_CREATURE (script id %u) call for a nullptr or non-creature source (TypeId: %u), skipping.", script.id, source ? source->GetTypeId() : 0);
@@ -2084,12 +2205,19 @@ bool Map::ScriptCommand_RespawnCreature(ScriptInfo const& script, WorldObject* s
 
     if (pSource->IsAlive())
     {
-        if (script.respawnCreature.evenAlive)
+        if (script.respawnCreature.flags & SF_RESPAWNCREATURE_EVEN_IF_ALIVE)
             pSource->SetDeathState(JUST_DIED);
         else
+        {
+            if (script.id == 1243504 && pSource) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn creature - %u - ShouldAbortScript", pSource->GetEntry()); }
             return ShouldAbortScript(script);
+        }
     }
 
+    if (script.respawnCreature.flags & SF_RESPAWNCREATURE_CLEAR_DESPAWN)
+        pSource->CancelDespawn();
+
+    if (script.id == 1243504 && pSource) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn creature - %u - pSource->Respawn()", pSource->GetEntry()); }
     pSource->Respawn();
 
     return false;

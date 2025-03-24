@@ -22,6 +22,7 @@
 #define __EVENTPROCESSOR_H
 
 #include "Platform/Define.h"
+#include <functional>
 #include <map>
 
 class EventProcessor;
@@ -97,6 +98,7 @@ class EventProcessor
 
         void Update(uint32 p_time);
         void KillAllEvents(bool force);
+        void KillEvents(bool force, std::function<bool (BasicEvent*)> f);
         uint64 CalculateTime(uint64 t_offset) const;
 
         void AddEvent(BasicEvent* Event, uint64 e_time, bool set_addtime = true);

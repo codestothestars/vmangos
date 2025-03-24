@@ -285,7 +285,7 @@ enum eScriptCommand
     SCRIPT_COMMAND_FAIL_QUEST               = 70,           // source = Player
                                                             // datalong = quest_id
     SCRIPT_COMMAND_RESPAWN_CREATURE         = 71,           // source = Creature
-                                                            // datalong = (bool) even_if_alive
+                                                            // datalong = eRespawnCreatureFlags
     SCRIPT_COMMAND_ASSIST_UNIT              = 72,           // source = Creature
                                                             // target = Unit
     SCRIPT_COMMAND_COMBAT_STOP              = 73,           // source = Unit
@@ -511,6 +511,15 @@ enum eStartScriptForAllOptions
     SO_STARTFORALL_PLAYERS      = 3,
 
     SO_STARTFORALL_MAX
+};
+
+// Flags used by SCRIPT_COMMAND_RESPAWN_CREATURE
+enum eRespawnCreatureFlags
+{
+    SF_RESPAWNCREATURE_EVEN_IF_ALIVE = 0x1,
+    SF_RESPAWNCREATURE_CLEAR_DESPAWN = 0x2,
+
+    SF_RESPAWNCREATURE_MAX
 };
 
 enum eDataFlags
@@ -988,7 +997,7 @@ struct ScriptInfo
 
         struct                                              // SCRIPT_COMMAND_RESPAWN_CREATURE (71)
         {
-            uint32 evenAlive;                               // datalong
+            uint32 flags;                                   // datalong
         } respawnCreature;
 
                                                             // SCRIPT_COMMAND_ASSIST_UNIT (72)

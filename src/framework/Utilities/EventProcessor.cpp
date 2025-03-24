@@ -84,8 +84,19 @@ void EventProcessor::Update(uint32 p_time)
 
 void EventProcessor::KillAllEvents(bool force)
 {
+    KillEvents(force, [](BasicEvent* _) { return true; });
+}
+
+void EventProcessor::KillEvents(bool force, std::function<bool (BasicEvent*)> f)
+{
     for (auto itr = m_events.begin(); itr != m_events.end();)
     {
+        if (!f(itr->second))
+        {
+            ++itr;
+            continue;
+        }
+
         // Abort events which weren't aborted already
         if (!itr->second->IsAborted())
         {

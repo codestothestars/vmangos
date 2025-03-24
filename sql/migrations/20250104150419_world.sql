@@ -48,6 +48,7 @@ INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `f
 -- Define targets for Explode Orb Effect.
 INSERT `spell_script_target`
 (`entry`, `type`, `targetEntry`, `inverseEffectMask`) VALUES
+(  20037,      0,        177808,                0b01),
 (  20037,      1,         14453,                0b10),
 (  20037,      1,         16604,                0b10);
 
@@ -78,6 +79,9 @@ UPDATE `gameobject_template` SET `faction` = 114, `flags` = 0x20 WHERE `entry` =
 -- Disable Black Dragon Egg automatic spawn.
 UPDATE `gameobject` SET `spawntimesecsmax` = 3600000, `spawntimesecsmin` = 3600000 WHERE `id` = 177807;
 
+-- Correct Orb of Domination respawn time.
+UPDATE `gameobject` SET `spawntimesecsmax` = 60, `spawntimesecsmin` = 60 WHERE `id` = 177808;
+
 -- Correct Blackwing Guardsman positions.
 UPDATE `creature` SET `position_x` = -7619.66, `position_y` = -1025.14, `position_z` = 413.465, `orientation` = 3.68265  WHERE `guid` = 84390;
 UPDATE `creature` SET `position_x` = -7615.01, `position_y` = -1021.55, `position_z` = 413.465, `orientation` = 0.610865 WHERE `guid` = 84391;
@@ -85,7 +89,7 @@ UPDATE `creature` SET `position_x` = -7615.01, `position_y` = -1021.55, `positio
 -- Add missing Blackwing Orb Trigger spawn.
 INSERT INTO `creature`
 (`guid`,  `id`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecsmin`, `spawntimesecsmax`, `wander_distance`) VALUES
-( 12784, 14449,   469,     -7615.51,     -1025.58,      413.465,       5.23599,                  0,                  0,                 0);
+( 12784, 14449,   469,     -7615.51,     -1025.58,      413.465,       5.23599,                 60,                 60,                 0);
 
 -- Add missing Orb of Domination spawns.
 INSERT INTO `creature`
@@ -816,6 +820,7 @@ REPLACE `creature_ai_scripts`
 DELETE FROM `creature_ai_events` WHERE `creature_id` = 12435;
 INSERT `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
+-- Reorder all these at the end, if necessary.
 -- is repeat flag necessary now?
 (1243501,         12435,             572,           1,                   0b011110,          0x01,           6000,          16000,           6000,          16000,          1243501, 'Razorgore the Untamed - Out of Combat (periodic) (phase 0)'),
 (1243502,         12435,             572,           1,                   0b011101,          0x01,           6000,          16000,           6000,          16000,          1243502, 'Razorgore the Untamed - Out of Combat (periodic) (phase 1)'),
@@ -830,7 +835,8 @@ INSERT `creature_ai_events`
 (1243511,         12435,               0,          21,                   0b000000,          0x00,              0,              0,              0,              0,          1243511, 'Razorgore the Untamed - Reached Home'),
 (1243512,         12435,             241,           6,                   0b100000,          0x00,              0,              0,              0,              0,          1243512, 'Razorgore the Untamed - Death (eggs remain, before phase 5)'),
 (1243513,         12435,             241,           6,                   0b000000,          0x00,              0,              0,              0,              0,          1243513, 'Razorgore the Untamed - Death (eggs remain, any phase)'),
-(1243514,         12435,             242,           6,                   0b000000,          0x00,              0,              0,              0,              0,          1243514, 'Razorgore the Untamed - Death (eggs destroyed)');
+(1243514,         12435,             242,           6,                   0b000000,          0x00,              0,              0,              0,              0,          1243514, 'Razorgore the Untamed - Death (eggs destroyed)'),
+(1243515,         12435,               0,          11,                   0b000000,          0x00,              0,              0,              0,              0,          1243506, 'Razorgore the Untamed - Spawned');
 INSERT `creature_ai_scripts`
 (   `id`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `dataint`, `dataint2`, `dataint3`,      `o`, `condition_id`, `comments`) VALUES
 (1243501,          0,        35,          1,           0,           0,           0,               0,               0,             0,         0,          0,          0, 4.64258 ,              0, 'Razorgore the Untamed - Turn to Point 5'),
@@ -845,7 +851,7 @@ INSERT `creature_ai_scripts`
 (1243504,          0,        39,    1243502,           0,           0,           0,               0,               0,             0,       100,          0,          0, 0       ,              0, 'Razorgore the Untamed - Increment Phase (point 4)'),
 (1243505,          0,        35,          1,           0,           0,           0,               0,               0,             0,         0,          0,          0, 4.64258 ,              0, 'Razorgore the Untamed - Turn to Point 5'),
 (1243505,          0,        44,          0,           0,           0,           0,               0,               0,             0,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Set Phase 0 (Out of Combat)'),
-(1243506,          0,        44,          0,           0,           0,           0,               0,               0,             0,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Set Phase 0 (In Combat)'),
+(1243506,          0,        44,          0,           0,           0,           0,               0,               0,             0,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Set Phase 0'),
 (1243507,          0,        37,         27,           0,           0,           0,               0,               0,             0,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Set instance data'),
 (1243508,          0,        68,    1660401,           2,       14453,         100,               0,               0,             0,         0,          0,          0, 0       ,            242, 'Razorgore the Untamed - Nefarian''s Troops Flee (Orb of Domination)'),
 (1243508,          0,        68,    1660401,           2,       16604,         100,               0,               0,             0,         0,          0,          0, 0       ,            242, 'Razorgore the Untamed - Nefarian''s Troops Flee (Blackwing Spell Marker)'),
@@ -879,9 +885,7 @@ REPLACE `generic_scripts`
 (1243503,       0,          0,        44,          5,           0,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Set Phase 5'),
 (1243503,       0,          1,        15,      23024,       0x002,           0,             6,         0x00,         0,               0, 'Razorgore the Untamed - Cast Fireball'),
 (1243503,       1,          0,        39,     176964,           0,           0,             0,         0x00,       100,               0, 'Razorgore the Untamed - Open Portcullis'),
--- Note that Orb of Domination is not falling apart.
--- Okay, I think what we need is a third parameter to SCRIPT_COMMAND_RESPAWN_GAMEOBJECT that overrides the respawn delay via SetRespawnDelay.
--- That way we can simultaneously set the next spawn time (5 seconds) and the subsequent delay (forever).
+-- Note, one of Razorgore's spells has an empty-looking aura icon.
 (1243504,      55,          0,         9,     234786,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 1 (spawn)'),
 (1243504,      55,          0,         9,     234787,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 2 (spawn)'),
 (1243504,      55,          0,         9,     234788,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 3 (spawn)'),
@@ -912,42 +916,11 @@ REPLACE `generic_scripts`
 (1243504,      55,          0,         9,     234813,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 28 (spawn)'),
 (1243504,      55,          0,         9,     234814,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 29 (spawn)'),
 (1243504,      55,          0,         9,     234815,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 30 (spawn)'),
--- (1243504,      70,          0,        81,     234786,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 1 (disable respawn)'),
--- (1243504,      70,          0,        81,     234787,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 2 (disable respawn)'),
--- (1243504,      70,          0,        81,     234788,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 3 (disable respawn)'),
--- (1243504,      70,          0,        81,     234789,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 4 (disable respawn)'),
--- (1243504,      70,          0,        81,     234790,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 5 (disable respawn)'),
--- (1243504,      70,          0,        81,     234791,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 6 (disable respawn)'),
--- (1243504,      70,          0,        81,     234792,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 7 (disable respawn)'),
--- (1243504,      70,          0,        81,     234793,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 8 (disable respawn)'),
--- (1243504,      70,          0,        81,     234794,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 9 (disable respawn)'),
--- (1243504,      70,          0,        81,     234795,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 10 (disable respawn)'),
--- (1243504,      70,          0,        81,     234796,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 11 (disable respawn)'),
--- (1243504,      70,          0,        81,     234797,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 12 (disable respawn)'),
--- (1243504,      70,          0,        81,     234798,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 13 (disable respawn)'),
--- (1243504,      70,          0,        81,     234799,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 14 (disable respawn)'),
--- (1243504,      70,          0,        81,     234800,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 15 (disable respawn)'),
--- (1243504,      70,          0,        81,     234801,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 16 (disable respawn)'),
--- (1243504,      70,          0,        81,     234802,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 17 (disable respawn)'),
--- (1243504,      70,          0,        81,     234803,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 18 (disable respawn)'),
--- (1243504,      70,          0,        81,     234804,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 19 (disable respawn)'),
--- (1243504,      70,          0,        81,     234805,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 20 (disable respawn)'),
--- (1243504,      70,          0,        81,     234806,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 21 (disable respawn)'),
--- (1243504,      70,          0,        81,     234807,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 22 (disable respawn)'),
--- (1243504,      70,          0,        81,     234808,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 23 (disable respawn)'),
--- (1243504,      70,          0,        81,     234809,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 24 (disable respawn)'),
--- (1243504,      70,          0,        81,     234810,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 25 (disable respawn)'),
--- (1243504,      70,          0,        81,     234811,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 26 (disable respawn)'),
--- (1243504,      70,          0,        81,     234812,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 27 (disable respawn)'),
--- (1243504,      70,          0,        81,     234813,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 28 (disable respawn)'),
--- (1243504,      70,          0,        81,     234814,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 29 (disable respawn)'),
--- (1243504,      70,          0,        81,     234815,     3600000,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 30 (disable respawn)'),
-(1243504,      60,          0,        71,          0,           0,           0,             9,         0x00,         0,           12784, 'Razorgore the Untamed - Respawn Blackwing Orb Trigger'),
 (1243504,      60,          0,        71,          0,           0,           0,             9,         0x00,         0,           84388, 'Razorgore the Untamed - Respawn Razorgore the Untamed'),
 (1243504,      60,          1,        71,          0,           0,           0,             9,         0x02,         0,           84389, 'Razorgore the Untamed - Respawn Grethok the Controller'),
-(1243504,      60,          0,        71,          0,           0,           0,             9,         0x02,         0,           84390, 'Razorgore the Untamed - Respawn Blackwing Guardsman 1'),
+(1243504,      60,          0,        71,        0x2,           0,           0,             9,         0x02,         0,           84390, 'Razorgore the Untamed - Respawn Blackwing Guardsman 1'),
 (1243504,      60,          1,        91,      84390,           0,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Load Blackwing Guardsman 1 Spawn'),
-(1243504,      60,          0,        71,          0,           0,           0,             9,         0x02,         0,           84391, 'Razorgore the Untamed - Respawn Blackwing Guardsman 2'),
+(1243504,      60,          0,        71,        0x2,           0,           0,             9,         0x02,         0,           84391, 'Razorgore the Untamed - Respawn Blackwing Guardsman 2'),
 (1243504,      60,          1,        91,      84391,           0,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Load Blackwing Guardsman 2 Spawn');
 UPDATE `creature_template` SET `ai_name` = 'EventAI', `auras` = '18943', `script_name` = '', `spell_list_id` = 124350 WHERE `entry` = 12435;
 
@@ -1037,6 +1010,9 @@ INSERT `generic_scripts`
 
 -- Correct target for spell Use Dragon Orb.
 UPDATE `spell_script_target` SET `targetEntry` = 14449, `type` = 1 WHERE `entry` = 23018;
+
+-- TESTING
+UPDATE creature_template SET display_id1 = 1525 WHERE entry = 14449; -- was 11686
 
 -- CODESTOTHESTARS
 UPDATE item_template SET name = 'Duchess' WHERE entry = 5665;
@@ -3018,27 +2994,49 @@ JOIN gameobject portcullis ON portcullis_open.object_guid = portcullis.guid
 WHERE fireball.spell_id = 23024 AND portcullis.id = 176964
 ORDER BY fireball_unixtimems;
 
--- Boss respawn time
+-- Respawn delay after boss death
+WITH object_create2_time AS (
+  SELECT 'creature' object_type, creature_create2_time.* FROM creature_create2_time
+  UNION ALL
+  SELECT 'gameobject', gameobject_create2_time.* FROM gameobject_create2_time
+)
 SELECT
   spawn.unixtimems,
-  spawn_creature.guid spawn_guid,
-  spawn_creature.id,
-  spawn_last_death.death_guid,
+  spawn.object_type,
+  spawn_object.id,
+  spawn_object.guid spawn_guid,
+  death_creature.guid death_guid,
   spawn_last_death.death_unixtimems,
   ROUND((spawn.unixtimems - spawn_last_death.death_unixtimems) / 1000) respawn_seconds
-FROM creature_create2_time spawn
+FROM object_create2_time spawn
 JOIN (
   SELECT
-    creature_create2_time.guid create_guid,
-    creature_create2_time.unixtimems create_unixtimems,
-    creature_values_update.guid death_guid,
-    MAX(creature_values_update.unixtimems) death_unixtimems
-  FROM creature_create2_time JOIN creature_values_update
-  WHERE creature_create2_time.unixtimems > creature_values_update.unixtimems
-    AND creature_values_update.current_health = 0
-  GROUP BY creature_create2_time.guid, creature_create2_time.unixtimems, creature_values_update.guid
+    object_create2_time.object_type create_type,
+    object_create2_time.guid create_guid,
+    object_create2_time.unixtimems create_unixtimems,
+    creature.id death_id,
+    MAX(death.unixtimems) death_unixtimems
+  FROM object_create2_time JOIN creature_values_update death JOIN creature ON death.guid = creature.guid
+  WHERE object_create2_time.unixtimems > death.unixtimems
+    AND death.current_health = 0
+  GROUP BY
+    object_create2_time.object_type,
+    object_create2_time.guid,
+    object_create2_time.unixtimems,
+    creature.id
 ) spawn_last_death
-  ON spawn.guid = spawn_last_death.create_guid AND spawn.unixtimems = spawn_last_death.create_unixtimems
-JOIN creature spawn_creature ON spawn.guid = spawn_creature.guid
-JOIN creature death_creature ON spawn_last_death.death_guid = death_creature.guid
-WHERE spawn_creature.id IN (12435, 12557) AND death_creature.id = 12435;
+  ON spawn.object_type = spawn_last_death.create_type
+  AND spawn.guid = spawn_last_death.create_guid
+  AND spawn.unixtimems = spawn_last_death.create_unixtimems
+JOIN (
+  SELECT 'creature' object_type, guid, id FROM creature
+  UNION ALL
+  SELECT 'gameobject', guid, id FROM gameobject
+) spawn_object
+  ON spawn.object_type = spawn_object.object_type AND spawn.guid = spawn_object.guid
+JOIN creature death_creature
+  ON spawn_last_death.death_id = death_creature.id
+JOIN creature_values_update death
+  ON spawn_last_death.death_unixtimems = death.unixtimems AND death_creature.guid = death.guid
+WHERE spawn_object.id IN (12435, 12557, 14456, 177808) AND death_creature.id = 12435 AND death.current_health = 0
+ORDER BY unixtimems, object_type, id;

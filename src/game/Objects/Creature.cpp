@@ -2312,6 +2312,11 @@ void Creature::Respawn()
     }
 }
 
+void Creature::CancelDespawn()
+{
+    m_Events.KillEvents(false, [](BasicEvent* event) -> bool { return dynamic_cast<ForcedDespawnDelayEvent*>(event); });
+}
+
 void Creature::DespawnOrUnsummon(uint32 msTimeToDespawn /*= 0*/, uint32 secsTimeToRespawn /*= 0*/)
 {
     if (IsTemporarySummon())

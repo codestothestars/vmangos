@@ -565,7 +565,8 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                 case 20037: // Explode Orb Effect
                 {
                     const char *name = unitTarget->GetName();
-                    // Make sure 20038 "activates" the Black Dragon Eggs and misses the Orbs of Domination and Blackwing Spell Markers
+                    // Make sure 20038 misses the Orbs of Domination and Blackwing Spell Markers.
+                    // Probably need ymir to verify that.
                     unitTarget->CastSpell(nullptr, 20038, false);
                     return;
                 }
