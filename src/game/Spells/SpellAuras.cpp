@@ -2045,10 +2045,6 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
             case 23018:                                     // Use Dragon Orb
             {
                 target->InterruptSpell(CURRENT_CHANNELED_SPELL); // Possess
-                if (Creature* razorgore = target->FindNearestCreature(12435, 100))
-                    razorgore->RemoveAura(23021, EFFECT_INDEX_0); // Dragon Orb
-                // target->RemoveAura(23021, EFFECT_INDEX_1); // do we also need 1 and 2?
-                // target->RemoveAura(23021, EFFECT_INDEX_2);
                 return;
             }
             case 24906:                                     // Emeriss Aura
