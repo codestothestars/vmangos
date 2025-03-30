@@ -119,8 +119,8 @@ enum ConditionType
                                                             // Requirement: WorldObject Target
                                                             // Value1: creature_id
                                                             // Value2: search_radius
-                                                            // Value3: dead
-                                                            // Value4: not_self
+                                                            // Value3: flags (see enum eNearbyCreatureFlags)
+                                                            // Value4: condition_id
     CONDITION_NEARBY_GAMEOBJECT     = 21,                   // Checks if there is a gameobject nearby with the given id.
                                                             // Requirement: WorldObject Target
                                                             // Value1: gobject_id
@@ -312,6 +312,12 @@ enum eEscortConditionFlags
 {
     CF_ESCORT_SOURCE_DEAD = 0x1,
     CF_ESCORT_TARGET_DEAD = 0x2,
+};
+
+enum eNearbyCreatureFlags
+{
+    CF_NEARBY_CREATURE_DEAD     = 0x1,
+    CF_NEARBY_CREATURE_NOT_SELF = 0x2,
 };
 
 class ConditionEntry

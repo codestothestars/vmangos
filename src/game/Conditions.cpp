@@ -297,7 +297,7 @@ bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, 
         }
         case CONDITION_NEARBY_CREATURE:
         {
-            return (bool)(target->FindNearestCreature(m_value1, m_value2, !m_value3, m_value4 ? target->ToCreature() : nullptr));
+            return (bool)(target->FindNearestCreature(m_value1, m_value2, !(m_value3 & CF_NEARBY_CREATURE_DEAD), (m_value3 & CF_NEARBY_CREATURE_NOT_SELF) ? target->ToCreature() : nullptr, m_value4));
         }
         case CONDITION_NEARBY_GAMEOBJECT:
         {

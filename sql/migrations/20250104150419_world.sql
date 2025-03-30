@@ -8,42 +8,51 @@ IF v = 0 THEN
 INSERT INTO `migrations` VALUES ('20250104150419');
 -- Add your query below.
 
+-- Merge CONDITION_NEARBY_CREATURE boolean params into one flags param
+UPDATE `conditions` SET `value3` = `value3` | 0x2, `value4` = 0 WHERE `type` = 20 AND `value4` = 1;
+
 -- Remember to update all condition IDs at the end to use the first gap.
---  241: Black Dragon Egg within 100 yards.
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 241, 21,     177807,  100, 0, 0x2);
---  242: No Black Dragon Egg within 100 yards.
---  Test whether it works when standing in corners.
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 242, 21,     177807,  100, 0, 0x3);
---  572: Has aura Possess.
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 572,  1,      23014,    0, 0, 0x2);
---  580: (573: Last waypoint equals 0) Or (579: Last waypoint equals 6).
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 580, -2,        573,  579, 0, 0x0);
---  581: Instance data 0 (Razorgore) equals 0 (not started).
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 581, 34,          0,    0, 0, 0x0);
+--  241: Black Dragon Egg within 100 yards
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 241, 21,     177807,  100,   0,   0, 0x2);
+--  242: No Black Dragon Egg within 100 yards
+--  Test whether it works when standing in corners
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 242, 21,     177807,  100,   0,   0, 0x3);
+--  572: Does not have aura Possess
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 572,  1,      19832,    0,   0,   0, 0x1);
+--  573: Has aura Possess
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 573,  1,      23014,    0,   0,   0, 0x2);
+--  574: Does not have aura Mind Exhaustion
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 574,  1,      23958,    0,   0,   0, 0x1);
+--  575: Nearby Razorgore within 100 yards without aura Possess
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 575, 20,      12435,  100, 0x0, 572, 0x0);
+--  576: (574: Does not have aura Mind Exhaustion) And (575: Nearby Razorgore within 100 yards without aura Possess)
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 576, -1,        574,  575,   0,   0, 0x0);
+--  581: Instance data 0 (Razorgore) equals 0 (not started)
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 581, 34,          0,    0,   0,   0, 0x0);
 --  582: Nearby Razorgore within 90 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 582, 20,      12435,   90, 0, 0x2);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 582, 20,      12435,   90,   0,   0, 0x2);
 --  583: No nearby Razorgore within 90 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 583, 20,      12435,   90, 0, 0x3);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 583, 20,      12435,   90,   0,   0, 0x3);
 --  584: Nearby Razorgore within 70 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 584, 20,      12435,   70, 0, 0x2);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 584, 20,      12435,   70,   0,   0, 0x2);
 --  585: No nearby Razorgore within 70 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 585, 20,      12435,   70, 0, 0x3);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 585, 20,      12435,   70,   0,   0, 0x3);
 --  586: Nearby Razorgore within 50 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 586, 20,      12435,   50, 0, 0x2);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 586, 20,      12435,   50,   0,   0, 0x2);
 --  587: No nearby Razorgore within 50 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 587, 20,      12435,   50, 0, 0x3);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 587, 20,      12435,   50,   0,   0, 0x3);
 --  588: Hostile unit within 10 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 588, 59,         10,    0, 0, 0x2);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 588, 59,         10,    0,   0,   0, 0x2);
 --  589: Instance data 26 equal or less than 24
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 589, 34,         26,   24, 2, 0x0);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 589, 34,         26,   24,   2,   0, 0x0);
 --  590: Instance data 26 equal or higher than 25
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES ( 590, 34,         26,   25, 1, 0x0);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 590, 34,         26,   25,   1,   0, 0x0);
 -- 8302: Map event 8302 (Razorgore) is active
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES (8302, 36,       8302,    0, 0, 0x0);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES (8302, 36,       8302,    0,   0,   0, 0x0);
 -- 8303: (241: Black Dragon Egg within 100 yards) And (8302: Map event 8302 (Razorgore) is active)
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES (8303, -1,        241, 8302, 0, 0x0);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES (8303, -1,        241, 8302,   0,   0, 0x0);
 -- 8306: (589: Instance data 26 equal or less than 24) And (8303: (241: Black Dragon Egg within 100 yards) And (8302: Map event 8302 (Razorgore) is active))
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `flags`) VALUES (8306, -1,        589, 8303, 0, 0x0);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES (8306, -1,        589, 8303,   0,   0, 0x0);
 
 -- Define targets for Explode Orb Effect.
 INSERT `spell_script_target`
@@ -91,6 +100,9 @@ INSERT INTO `creature`
 (`guid`,  `id`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecsmin`, `spawntimesecsmax`, `wander_distance`) VALUES
 ( 12784, 14449,   469,     -7615.51,     -1025.58,      413.465,       5.23599,                 60,                 60,                 0);
 
+-- Add missing Blackwing Orb Trigger flags.
+UPDATE `creature_template` SET `static_flags1` = `static_flags1` | 0x00000220 WHERE `entry` = 14449;
+
 -- Add missing Orb of Domination spawns.
 INSERT INTO `creature`
 (`guid`,  `id`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecsmin`, `spawntimesecsmax`, `wander_distance`, `patch_max`) VALUES
@@ -136,7 +148,9 @@ UPDATE `creature_template` SET `static_flags1` = `static_flags1` | 0x00000260 WH
 UPDATE `gameobject_template` SET `script_name` = '' WHERE `entry` = 177807;
 
 -- Remove C++ script from Orb of Domination.
-UPDATE `gameobject_template` SET `script_name` = '' WHERE `entry` = 177808;
+-- Well, we actually do want the original script.
+-- The client doesn't even get an error message when attempting with Mind Exhaustion.
+-- UPDATE `gameobject_template` SET `script_name` = '' WHERE `entry` = 177808;
 
 -- Event Start Script
 DELETE FROM `scripted_event_id` WHERE `id` = 8302;
@@ -821,12 +835,11 @@ DELETE FROM `creature_ai_events` WHERE `creature_id` = 12435;
 INSERT `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
 -- Reorder all these at the end, if necessary.
--- is repeat flag necessary now?
-(1243501,         12435,             572,           1,                   0b011110,          0x01,           6000,          16000,           6000,          16000,          1243501, 'Razorgore the Untamed - Out of Combat (periodic) (phase 0)'),
-(1243502,         12435,             572,           1,                   0b011101,          0x01,           6000,          16000,           6000,          16000,          1243502, 'Razorgore the Untamed - Out of Combat (periodic) (phase 1)'),
-(1243503,         12435,             572,           1,                   0b011011,          0x01,           6000,          16000,           6000,          16000,          1243503, 'Razorgore the Untamed - Out of Combat (periodic) (phase 2)'),
-(1243504,         12435,             572,           1,                   0b010111,          0x01,           6000,          16000,           6000,          16000,          1243504, 'Razorgore the Untamed - Out of Combat (periodic) (phase 3)'),
-(1243505,         12435,             572,           1,                   0b001111,          0x01,           6000,          16000,           6000,          16000,          1243505, 'Razorgore the Untamed - Out of Combat (periodic) (phase 4)'),
+(1243501,         12435,             573,           1,                   0b011110,          0x01,           6000,          16000,           6000,          16000,          1243501, 'Razorgore the Untamed - Out of Combat (periodic) (phase 0)'),
+(1243502,         12435,             573,           1,                   0b011101,          0x01,           6000,          16000,           6000,          16000,          1243502, 'Razorgore the Untamed - Out of Combat (periodic) (phase 1)'),
+(1243503,         12435,             573,           1,                   0b011011,          0x01,           6000,          16000,           6000,          16000,          1243503, 'Razorgore the Untamed - Out of Combat (periodic) (phase 2)'),
+(1243504,         12435,             573,           1,                   0b010111,          0x01,           6000,          16000,           6000,          16000,          1243504, 'Razorgore the Untamed - Out of Combat (periodic) (phase 3)'),
+(1243505,         12435,             573,           1,                   0b001111,          0x01,           6000,          16000,           6000,          16000,          1243505, 'Razorgore the Untamed - Out of Combat (periodic) (phase 4)'),
 (1243506,         12435,               0,           4,                   0b100000,          0x00,              0,              0,              0,              0,          1243506, 'Razorgore the Untamed - Aggro'),
 (1243507,         12435,               0,          23,                   0b000000,          0x01,          19832,              1,              0,              0,          1243507, 'Razorgore the Untamed - Aura'),
 (1243508,         12435,               0,          36,                   0b000000,          0x01,          19873,             -1,              0,              0,          1243508, 'Razorgore the Untamed - Spell Hit Target (any phase)'),
@@ -885,7 +898,7 @@ REPLACE `generic_scripts`
 (1243503,       0,          0,        44,          5,           0,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Set Phase 5'),
 (1243503,       0,          1,        15,      23024,       0x002,           0,             6,         0x00,         0,               0, 'Razorgore the Untamed - Cast Fireball'),
 (1243503,       1,          0,        39,     176964,           0,           0,             0,         0x00,       100,               0, 'Razorgore the Untamed - Open Portcullis'),
--- Note, one of Razorgore's spells has an empty-looking aura icon.
+-- Note, right-clicking the Orb of Domination isn't possessing Razorgore.
 (1243504,      55,          0,         9,     234786,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 1 (spawn)'),
 (1243504,      55,          0,         9,     234787,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 2 (spawn)'),
 (1243504,      55,          0,         9,     234788,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 3 (spawn)'),
@@ -976,6 +989,7 @@ UPDATE `creature_template` SET `auras` = '18950' WHERE `entry` = 12557;
 -- INSERT `creature_ai_scripts`
 -- (   `id`, `command`, `datalong`, `comments`) VALUES;
 -- UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry` = 14449;
+-- Note that Blackwing Orb Trigger casts 23031 (Cancel Bob Possession) at some point.
 
 -- Events list for Orb of Domination
 UPDATE `creature_template` SET `script_name` = '' WHERE `entry` = 14453;
@@ -1012,7 +1026,7 @@ INSERT `generic_scripts`
 UPDATE `spell_script_target` SET `targetEntry` = 14449, `type` = 1 WHERE `entry` = 23018;
 
 -- TESTING
-UPDATE creature_template SET display_id1 = 1525 WHERE entry = 14449; -- was 11686
+-- UPDATE creature_template SET display_id1 = 1525 WHERE entry = 14449; -- was 11686
 
 -- CODESTOTHESTARS
 UPDATE item_template SET name = 'Duchess' WHERE entry = 5665;

@@ -904,6 +904,35 @@ InstanceData* GetInstanceData_instance_blackwing_lair(Map* pMap)
 
 bool GOHello_go_orbe_domination(Player* pPlayer, GameObject* pGo)
 {
+    Map* map = pGo->GetMap();
+
+    // Player does not have Mind Exhaustion and Razorgore is not possessed.
+    if (IsConditionSatisfied(576, pPlayer, map, pGo, CONDITION_FROM_DBSCRIPTS))
+    {
+        Creature* razorgore = pGo->FindNearestCreature(12435, 100);
+
+        static ScriptInfo scriptAddMindExhaustion;
+        scriptAddMindExhaustion.command = SCRIPT_COMMAND_ADD_AURA;
+        scriptAddMindExhaustion.addAura.spellId = 23958;
+
+        static ScriptInfo scriptPlayerCastPossess;
+        scriptPlayerCastPossess.command = SCRIPT_COMMAND_CAST_SPELL;
+        scriptPlayerCastPossess.castSpell.spellId = 19832;
+        // scriptPlayerCastPossess.condition = 576;
+
+        static ScriptInfo scriptTriggerCastPossess;
+        scriptTriggerCastPossess.command = SCRIPT_COMMAND_CAST_SPELL;
+        scriptTriggerCastPossess.castSpell.spellId = 23014;
+
+        map->ScriptCommandStartDirect(scriptAddMindExhaustion, pPlayer, pGo);
+        map->ScriptCommandStartDirect(scriptPlayerCastPossess, pPlayer, pGo);
+        // Working! Now need to stop this channel on Possess end.
+        // Try an "on unaura" event first. If that doesn't work, try the Aggro event.
+        map->ScriptCommandStartDirect(scriptTriggerCastPossess, pGo->FindNearestCreature(14449, 5), pGo);
+    }
+
+    return true;
+
     if (ScriptedInstance* pInstance = (ScriptedInstance*)pGo->GetInstanceData())
     {
         if (!pPlayer->HasAura(SPELL_MIND_EXHAUSTION))
@@ -927,8 +956,6 @@ bool GOHello_go_orbe_domination(Player* pPlayer, GameObject* pGo)
             }
         }
     }
-
-    return true;
 }
 
 // need to remove this
@@ -1411,10 +1438,10 @@ void AddSC_instance_blackwing_lair()
     pNewscript->GetInstanceData = &GetInstanceData_instance_blackwing_lair;
     pNewscript->RegisterSelf();
 
-    // pNewscript = new Script;
-    // pNewscript->Name = "go_orbe_domination";
-    // pNewscript->pGOHello = &GOHello_go_orbe_domination;
-    // pNewscript->RegisterSelf();
+    pNewscript = new Script;
+    pNewscript->Name = "go_orbe_domination";
+    pNewscript->pGOHello = &GOHello_go_orbe_domination;
+    pNewscript->RegisterSelf();
 
     // pNewscript = new Script;
     // pNewscript->Name = "go_oeuf_raz";
