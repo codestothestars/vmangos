@@ -915,6 +915,10 @@ bool GOHello_go_orbe_domination(Player* pPlayer, GameObject* pGo)
         scriptAddMindExhaustion.command = SCRIPT_COMMAND_ADD_AURA;
         scriptAddMindExhaustion.addAura.spellId = 23958;
 
+        static ScriptInfo scriptAddPossess;
+        scriptAddPossess.command = SCRIPT_COMMAND_ADD_AURA;
+        scriptAddPossess.addAura.spellId = 23021;
+
         static ScriptInfo scriptPlayerCastPossess;
         scriptPlayerCastPossess.command = SCRIPT_COMMAND_CAST_SPELL;
         scriptPlayerCastPossess.castSpell.spellId = 19832;
@@ -925,9 +929,8 @@ bool GOHello_go_orbe_domination(Player* pPlayer, GameObject* pGo)
         scriptTriggerCastPossess.castSpell.spellId = 23014;
 
         map->ScriptCommandStartDirect(scriptAddMindExhaustion, pPlayer, pGo);
+        map->ScriptCommandStartDirect(scriptAddPossess, razorgore, pGo);
         map->ScriptCommandStartDirect(scriptPlayerCastPossess, pPlayer, pGo);
-        // Working! Now need to stop this channel on Possess end.
-        // Try an "on unaura" event first. If that doesn't work, try the Aggro event.
         map->ScriptCommandStartDirect(scriptTriggerCastPossess, pGo->FindNearestCreature(14449, 5), pGo);
     }
 
