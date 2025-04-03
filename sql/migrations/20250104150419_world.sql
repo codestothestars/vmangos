@@ -785,14 +785,16 @@ REPLACE `creature_spells`
 ( 124160, 'Blackwing Legionnaire',       15580,             100,              1,                   3,                  16,                  5,                 16,       15754,             100,              1,                   0,                  15,                  6,                 13,       23967,             100,              8,            12435,                5,                   1,                  24,                  6,                 27);
 DELETE FROM `creature_ai_events` WHERE `creature_id` = 12416;
 INSERT `creature_ai_events`
-(   `id`, `creature_id`, `condition_id`, `event_type`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
-(1241601,         12416,              0,            6,            100,          0x00,              0,              0,              0,              0,          1241601, 'Blackwing Legionnaire - Death'),
--- Lower this ID at the end as needed.
-(1241604,         12416,              0,           21,            100,          0x00,              0,              0,              0,              0,          1241604, 'Blackwing Legionnaire - Reached Home');
+(   `id`, `creature_id`, `event_type`, `action1_script`, `comment`) VALUES
+-- Reorder these IDs at the end as needed.
+(1241601,         12416,            6,          1241601, 'Blackwing Legionnaire - Death'),
+(1241602,         12416,            4,          1241602, 'Blackwing Legionnaire - Aggro'),
+(1241604,         12416,           21,          1241604, 'Blackwing Legionnaire - Reached Home');
 REPLACE `creature_ai_scripts`
-(   `id`, `command`, `datalong`, `datalong2`, `datalong3`, `dataint`, `comments`) VALUES
-(1241601,        37,         26,           1,           2,         0, 'Blackwing Legionnaire - Decrement Creature Count'),
-(1241604,        18,          0,           0,           0,         0, 'Blackwing Legionnaire - Despawn');
+(   `id`, `command`, `datalong`, `datalong2`, `datalong3`, `comments`) VALUES
+(1241601,        37,         26,           1,           2, 'Blackwing Legionnaire - Decrement Creature Count'),
+(1241602,        49,          1,           0,           0, 'Blackwing Legionnaire - Combat Pulse'),
+(1241604,        18,          0,           0,           0, 'Blackwing Legionnaire - Despawn');
 
 -- Events list for Blackwing Mage
 REPLACE `creature_spells`
@@ -801,14 +803,16 @@ REPLACE `creature_spells`
 DELETE FROM `creature_ai_events` WHERE `creature_id` = 12420;
 INSERT `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
-(1242001,         12420,            588,            0,                        0x1,          0x01,              0,          22000,           3000,          22000,          1242001, 'Blackwing Mage - In Combat (periodic)'),
+(1242001,         12420,            588,            0,                        0b1,          0x01,              0,          22000,           3000,          22000,          1242001, 'Blackwing Mage - In Combat (periodic)'),
+(1242002,         12420,              0,            4,                        0b0,          0x00,              0,              0,              0,              0,          1242002, 'Blackwing Mage - Aggro'),
 -- Lower this ID at the end as needed.
-(1242003,         12420,              0,           21,                        0x0,          0x00,              0,              0,              0,              0,          1242003, 'Blackwing Mage - Reached Home');
+(1242003,         12420,              0,           21,                        0b0,          0x00,              0,              0,              0,              0,          1242003, 'Blackwing Mage - Reached Home');
 DELETE FROM `creature_ai_scripts` WHERE `id` = 1242002;
 REPLACE `creature_ai_scripts`
-(   `id`, `command`, `datalong`, `datalong2`, `target_type`, `dataint`, `comments`) VALUES
-(1242001,        15,      22271,       0x000,             6,         0, 'Blackwing Mage - Cast Arcane Explosion'),
-(1242003,        18,          0,       0x000,             0,         0, 'Blackwing Mage - Despawn');
+(   `id`, `command`, `datalong`, `target_type`, `comments`) VALUES
+(1242001,        15,      22271,             6, 'Blackwing Mage - Cast Arcane Explosion'),
+(1242002,        49,          1,             0, 'Blackwing Mage - Combat Pulse'),
+(1242003,        18,          0,             0, 'Blackwing Mage - Despawn');
 
 -- Events list for Death Talon Dragonspawn
 REPLACE `creature_spells`
@@ -818,11 +822,13 @@ DELETE FROM `creature_ai_events` WHERE `creature_id` = 12422;
 REPLACE `creature_ai_events`
 (   `id`,  `creature_id`, `event_type`, `action1_script`, `comment`) VALUES
 (1242201,          12422,            7,          1242201, 'Death Talon Dragonspawn - Evade'),
+(1242202,          12422,            4,          1242202, 'Death Talon Dragonspawn - Aggro'),
 -- Lower this ID at the end as needed.
 (1242204,          12422,           21,          1242204, 'Death Talon Dragonspawn - Reached Home');
 REPLACE `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `comments`) VALUES
 (1242201,        34,          1, 'Death Talon Dragonspawn - Set Home Position'),
+(1242202,        49,          1, 'Death Talon Dragonspawn - Combat Pulse'),
 (1242204,        18,          0, 'Death Talon Dragonspawn - Despawn');
 -- REPLACE `generic_scripts`
 -- (   `id`, `command`, `comments`) VALUES;
@@ -866,6 +872,7 @@ INSERT `creature_ai_scripts`
 (1243506,          0,        44,          0,           0,           0,           0,               0,               0,             0,         0x00,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Set phase 0 (Aggro)'),
 (1243506,          0,         5,          0,           0,           0,           0,           12784,               0,             9,         0x02,         0,          0,          0, 0       ,            572, 'Razorgore the Untamed - Interrupt casts on Blackwing Orb Trigger'),
 (1243506,          0,        14,      23021,           0,           0,           0,               0,               0,             0,         0x00,         0,          0,          0, 0       ,            572, 'Razorgore the Untamed - Remove aura Dragon Orb'),
+(1243506,          0,        49,          1,           0,           0,           0,               0,               0,             0,         0x00,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Combat Pulse'),
 (1243507,          0,        37,         27,           0,           0,           0,               0,               0,             0,         0x00,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Set instance data'),
 (1243508,          0,        68,    1660401,           2,       14453,         100,               0,               0,             0,         0x00,         0,          0,          0, 0       ,            242, 'Razorgore the Untamed - Nefarian''s Troops Flee (Orb of Domination)'),
 (1243508,          0,        68,    1660401,           2,       16604,         100,               0,               0,             0,         0x00,         0,          0,          0, 0       ,            242, 'Razorgore the Untamed - Nefarian''s Troops Flee (Blackwing Spell Marker)'),
@@ -952,13 +959,13 @@ INSERT `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `datalong2`, `target_type`, `dataint`, `dataint4`,      `x`,      `y`,     `z`,     `o`, `comments`) VALUES
 (1255701,        15,      23018,           0,             6,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Cast Use Dragon Orb'),
 -- double check target for Dominate Mind
+-- currently he sometimes uses it on Razorgore.
 (1255702,        15,      14515,           0,             4,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Cast Spell Dominate Mind'),
 (1255702,         0,          1,           0,             0,      9960,          0,        0,        0,       0,       0, 'Grethok the Controller - Say Text'),
 (1255703,        39,    1255701,           0,             0,       100,          0,        0,        0,       0,       0, 'Grethok the Controller - Close Portcullis'),
 (1255703,        49,          1,           0,             0,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Combat Pulse'),
 (1255703,         0,          1,           0,             0,      9958,          0,        0,        0,       0,       0, 'Grethok the Controller - Yell'),
 (1255703,        37,          0,           4,             0,         0,          0,        0,        0,       0,       0, 'Grethok the Controller - Set Instance Data (Encounter Special)'),
--- Need to despawn these a few seconds later. Check sniffs.
 (1255704,        10,      12434,         400,             0,         0,          3, -7643.39, -1064.69, 407.288, 1.71042, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
 (1255704,        10,      12434,         400,             0,         0,          3, -7623.1 , -1094.06, 407.288, 1.44862, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
 (1255704,        10,      12434,         400,             0,         0,          3, -7568.61, -1012.67, 407.288, 1.51844, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
@@ -1003,11 +1010,13 @@ UPDATE `creature_template` SET `script_name` = '' WHERE `entry` = 14453;
 DELETE FROM `creature_ai_events` WHERE `creature_id` = 14456;
 DELETE FROM `creature_ai_scripts` WHERE `id` = 1445601;
 INSERT `creature_ai_events`
-(   `id`, `creature_id`, `condition_id`, `event_type`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
-(1445601,        14456,              0,            6,          0x00,              0,              0,              0,              0,          1445601, 'Blackwing Guardsman - Death');
+(   `id`, `creature_id`, `event_type`, `action1_script`, `comment`) VALUES
+(1445601,        14456,            6,          1445601, 'Blackwing Guardsman - Death'),
+(1445602,        14456,            4,          1445602, 'Blackwing Guardsman - Aggro');
 INSERT `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `comments`) VALUES
-(1445601,        18,     300000, 'Blackwing Guardsman - Despawn');
+(1445601,        18,     300000, 'Blackwing Guardsman - Despawn'),
+(1445602,        49,          1, 'Blackwing Guardsman - Combat Pulse');
 REPLACE `creature_spells`
 (`entry`, `name`,                                 `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`) VALUES
 ( 144560, 'Blackwing Lair - Blackwing Guardsman',       15580,             100,              1,                   5,                  23,                  1,                 16,       15754,             100,              1,                   3,                  24,                  8,                 11);
@@ -1031,6 +1040,7 @@ INSERT `generic_scripts`
 UPDATE `spell_script_target` SET `targetEntry` = 14449, `type` = 1 WHERE `entry` = 23018;
 
 -- TESTING
+-- UPDATE creature_template SET display_id1 = 1311 WHERE entry = 12434; -- was 11686
 -- UPDATE creature_template SET display_id1 = 1525 WHERE entry = 14449; -- was 11686
 
 -- CODESTOTHESTARS
