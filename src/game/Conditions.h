@@ -263,6 +263,13 @@ enum ConditionType
     CONDITION_UNIT_STATE            = 60,                   // Checks if the unit has the specified state flags.
                                                             // Requirement: Unit Target
                                                             // Value1: enum UnitState
+    CONDITION_CREATURE_FIT_CONDITION = 61,                  // Returns true if a creature with this guid exists and it satisfies the provided condition id.
+                                                            // Requirement: Map
+                                                            // Value1: guid
+                                                            // Value2: condition_id
+    CONDITION_CREATURE_PHASE         = 62,                  // Checks the source creature's phase.
+                                                            // Requirement: Creature
+                                                            // Value1: phase
 };
 
 enum ConditionFlags

@@ -19,6 +19,7 @@
  */
 
 #include "Conditions.h"
+#include "CreatureEventAI.h"
 #include "Player.h"
 #include "GameEventMgr.h"
 #include "SpellAuras.h"
@@ -662,6 +663,20 @@ bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, 
                 return (bool)((Creature*)target)->GetVictimInRange(0, m_value1);
             }
 
+            return false;
+        }
+        case CONDITION_CREATURE_FIT_CONDITION:
+        {
+            Map* pMap = const_cast<Map*>(map ? map : (source ? source->GetMap() : target->GetMap()));
+            if (Creature* pCreature = pMap->GetCreature(m_value1))
+                return sConditionStorage.LookupEntry<ConditionEntry>(m_value2)->Meets(pCreature, map, source, conditionSourceType);
+            return false;
+        }
+        case CONDITION_CREATURE_PHASE:
+        {
+            if (Creature const* pCreature = source->ToCreature())
+                if (auto const* pAI = dynamic_cast<CreatureEventAI const*>(pCreature->AI()))
+                    return pAI->m_Phase == m_value1;
             return false;
         }
     }
@@ -1354,6 +1369,8 @@ bool ConditionEntry::IsValid()
         case CONDITION_IS_PLAYER:
         case CONDITION_OBJECT_IS_SPAWNED:
         case CONDITION_CREATURE_GROUP_DEAD:
+        case CONDITION_CREATURE_FIT_CONDITION:
+        case CONDITION_CREATURE_PHASE:
             break;
         default:
             sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "Condition entry %u has bad type of %d, skipped ", m_entry, m_condition);
