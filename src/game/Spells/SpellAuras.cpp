@@ -942,6 +942,10 @@ void Aura::ApplyModifier(bool apply, bool Real, bool skipCheckExclusive)
     if (GetAuraScript())
         GetAuraScript()->OnAfterApply(this, apply);
 
+    if (Creature* creature = GetTarget()->ToCreature())
+        if (CreatureAI* ai = creature->AI())
+            ai->AuraUnapply(GetCaster(), GetSpellProto());
+
     if (!apply && !skipCheckExclusive && IsExclusive())
         ExclusiveAuraUnapply();
 
@@ -2044,7 +2048,17 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
             }
             case 23018:                                     // Use Dragon Orb
             {
+                uint32 razorgoreGuid = 84388;
                 target->InterruptSpell(CURRENT_CHANNELED_SPELL); // Possess
+                if (CreatureData const* razorgoreData = sObjectMgr.GetCreatureData(84388))
+                {
+                    if (Creature* razorgore = target->GetMap()->GetCreature(razorgoreData->GetObjectGuid(84388)))
+                        razorgore->RemoveAura(23021, EFFECT_INDEX_0); // Dragon Orb
+                    else
+                        sLog.Out(LOG_DBERROR, LOG_LVL_ERROR, "HandleAuraDummy: Use Dragon Orb unapply - Razorgore not found");
+                }
+                else
+                    sLog.Out(LOG_DBERROR, LOG_LVL_ERROR, "HandleAuraDummy: Use Dragon Orb unapply - Razorgore data not found");
                 return;
             }
             case 24906:                                     // Emeriss Aura

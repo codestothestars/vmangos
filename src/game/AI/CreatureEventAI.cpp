@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "Common.h"
 #include "Creature.h"
 #include "CreatureEventAI.h"
 #include "CreatureEventAIMgr.h"
@@ -399,6 +398,10 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, SpellCaster* 
             pHolder.UpdateRepeatTimer(m_creature, event.stealth_alert.repeatMin, event.stealth_alert.repeatMax);
             break;
         }
+        case EVENT_T_AURA_UNAPPLY:
+        {
+            break;
+        }
         default:
         {
             sLog.Out(LOG_SCRIPTS, LOG_LVL_MINIMAL, "CreatureEventAI: Creature %u using Event %u has invalid Event Type(%u), missing from ProcessEvent() Switch.", m_creature->GetEntry(), pHolder.Event.event_id, pHolder.Event.event_type);
@@ -665,6 +668,25 @@ void CreatureEventAI::EnterCombat(Unit* enemy)
 
     m_EventUpdateTime = EVENT_UPDATE_TIME;
     m_EventDiff = 0;
+}
+
+void CreatureEventAI::AuraUnapply(SpellCaster* pCaster, SpellEntry const* pSpellEntry)
+{
+    if (m_bEmptyList)
+        return;
+
+    for (auto& i : m_CreatureEventAIList)
+    {
+        switch (i.Event.event_type)
+        {
+            case EVENT_T_AURA_UNAPPLY:
+            {
+                if (i.Event.aura_unapply.spellId == pSpellEntry->Id)
+                    ProcessEvent(i, pCaster);
+                break;
+            }
+        }
+    }
 }
 
 void CreatureEventAI::MoveInLineOfSight(Unit* pWho)

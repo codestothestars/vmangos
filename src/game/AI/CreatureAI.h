@@ -62,6 +62,9 @@ class CreatureAI
 
         // == Reactions At =================================
 
+        // Called when aura removed
+        virtual void AuraUnapply(SpellCaster*, SpellEntry const*) {}
+
         // Called when an unit moves within visibility distance
         virtual void MoveInLineOfSight(Unit*) {}
 
