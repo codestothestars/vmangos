@@ -922,16 +922,23 @@ bool GOHello_go_orbe_domination(Player* pPlayer, GameObject* pGo)
         static ScriptInfo scriptPlayerCastPossess;
         scriptPlayerCastPossess.command = SCRIPT_COMMAND_CAST_SPELL;
         scriptPlayerCastPossess.castSpell.spellId = 19832;
-        // scriptPlayerCastPossess.condition = 576;
+        scriptPlayerCastPossess.raw.data[4] = SF_GENERAL_ABORT_ON_FAILURE;
 
         static ScriptInfo scriptTriggerCastPossess;
         scriptTriggerCastPossess.command = SCRIPT_COMMAND_CAST_SPELL;
         scriptTriggerCastPossess.castSpell.spellId = 23014;
 
-        map->ScriptCommandStartDirect(scriptAddMindExhaustion, pPlayer, pGo);
-        map->ScriptCommandStartDirect(scriptAddPossess, razorgore, pGo);
-        map->ScriptCommandStartDirect(scriptPlayerCastPossess, pPlayer, pGo);
-        map->ScriptCommandStartDirect(scriptTriggerCastPossess, pGo->FindNearestCreature(14449, 5), pGo);
+        if (razorgore)
+        {
+            if (!map->ScriptCommandStartDirect(scriptPlayerCastPossess, pPlayer, pGo))
+            {
+                map->ScriptCommandStartDirect(scriptAddMindExhaustion, pPlayer, pGo);
+                map->ScriptCommandStartDirect(scriptAddPossess, razorgore, pGo);
+                map->ScriptCommandStartDirect(scriptTriggerCastPossess, pGo->FindNearestCreature(14449, 5), pGo);
+            }
+        }
+        else
+            sLog.Out(LOG_DBERROR, LOG_LVL_ERROR, "GOHello_go_orbe_domination - Razorgore not found");
     }
 
     return true;
