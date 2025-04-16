@@ -2053,7 +2053,12 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                 if (CreatureData const* razorgoreData = sObjectMgr.GetCreatureData(84388))
                 {
                     if (Creature* razorgore = target->GetMap()->GetCreature(razorgoreData->GetObjectGuid(84388)))
-                        razorgore->RemoveAura(23021, EFFECT_INDEX_0); // Dragon Orb
+                    {
+                        // Dragon Orb
+                        razorgore->RemoveAura(23021, EFFECT_INDEX_0);
+                        razorgore->RemoveAura(23021, EFFECT_INDEX_1);
+                        razorgore->RemoveAura(23021, EFFECT_INDEX_2);
+                    }
                     else
                         sLog.Out(LOG_DBERROR, LOG_LVL_ERROR, "HandleAuraDummy: Use Dragon Orb unapply - Razorgore not found");
                 }
