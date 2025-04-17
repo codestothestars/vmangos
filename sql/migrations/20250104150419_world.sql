@@ -12,6 +12,7 @@ INSERT INTO `migrations` VALUES ('20250104150419');
 UPDATE `conditions` SET `value3` = `value3` | 0x2, `value4` = 0 WHERE `type` = 20 AND `value4` = 1;
 
 -- Remember to update all condition IDs at the end to use the first gap.
+-- getting CONDITION 241 type 21 used with bad parameters, called from script action, used with target: <nullptr>, map 469, source Gameobject (Entry: 177808 Guid: 234816)
 --  241: Black Dragon Egg within 100 yards
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 241, 21,     177807,  100,   0,   0, 0x2);
 --  242: No Black Dragon Egg within 100 yards
@@ -806,7 +807,7 @@ INSERT INTO `creature_movement_special`
 -- Events list for Blackwing Legionnaire
 REPLACE `creature_spells`
 (`entry`, `name`,                  `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `spellId_3`, `probability_3`, `castTarget_3`, `targetParam1_3`, `targetParam2_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`) VALUES
-( 124160, 'Blackwing Legionnaire',       15580,             100,              1,                   3,                  16,                  5,                 16,       15754,             100,              1,                   0,                  15,                  6,                 13,       23967,             100,              8,            12435,                5,                   1,                  24,                  6,                 27);
+( 124160, 'Blackwing Legionnaire',       15580,             100,              1,                   3,                  16,                  5,                 16,       15754,             100,              1,                   0,                  15,                  6,                 13,       23967,             100,              8,            12435,                7,                   1,                  24,                  6,                 27);
 DELETE FROM `creature_ai_events` WHERE `creature_id` = 12416;
 INSERT `creature_ai_events`
 (   `id`, `creature_id`, `event_type`, `event_param1`, `action1_script`, `comment`) VALUES
@@ -817,11 +818,13 @@ INSERT `creature_ai_events`
 INSERT INTO `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `datalong2`, `datalong3`, `condition_id`, `comments`) VALUES
 (1241601,        37,         26,           1,           2,              0, 'Blackwing Legionnaire - Decrement Creature Count'),
-(1241601,        18,          5,           0,           0,            578, 'Blackwing Legionnaire - Despawn'),
+-- They're despawning now, but instantly.
+(1241601,        18,       5000,           0,           0,            578, 'Blackwing Legionnaire - Despawn'),
 (1241602,        49,          1,           0,           0,              0, 'Blackwing Legionnaire - Combat Pulse'),
 (1241604,        18,          0,           0,           0,              0, 'Blackwing Legionnaire - Despawn');
 
 -- Events list for Blackwing Mage
+-- Not casting Arcane Explosion.
 REPLACE `creature_spells`
 (`entry`, `name`,           `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`) VALUES
 ( 124200, 'Blackwing Mage',       17290,             100,              1,                   0,                   0,                  3,                 12);
@@ -841,12 +844,13 @@ INSERT INTO `creature_ai_scripts`
 (1242002,        49,          1,           0,           0,             0,              0, 'Blackwing Mage - Combat Pulse'),
 (1242003,        18,          0,           0,           0,             0,              0, 'Blackwing Mage - Despawn (reached home)'),
 (1242004,        37,         26,           1,           2,             0,              0, 'Blackwing Mage - Decrement Creature Count'),
-(1242004,        18,          5,           0,           0,             0,            578, 'Blackwing Mage - Despawn (death)');
+(1242004,        18,       5000,           0,           0,             0,            578, 'Blackwing Mage - Despawn (death)');
+UPDATE `creature_template` SET `spell_list_id` = 124200 WHERE `entry` = 12420;
 
 -- Events list for Death Talon Dragonspawn
 REPLACE `creature_spells`
 (`entry`, `name`,                    `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `spellId_3`, `probability_3`, `castTarget_3`, `targetParam1_3`, `targetParam2_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`) VALUES
-( 124220, 'Death Talon Dragonspawn',       15580,             100,              1,                   0,                  32,                  4,                  27,       15663,             100,              1,                  0,                  32,                 13,                 36,       23967,             100,              8,            12435,                5,                   0,                  34,                  6,                 36);
+( 124220, 'Death Talon Dragonspawn',       15580,             100,              1,                   0,                  32,                  4,                  27,       15663,             100,              1,                  0,                  32,                 13,                 36,       23967,             100,              8,            12435,                7,                   0,                  34,                  6,                 36);
 DELETE FROM `creature_ai_events` WHERE `creature_id` = 12422;
 REPLACE `creature_ai_events`
 (   `id`, `creature_id`, `event_type`, `event_param1`, `action1_script`, `comment`) VALUES

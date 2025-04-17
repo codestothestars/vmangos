@@ -668,8 +668,10 @@ bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, 
         case CONDITION_CREATURE_FIT_CONDITION:
         {
             Map* pMap = const_cast<Map*>(map ? map : (source ? source->GetMap() : target->GetMap()));
-            if (Creature* pCreature = pMap->GetCreature(m_value1))
-                return sConditionStorage.LookupEntry<ConditionEntry>(m_value2)->Meets(pCreature, map, source, conditionSourceType);
+            if (CreatureData const* creatureData = sObjectMgr.GetCreatureData(m_value1))
+                // is there a shortcut for all this? check other conditions that take a creature guid
+                if (Creature* pCreature = pMap->GetCreature(creatureData->GetObjectGuid(m_value1)))
+                    return sConditionStorage.LookupEntry<ConditionEntry>(m_value2)->Meets(pCreature, map, source, conditionSourceType);
             return false;
         }
         case CONDITION_CREATURE_PHASE:
