@@ -1325,18 +1325,6 @@ bool Map::ScriptCommand_StartScript(ScriptInfo const& script, WorldObject* sourc
 
     if (scriptId)
     {
-        if (script.id == 1243511 && scriptId == 1243503)
-        {
-            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Cast Fireball (reached home)");
-        }
-        if (script.id == 1243512 && scriptId == 1243503)
-        {
-            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Cast Fireball (death)");
-        }
-        if (scriptId == 1243504)
-        {
-            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn encounter");
-        }
         ScriptsStart(sGenericScripts, scriptId, source ? source->GetObjectGuid() : ObjectGuid(), target ? target->GetObjectGuid() : ObjectGuid());
     }
     else
