@@ -834,7 +834,7 @@ REPLACE `creature_spells`
 DELETE FROM `creature_ai_events` WHERE `creature_id` = 12420;
 INSERT `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
-(1242001,         12420,            588,            0,                        0b1,          0x01,              0,          22000,           3000,          22000,          1242001, 'Blackwing Mage - In Combat (periodic)'),
+(1242001,         12420,            588,            0,                        0b0,          0x01,              0,          22000,           3000,          22000,          1242001, 'Blackwing Mage - In Combat (periodic)'),
 (1242002,         12420,              0,           29,                        0b0,          0x00,              9,              0,              0,              0,          1242002, 'Blackwing Mage - Movement inform'),
 -- Need to decrement creature count on death.
 -- Lower this ID at the end as needed.

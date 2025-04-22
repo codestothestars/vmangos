@@ -659,7 +659,6 @@ bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, 
         {
             if (target->IsCreature())
             {
-                // If this crashes or something, can probably add a Creature::HasVictimInRange.
                 return (bool)((Creature*)target)->GetVictimInRange(0, m_value1);
             }
 
