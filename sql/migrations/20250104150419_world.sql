@@ -827,7 +827,6 @@ INSERT INTO `creature_ai_scripts`
 (1241604,        18,          0,           0,           0,           0,         0,              0, 'Blackwing Legionnaire - Despawn');
 
 -- Events list for Blackwing Mage
--- Not casting Arcane Explosion.
 REPLACE `creature_spells`
 (`entry`, `name`,           `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`) VALUES
 ( 124200, 'Blackwing Mage',       17290,             100,              1,                   0,                   0,                  3,                 12);
