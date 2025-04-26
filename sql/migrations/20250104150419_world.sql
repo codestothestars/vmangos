@@ -30,8 +30,8 @@ INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `v
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 576, -1,        574,  575,   0,   0, 0x0);
 --  577: Source is on phase 0
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 577, 62,          0,    0,   0,   0, 0x0);
---  578: Nefarian's Troops is on phase 0
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 578, 61,      12796,  577,   0,   0, 0x0);
+--  579: Nefarian's Troops is on phase 0
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 579, 61,      12796,  577,   0,   0, 0x0);
 --  581: Instance data 0 (Razorgore) equals 0 (not started)
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 581, 34,          0,    0,   0,   0, 0x0);
 --  582: Nearby Razorgore within 90 yards
@@ -52,13 +52,21 @@ INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `v
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 589, 35,       8302,    0,  24,   2, 0x0);
 --  590: Map event data 0 equal or higher than 25
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 590, 35,       8302,    0,  25,   1, 0x0);
+--  591: Map event data 1 equal to 0
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 591, 35,       8302,    1,   0,   0, 0x0);
+--  592: Map event data 1 equal to 1
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 592, 35,       8302,    1,   1,   0, 0x0);
+--  593: Map event data 2 equal to 0
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 593, 35,       8302,    2,   0,   0, 0x0);
+--  594: Map event data 2 equal to 1
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 594, 35,       8302,    2,   1,   0, 0x0);
 -- 8302: Map event 8302 (Razorgore) is active
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES (8302, 36,       8302,    0,   0,   0, 0x0);
 -- 8303: Map event 8302 (Razorgore) is not active
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES (8303, 36,       8302,    0,   0,   0, 0x1);
 -- 8304: (241: Black Dragon Egg within 100 yards) And (8302: Map event 8302 (Razorgore) is active)
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES (8304, -1,        241, 8302,   0,   0, 0x0);
--- 8305: (589: Map event data 26 equal or less than 24) And (8304: (241: Black Dragon Egg within 100 yards) And (8302: Map event 8302 (Razorgore) is active))
+-- 8305: (589: Map event data 0 equal or less than 24) And (8304: (241: Black Dragon Egg within 100 yards) And (8302: Map event 8302 (Razorgore) is active))
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES (8305, -1,        589, 8304,   0,   0, 0x0);
 
 -- Define targets for Explode Orb Effect.
@@ -820,8 +828,7 @@ INSERT `creature_ai_events`
 INSERT INTO `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `dataint`, `condition_id`, `comments`) VALUES
 (1241601,        65,       8302,           0,           1,           2,         0,              0, 'Blackwing Legionnaire - Decrement Creature Count'),
--- They're despawning now, but instantly.
-(1241601,        18,       5000,           0,           0,           0,         0,            578, 'Blackwing Legionnaire - Despawn'),
+(1241601,        18,       5000,           0,           0,           0,         0,            579, 'Blackwing Legionnaire - Despawn'),
 (1241602,        49,          1,           0,           0,           0,         0,              0, 'Blackwing Legionnaire - Combat Pulse'),
 (1241603,        39,    8302036,           0,           0,           0,       100,              0, 'Blackwing Legionnaire - Increment Creature Count'),
 (1241604,        18,          0,           0,           0,           0,         0,              0, 'Blackwing Legionnaire - Despawn');
@@ -835,7 +842,6 @@ INSERT `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
 (1242001,         12420,            588,            0,                        0b0,          0x01,              0,          22000,           3000,          22000,          1242001, 'Blackwing Mage - In Combat (periodic)'),
 (1242002,         12420,              0,           29,                        0b0,          0x00,              9,              0,              0,              0,          1242002, 'Blackwing Mage - Movement inform'),
--- Need to decrement creature count on death.
 -- Lower this ID at the end as needed.
 (1242003,         12420,              0,           21,                        0b0,          0x00,              0,              0,              0,              0,          1242003, 'Blackwing Mage - Reached Home'),
 (1242004,         12420,              0,            6,                        0b0,          0x00,              0,              0,              0,              0,          1242004, 'Blackwing Mage - Death'),
@@ -847,7 +853,7 @@ INSERT INTO `creature_ai_scripts`
 (1242002,        49,          1,           0,           0,           0,             0,         0,              0, 'Blackwing Mage - Combat Pulse'),
 (1242003,        18,          0,           0,           0,           0,             0,         0,              0, 'Blackwing Mage - Despawn (reached home)'),
 (1242004,        65,       8302,           0,           1,           2,             0,         0,              0, 'Blackwing Mage - Decrement Creature Count'),
-(1242004,        18,       5000,           0,           0,           0,             0,         0,            578, 'Blackwing Mage - Despawn (death)'),
+(1242004,        18,       5000,           0,           0,           0,             0,         0,            579, 'Blackwing Mage - Despawn (death)'),
 (1242005,        39,    8302036,           0,           0,           0,             0,       100,              0, 'Blackwing Mage - Increment Creature Count');
 UPDATE `creature_template` SET `spell_list_id` = 124200 WHERE `entry` = 12420;
 
@@ -885,9 +891,6 @@ INSERT `creature_ai_events`
 (1243504,         12435,             573,           1,                   0b010111,          0x01,           6000,          16000,           6000,          16000,          1243504, 'Razorgore the Untamed - Out of Combat (periodic) (phase 3)'),
 (1243505,         12435,             573,           1,                   0b001111,          0x01,           6000,          16000,           6000,          16000,          1243505, 'Razorgore the Untamed - Out of Combat (periodic) (phase 4)'),
 (1243506,         12435,               0,           4,                   0b100000,          0x00,              0,              0,              0,              0,          1243506, 'Razorgore the Untamed - Aggro'),
-(1243508,         12435,               0,          36,                   0b000000,          0x01,          19873,             -1,              0,              0,          1243508, 'Razorgore the Untamed - Spell Hit Target (any phase)'),
-(1243509,         12435,               0,          36,                   0b000010,          0x00,          19873,             -1,              0,              0,          1243509, 'Razorgore the Untamed - Spell Hit Target (phase 0)'),
-(1243510,         12435,               0,          36,                   0b000001,          0x00,          19873,             -1,              0,              0,          1243510, 'Razorgore the Untamed - Spell Hit Target (phase 1)'),
 (1243511,         12435,               0,          21,                   0b000000,          0x00,              0,              0,              0,              0,          1243511, 'Razorgore the Untamed - Reached Home'),
 (1243512,         12435,             241,           6,                   0b100000,          0x00,              0,              0,              0,              0,          1243512, 'Razorgore the Untamed - Death (eggs remain, before phase 5)'),
 (1243513,         12435,             241,           6,                   0b000000,          0x00,              0,              0,              0,              0,          1243513, 'Razorgore the Untamed - Death (eggs remain, any phase)'),
@@ -908,12 +911,8 @@ INSERT `creature_ai_scripts`
 (1243504,          0,        39,    1243502,           0,           0,           0,               0,               0,             0,         0x00,       100,          0,          0, 0       ,              0, 'Razorgore the Untamed - Increment phase (point 4)'),
 (1243505,          0,        35,          1,           0,           0,           0,               0,               0,             0,         0x00,         0,          0,          0, 4.64258 ,              0, 'Razorgore the Untamed - Turn to point 5'),
 (1243505,          0,        44,          0,           0,           0,           0,               0,               0,             0,         0x00,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Set phase 0 (Out of Combat)'),
-(1243506,          0,        44,          0,           0,           0,           0,               0,               0,             0,         0x00,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Set phase 0 (Aggro)'),
+(1243506,          0,        65,       8302,           1,           0,           0,               0,               0,             0,         0x00,         0,          0,          0, 0       ,           8302, 'Razorgore the Untamed - Set map event data 1 to 0 (Aggro)'),
 (1243506,          0,        49,          1,           0,           0,           0,               0,               0,             0,         0x00,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Combat Pulse (Aggro)'),
-(1243508,          0,        68,    1660401,           2,       14453,         100,               0,               0,             0,         0x00,         0,          0,          0, 0       ,            242, 'Razorgore the Untamed - Nefarian''s Troops Flee (Orb of Domination)'),
-(1243508,          0,        68,    1660401,           2,       16604,         100,               0,               0,             0,         0x00,         0,          0,          0, 0       ,            242, 'Razorgore the Untamed - Nefarian''s Troops Flee (Blackwing Spell Marker)'),
-(1243509,          0,         0,          1,           0,           0,           0,               0,               0,             0,         0x00,      9961,       9962,       9963, 0       ,              0, 'Razorgore the Untamed - Yell (destroyed egg)'),
-(1243509,          0,        44,          1,           0,           0,           0,               0,               0,             0,         0x00,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Set phase 1'),
 (1243510,          0,        44,          0,           0,           0,           0,               0,               0,             0,         0x00,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Set phase 0'),
 (1243511,          0,         0,          1,           0,           0,           0,               0,               0,             0,         0x00,      7980,          0,          0, 0       ,              0, 'Razorgore the Untamed - Yell (reached home)'),
 (1243511,          0,        18,      20000,           0,           0,           0,               0,               0,             0,         0x00,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Despawn (reached home)'),
@@ -925,7 +924,7 @@ INSERT `creature_ai_scripts`
 (1243513,          0,        62,       8302,           0,           0,           0,               0,               0,             0,         0x00,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - End map event (Failure)'),
 (1243513,          0,        39,    1243504,           0,           0,           0,               0,               0,             0,         0x00,       100,          0,          0, 0       ,              0, 'Razorgore the Untamed - Respawn encounter'),
 (1243514,          0,        62,       8302,           1,           0,           0,               0,               0,             0,         0x00,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - End map event (Success)'),
-(1243516,          0,        44,          0,           0,           0,           0,               0,               0,             0,         0x00,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Set phase 0 (Possess removed)'),
+(1243516,          0,        65,       8302,           1,           0,           0,               0,               0,             0,         0x00,         0,          0,          0, 0       ,              0, 'Razorgore the Untamed - Set map event data 1 to 0 (Possess removed)'),
 (1243516,          0,         5,          0,           0,           0,           0,           12784,               0,             9,         0x02,         0,          0,          0, 0       ,            572, 'Razorgore the Untamed - Interrupt casts on Blackwing Orb Trigger'),
 (1243516,          0,        14,      23021,           0,           0,           0,               0,               0,             0,         0x00,         0,          0,          0, 0       ,            572, 'Razorgore the Untamed - Remove aura Dragon Orb');
 REPLACE `creature_spells`
@@ -1074,6 +1073,49 @@ INSERT `generic_scripts`
 INSERT `generic_scripts`
 (  `id`, `command`, `datalong`, `comments`) VALUES
 (176965,        11,     234784, 'Portcullis - Open');
+
+-- Black Dragon Egg
+INSERT `gameobject_scripts`
+(  `id`, `command`,  `datalong`, `dataint`, `comments`) VALUES
+(234786,        39,    17780701,       100, 'Black Dragon Egg 1 - Use'),
+(234787,        39,    17780701,       100, 'Black Dragon Egg 2 - Use'),
+(234788,        39,    17780701,       100, 'Black Dragon Egg 3 - Use'),
+(234789,        39,    17780701,       100, 'Black Dragon Egg 4 - Use'),
+(234790,        39,    17780701,       100, 'Black Dragon Egg 5 - Use'),
+(234791,        39,    17780701,       100, 'Black Dragon Egg 6 - Use'),
+(234792,        39,    17780701,       100, 'Black Dragon Egg 7 - Use'),
+(234793,        39,    17780701,       100, 'Black Dragon Egg 8 - Use'),
+(234794,        39,    17780701,       100, 'Black Dragon Egg 9 - Use'),
+(234795,        39,    17780701,       100, 'Black Dragon Egg 10 - Use'),
+(234796,        39,    17780701,       100, 'Black Dragon Egg 11 - Use'),
+(234797,        39,    17780701,       100, 'Black Dragon Egg 12 - Use'),
+(234798,        39,    17780701,       100, 'Black Dragon Egg 13 - Use'),
+(234799,        39,    17780701,       100, 'Black Dragon Egg 14 - Use'),
+(234800,        39,    17780701,       100, 'Black Dragon Egg 15 - Use'),
+(234801,        39,    17780701,       100, 'Black Dragon Egg 16 - Use'),
+(234802,        39,    17780701,       100, 'Black Dragon Egg 17 - Use'),
+(234803,        39,    17780701,       100, 'Black Dragon Egg 18 - Use'),
+(234804,        39,    17780701,       100, 'Black Dragon Egg 19 - Use'),
+(234805,        39,    17780701,       100, 'Black Dragon Egg 20 - Use'),
+(234806,        39,    17780701,       100, 'Black Dragon Egg 21 - Use'),
+(234807,        39,    17780701,       100, 'Black Dragon Egg 22 - Use'),
+(234808,        39,    17780701,       100, 'Black Dragon Egg 23 - Use'),
+(234809,        39,    17780701,       100, 'Black Dragon Egg 24 - Use'),
+(234810,        39,    17780701,       100, 'Black Dragon Egg 25 - Use'),
+(234811,        39,    17780701,       100, 'Black Dragon Egg 26 - Use'),
+(234812,        39,    17780701,       100, 'Black Dragon Egg 27 - Use'),
+(234813,        39,    17780701,       100, 'Black Dragon Egg 28 - Use'),
+(234814,        39,    17780701,       100, 'Black Dragon Egg 29 - Use'),
+(234815,        39,    17780701,       100, 'Black Dragon Egg 30 - Use');
+INSERT `generic_scripts`
+(    `id`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `condition_id`, `comments`) VALUES
+(17780701,          0,        68,    1660401,           2,       14453,         100,               0,             0,         0x00,         0,          0,          0,            242, 'Black Dragon Egg - Nefarian''s Troops Flee (Orb of Domination)'),
+(17780701,          0,        68,    1660401,           2,       16604,         100,               0,             0,         0x00,         0,          0,          0,            242, 'Black Dragon Egg - Nefarian''s Troops Flee (Blackwing Spell Marker)'),
+(17780701,          0,         0,          1,           0,           0,           0,           84388,             9,         0x02,      9961,       9962,       9963,            591, 'Black Dragon Egg - Yell (destroyed egg)'),
+(17780701,          0,        65,       8302,           2,           1,           0,               0,             0,         0x00,         0,          0,          0,            591, 'Black Dragon Egg - Set map event data 2 to 1'),
+(17780701,          0,        65,       8302,           2,           0,           0,               0,             0,         0x00,         0,          0,          0,            592, 'Black Dragon Egg - Set map event data 2 to 0'),
+(17780701,          1,        65,       8302,           1,           1,           0,               0,             0,         0x00,         0,          0,          0,            594, 'Black Dragon Egg - Set map event data 1 to 1'),
+(17780701,          1,        65,       8302,           1,           0,           0,               0,             0,         0x00,         0,          0,          0,            593, 'Black Dragon Egg - Set map event data 1 to 0');
 
 -- Correct target for spell Use Dragon Orb.
 UPDATE `spell_script_target` SET `targetEntry` = 14449, `type` = 1 WHERE `entry` = 23018;
