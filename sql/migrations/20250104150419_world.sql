@@ -12,12 +12,15 @@ INSERT INTO `migrations` VALUES ('20250104150419');
 UPDATE `conditions` SET `value3` = `value3` | 0x2, `value4` = 0 WHERE `type` = 20 AND `value4` = 1;
 
 -- Remember to update all condition IDs at the end to use the first gap.
--- getting CONDITION 241 type 21 used with bad parameters, called from script action, used with target: <nullptr>, map 469, source Gameobject (Entry: 177808 Guid: 234816)
+-- Problem - The egg "exists" even after despawning from activation.
+-- Need to augment CONDITION_NEARBY_GAMEOBJECT with a condition_id like we did with CONDITION_NEARBY_CREATURE.
 --  241: Black Dragon Egg within 100 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 241, 21,     177807,  100,   0,   0, 0x2);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 241, 21,     177807,  100, 0x0, 122, 0x2);
 --  242: No Black Dragon Egg within 100 yards
 --  Test whether it works when standing in corners
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 242, 21,     177807,  100,   0,   0, 0x3);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 242, 21,     177807,  100, 0x0, 122, 0x3);
+--  275: No Black Dragon Egg within 100 yards, except self
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 275, 21,     177807,  100, 0x1, 122, 0x1);
 --  572: Does not have aura Possess
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 572,  1,      19832,    0,   0,   0, 0x1);
 --  573: Has aura Possess
@@ -827,7 +830,7 @@ INSERT `creature_ai_events`
 (1241604,         12416,           21,              0,          1241604, 'Blackwing Legionnaire - Reached Home');
 INSERT INTO `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `dataint`, `condition_id`, `comments`) VALUES
-(1241601,        65,       8302,           0,           1,           2,         0,              0, 'Blackwing Legionnaire - Decrement Creature Count'),
+(1241601,        65,       8302,           0,           1,           2,         0,           8302, 'Blackwing Legionnaire - Decrement Creature Count'),
 (1241601,        18,       5000,           0,           0,           0,         0,            579, 'Blackwing Legionnaire - Despawn'),
 (1241602,        49,          1,           0,           0,           0,         0,              0, 'Blackwing Legionnaire - Combat Pulse'),
 (1241603,        39,    8302036,           0,           0,           0,       100,              0, 'Blackwing Legionnaire - Increment Creature Count'),
@@ -852,7 +855,7 @@ INSERT INTO `creature_ai_scripts`
 (1242001,        15,      22271,           0,           0,           0,             6,         0,              0, 'Blackwing Mage - Cast Arcane Explosion'),
 (1242002,        49,          1,           0,           0,           0,             0,         0,              0, 'Blackwing Mage - Combat Pulse'),
 (1242003,        18,          0,           0,           0,           0,             0,         0,              0, 'Blackwing Mage - Despawn (reached home)'),
-(1242004,        65,       8302,           0,           1,           2,             0,         0,              0, 'Blackwing Mage - Decrement Creature Count'),
+(1242004,        65,       8302,           0,           1,           2,             0,         0,           8302, 'Blackwing Mage - Decrement Creature Count'),
 (1242004,        18,       5000,           0,           0,           0,             0,         0,            579, 'Blackwing Mage - Despawn (death)'),
 (1242005,        39,    8302036,           0,           0,           0,             0,       100,              0, 'Blackwing Mage - Increment Creature Count');
 UPDATE `creature_template` SET `spell_list_id` = 124200 WHERE `entry` = 12420;
@@ -863,13 +866,13 @@ REPLACE `creature_spells`
 ( 124220, 'Death Talon Dragonspawn',       15580,             100,              1,                   0,                  32,                  4,                  27,       15663,             100,              1,                  0,                  32,                 13,                 36,       23967,             100,              8,            12435,                7,                   0,                  34,                  6,                 36);
 DELETE FROM `creature_ai_events` WHERE `creature_id` = 12422;
 REPLACE `creature_ai_events`
-(   `id`, `creature_id`, `event_type`, `event_param1`, `action1_script`, `comment`) VALUES
-(1242201,         12422,            7,              0,          1242201, 'Death Talon Dragonspawn - Evade'),
-(1242202,         12422,           29,              9,          1242202, 'Death Talon Dragonspawn - Movement inform'),
-(1242203,         12422,            6,              0,          1242203, 'Death Talon Dragonspawn - Death'),
+(   `id`, `creature_id`, `condition_id`, `event_type`, `event_param1`, `action1_script`, `comment`) VALUES
+(1242201,         12422,              0,            7,              0,          1242201, 'Death Talon Dragonspawn - Evade'),
+(1242202,         12422,              0,           29,              9,          1242202, 'Death Talon Dragonspawn - Movement inform'),
+(1242203,         12422,           8302,            6,              0,          1242203, 'Death Talon Dragonspawn - Death'),
 -- Lower this ID at the end as needed.
-(1242204,         12422,           21,              0,          1242204, 'Death Talon Dragonspawn - Reached Home'),
-(1242205,         12422,           11,              0,          1242205, 'Death Talon Dragonspawn - Spawned');
+(1242204,         12422,              0,           21,              0,          1242204, 'Death Talon Dragonspawn - Reached Home'),
+(1242205,         12422,              0,           11,              0,          1242205, 'Death Talon Dragonspawn - Spawned');
 INSERT INTO `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `dataint`, `condition_id`, `comments`) VALUES
 (1242201,        34,          1,           0,           0,           0,         0,              0, 'Death Talon Dragonspawn - Set Home Position'),
@@ -1059,10 +1062,22 @@ REPLACE `creature_spells`
 (`entry`, `name`,                                 `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`) VALUES
 ( 144560, 'Blackwing Lair - Blackwing Guardsman',       15580,             100,              1,                   5,                  23,                  1,                 16,       15754,             100,              1,                   3,                  24,                  8,                 11);
 
+-- Events list for Nefarian's Troops
+INSERT `creature_ai_events`
+(   `id`, `creature_id`, `event_type`, `event_inverse_phase_mask`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
+(1445901,         14459,            8,                       0b10,          23032,             -1,          1445901, 'Nefarian''s Troops - Hit by spell');
+INSERT `creature_ai_scripts`
+(   `id`, `command`) VALUES
+(1445901,        44);
+UPDATE `creature_template` SET `ai_name` = 'EventAI';
+
 -- Events list for Blackwing Spell Marker
 REPLACE `generic_scripts`
 (   `id`, `command`, `datalong`, `comments`) VALUES
 (1660401,        15,      23032, 'Blackwing Spell Marker - Cast Nefarian''s Troops Flee');
+
+-- Nefarian's Troops Flee hits creature 12434 (Monster Generator (Blackwing))
+-- double check that creature's spawn/despawn behavior.
 
 -- Portcullis (Entry: 176964 Guid: 234783) Open Script
 INSERT `generic_scripts`
@@ -1109,8 +1124,8 @@ INSERT `gameobject_scripts`
 (234815,        39,    17780701,       100, 'Black Dragon Egg 30 - Use');
 INSERT `generic_scripts`
 (    `id`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `condition_id`, `comments`) VALUES
-(17780701,          0,        68,    1660401,           2,       14453,         100,               0,             0,         0x00,         0,          0,          0,            242, 'Black Dragon Egg - Nefarian''s Troops Flee (Orb of Domination)'),
-(17780701,          0,        68,    1660401,           2,       16604,         100,               0,             0,         0x00,         0,          0,          0,            242, 'Black Dragon Egg - Nefarian''s Troops Flee (Blackwing Spell Marker)'),
+(17780701,          0,        68,    1660401,           2,       14453,         100,               0,             0,         0x00,         0,          0,          0,            275, 'Black Dragon Egg - Nefarian''s Troops Flee (Orb of Domination)'),
+(17780701,          0,        68,    1660401,           2,       16604,         100,               0,             0,         0x00,         0,          0,          0,            275, 'Black Dragon Egg - Nefarian''s Troops Flee (Blackwing Spell Marker)'),
 (17780701,          0,         0,          1,           0,           0,           0,           84388,             9,         0x02,      9961,       9962,       9963,            591, 'Black Dragon Egg - Yell (destroyed egg)'),
 (17780701,          0,        65,       8302,           2,           1,           0,               0,             0,         0x00,         0,          0,          0,            591, 'Black Dragon Egg - Set map event data 2 to 1'),
 (17780701,          0,        65,       8302,           2,           0,           0,               0,             0,         0x00,         0,          0,          0,            592, 'Black Dragon Egg - Set map event data 2 to 0'),
@@ -1119,6 +1134,40 @@ INSERT `generic_scripts`
 
 -- Correct target for spell Use Dragon Orb.
 UPDATE `spell_script_target` SET `targetEntry` = 14449, `type` = 1 WHERE `entry` = 23018;
+
+-- Define targets for Nefarian's Troops Flee.
+INSERT `spell_script_target`
+(`entry`, `type`, `targetEntry`) VALUES
+(  23032,      1,          7386),
+(  23032,      1,         10259),
+(  23032,      1,         12017),
+(  23032,      1,         12416),
+(  23032,      1,         12420),
+(  23032,      1,         12422),
+(  23032,      1,         12434),
+(  23032,      1,         12435),
+(  23032,      1,         12457),
+(  23032,      1,         12458),
+(  23032,      1,         12459),
+(  23032,      1,         12460),
+(  23032,      1,         12461),
+(  23032,      1,         12463),
+(  23032,      1,         12464),
+(  23032,      1,         12465),
+(  23032,      1,         12467),
+(  23032,      1,         12468),
+(  23032,      1,         12999),
+(  23032,      1,         13020),
+(  23032,      1,         13996),
+(  23032,      1,         14020),
+(  23032,      1,         14022),
+(  23032,      1,         14023),
+(  23032,      1,         14024),
+(  23032,      1,         14025),
+(  23032,      1,         14449),
+(  23032,      1,         14459),
+(  23032,      1,         16604),
+(  23032,      3,             0);
 
 -- TESTING
 -- UPDATE creature_template SET display_id1 = 1311 WHERE entry = 12434; -- was 11686

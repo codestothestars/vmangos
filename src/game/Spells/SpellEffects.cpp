@@ -584,13 +584,16 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                         {
                             case 12416: // Blackwing Legionnaire
                             case 12420: // Blackwing Mage
+                                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Nefarian's Troops Flee Hit Blackwing Legionnaire/Mage");
                                 creature->SetCreatureReactState(REACT_PASSIVE);
                                 creature->SetHomePosition(-7556.65, -1025.56, 408.56, 100);
                                 return;
                             case 12422: // Death Talon Dragonspawn
+                                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Nefarian's Troops Flee Hit Death Talon Dragonspawn");
                                 creature->DespawnOrUnsummon();
                                 return;
                             case 14459: // Nefarian's Troops
+                                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Nefarian's Troops Flee Hit Nefarian's Troops");
                                 if (auto* pAI = dynamic_cast<CreatureEventAI*>(creature->AI()))
                                 {
                                     if (pAI->m_Phase == 0)

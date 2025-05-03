@@ -106,10 +106,6 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, SpellCaster* 
     //Check the inverse phase mask (event doesn't trigger if current phase bit is set in mask)
     if (pHolder.Event.event_inverse_phase_mask & (1 << m_Phase))
     {
-        if (pHolder.Event.event_id == 1243512)
-        {
-            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Death (eggs remain, before phase 5) - Phase is wrong");
-        }
         return false;
     }
 

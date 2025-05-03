@@ -2998,7 +2998,7 @@ Creature* WorldObject::FindRandomCreature(uint32 entry, float range, bool alive,
     return *tcIter;
 }
 
-GameObject* WorldObject::FindNearestGameObject(uint32 entry, float range) const
+GameObject* WorldObject::FindNearestGameObject(uint32 entry, float range, GameObject const* except, uint32 conditionId) const
 {
     GameObject* pGo = nullptr;
 
@@ -3006,10 +3006,10 @@ GameObject* WorldObject::FindNearestGameObject(uint32 entry, float range) const
     Cell cell(pair);
     cell.SetNoCreate();
 
-    MaNGOS::NearestGameObjectEntryInObjectRangeCheck go_check(*this, entry, range);
-    MaNGOS::GameObjectLastSearcher<MaNGOS::NearestGameObjectEntryInObjectRangeCheck> searcher(pGo, go_check);
+    MaNGOS::NearestGameObjectEntryFitConditionInObjectRangeCheck go_check(*this, entry, range, conditionId, except);
+    MaNGOS::GameObjectLastSearcher<MaNGOS::NearestGameObjectEntryFitConditionInObjectRangeCheck> searcher(pGo, go_check);
 
-    TypeContainerVisitor<MaNGOS::GameObjectLastSearcher<MaNGOS::NearestGameObjectEntryInObjectRangeCheck>, GridTypeMapContainer> go_searcher(searcher);
+    TypeContainerVisitor<MaNGOS::GameObjectLastSearcher<MaNGOS::NearestGameObjectEntryFitConditionInObjectRangeCheck>, GridTypeMapContainer> go_searcher(searcher);
 
     cell.Visit(pair, go_searcher, *(GetMap()), *this, range);
 

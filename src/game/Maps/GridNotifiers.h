@@ -662,12 +662,15 @@ namespace MaNGOS
     class NearestGameObjectEntryFitConditionInObjectRangeCheck
     {
         public:
-            NearestGameObjectEntryFitConditionInObjectRangeCheck(WorldObject const& obj,uint32 entry, float range, uint32 conditionId) : i_obj(obj), i_entry(entry), i_range(range), i_conditionId(conditionId) {}
+            NearestGameObjectEntryFitConditionInObjectRangeCheck(WorldObject const& obj,uint32 entry, float range, uint32 conditionId, GameObject const* except = nullptr) : i_obj(obj), i_entry(entry), i_range(range), i_conditionId(conditionId), i_except(except) {}
             WorldObject const& GetFocusObject() const { return i_obj; }
             bool operator()(GameObject* go)
             {
                 if (go->GetEntry() == i_entry && i_obj.IsWithinDistInMap(go, i_range))
                 {
+                    if (go == i_except)
+                        return false;
+
                     if (i_conditionId && !IsConditionSatisfied(i_conditionId, go, go->GetMap(), &i_obj, CONDITION_FROM_SPELL_AREA))
                         return false;
 
@@ -682,6 +685,7 @@ namespace MaNGOS
             uint32 i_entry;
             float  i_range;
             uint32 i_conditionId;
+            GameObject const* i_except;
 
             // prevent clone this object
             NearestGameObjectEntryFitConditionInObjectRangeCheck(NearestGameObjectEntryFitConditionInObjectRangeCheck const&);

@@ -1,4 +1,5 @@
 #include "SpellEntry.h"
+#include "ScriptMgr.h"
 #include "SharedDefines.h"
 #include "SpellAuraDefines.h"
 #include "SpellMgr.h"

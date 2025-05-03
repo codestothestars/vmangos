@@ -610,6 +610,17 @@ bool Map::ScriptCommand_CastSpell(ScriptInfo const& script, WorldObject* source,
 {
     SpellCaster* pTarget = ToSpellCaster(target);
 
+    if (script.id == 1660401)
+    {
+        if (source)
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Blackwing Spell Marker - Cast Nefarian''s Troops Flee - guid %u", source->GetGUIDLow());
+        }
+        else
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Blackwing Spell Marker - Cast Nefarian''s Troops Flee - no source");
+        }
+    }
     if (script.id == 1243503 && script.castSpell.spellId == 23024) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Cast Fireball"); }
 
     if (!source)
@@ -642,6 +653,11 @@ bool Map::ScriptCommand_CastSpell(ScriptInfo const& script, WorldObject* source,
     {
         if (script.id == 1243503 && script.castSpell.spellId == 23024) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Cast Fireball - CastSpell"); }
         result = pSource->CastSpell(pTarget, script.castSpell.spellId, (script.castSpell.flags & CF_TRIGGERED) != 0);
+    }
+
+    if (script.id == 1660401)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Blackwing Spell Marker - Cast Nefarian's Troops Flee - result is %u", result);
     }
 
     if (result != SPELL_CAST_OK)
@@ -1984,6 +2000,11 @@ bool Map::ScriptCommand_SetDefaultMovement(ScriptInfo const& script, WorldObject
 // SCRIPT_COMMAND_START_SCRIPT_FOR_ALL (68)
 bool Map::ScriptCommand_StartScriptForAll(ScriptInfo const& script, WorldObject* source, WorldObject* target)
 {
+    if (script.id == 17780701)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Black Dragon Egg - Nefarian's Troops Flee - %u", script.startScriptForAll.objectEntry);
+    }
+
     if (!source)
     {
         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_START_SCRIPT_FOR_ALL (script id %u) call for a nullptr source, skipping.", script.id);

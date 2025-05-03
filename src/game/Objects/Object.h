@@ -755,7 +755,7 @@ class WorldObject : public Object
 
         Creature* FindNearestCreature(uint32 entry, float range, bool alive = true, Creature const* except = nullptr, uint32 conditionId = 0) const;
         Creature* FindRandomCreature(uint32 entry, float range, bool alive = true, Creature const* except = nullptr) const;
-        GameObject* FindNearestGameObject(uint32 entry, float range) const;
+        GameObject* FindNearestGameObject(uint32 entry, float range, GameObject const* except = nullptr, uint32 conditionId = 0) const;
         GameObject* FindRandomGameObject(uint32 entry, float range) const;
         Player* FindNearestPlayer(float range) const;
         Player* FindNearestHostilePlayer(float range) const;

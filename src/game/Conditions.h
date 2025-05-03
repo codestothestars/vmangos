@@ -125,6 +125,8 @@ enum ConditionType
                                                             // Requirement: WorldObject Target
                                                             // Value1: gobject_id
                                                             // Value2: search_radius
+                                                            // Value3: flags (see enum eNearbyGameobjectFlags)
+                                                            // Value4: condition_id
     CONDITION_QUEST_NONE            = 22,                   // Returns true if the player has not taken the given quest and has not been rewared for it before.
                                                             // Requirement: Player Target
                                                             // Value1: quest_id
@@ -325,6 +327,11 @@ enum eNearbyCreatureFlags
 {
     CF_NEARBY_CREATURE_DEAD     = 0x1,
     CF_NEARBY_CREATURE_NOT_SELF = 0x2,
+};
+
+enum eNearbyGameobjectFlags
+{
+    CF_NEARBY_GAMEOBJECT_NOT_SELF = 0x1
 };
 
 class ConditionEntry
