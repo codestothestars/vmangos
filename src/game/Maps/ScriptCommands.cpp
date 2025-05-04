@@ -610,19 +610,6 @@ bool Map::ScriptCommand_CastSpell(ScriptInfo const& script, WorldObject* source,
 {
     SpellCaster* pTarget = ToSpellCaster(target);
 
-    if (script.id == 1660401)
-    {
-        if (source)
-        {
-            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Blackwing Spell Marker - Cast Nefarian''s Troops Flee - guid %u", source->GetGUIDLow());
-        }
-        else
-        {
-            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Blackwing Spell Marker - Cast Nefarian''s Troops Flee - no source");
-        }
-    }
-    if (script.id == 1243503 && script.castSpell.spellId == 23024) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Cast Fireball"); }
-
     if (!source)
     {
         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_CAST_SPELL (script id %u) call for a nullptr source, skipping.", script.id);
@@ -653,11 +640,6 @@ bool Map::ScriptCommand_CastSpell(ScriptInfo const& script, WorldObject* source,
     {
         if (script.id == 1243503 && script.castSpell.spellId == 23024) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Cast Fireball - CastSpell"); }
         result = pSource->CastSpell(pTarget, script.castSpell.spellId, (script.castSpell.flags & CF_TRIGGERED) != 0);
-    }
-
-    if (script.id == 1660401)
-    {
-        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Blackwing Spell Marker - Cast Nefarian's Troops Flee - result is %u", result);
     }
 
     if (result != SPELL_CAST_OK)
@@ -815,6 +797,8 @@ bool Map::ScriptCommand_SetMovementType(ScriptInfo const& script, WorldObject* s
                 pSource->GetMotionMaster()->MoveChase(pTarget, script.x, script.o);
             break;
         case HOME_MOTION_TYPE:
+            if (script.movement.clear)
+                pSource->GetMotionMaster()->Clear(false, true);
             pSource->GetMotionMaster()->MoveTargetedHome();
             break;
         case FLEEING_MOTION_TYPE:

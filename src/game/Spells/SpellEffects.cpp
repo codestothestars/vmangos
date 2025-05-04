@@ -564,7 +564,6 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                 }
                 case 20037: // Explode Orb Effect
                 {
-                    const char *name = unitTarget->GetName();
                     // Make sure 20038 misses the Orbs of Domination and Blackwing Spell Markers.
                     // Probably need ymir to verify that.
                     unitTarget->CastSpell(nullptr, 20038, false);
@@ -574,49 +573,6 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                 {
                     // Make sure that the Orb of Domination despawns, and does so with its "falling apart" animation as in sniffs.
                     if (effIdx == 0) unitTarget->CastSpell(nullptr, 20037, false);
-                    return;
-                }
-                case 23032: // Nefarian's Troops Flee
-                {
-                    if (Creature* creature = unitTarget->ToCreature())
-                    {
-                        switch(creature->GetEntry())
-                        {
-                            case 12416: // Blackwing Legionnaire
-                            case 12420: // Blackwing Mage
-                                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Nefarian's Troops Flee Hit Blackwing Legionnaire/Mage");
-                                creature->SetCreatureReactState(REACT_PASSIVE);
-                                creature->SetHomePosition(-7556.65, -1025.56, 408.56, 100);
-                                return;
-                            case 12422: // Death Talon Dragonspawn
-                                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Nefarian's Troops Flee Hit Death Talon Dragonspawn");
-                                creature->DespawnOrUnsummon();
-                                return;
-                            case 14459: // Nefarian's Troops
-                                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Nefarian's Troops Flee Hit Nefarian's Troops");
-                                if (auto* pAI = dynamic_cast<CreatureEventAI*>(creature->AI()))
-                                {
-                                    if (pAI->m_Phase == 0)
-                                    {
-                                        pAI->m_Phase = 1;
-
-                                        static ScriptInfo scriptFleeEmote;
-                                        scriptFleeEmote.command = SCRIPT_COMMAND_TALK;
-                                        scriptFleeEmote.talk.chatType = CHAT_TYPE_BOSS_EMOTE;
-                                        scriptFleeEmote.talk.textId[0] = 9592;
-
-                                        creature->GetMap()->ScriptCommandStart(
-                                            scriptFleeEmote,
-                                            2,
-                                            creature->GetObjectGuid(),
-                                            creature->FindNearestCreature(12435, 100)->GetObjectGuid()
-                                        );
-                                    }
-                                }
-                                return;
-                        }
-                    }
-                    
                     return;
                 }
                 case 20863: // Muglash's Brazier Trap

@@ -302,36 +302,7 @@ bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, 
         }
         case CONDITION_NEARBY_GAMEOBJECT:
         {
-            if (m_entry == 275)
-            {
-                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Condition 275 - target is %u", target->GetGUIDLow());
-
-                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Condition 275 - m_value3 is %u", m_value3);
-
-                GameObject const* except = (m_value3 & CF_NEARBY_GAMEOBJECT_NOT_SELF) ? target->ToGameObject() : nullptr;
-                if (except)
-                {
-                    sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Condition 275 - except is %u", except->GetGUIDLow());
-                }
-                else
-                {
-                    sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Condition 275 - no except");
-                }
-            }
-            GameObject* nearestObject = target->FindNearestGameObject(m_value1, m_value2, (m_value3 & CF_NEARBY_GAMEOBJECT_NOT_SELF) ? target->ToGameObject() : nullptr, m_value4);
-            
-            if (m_entry == 275)
-            {
-                if (nearestObject)
-                {
-                    sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Condition 275 - nearest egg is %u", nearestObject->GetGUIDLow());
-                }
-                else
-                {
-                    sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Condition 275 - no egg nearby");
-                }
-            }
-            return (bool)(nearestObject);
+            return (bool)(target->FindNearestGameObject(m_value1, m_value2, (m_value3 & CF_NEARBY_GAMEOBJECT_NOT_SELF) ? target->ToGameObject() : nullptr, m_value4));
         }
         case CONDITION_QUEST_NONE:
         {

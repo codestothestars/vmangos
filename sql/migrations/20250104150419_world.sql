@@ -822,19 +822,26 @@ REPLACE `creature_spells`
 ( 124160, 'Blackwing Legionnaire',       15580,             100,              1,                   3,                  16,                  5,                 16,       15754,             100,              1,                   0,                  15,                  6,                 13,       23967,             100,              8,            12435,                7,                   1,                  24,                  6,                 27);
 DELETE FROM `creature_ai_events` WHERE `creature_id` = 12416;
 INSERT `creature_ai_events`
-(   `id`, `creature_id`, `event_type`, `event_param1`, `action1_script`, `comment`) VALUES
+(   `id`, `creature_id`, `event_type`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
 -- Reorder these IDs at the end as needed.
-(1241601,         12416,            6,              0,          1241601, 'Blackwing Legionnaire - Death'),
-(1241602,         12416,           29,              9,          1241602, 'Blackwing Legionnaire - Movement inform'),
-(1241603,         12416,           11,              0,          1241603, 'Blackwing Legionnaire - Spawned'),
-(1241604,         12416,           21,              0,          1241604, 'Blackwing Legionnaire - Reached Home');
+(1241601,         12416,            6,              0,              0,          1241601, 'Blackwing Legionnaire - Death'),
+(1241602,         12416,           29,              9,              0,          1241602, 'Blackwing Legionnaire - Movement inform'),
+(1241603,         12416,           11,              0,              0,          1241603, 'Blackwing Legionnaire - Spawned'),
+(1241604,         12416,           21,              0,              0,          1241604, 'Blackwing Legionnaire - Reached home'),
+(1241605,         12416,            8,          23032,             -1,          1241605, 'Blackwing Legionnaire - Hit by spell');
 INSERT INTO `creature_ai_scripts`
-(   `id`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `dataint`, `condition_id`, `comments`) VALUES
-(1241601,        65,       8302,           0,           1,           2,         0,           8302, 'Blackwing Legionnaire - Decrement Creature Count'),
-(1241601,        18,       5000,           0,           0,           0,         0,            579, 'Blackwing Legionnaire - Despawn'),
-(1241602,        49,          1,           0,           0,           0,         0,              0, 'Blackwing Legionnaire - Combat Pulse'),
-(1241603,        39,    8302036,           0,           0,           0,       100,              0, 'Blackwing Legionnaire - Increment Creature Count'),
-(1241604,        18,          0,           0,           0,           0,         0,              0, 'Blackwing Legionnaire - Despawn');
+(   `id`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `dataint`,    `x`  ,    `y`  ,  `z`  ,  `o`, `condition_id`, `comments`) VALUES
+(1241601,          0,        65,       8302,           0,           1,           2,         0,     0   ,     0   ,   0   ,   0 ,           8302, 'Blackwing Legionnaire - Decrement Creature Count'),
+(1241601,          0,        18,       5000,           0,           0,           0,         0,     0   ,     0   ,   0   ,   0 ,            579, 'Blackwing Legionnaire - Despawn (death)'),
+(1241602,          0,        49,          1,           0,           0,           0,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Legionnaire - Combat Pulse'),
+(1241603,          0,        39,    8302036,           0,           0,           0,       100,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Legionnaire - Increment Creature Count'),
+(1241604,          0,        18,          0,           0,           0,           0,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Legionnaire - Despawn (reached home)'),
+(1241605,          0,        34,          0,           0,           0,           0,         0, -7556.65, -1025.56, 408.56, 100 ,              0, 'Blackwing Legionnaire - Set home position'),
+(1241605,          1,        59,          0,           0,           0,           0,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Legionnaire - Set react state'),
+(1241605,          2,        42,          0,           0,           0,           0,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Legionnaire - Set melee attack'),
+-- clear is true to remove default Random movement, because otherwise the HomeMovementGenerator doesn't use the creature's home position.
+-- Make sure that a polymorphed creature runs home after the polymorph ends.
+(1241605,          3,        20,          7,           0,           0,           1,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Legionnaire - Set movement type');
 
 -- Events list for Blackwing Mage
 REPLACE `creature_spells`
@@ -848,16 +855,21 @@ INSERT `creature_ai_events`
 -- Lower this ID at the end as needed.
 (1242003,         12420,              0,           21,                        0b0,          0x00,              0,              0,              0,              0,          1242003, 'Blackwing Mage - Reached Home'),
 (1242004,         12420,              0,            6,                        0b0,          0x00,              0,              0,              0,              0,          1242004, 'Blackwing Mage - Death'),
-(1242005,         12420,              0,           11,                        0b0,          0x00,              0,              0,              0,              0,          1242005, 'Blackwing Mage - Spawned');
+(1242005,         12420,              0,           11,                        0b0,          0x00,              0,              0,              0,              0,          1242005, 'Blackwing Mage - Spawned'),
+(1242006,         12420,              0,            8,                        0b0,          0x00,          23032,             -1,              0,              0,          1242006, 'Blackwing Mage - Hit by spell');
 DELETE FROM `creature_ai_scripts` WHERE `id` = 1242002;
 INSERT INTO `creature_ai_scripts`
-(   `id`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `dataint`, `condition_id`, `comments`) VALUES
-(1242001,        15,      22271,           0,           0,           0,             6,         0,              0, 'Blackwing Mage - Cast Arcane Explosion'),
-(1242002,        49,          1,           0,           0,           0,             0,         0,              0, 'Blackwing Mage - Combat Pulse'),
-(1242003,        18,          0,           0,           0,           0,             0,         0,              0, 'Blackwing Mage - Despawn (reached home)'),
-(1242004,        65,       8302,           0,           1,           2,             0,         0,           8302, 'Blackwing Mage - Decrement Creature Count'),
-(1242004,        18,       5000,           0,           0,           0,             0,         0,            579, 'Blackwing Mage - Despawn (death)'),
-(1242005,        39,    8302036,           0,           0,           0,             0,       100,              0, 'Blackwing Mage - Increment Creature Count');
+(   `id`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `dataint`,    `x`  ,    `y`  ,  `z`  ,  `o`, `condition_id`, `comments`) VALUES
+(1242001,          0,        15,      22271,           0,           0,           0,             6,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Cast Arcane Explosion'),
+(1242002,          0,        49,          1,           0,           0,           0,             0,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Combat Pulse'),
+(1242003,          0,        18,          0,           0,           0,           0,             0,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Despawn (reached home)'),
+(1242004,          0,        65,       8302,           0,           1,           2,             0,         0,     0   ,     0   ,   0   ,   0 ,           8302, 'Blackwing Mage - Decrement Creature Count'),
+(1242004,          0,        18,       5000,           0,           0,           0,             0,         0,     0   ,     0   ,   0   ,   0 ,            579, 'Blackwing Mage - Despawn (death)'),
+(1242005,          0,        39,    8302036,           0,           0,           0,             0,       100,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Increment Creature Count'),
+(1242006,          0,        34,          0,           0,           0,           0,             0,         0, -7556.65, -1025.56, 408.56, 100 ,              0, 'Blackwing Mage - Set home position'),
+(1242006,          1,        59,          0,           0,           0,           0,             0,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Set react state'),
+(1242006,          2,        42,          0,           0,           0,           0,             0,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Set melee attack'),
+(1242006,          3,        20,          7,           0,           0,           1,             0,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Set movement type');
 UPDATE `creature_template` SET `spell_list_id` = 124200 WHERE `entry` = 12420;
 
 -- Events list for Death Talon Dragonspawn
@@ -866,13 +878,14 @@ REPLACE `creature_spells`
 ( 124220, 'Death Talon Dragonspawn',       15580,             100,              1,                   0,                  32,                  4,                  27,       15663,             100,              1,                  0,                  32,                 13,                 36,       23967,             100,              8,            12435,                7,                   0,                  34,                  6,                 36);
 DELETE FROM `creature_ai_events` WHERE `creature_id` = 12422;
 REPLACE `creature_ai_events`
-(   `id`, `creature_id`, `condition_id`, `event_type`, `event_param1`, `action1_script`, `comment`) VALUES
-(1242201,         12422,              0,            7,              0,          1242201, 'Death Talon Dragonspawn - Evade'),
-(1242202,         12422,              0,           29,              9,          1242202, 'Death Talon Dragonspawn - Movement inform'),
-(1242203,         12422,           8302,            6,              0,          1242203, 'Death Talon Dragonspawn - Death'),
+(   `id`, `creature_id`, `condition_id`, `event_type`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
+(1242201,         12422,              0,            7,              0,              0,          1242201, 'Death Talon Dragonspawn - Evade'),
+(1242202,         12422,              0,           29,              9,              0,          1242202, 'Death Talon Dragonspawn - Movement inform'),
+(1242203,         12422,           8302,            6,              0,              0,          1242203, 'Death Talon Dragonspawn - Death'),
 -- Lower this ID at the end as needed.
-(1242204,         12422,              0,           21,              0,          1242204, 'Death Talon Dragonspawn - Reached Home'),
-(1242205,         12422,              0,           11,              0,          1242205, 'Death Talon Dragonspawn - Spawned');
+(1242204,         12422,              0,           21,              0,              0,          1242204, 'Death Talon Dragonspawn - Reached Home'),
+(1242205,         12422,              0,           11,              0,              0,          1242205, 'Death Talon Dragonspawn - Spawned'),
+(1242206,         12422,              0,            8,          23032,             -1,          1242204, 'Death Talon Dragonspawn - Hit by spell');
 INSERT INTO `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `dataint`, `condition_id`, `comments`) VALUES
 (1242201,        34,          1,           0,           0,           0,         0,              0, 'Death Talon Dragonspawn - Set Home Position'),
@@ -1067,9 +1080,14 @@ INSERT `creature_ai_events`
 (   `id`, `creature_id`, `event_type`, `event_inverse_phase_mask`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
 (1445901,         14459,            8,                       0b10,          23032,             -1,          1445901, 'Nefarian''s Troops - Hit by spell');
 INSERT `creature_ai_scripts`
-(   `id`, `command`) VALUES
-(1445901,        44);
-UPDATE `creature_template` SET `ai_name` = 'EventAI';
+(   `id`, `command`, `datalong`, `dataint`, `comments`) VALUES
+-- Need to reset phase at the beginning of the encounter.
+(1445901,        44,          1,         0, 'Nefarian''s Troops - Set phase'),
+(1445901,        39,    1445901,       100, 'Nefarian''s Troops - Emote');
+INSERT `generic_scripts`
+(   `id`, `delay`, `command`, `datalong`, `target_param1`, `target_type`, `dataint`, `comments`) VALUES
+(1445901,       2,         0,          3,           84388,             9,      9592, 'Nefarian''s Troops - Emote');
+UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry` = 14459;
 
 -- Events list for Blackwing Spell Marker
 REPLACE `generic_scripts`
