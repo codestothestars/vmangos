@@ -839,24 +839,22 @@ INSERT INTO `creature_ai_scripts`
 (1241605,          0,        34,          0,           0,           0,           0,         0, -7556.65, -1025.56, 408.56, 100 ,              0, 'Blackwing Legionnaire - Set home position'),
 (1241605,          1,        59,          0,           0,           0,           0,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Legionnaire - Set react state'),
 (1241605,          2,        42,          0,           0,           0,           0,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Legionnaire - Set melee attack'),
--- clear is true to remove default Random movement, because otherwise the HomeMovementGenerator doesn't use the creature's home position.
 -- Make sure that a polymorphed creature runs home after the polymorph ends.
-(1241605,          3,        20,          7,           0,           0,           1,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Legionnaire - Set movement type');
+(1241605,          3,        20,          7,           0,           0,           1,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Legionnaire - Set movement type'),
+(1241605,          4,        67,          1,           0,           0,           1,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Legionnaire - Set default movement');
 
 -- Events list for Blackwing Mage
-REPLACE `creature_spells`
-(`entry`, `name`,           `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`) VALUES
-( 124200, 'Blackwing Mage',       17290,             100,              1,                   0,                   0,                  3,                 12);
 DELETE FROM `creature_ai_events` WHERE `creature_id` = 12420;
 INSERT `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
-(1242001,         12420,            588,            0,                        0b0,          0x01,              0,          22000,           3000,          22000,          1242001, 'Blackwing Mage - In Combat (periodic)'),
-(1242002,         12420,              0,           29,                        0b0,          0x00,              9,              0,              0,              0,          1242002, 'Blackwing Mage - Movement inform'),
+(1242001,         12420,            588,            0,                       0b10,          0x01,              0,          22000,           3000,          22000,          1242001, 'Blackwing Mage - In Combat (periodic) - Arcane Explosion'),
+(1242002,         12420,              0,           29,                       0b00,          0x00,              9,              0,              0,              0,          1242002, 'Blackwing Mage - Movement inform'),
 -- Lower this ID at the end as needed.
-(1242003,         12420,              0,           21,                        0b0,          0x00,              0,              0,              0,              0,          1242003, 'Blackwing Mage - Reached Home'),
-(1242004,         12420,              0,            6,                        0b0,          0x00,              0,              0,              0,              0,          1242004, 'Blackwing Mage - Death'),
-(1242005,         12420,              0,           11,                        0b0,          0x00,              0,              0,              0,              0,          1242005, 'Blackwing Mage - Spawned'),
-(1242006,         12420,              0,            8,                        0b0,          0x00,          23032,             -1,              0,              0,          1242006, 'Blackwing Mage - Hit by spell');
+(1242003,         12420,              0,           21,                       0b00,          0x00,              0,              0,              0,              0,          1242003, 'Blackwing Mage - Reached Home'),
+(1242004,         12420,              0,            6,                       0b00,          0x00,              0,              0,              0,              0,          1242004, 'Blackwing Mage - Death'),
+(1242005,         12420,              0,           11,                       0b00,          0x00,              0,              0,              0,              0,          1242005, 'Blackwing Mage - Spawned'),
+(1242006,         12420,              0,            8,                       0b00,          0x00,          23032,             -1,              0,              0,          1242006, 'Blackwing Mage - Hit by spell'),
+(1242007,         12420,              0,            0,                       0b10,          0x01,              0,              0,           3000,          12000,          1242007, 'Blackwing Mage - In Combat (periodic) - Fireball');
 DELETE FROM `creature_ai_scripts` WHERE `id` = 1242002;
 INSERT INTO `creature_ai_scripts`
 (   `id`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `dataint`,    `x`  ,    `y`  ,  `z`  ,  `o`, `condition_id`, `comments`) VALUES
@@ -867,10 +865,13 @@ INSERT INTO `creature_ai_scripts`
 (1242004,          0,        18,       5000,           0,           0,           0,             0,         0,     0   ,     0   ,   0   ,   0 ,            579, 'Blackwing Mage - Despawn (death)'),
 (1242005,          0,        39,    8302036,           0,           0,           0,             0,       100,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Increment Creature Count'),
 (1242006,          0,        34,          0,           0,           0,           0,             0,         0, -7556.65, -1025.56, 408.56, 100 ,              0, 'Blackwing Mage - Set home position'),
+(1242006,          0,        44,          1,           0,           0,           0,             0,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Set phase'),
 (1242006,          1,        59,          0,           0,           0,           0,             0,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Set react state'),
 (1242006,          2,        42,          0,           0,           0,           0,             0,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Set melee attack'),
-(1242006,          3,        20,          7,           0,           0,           1,             0,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Set movement type');
-UPDATE `creature_template` SET `spell_list_id` = 124200 WHERE `entry` = 12420;
+(1242006,          3,        20,          7,           0,           0,           1,             0,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Set movement type'),
+(1242006,          4,        67,          1,           0,           0,           0,             0,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Set default movement'),
+(1242007,          0,        15,      17290,           0,           0,           0,             1,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Cast Fireball');
+UPDATE `creature_template` SET `spell_list_id` = 0 WHERE `entry` = 12420;
 
 -- Events list for Death Talon Dragonspawn
 REPLACE `creature_spells`
