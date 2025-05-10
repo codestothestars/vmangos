@@ -3002,6 +3002,11 @@ GameObject* WorldObject::FindNearestGameObject(uint32 entry, float range, GameOb
 {
     GameObject* pGo = nullptr;
 
+    if (entry == 177807)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "position is %f, %f, %f", GetPositionX(), GetPositionY(), GetPositionZ());
+    }
+
     CellPair pair(MaNGOS::ComputeCellPair(GetPositionX(), GetPositionY()));
     Cell cell(pair);
     cell.SetNoCreate();
