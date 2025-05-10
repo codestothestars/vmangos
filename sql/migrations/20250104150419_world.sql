@@ -14,26 +14,26 @@ UPDATE `conditions` SET `value3` = `value3` | 0x2, `value4` = 0 WHERE `type` = 2
 -- Remember to update all condition IDs at the end to use the first gap.
 -- Problem - The egg "exists" even after despawning from activation.
 -- Need to augment CONDITION_NEARBY_GAMEOBJECT with a condition_id like we did with CONDITION_NEARBY_CREATURE.
---  241: Black Dragon Egg within 100 yards
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 241, 21,     177807,  100, 0x0, 122, 0x2);
---  242: No Black Dragon Egg within 100 yards
+--  241: Black Dragon Egg within 125 yards
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 241, 21,     177807,  125, 0x0, 122, 0x2);
+--  242: No Black Dragon Egg within 125 yards
 --  Test whether it works when standing in corners
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 242, 21,     177807,  100, 0x0, 122, 0x3);
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 242, 21,     177807,  125, 0x0, 122, 0x3);
 --  273: Entry is 12416 or 12420
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 273, 16,      12416, 12420,   0,   0, 0x0);
 --  274: Entry is 12422
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 274, 16,      12422,    0,   0,   0, 0x0);
---  275: No Black Dragon Egg within 100 yards, except self
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 275, 21,     177807,  100, 0x1, 122, 0x1);
+--  275: No Black Dragon Egg within 125 yards, except self
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 275, 21,     177807,  125, 0x1, 122, 0x1);
 --  572: Does not have aura Possess
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 572,  1,      19832,    0,   0,   0, 0x1);
 --  573: Has aura Possess
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 573,  1,      23014,    0,   0,   0, 0x2);
 --  574: Does not have aura Mind Exhaustion
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 574,  1,      23958,    0,   0,   0, 0x1);
---  575: Nearby Razorgore within 100 yards without aura Possess
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 575, 20,      12435,  100, 0x0, 572, 0x0);
---  576: (574: Does not have aura Mind Exhaustion) And (575: Nearby Razorgore within 100 yards without aura Possess)
+--  575: Nearby Razorgore within 125 yards without aura Possess
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 575, 20,      12435,  125, 0x0, 572, 0x0);
+--  576: (574: Does not have aura Mind Exhaustion) And (575: Nearby Razorgore within 125 yards without aura Possess)
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 576, -1,        574,  575,   0,   0, 0x0);
 --  577: Source is on phase 0
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 577, 62,          0,    0,   0,   0, 0x0);
@@ -67,29 +67,39 @@ INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `v
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 593, 35,       8302,    2,   0,   0, 0x0);
 --  594: Map event data 2 equal to 1
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 594, 35,       8302,    2,   1,   0, 0x0);
---  612: (241: Black Dragon Egg within 100 yards) And (582: Nearby Razorgore within 90 yards)
+--  595: Movement type is random
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 595, 63,          1,    0,   0,   0, 0x0);
+--  596: Movement type is waypoint
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 596, 63,          2,    0,   0,   0, 0x0);
+--  597: Movement type is chase
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 597, 63,          6,    0,   0,   0, 0x0);
+--  598: Movement type is point
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 598, 63,          9,    0,   0,   0, 0x0);
+--  599: (595: Movement type is random) Or (596: Movement type is waypoint) Or (597: Movement type is chase) Or (598: Movement type is point)
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 599, -2,        595,  596, 597, 598, 0x0);
+--  612: (241: Black Dragon Egg within 125 yards) And (582: Nearby Razorgore within 90 yards)
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 612, -1,        241,  582,   0,   0, 0x0);
---  613: (241: Black Dragon Egg within 100 yards) And (583: No nearby Razorgore within 90 yards)
+--  613: (241: Black Dragon Egg within 125 yards) And (583: No nearby Razorgore within 90 yards)
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 613, -1,        241,  583,   0,   0, 0x0);
---  614: (241: Black Dragon Egg within 100 yards) And (584: Nearby Razorgore within 70 yards)
+--  614: (241: Black Dragon Egg within 125 yards) And (584: Nearby Razorgore within 70 yards)
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 614, -1,        241,  584,   0,   0, 0x0);
---  615: (241: Black Dragon Egg within 100 yards) And (585: No nearby Razorgore within 70 yards)
+--  615: (241: Black Dragon Egg within 125 yards) And (585: No nearby Razorgore within 70 yards)
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 615, -1,        241,  585,   0,   0, 0x0);
---  616: (241: Black Dragon Egg within 100 yards) And (586: Nearby Razorgore within 50 yards)
+--  616: (241: Black Dragon Egg within 125 yards) And (586: Nearby Razorgore within 50 yards)
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 616, -1,        241,  586,   0,   0, 0x0);
---  617: (241: Black Dragon Egg within 100 yards) And (587: No nearby Razorgore within 50 yards)
+--  617: (241: Black Dragon Egg within 125 yards) And (587: No nearby Razorgore within 50 yards)
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 617, -1,        241,  587,   0,   0, 0x0);
---  618: (242: No Black Dragon Egg within 100 yards) And (273: Entry is 12416 or 12420)
+--  618: (242: No Black Dragon Egg within 125 yards) And (273: Entry is 12416 or 12420)
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 618, -1,        242,  273,   0,   0, 0x0);
---  619: (242: No Black Dragon Egg within 100 yards) And (274: Entry is 12422)
+--  619: (242: No Black Dragon Egg within 125 yards) And (274: Entry is 12422)
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 619, -1,        242,  274,   0,   0, 0x0);
 -- 8302: Map event 8302 (Razorgore) is active
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES (8302, 36,       8302,    0,   0,   0, 0x0);
 -- 8303: Map event 8302 (Razorgore) is not active
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES (8303, 36,       8302,    0,   0,   0, 0x1);
--- 8304: (241: Black Dragon Egg within 100 yards) And (8302: Map event 8302 (Razorgore) is active)
+-- 8304: (241: Black Dragon Egg within 125 yards) And (8302: Map event 8302 (Razorgore) is active)
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES (8304, -1,        241, 8302,   0,   0, 0x0);
--- 8305: (589: Map event data 0 equal or less than 24) And (8304: (241: Black Dragon Egg within 100 yards) And (8302: Map event 8302 (Razorgore) is active))
+-- 8305: (589: Map event data 0 equal or less than 24) And (8304: (241: Black Dragon Egg within 125 yards) And (8302: Map event 8302 (Razorgore) is active))
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES (8305, -1,        589, 8304,   0,   0, 0x0);
 
 -- Define targets for Explode Orb Effect.
@@ -234,39 +244,60 @@ INSERT `generic_scripts`
 -- Spawning Adds
 INSERT `generic_scripts`
 (  `id` , `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`,    `x`  ,    `y`   ,  `z`   , `o`, `condition_id`, `comments`) VALUES
+-- I have seen a mage spawn, run toward Razorgore,
+-- then immediately run back to their spawn point and despawn from their on-home script.
+-- Is Razorgore's faction right?
+(8302000,       0,          0,        20,          2,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Set movement type'),
+(8302000,       0,          1,        67,          2,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Set default movement'),
 (8302003,       0,          0,         3,          2,           0,       0x001,         0x2,             8,           12435,             150,         0x00,         0,          0,          0,          0,     5   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Move to Razorgore'),
 (8302004,       0,          0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            612, 'Razorgore Event Spawning Adds - Initial Movement (North) - Move to Razorgore'),
 (8302004,       0,          0,        60,          3,           0,           0,           0,             0,               0,               0,         0x00,         0,     830204,          0,          0,     0   ,     0    ,   0    ,  0 ,            613, 'Razorgore Event Spawning Adds - Initial Movement (North) - Move to Altar'),
 (8302004,       0,          0,        39,    1242001,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            618, 'Razorgore Event Spawning Adds - Initial Movement (North) - Flee'),
 (8302004,       0,          0,        18,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            619, 'Razorgore Event Spawning Adds - Initial Movement (North) - Despawn'),
+(8302004,       1,          0,        39,    1242001,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            618, 'Razorgore Event Spawning Adds - Initial Movement (North) - Flee'),
+(8302004,       1,          0,        18,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            619, 'Razorgore Event Spawning Adds - Initial Movement (North) - Despawn'),
 (8302005,       0,          0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            612, 'Razorgore Event Spawning Adds - Initial Movement (East) - Move to Razorgore'),
 (8302005,       0,          0,        60,          3,           0,           0,           0,             0,               0,               0,         0x00,         0,     830206,          0,          0,     0   ,     0    ,   0    ,  0 ,            613, 'Razorgore Event Spawning Adds - Initial Movement (East) - Move to Altar'),
 (8302005,       0,          0,        39,    1242001,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            618, 'Razorgore Event Spawning Adds - Initial Movement (East) - Flee'),
 (8302005,       0,          0,        18,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            619, 'Razorgore Event Spawning Adds - Initial Movement (East) - Despawn'),
+(8302005,       1,          0,        39,    1242001,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            618, 'Razorgore Event Spawning Adds - Initial Movement (East) - Flee'),
+(8302005,       1,          0,        18,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            619, 'Razorgore Event Spawning Adds - Initial Movement (East) - Despawn'),
 (8302006,       0,          0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            614, 'Razorgore Event Spawning Adds - Initial Movement (East South) - Move to Razorgore'),
 (8302006,       0,          0,        60,          3,           0,           0,           0,             0,               0,               0,         0x00,         0,     830208,          0,          0,     0   ,     0    ,   0    ,  0 ,            615, 'Razorgore Event Spawning Adds - Initial Movement (East South) - Move to Altar'),
 (8302006,       0,          0,        39,    1242001,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            618, 'Razorgore Event Spawning Adds - Initial Movement (East South) - Flee'),
 (8302006,       0,          0,        18,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            619, 'Razorgore Event Spawning Adds - Initial Movement (East South) - Despawn'),
+(8302006,       1,          0,        39,    1242001,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            618, 'Razorgore Event Spawning Adds - Initial Movement (East South) - Flee'),
+(8302006,       1,          0,        18,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            619, 'Razorgore Event Spawning Adds - Initial Movement (East South) - Despawn'),
 (8302007,       0,          0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            616, 'Razorgore Event Spawning Adds - Initial Movement (South East) - Move to Razorgore'),
 (8302007,       0,          0,        60,          3,           0,           0,           0,             0,               0,               0,         0x00,         0,     830210,          0,          0,     0   ,     0    ,   0    ,  0 ,            617, 'Razorgore Event Spawning Adds - Initial Movement (South East) - Move to Altar'),
 (8302007,       0,          0,        39,    1242001,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            618, 'Razorgore Event Spawning Adds - Initial Movement (South East) - Flee'),
 (8302007,       0,          0,        18,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            619, 'Razorgore Event Spawning Adds - Initial Movement (South East) - Despawn'),
+(8302007,       1,          0,        39,    1242001,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            618, 'Razorgore Event Spawning Adds - Initial Movement (South East) - Flee'),
+(8302007,       1,          0,        18,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            619, 'Razorgore Event Spawning Adds - Initial Movement (South East) - Despawn'),
 (8302008,       0,          0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            616, 'Razorgore Event Spawning Adds - Initial Movement (South) - Move to Razorgore'),
 (8302008,       0,          0,        60,          3,           0,           0,           0,             0,               0,               0,         0x00,         0,     830212,          0,          0,     0   ,     0    ,   0    ,  0 ,            617, 'Razorgore Event Spawning Adds - Initial Movement (South) - Move to Altar'),
 (8302008,       0,          0,        39,    1242001,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            618, 'Razorgore Event Spawning Adds - Initial Movement (South) - Flee'),
 (8302008,       0,          0,        18,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            619, 'Razorgore Event Spawning Adds - Initial Movement (South) - Despawn'),
+(8302008,       1,          0,        39,    1242001,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            618, 'Razorgore Event Spawning Adds - Initial Movement (South) - Flee'),
+(8302008,       1,          0,        18,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            619, 'Razorgore Event Spawning Adds - Initial Movement (South) - Despawn'),
 (8302009,       0,          0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            616, 'Razorgore Event Spawning Adds - Initial Movement (West) - Move to Razorgore'),
 (8302009,       0,          0,        60,          3,           0,           0,           0,             0,               0,               0,         0x00,         0,     830214,          0,          0,     0   ,     0    ,   0    ,  0 ,            617, 'Razorgore Event Spawning Adds - Initial Movement (West) - Move to Altar'),
 (8302009,       0,          0,        39,    1242001,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            618, 'Razorgore Event Spawning Adds - Initial Movement (West) - Flee'),
 (8302009,       0,          0,        18,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            619, 'Razorgore Event Spawning Adds - Initial Movement (West) - Despawn'),
+(8302009,       1,          0,        39,    1242001,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            618, 'Razorgore Event Spawning Adds - Initial Movement (West) - Flee'),
+(8302009,       1,          0,        18,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            619, 'Razorgore Event Spawning Adds - Initial Movement (West) - Despawn'),
 (8302010,       0,          0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            616, 'Razorgore Event Spawning Adds - Initial Movement (West North) - Move to Razorgore'),
 (8302010,       0,          0,        60,          3,           0,           0,           0,             0,               0,               0,         0x00,         0,     830216,          0,          0,     0   ,     0    ,   0    ,  0 ,            617, 'Razorgore Event Spawning Adds - Initial Movement (West North) - Move to Altar'),
 (8302010,       0,          0,        39,    1242001,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            618, 'Razorgore Event Spawning Adds - Initial Movement (West North) - Flee'),
 (8302010,       0,          0,        18,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            619, 'Razorgore Event Spawning Adds - Initial Movement (West North) - Despawn'),
+(8302010,       1,          0,        39,    1242001,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            618, 'Razorgore Event Spawning Adds - Initial Movement (West North) - Flee'),
+(8302010,       1,          0,        18,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            619, 'Razorgore Event Spawning Adds - Initial Movement (West North) - Despawn'),
 (8302011,       0,          0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            614, 'Razorgore Event Spawning Adds - Initial Movement (North West) - Move to Razorgore'),
 (8302011,       0,          0,        60,          3,           0,           0,           0,             0,               0,               0,         0x00,         0,     830218,          0,          0,     0   ,     0    ,   0    ,  0 ,            615, 'Razorgore Event Spawning Adds - Initial Movement (North West) - Move to Altar'),
 (8302011,       0,          0,        39,    1242001,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            618, 'Razorgore Event Spawning Adds - Initial Movement (North West) - Flee'),
 (8302011,       0,          0,        18,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            619, 'Razorgore Event Spawning Adds - Initial Movement (North West) - Despawn'),
+(8302011,       1,          0,        39,    1242001,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            618, 'Razorgore Event Spawning Adds - Initial Movement (North West) - Flee'),
+(8302011,       1,          0,        18,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            619, 'Razorgore Event Spawning Adds - Initial Movement (North West) - Despawn'),
 (8302012,       0,          0,        10,      12416,      300000,           0,           0,             0,               0,               0,         0x00,      0x01,    8302004,          0,          6, -7532.72, -1063.49 , 407.366,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Blackwing Legionnaire - North'),
 (8302013,       0,          0,        10,      12416,      300000,           0,           0,             0,               0,               0,         0x00,      0x01,    8302005,          0,          6, -7607.78, -1116.17 , 407.366,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Blackwing Legionnaire - East'),
 (8302014,       0,          0,        10,      12416,      300000,           0,           0,             0,               0,               0,         0x00,      0x01,    8302006,          0,          6, -7623.1 , -1094.06 , 407.371,  0 ,              0, 'Razorgore Event Spawning Adds - Summon Blackwing Legionnaire - East South'),
@@ -893,8 +924,10 @@ INSERT `creature_movement_template`
 (`entry`, `point`, `position_x`, `position_y`, `position_z`, `orientation`, `script_id`) VALUES
 (  12420,       1,     -7556.65,     -1025.56,       408.56,           100,     1242001);
 INSERT `creature_movement_scripts`
-(   `id`, `command`, `comments`) VALUES
-(1242001,        18, 'Blackwing Mage - Despawn');
+(   `id`, `priority`, `command`, `datalong`, `comments`) VALUES
+-- Not sure we need this now.
+-- (1242001,          0,        34,          1, 'Blackwing Mage - Set home position'),
+(1242001,          1,        18,          0, 'Blackwing Mage - Despawn');
 DELETE FROM `creature_ai_events` WHERE `creature_id` = 12420;
 INSERT `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
@@ -918,14 +951,13 @@ INSERT INTO `creature_ai_scripts`
 (1242006,          0,        39,    1242001,           0,           0,           0,             0,       100,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Flee (hit by spell)'),
 (1242007,          0,        15,      17290,           0,           0,           0,             1,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Cast Fireball');
 INSERT INTO `generic_scripts`
-(   `id`, `priority`, `command`, `datalong`, `datalong4`, `comments`) VALUES
+(   `id`, `priority`, `command`, `datalong`, `dataint`, `condition_id`, `comments`) VALUES
 -- Move with the Spawning Adds generic_scripts above. It's only used from there.
-(1242001,          0,        44,          1,           0, 'Blackwing Mage - Set phase'),
-(1242001,          1,        59,          0,           0, 'Blackwing Mage - Set react state'),
-(1242001,          2,        42,          0,           0, 'Blackwing Mage - Set melee attack'),
+(1242001,          0,        44,          1,         0,              0, 'Blackwing Mage - Set phase'),
+(1242001,          1,        59,          0,         0,              0, 'Blackwing Mage - Set react state'),
+(1242001,          2,        42,          0,         0,              0, 'Blackwing Mage - Set melee attack'),
 -- Make sure that a polymorphed creature runs home after the polymorph ends.
-(1242001,          3,        20,          2,           1, 'Blackwing Mage - Set movement type'),
-(1242001,          4,        67,          2,           0, 'Blackwing Mage - Set default movement');
+(1242001,          3,        39,    8302000,       100,            599, 'Blackwing Mage - Set movement type');
 UPDATE `creature_template` SET `spell_list_id` = 0 WHERE `entry` = 12420;
 
 -- Events list for Death Talon Dragonspawn

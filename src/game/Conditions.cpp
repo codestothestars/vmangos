@@ -151,6 +151,25 @@ bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, 
         }
         case CONDITION_OR:
         {
+            if (
+                m_entry == 599 && !(
+                    sConditionStorage.LookupEntry<ConditionEntry>(m_value1)->Meets(target, map, source, conditionSourceType) ||
+                    sConditionStorage.LookupEntry<ConditionEntry>(m_value2)->Meets(target, map, source, conditionSourceType) ||
+                    sConditionStorage.LookupEntry<ConditionEntry>(m_value3)->Meets(target, map, source, conditionSourceType) ||
+                    sConditionStorage.LookupEntry<ConditionEntry>(m_value4)->Meets(target, map, source, conditionSourceType)
+                )
+            )
+            {
+                if (Creature const* sourceCreature = source->ToCreature())
+                {
+                    sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "599 - creature movement type is %u", sourceCreature->GetMotionMaster()->GetCurrentMovementGeneratorType());
+                }
+                else
+                {
+                    sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "599 - source is not a creature");
+                }
+            }
+
             // Third and fourth condition are optional
             if (m_value3 && sConditionStorage.LookupEntry<ConditionEntry>(m_value3)->Meets(target, map, source, conditionSourceType))
                 return true;
@@ -678,6 +697,12 @@ bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, 
             if (Creature const* pCreature = source->ToCreature())
                 if (auto const* pAI = dynamic_cast<CreatureEventAI const*>(pCreature->AI()))
                     return pAI->m_Phase == m_value1;
+            return false;
+        }
+        case CONDITION_MOVEMENT_TYPE:
+        {
+            if (Creature const* pCreature = source->ToCreature())
+                return pCreature->GetMotionMaster()->GetCurrentMovementGeneratorType() == m_value1;
             return false;
         }
     }
@@ -1350,6 +1375,15 @@ bool ConditionEntry::IsValid()
             if (m_value1 <= 0)
             {
                 sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "CONDITION_NEARBY_HOSTILE (entry %u, type %d) does not have max distance set in value1, skipped", m_entry, m_condition);
+                return false;
+            }
+            break;
+        }
+        case CONDITION_MOVEMENT_TYPE:
+        {
+            if (m_value1 > DISTANCING_MOTION_TYPE)
+            {
+                sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "CONDITION_MOVEMENT_TYPE (entry %u, type %u) has invalid MovementGeneratorType %u, skipped", m_entry, m_condition, m_value1);
                 return false;
             }
             break;

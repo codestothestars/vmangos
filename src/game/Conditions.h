@@ -272,6 +272,9 @@ enum ConditionType
     CONDITION_CREATURE_PHASE         = 62,                  // Checks the source creature's phase.
                                                             // Requirement: Creature
                                                             // Value1: phase
+    CONDITION_MOVEMENT_TYPE          = 63,                  // Checks the source creature's current active movement type.
+                                                            // Requirement: Creature
+                                                            // Value1: enum MovementGeneratorType
 };
 
 enum ConditionFlags

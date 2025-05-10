@@ -131,6 +131,11 @@ bool ChatHandler::HandleNpcInfoCommand(char* /*args*/)
     PSendSysMessage(LANG_NPCINFO_POSITION, float(target->GetPositionX()), float(target->GetPositionY()), float(target->GetPositionZ()));
     PSendSysMessage(LANG_NPCINFO_AIINFO, target->GetAIName().c_str(), target->GetScriptName().c_str());
     PSendSysMessage(LANG_NPCINFO_ACTIVE_VISIBILITY, target->isActiveObject(), target->GetVisibilityModifier());
+    PSendSysMessage("Movement type: %s", target->GetMotionMaster()->GetMovementGeneratorTypeName(target->GetMotionMaster()->GetCurrentMovementGeneratorType()));
+    if (target->GetMotionMaster()->GetCurrentMovementGeneratorType() == HOME_MOTION_TYPE)
+    {
+        PSendSysMessage("Home position: %g %g %g %g", target->GetHomePosition().x, target->GetHomePosition().y, target->GetHomePosition().z, target->GetHomePosition().o);
+    }
 
     if ((npcflags & UNIT_NPC_FLAG_VENDOR))
         SendSysMessage(LANG_NPCINFO_VENDOR);
