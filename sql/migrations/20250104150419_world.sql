@@ -11,9 +11,8 @@ INSERT INTO `migrations` VALUES ('20250104150419');
 -- Merge CONDITION_NEARBY_CREATURE boolean params into one flags param
 UPDATE `conditions` SET `value3` = `value3` | 0x2, `value4` = 0 WHERE `type` = 20 AND `value4` = 1;
 
+DELETE FROM conditions WHERE condition_entry IN (241, 242, 273, 274, 275, 276) OR condition_entry BETWEEN 572 AND 599 OR condition_entry BETWEEN 612 AND 619 OR condition_entry BETWEEN 8302 AND 8306; -- testing
 -- Remember to update all condition IDs at the end to use the first gap.
--- Problem - The egg "exists" even after despawning from activation.
--- Need to augment CONDITION_NEARBY_GAMEOBJECT with a condition_id like we did with CONDITION_NEARBY_CREATURE.
 --  241: Black Dragon Egg within 125 yards
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 241, 21,     177807,  125, 0x0, 122, 0x2);
 --  242: No Black Dragon Egg within 125 yards
@@ -242,6 +241,7 @@ INSERT `generic_scripts`
 -- (830202, );
 
 -- Spawning Adds
+DELETE FROM generic_scripts WHERE LENGTH(id) = 7 AND id LIKE '8302%'; -- testing
 INSERT `generic_scripts`
 (  `id` , `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`,    `x`  ,    `y`   ,  `z`   , `o`, `condition_id`, `comments`) VALUES
 -- I have seen a mage spawn, run toward Razorgore,
@@ -526,10 +526,12 @@ INSERT `generic_scripts`
 (8302148,      45,          0,        39,    8302129,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,           8302, 'Razorgore Event Spawning Adds - Start Spawning Adds (North West)');
 
 -- Movement script for Blackwing Legionnaire, Blackwing Mage, Deathtalon Dragonspawn
+DELETE FROM creature_movement_scripts WHERE LENGTH(id) = 6 AND id LIKE '8302%'; -- testing
 INSERT INTO `creature_movement_scripts`
 (  `id`, `command`, `datalong`, `comments`) VALUES
 (830201,        49,          1, 'Razorgore Event Spawning Adds - Combat Pulse');
 
+DELETE FROM creature_movement_special WHERE LENGTH(id) = 6 AND id LIKE '8302%'; -- testing
 -- Waypoints for Blackwing Legionnaire, Blackwing Mage, Deathtalon Dragonspawn (North)
 INSERT INTO `creature_movement_special`
 (  `id`, `point`, `position_x`, `position_y`, `position_z`, `script_id`, `path_id`) VALUES
@@ -885,9 +887,11 @@ INSERT INTO `creature_movement_special`
 (830219,      43,     -7611.79,     -1022.45,      413.597,           0,         0);
 
 -- Events list for Blackwing Legionnaire
+DELETE FROM creature_movement_template WHERE entry = 12416; -- testing
 INSERT `creature_movement_template`
 (`entry`, `point`, `position_x`, `position_y`, `position_z`, `orientation`, `script_id`) VALUES
 (  12416,       1,     -7556.65,     -1025.56,       408.56,           100,     1241601);
+DELETE FROM creature_movement_scripts WHERE LENGTH(id) = 7 AND id LIKE '12416%'; -- testing
 INSERT `creature_movement_scripts`
 (   `id`, `command`, `comments`) VALUES
 (1241601,        18, 'Blackwing Legionnaire - Despawn');
@@ -903,6 +907,7 @@ INSERT `creature_ai_events`
 (1241603,         12416,           11,              0,              0,          1241603, 'Blackwing Legionnaire - Spawned'),
 (1241604,         12416,           21,              0,              0,          1241604, 'Blackwing Legionnaire - Reached home'),
 (1241605,         12416,            8,          23032,             -1,          1241605, 'Blackwing Legionnaire - Hit by spell');
+DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '12416%'; -- testing
 INSERT INTO `creature_ai_scripts`
 (   `id`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `dataint`,    `x`  ,    `y`  ,  `z`  ,  `o`, `condition_id`, `comments`) VALUES
 (1241601,          0,        65,       8302,           0,           1,           2,         0,     0   ,     0   ,   0   ,   0 ,           8302, 'Blackwing Legionnaire - Decrement Creature Count'),
@@ -911,6 +916,7 @@ INSERT INTO `creature_ai_scripts`
 (1241603,          0,        39,    8302036,           0,           0,           0,       100,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Legionnaire - Increment Creature Count'),
 (1241604,          0,        18,          0,           0,           0,           0,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Legionnaire - Despawn (reached home)'),
 (1241605,          0,        39,    1241601,           0,           0,           0,       100,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Legionnaire - Flee (hit by spell)');
+DELETE FROM generic_scripts WHERE LENGTH(id) = 7 AND id LIKE '12416%'; -- testing
 INSERT INTO `generic_scripts`
 (   `id`, `priority`, `command`, `datalong`, `datalong4`, `comments`) VALUES
 (1241601,          0,        59,          0,           0, 'Blackwing Legionnaire - Set react state'),
@@ -920,9 +926,11 @@ INSERT INTO `generic_scripts`
 (1241601,          3,        67,          2,           0, 'Blackwing Legionnaire - Set default movement');
 
 -- Events list for Blackwing Mage
+DELETE FROM creature_movement_template WHERE entry = 12420; -- testing
 INSERT `creature_movement_template`
 (`entry`, `point`, `position_x`, `position_y`, `position_z`, `orientation`, `script_id`) VALUES
 (  12420,       1,     -7556.65,     -1025.56,       408.56,           100,     1242001);
+DELETE FROM creature_movement_scripts WHERE LENGTH(id) = 7 AND id LIKE '12420%'; -- testing
 INSERT `creature_movement_scripts`
 (   `id`, `priority`, `command`, `datalong`, `comments`) VALUES
 -- Not sure we need this now.
@@ -939,7 +947,7 @@ INSERT `creature_ai_events`
 (1242005,         12420,              0,           11,                       0b00,          0x00,              0,              0,              0,              0,          1242005, 'Blackwing Mage - Spawned'),
 (1242006,         12420,              0,            8,                       0b00,          0x00,          23032,             -1,              0,              0,          1242006, 'Blackwing Mage - Hit by spell'),
 (1242007,         12420,              0,            0,                       0b10,          0x01,              0,              0,           3000,          12000,          1242007, 'Blackwing Mage - In Combat (periodic) - Fireball');
-DELETE FROM `creature_ai_scripts` WHERE `id` = 1242002;
+DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '12420%'; -- testing
 INSERT INTO `creature_ai_scripts`
 (   `id`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `dataint`,    `x`  ,    `y`  ,  `z`  ,  `o`, `condition_id`, `comments`) VALUES
 (1242001,          0,        15,      22271,           0,           0,           0,             6,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Cast Arcane Explosion'),
@@ -950,6 +958,7 @@ INSERT INTO `creature_ai_scripts`
 (1242005,          0,        39,    8302036,           0,           0,           0,             0,       100,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Increment Creature Count'),
 (1242006,          0,        39,    1242001,           0,           0,           0,             0,       100,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Flee (hit by spell)'),
 (1242007,          0,        15,      17290,           0,           0,           0,             1,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Cast Fireball');
+DELETE FROM generic_scripts WHERE LENGTH(id) = 7 AND id LIKE '12420%'; -- testing
 INSERT INTO `generic_scripts`
 (   `id`, `priority`, `command`, `datalong`, `dataint`, `condition_id`, `comments`) VALUES
 -- Move with the Spawning Adds generic_scripts above. It's only used from there.
@@ -974,6 +983,7 @@ REPLACE `creature_ai_events`
 (1242204,         12422,              0,           21,              0,              0,          1242204, 'Death Talon Dragonspawn - Reached Home'),
 (1242205,         12422,              0,           11,              0,              0,          1242205, 'Death Talon Dragonspawn - Spawned'),
 (1242206,         12422,              0,            8,          23032,             -1,          1242204, 'Death Talon Dragonspawn - Hit by spell');
+DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '12422%'; -- testing
 INSERT INTO `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `dataint`, `condition_id`, `comments`) VALUES
 (1242201,        34,          1,           0,           0,           0,         0,              0, 'Death Talon Dragonspawn - Set Home Position'),
@@ -1001,6 +1011,7 @@ INSERT `creature_ai_events`
 (1243514,         12435,             242,           6,                   0b000000,          0x00,              0,              0,              0,              0,          1243514, 'Razorgore the Untamed - Death (eggs destroyed)'),
 (1243515,         12435,               0,          11,                   0b000000,          0x00,              0,              0,              0,              0,          1243510, 'Razorgore the Untamed - Spawned'),
 (1243516,         12435,               0,          37,                   0b000000,          0x00,          19832,              0,              0,              0,          1243516, 'Razorgore the Untamed - Aura unapply');
+DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '12435%'; -- testing
 INSERT `creature_ai_scripts`
 (   `id`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`,      `o`, `condition_id`, `comments`) VALUES
 (1243501,          0,        35,          1,           0,           0,           0,               0,               0,             0,         0x00,         0,          0,          0, 4.64258 ,              0, 'Razorgore the Untamed - Turn to point 5'),
@@ -1164,14 +1175,17 @@ REPLACE `creature_spells`
 ( 144560, 'Blackwing Lair - Blackwing Guardsman',       15580,             100,              1,                   5,                  23,                  1,                 16,       15754,             100,              1,                   3,                  24,                  8,                 11);
 
 -- Events list for Nefarian's Troops
+DELETE FROM creature_ai_events WHERE creature_id = 14459; -- testing
 INSERT `creature_ai_events`
 (   `id`, `creature_id`, `event_type`, `event_inverse_phase_mask`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
 (1445901,         14459,            8,                       0b10,          23032,             -1,          1445901, 'Nefarian''s Troops - Hit by spell');
+DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '14459%'; -- testing
 INSERT `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `dataint`, `comments`) VALUES
 -- Need to reset phase at the beginning of the encounter.
 (1445901,        44,          1,         0, 'Nefarian''s Troops - Set phase'),
 (1445901,        39,    1445901,       100, 'Nefarian''s Troops - Emote');
+DELETE FROM generic_scripts WHERE LENGTH(id) = 7 AND id LIKE '14459%'; -- testing
 INSERT `generic_scripts`
 (   `id`, `delay`, `command`, `datalong`, `target_param1`, `target_type`, `dataint`, `comments`) VALUES
 (1445901,       2,         0,          3,           84388,             9,      9592, 'Nefarian''s Troops - Emote');
@@ -1196,6 +1210,7 @@ INSERT `generic_scripts`
 (176965,        11,     234784, 'Portcullis - Open');
 
 -- Black Dragon Egg
+DELETE FROM gameobject_scripts WHERE id BETWEEN 234786 AND 234815; -- testing
 INSERT `gameobject_scripts`
 (  `id`, `command`,  `datalong`, `dataint`, `comments`) VALUES
 (234786,        39,    17780701,       100, 'Black Dragon Egg 1 - Use'),
@@ -1228,6 +1243,7 @@ INSERT `gameobject_scripts`
 (234813,        39,    17780701,       100, 'Black Dragon Egg 28 - Use'),
 (234814,        39,    17780701,       100, 'Black Dragon Egg 29 - Use'),
 (234815,        39,    17780701,       100, 'Black Dragon Egg 30 - Use');
+DELETE FROM generic_scripts WHERE id = 17780701; -- testing
 INSERT `generic_scripts`
 (    `id`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `condition_id`, `comments`) VALUES
 (17780701,          0,        68,    1660401,           2,       14453,         100,               0,             0,         0x00,         0,          0,          0,            275, 'Black Dragon Egg - Nefarian''s Troops Flee (Orb of Domination)'),
@@ -1278,6 +1294,7 @@ INSERT `spell_script_target`
 -- TESTING
 -- UPDATE creature_template SET display_id1 = 1311 WHERE entry = 12434; -- was 11686
 -- UPDATE creature_template SET display_id1 = 1525 WHERE entry = 14449; -- was 11686
+INSERT migrations VALUE(20250104150419);
 
 -- CODESTOTHESTARS
 UPDATE item_template SET name = 'Duchess' WHERE entry = 5665;
