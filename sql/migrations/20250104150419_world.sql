@@ -66,16 +66,17 @@ INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `v
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 593, 35,       8302,    2,   0,   0, 0x0);
 --  594: Map event data 2 equal to 1
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 594, 35,       8302,    2,   1,   0, 0x0);
---  595: Movement type is random
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 595, 63,          1,    0,   0,   0, 0x0);
+--  595: Movement type is not waypoint
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 595, 63,          2,    0,   0,   0, 0x1);
 --  596: Movement type is waypoint
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 596, 63,          2,    0,   0,   0, 0x0);
 --  597: Movement type is chase
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 597, 63,          6,    0,   0,   0, 0x0);
 --  598: Movement type is point
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 598, 63,          9,    0,   0,   0, 0x0);
---  599: (595: Movement type is random) Or (596: Movement type is waypoint) Or (597: Movement type is chase) Or (598: Movement type is point)
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 599, -2,        595,  596, 597, 598, 0x0);
+--  599: (596: Movement type is waypoint) Or (597: Movement type is chase) Or (598: Movement type is point)
+-- or idle?
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 599, -2,        596,  597, 598,   0, 0x0);
 --  612: (241: Black Dragon Egg within 125 yards) And (582: Nearby Razorgore within 90 yards)
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 612, -1,        241,  582,   0,   0, 0x0);
 --  613: (241: Black Dragon Egg within 125 yards) And (583: No nearby Razorgore within 90 yards)
@@ -218,14 +219,14 @@ DELETE FROM `event_scripts` WHERE `id` = 8302;
 -- Make sure to test that casting Possess subsequent times doesn't start additional instances of the scripts.
 INSERT `event_scripts`
 (`id`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `condition_id`, `comments`) VALUES
-(8302,          0,        39,    8302141,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8303, 'Razorgore Event - Start Spawning Adds (North)'),
-(8302,          0,        39,    8302142,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8303, 'Razorgore Event - Start Spawning Adds (East)'),
+-- (8302,          0,        39,    8302141,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8303, 'Razorgore Event - Start Spawning Adds (North)'),
+-- (8302,          0,        39,    8302142,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8303, 'Razorgore Event - Start Spawning Adds (East)'),
 (8302,          0,        39,    8302143,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8303, 'Razorgore Event - Start Spawning Adds (East South)'),
-(8302,          0,        39,    8302144,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8303, 'Razorgore Event - Start Spawning Adds (South East)'),
-(8302,          0,        39,    8302145,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8303, 'Razorgore Event - Start Spawning Adds (South)'),
-(8302,          0,        39,    8302146,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8303, 'Razorgore Event - Start Spawning Adds (West)'),
-(8302,          0,        39,    8302147,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8303, 'Razorgore Event - Start Spawning Adds (West North)'),
-(8302,          0,        39,    8302148,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8303, 'Razorgore Event - Start Spawning Adds (North West)'),
+-- (8302,          0,        39,    8302144,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8303, 'Razorgore Event - Start Spawning Adds (South East)'),
+-- (8302,          0,        39,    8302145,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8303, 'Razorgore Event - Start Spawning Adds (South)'),
+-- (8302,          0,        39,    8302146,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8303, 'Razorgore Event - Start Spawning Adds (West)'),
+-- (8302,          0,        39,    8302147,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8303, 'Razorgore Event - Start Spawning Adds (West North)'),
+-- (8302,          0,        39,    8302148,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8303, 'Razorgore Event - Start Spawning Adds (North West)'),
 (8302,          1,        61,       8302,     9000000,           0,           0,             0,               0,               0,            0,         0,     830201,          0,     830202,              0, 'Razorgore Event - Start Map Event');
 
 -- Success Script for Scripted Map Event
@@ -248,13 +249,16 @@ INSERT `generic_scripts`
 -- then immediately run back to their spawn point and despawn from their on-home script.
 -- I think it happened when changing from possessed to not, or vice versa.
 -- Probably rename the comment prefix to something less specific like "Razorgore Event Adds".
-(8302000,       0,          0,        20,          2,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Set movement type'),
-(8302000,       0,          1,        67,          2,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Set default movement'),
-(8302001,       0,          0,        44,          1,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Set phase'),
-(8302001,       0,          1,        59,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Set react state'),
-(8302001,       0,          2,        42,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Set melee attack'),
+(8302000,       0,          0,        20,          2,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            599, 'Razorgore Event Spawning Adds - Set movement type'),
+-- (8302000,       0,          1,        67,          2,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Set default movement'),
+-- (8302000,       0,          0,        67,          2,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Set default movement'),
+(8302001,       0,          0,        94,          2,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            595, 'Razorgore Event Spawning Adds - Clear movement'),
+(8302001,       0,          1,        44,          1,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Set phase'),
+(8302001,       0,          2,        59,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Set react state'),
+-- (8302001,       0,          2,        42,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Set melee attack'),
+(8302001,       0,          3,        93,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Attack stop'),
 -- Make sure that a polymorphed creature runs home after the polymorph ends, probably with an Aggro event.
-(8302001,       0,          3,        39,    8302000,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            599, 'Razorgore Event Spawning Adds - Set movement type'),
+(8302001,       0,          4,        39,    8302000,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,     /* 599 */0, 'Razorgore Event Spawning Adds - Set movement type'),
 (8302003,       0,          0,         3,          2,           0,       0x001,         0x2,             8,           12435,             150,         0x00,         0,          0,          0,          0,     5   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Move to Razorgore'),
 (8302004,       0,          0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            612, 'Razorgore Event Spawning Adds - Initial Movement (North) - Move to Razorgore'),
 (8302004,       0,          0,        60,          3,           0,           0,           0,             0,               0,               0,         0x00,         0,     830204,          0,          0,     0   ,     0    ,   0    ,  0 ,            613, 'Razorgore Event Spawning Adds - Initial Movement (North) - Move to Altar'),
@@ -268,8 +272,9 @@ INSERT `generic_scripts`
 (8302005,       0,          0,        18,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            619, 'Razorgore Event Spawning Adds - Initial Movement (East) - Despawn'),
 (8302005,       1,          0,        39,    8302001,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            618, 'Razorgore Event Spawning Adds - Initial Movement (East) - Flee'),
 (8302005,       1,          0,        18,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            619, 'Razorgore Event Spawning Adds - Initial Movement (East) - Despawn'),
-(8302006,       0,          0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            614, 'Razorgore Event Spawning Adds - Initial Movement (East South) - Move to Razorgore'),
-(8302006,       0,          0,        60,          3,           0,           0,           0,             0,               0,               0,         0x00,         0,     830208,          0,          0,     0   ,     0    ,   0    ,  0 ,            615, 'Razorgore Event Spawning Adds - Initial Movement (East South) - Move to Altar'),
+(8302006,       0,          0,        39,    8302003,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            /* 614 */612, 'Razorgore Event Spawning Adds - Initial Movement (East South) - Move to Razorgore'),
+(8302006,       0,          0,        67,          2,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            615, 'Razorgore Event Spawning Adds - Initial Movement (East South) - Move to Altar'),
+(8302006,       0,          1,        60,          3,           0,           0,           0,             0,               0,               0,         0x00,         0,     830208,          0,          0,     0   ,     0    ,   0    ,  0 ,            615, 'Razorgore Event Spawning Adds - Initial Movement (East South) - Move to Altar'),
 (8302006,       0,          0,        39,    8302001,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            618, 'Razorgore Event Spawning Adds - Initial Movement (East South) - Flee'),
 (8302006,       0,          0,        18,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            619, 'Razorgore Event Spawning Adds - Initial Movement (East South) - Despawn'),
 (8302006,       1,          0,        39,    8302001,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,            618, 'Razorgore Event Spawning Adds - Initial Movement (East South) - Flee'),
@@ -524,7 +529,7 @@ INSERT `generic_scripts`
 (8302140,      30,          0,        39,    8302129,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,           8304, 'Razorgore Event Spawning Adds - Summon Creature - North West 6 - Summon First'),
 (8302141,      75,          0,        39,    8302045,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,           8302, 'Razorgore Event Spawning Adds - Start Spawning Adds (North)'),
 (8302142,      75,          0,        39,    8302057,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,           8302, 'Razorgore Event Spawning Adds - Start Spawning Adds (East)'),
-(8302143,      45,          0,        39,    8302069,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,           8302, 'Razorgore Event Spawning Adds - Start Spawning Adds (East South)'),
+(8302143,      15,          0,        39,    8302069,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,           8302, 'Razorgore Event Spawning Adds - Start Spawning Adds (East South)'),
 (8302144,      45,          0,        39,    8302081,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,           8302, 'Razorgore Event Spawning Adds - Start Spawning Adds (South East)'),
 (8302145,      75,          0,        39,    8302093,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,           8302, 'Razorgore Event Spawning Adds - Start Spawning Adds (South)'),
 (8302146,      75,          0,        39,    8302105,           0,           0,           0,             0,               0,               0,         0x00,       100,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,           8302, 'Razorgore Event Spawning Adds - Start Spawning Adds (West)'),
@@ -934,7 +939,7 @@ INSERT `creature_movement_scripts`
 (   `id`, `priority`, `command`, `datalong`, `comments`) VALUES
 -- Not sure we need this now.
 -- (1242001,          0,        34,          1, 'Blackwing Mage - Set home position'),
-(1242001,          1,        18,          0, 'Blackwing Mage - Despawn');
+(1242001,          0,        18,          0, 'Blackwing Mage - Despawn');
 DELETE FROM `creature_ai_events` WHERE `creature_id` = 12420;
 INSERT `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
@@ -945,7 +950,8 @@ INSERT `creature_ai_events`
 (1242004,         12420,              0,            6,                       0b00,          0x00,              0,              0,              0,              0,          1242004, 'Blackwing Mage - Death'),
 (1242005,         12420,              0,           11,                       0b00,          0x00,              0,              0,              0,              0,          1242005, 'Blackwing Mage - Spawned'),
 (1242006,         12420,              0,            8,                       0b00,          0x00,          23032,             -1,              0,              0,          1242006, 'Blackwing Mage - Hit by spell'),
-(1242007,         12420,              0,            0,                       0b10,          0x01,              0,              0,           3000,          12000,          1242007, 'Blackwing Mage - In Combat (periodic) - Fireball');
+(1242007,         12420,              0,            0,                       0b10,          0x01,              0,              0,           3000,          12000,          1242007, 'Blackwing Mage - In Combat (periodic) - Fireball')/* ,
+(1242008,         12420,              0,            4,                       0b00,          0x00,              0,              0,              0,              0,          1242008, 'Blackwing Mage - Aggro') */;
 DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '12420%'; -- testing
 INSERT INTO `creature_ai_scripts`
 (   `id`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `dataint`,    `x`  ,    `y`  ,  `z`  ,  `o`, `condition_id`, `comments`) VALUES
@@ -956,7 +962,8 @@ INSERT INTO `creature_ai_scripts`
 (1242004,          0,        18,       5000,           0,           0,           0,             0,         0,     0   ,     0   ,   0   ,   0 ,            579, 'Blackwing Mage - Despawn (death)'),
 (1242005,          0,        39,    8302036,           0,           0,           0,             0,       100,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Increment Creature Count'),
 (1242006,          0,        39,    8302001,           0,           0,           0,             0,       100,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Flee (hit by spell)'),
-(1242007,          0,        15,      17290,           0,           0,           0,             1,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Cast Fireball');
+(1242007,          0,        15,      17290,           0,           0,           0,             1,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Cast Fireball')/* ,
+(1242008,          0,        39,    8302001,           0,           0,           0,             0,       100,     0   ,     0   ,   0   ,   0 ,            242, 'Blackwing Mage - Flee (aggro)') */;
 DELETE FROM generic_scripts WHERE LENGTH(id) = 7 AND id LIKE '12420%'; -- testing
 UPDATE `creature_template` SET `spell_list_id` = 0 WHERE `entry` = 12420;
 

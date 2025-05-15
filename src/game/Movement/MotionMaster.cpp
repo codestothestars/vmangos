@@ -569,11 +569,11 @@ void MotionMaster::MoveWaypoint(uint32 startPoint /*=0*/, uint32 source /*=0==PA
 {
     if (m_owner->IsCreature())
     {
-        // if (GetCurrentMovementGeneratorType() == WAYPOINT_MOTION_TYPE)
-        // {
-        //     sLog.Out(LOG_BASIC, LOG_LVL_ERROR, "Creature %s (Entry %u) attempt to MoveWaypoint() but creature is already using waypoint", m_owner->GetGuidStr().c_str(), m_owner->GetEntry());
-        //     return;
-        // }
+        if (GetCurrentMovementGeneratorType() == WAYPOINT_MOTION_TYPE)
+        {
+            sLog.Out(LOG_BASIC, LOG_LVL_ERROR, "Creature %s (Entry %u) attempt to MoveWaypoint() but creature is already using waypoint", m_owner->GetGuidStr().c_str(), m_owner->GetEntry());
+            return;
+        }
 
         Creature* creature = (Creature*)m_owner;
 
