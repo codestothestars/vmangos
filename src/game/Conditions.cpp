@@ -151,25 +151,6 @@ bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, 
         }
         case CONDITION_OR:
         {
-            if (
-                m_entry == 599 && !(
-                    sConditionStorage.LookupEntry<ConditionEntry>(m_value1)->Meets(target, map, source, conditionSourceType) ||
-                    sConditionStorage.LookupEntry<ConditionEntry>(m_value2)->Meets(target, map, source, conditionSourceType) ||
-                    sConditionStorage.LookupEntry<ConditionEntry>(m_value3)->Meets(target, map, source, conditionSourceType) ||
-                    sConditionStorage.LookupEntry<ConditionEntry>(m_value4)->Meets(target, map, source, conditionSourceType)
-                )
-            )
-            {
-                if (Creature const* sourceCreature = source->ToCreature())
-                {
-                    sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "599 - creature movement type is %u", sourceCreature->GetMotionMaster()->GetCurrentMovementGeneratorType());
-                }
-                else
-                {
-                    sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "599 - source is not a creature");
-                }
-            }
-
             // Third and fourth condition are optional
             if (m_value3 && sConditionStorage.LookupEntry<ConditionEntry>(m_value3)->Meets(target, map, source, conditionSourceType))
                 return true;

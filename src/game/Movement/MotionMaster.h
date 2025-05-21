@@ -126,13 +126,14 @@ class MotionMaster : std::stack<MovementGenerator *>
 
         void MoveIdle();
         void MoveRandom(bool use_current_position = false, float wander_distance = 0.0f, uint32 expire_time = 0);
-        void MoveTargetedHome();
+        void MoveTargetedHome(bool isPersistent = false);
         void MoveFollow(Unit* target, float dist, float angle);
         void MoveChase(Unit* target, float dist = 0.0f, float angle = 0.0f);
         void MoveConfused();
         void MoveFleeing(Unit* enemy, uint32 time = 0);
         void MoveFeared(Unit* enemy, uint32 time = 0);
-        void MovePoint(uint32 id, float x, float y, float z, uint32 options = MOVE_NONE, float speed = 0.0f, float finalOrientation = -10);
+        void MovePoint(uint32 id, float x, float y, float z, uint32 options = MOVE_NONE, float speed = 0.0f, float finalOrientation = -10, bool resumeOnReset = false);
+        void ClearPoint(uint32 id);
         void MoveSeekAssistance(float x,float y,float z);
         void MoveSeekAssistanceDistract(uint32 timer);
         void MoveWaypoint(uint32 startPoint = 0, uint32 source = 0, uint32 initialDelay = 0, uint32 overwriteGuid = 0, uint32 overwriteEntry = 0, bool repeat = true);

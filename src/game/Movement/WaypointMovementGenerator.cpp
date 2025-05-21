@@ -21,6 +21,7 @@
 #include "WaypointMovementGenerator.h"
 #include "Creature.h"
 #include "CreatureAI.h"
+#include "Log.h"
 #include "WaypointManager.h"
 #include "WorldPacket.h"
 #include "ScriptMgr.h"
@@ -62,11 +63,19 @@ void WaypointMovementGenerator<Creature>::LoadPath(uint32 guid, uint32 entry, Wa
 
 void WaypointMovementGenerator<Creature>::Initialize(Creature &creature)
 {
+    if (creature.GetEntry() == 12416)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "WaypointMovementGenerator::Initialize 12416");
+    }
     creature.AddUnitState(UNIT_STATE_ROAMING | UNIT_STATE_ROAMING_MOVE);
 }
 
 void WaypointMovementGenerator<Creature>::InitializeWaypointPath(Creature& creature, uint32 startPoint, WaypointPathOrigin wpSource, uint32 initialDelay, uint32 overwriteGuid, uint32 overwriteEntry, bool repeat)
 {
+    if (creature.GetEntry() == 12416)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "InitializeWaypointPath 12416");
+    }
     m_isWandering = false;
     m_repeating = repeat;
 
@@ -95,18 +104,30 @@ void WaypointMovementGenerator<Creature>::InitializeWaypointPath(Creature& creat
 
 void WaypointMovementGenerator<Creature>::Finalize(Creature &creature)
 {
+    if (creature.GetEntry() == 12416)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "WaypointMovementGenerator::Finalize 12416");
+    }
     creature.ClearUnitState(UNIT_STATE_ROAMING | UNIT_STATE_ROAMING_MOVE);
     creature.SetWalk(!creature.HasUnitState(UNIT_STATE_RUNNING), false);
 }
 
 void WaypointMovementGenerator<Creature>::Interrupt(Creature &creature)
 {
+    if (creature.GetEntry() == 12416)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Interrupt 12416");
+    }
     creature.ClearUnitState(UNIT_STATE_ROAMING | UNIT_STATE_ROAMING_MOVE);
     creature.SetWalk(!creature.HasUnitState(UNIT_STATE_RUNNING), false);
 }
 
 void WaypointMovementGenerator<Creature>::Reset(Creature &creature)
 {
+    if (creature.GetEntry() == 12416)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Reset 12416");
+    }
     creature.AddUnitState(UNIT_STATE_ROAMING | UNIT_STATE_ROAMING_MOVE);
 
     if (m_isWandering)
@@ -127,6 +148,10 @@ void WaypointMovementGenerator<Creature>::Reset(Creature &creature)
 
 bool WaypointMovementGenerator<Creature>::OnArrived(Creature& creature)
 {
+    if (creature.GetEntry() == 12416)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "OnArrived 12416");
+    }
     if (!i_path || i_path->empty())
         return false;
 
@@ -183,6 +208,10 @@ bool WaypointMovementGenerator<Creature>::OnArrived(Creature& creature)
 
 void WaypointMovementGenerator<Creature>::StartMove(Creature &creature)
 {
+    if (creature.GetEntry() == 12416)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "StartMove 12416");
+    }
     if (!i_path || i_path->empty())
         return;
 
@@ -243,15 +272,23 @@ void WaypointMovementGenerator<Creature>::StartMove(Creature &creature)
 
 bool WaypointMovementGenerator<Creature>::Update(Creature &creature, uint32 const& diff)
 {
+    // if (creature.GetEntry() == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Update 12416");
+    // }
     // Waypoint movement can be switched on/off
     // This is quite handy for escort quests and other stuff
     bool shouldWait = false;
-    if (creature.HasUnitState(UNIT_STATE_CAN_NOT_MOVE | UNIT_STATE_DISTRACTED) || !i_path || i_path->empty())
+    if (creature.HasUnitState(UNIT_STATE_CAN_NOT_MOVE | UNIT_STATE_CONFUSED | UNIT_STATE_DISTRACTED) || !i_path || i_path->empty())
         shouldWait = true;
 
     // prevent a crash at empty waypoint path.
     if (shouldWait)
     {
+        // if (creature.GetEntry() == 12416)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Update 12416 - shouldWait");
+        // }
         creature.ClearUnitState(UNIT_STATE_ROAMING_MOVE);
         return true;
     }
@@ -260,6 +297,10 @@ bool WaypointMovementGenerator<Creature>::Update(Creature &creature, uint32 cons
     // don't stop creature movement for spells without interrupt movement flags
     if (creature.IsNoMovementSpellCasted())
     {
+        // if (creature.GetEntry() == 12416)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Update 12416 - IsNoMovementSpellCasted");
+        // }
         if (!creature.IsStopped())
         {
             creature.StopMoving();
@@ -273,24 +314,62 @@ bool WaypointMovementGenerator<Creature>::Update(Creature &creature, uint32 cons
 
     if (Stopped())
     {
+        // if (creature.GetEntry() == 12416)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Update 12416 - Stopped");
+        // }
         if (CanMove(diff))
+        {
+            // if (creature.GetEntry() == 12416)
+            // {
+            //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Update 12416 - CanMove");
+            // }
             StartMove(creature);
+        }
     }
     else
     {
+        // if (creature.GetEntry() == 12416)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Update 12416 - !Stopped");
+        // }
         if (creature.IsStopped())
+        {
+            // if (creature.GetEntry() == 12416)
+            // {
+            //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Update 12416 - IsStopped");
+            // }
+            // This is getting hit after the confuse motion is removed,
+            // so the creature waits 30 seconds before continuing.
+            // Maybe we want to add a "resume" boolean parameter to enable calling
+            // Reset or StartMoveNow when the generator moves back to the top of the stack?
             Stop(STOP_TIME_FOR_PLAYER);
+        }
         else if (creature.movespline->Finalized())
         {
+            // if (creature.GetEntry() == 12416)
+            // {
+            //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Update 12416 - movespline->Finalized");
+            // }
             if (OnArrived(creature))        // fire script events
+            {
+                // if (creature.GetEntry() == 12416)
+                // {
+                //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Update 12416 - OnArrived");
+                // }
                 StartMove(creature);        // restart movement if needed
+            }
         }
     }
     return true;
 }
 
-bool WaypointMovementGenerator<Creature>::GetResetPosition(Creature&, float& x, float& y, float& z)
+bool WaypointMovementGenerator<Creature>::GetResetPosition(Creature& creature, float& x, float& y, float& z)
 {
+    if (creature.GetEntry() == 12416)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "GetResetPosition 12416");
+    }
     // prevent a crash at empty waypoint path.
     if (!i_path || i_path->empty())
         return false;

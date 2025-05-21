@@ -2546,11 +2546,6 @@ void Map::ScriptCommandStart(ScriptInfo const& script, uint32 delay, ObjectGuid 
 
 bool Map::ScriptCommandStartDirect(ScriptInfo const& script, WorldObject* source, WorldObject* target)
 {
-    if (script.id == 17780701 && script.condition == 242 && script.startScriptForAll.objectEntry == 14453)
-    {
-        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Nefarian''s Troops Flee - IsConditionSatisfied == %u", IsConditionSatisfied(script.condition, target, this, source, CONDITION_FROM_DBSCRIPTS));
-    }
-
     if ((script.command != SCRIPT_COMMAND_DISABLED) && 
         FindScriptFinalTargets(source, target, script) && 
         (!script.condition || IsConditionSatisfied(script.condition, target, this, source, CONDITION_FROM_DBSCRIPTS)))

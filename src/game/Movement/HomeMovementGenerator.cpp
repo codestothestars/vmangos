@@ -27,8 +27,13 @@ void HomeMovementGenerator<Creature>::Initialize(Creature & owner)
     _setTargetLocation(owner);
 }
 
-void HomeMovementGenerator<Creature>::Reset(Creature &)
+void HomeMovementGenerator<Creature>::Reset(Creature & owner)
 {
+    if(owner.GetEntry() == 12416)
+    {
+        owner.GetEntry();
+    }
+    _setTargetLocation(owner);
 }
 
 void HomeMovementGenerator<Creature>::_setTargetLocation(Creature & owner)
@@ -89,6 +94,10 @@ void HomeMovementGenerator<Creature>::Finalize(Creature& owner)
 
         owner.SetWalk(!owner.HasUnitState(UNIT_STATE_RUNNING) && !owner.IsLevitating(), false);
         owner.LoadCreatureAddon(true);
+        if(owner.GetEntry() == 12416)
+        {
+            owner.GetEntry();
+        }
         owner.AI()->JustReachedHome();
     }
 }

@@ -236,6 +236,7 @@ enum eScriptCommand
                                                             // datalong4 = (bool) repeat
                                                             // dataint = overwrite_guid
                                                             // dataint2 = overwrite_entry
+                                                            // dataint3 = preserve_existing
     SCRIPT_COMMAND_START_MAP_EVENT          = 61,           // source = Map
                                                             // datalong = event_id
                                                             // datalong2 = time_limit
@@ -338,7 +339,13 @@ enum eScriptCommand
                                                             // datalong = generic_script_id
                                                             // datalong2 = zone_id
                                                             // datalong3 = (bool) with_pets
-
+    SCRIPT_COMMAND_ATTACK_STOP              = 93,           // source = Unit
+    SCRIPT_COMMAND_CLEAR_MOVEMENT           = 94,           // source = Creature
+                                                            // datalong = enum MovementGeneratorType
+    SCRIPT_COMMAND_CLEAR_POINT              = 95,           // source = Creature
+                                                            // datalong = point_id
+    SCRIPT_COMMAND_TOGGLE_CAN_TARGET        = 96,           // source = Creature
+                                                            // datalong = (bool) 0 = off, 1 = on
     SCRIPT_COMMAND_MAX,
 
     SCRIPT_COMMAND_DISABLED                 = 9999          // Script action was disabled during loading.
@@ -350,8 +357,9 @@ static constexpr uint32 MAX_EMOTE_ID = 4;                   // used for SCRIPT_C
 // Flags used by SCRIPT_COMMAND_MOVE_TO
 enum eMoveToFlags
 {
-    SF_MOVETO_FORCED        = 0x1,                          // No check if creature can move.
-    SF_MOVETO_POINT_MOVEGEN = 0x2,                          // Changes movement generator to point movement.
+    SF_MOVETO_FORCED          = 0x1,                          // No check if creature can move.
+    SF_MOVETO_POINT_MOVEGEN   = 0x2,                          // Changes movement generator to point movement.
+    SF_MOVETO_RESUME_ON_RESET = 0x4,                          // Continue when overriding movement is removed.
 };
 
 // Possible datalong3 values for SCRIPT_COMMAND_MOVE_TO
@@ -906,6 +914,7 @@ struct ScriptInfo
             uint32 unused;                                  // data_flags
             int32  overwriteGuid;                           // dataint
             int32  overwriteEntry;                          // dataint2
+            int32  preserveExisting;                        // dataint3
         } startWaypoints;
         
         struct                                              // SCRIPT_COMMAND_START_MAP_EVENT (61)
@@ -1088,6 +1097,23 @@ struct ScriptInfo
             uint32 zoneId;                                  // datalong2
             uint32 withPets;                                // datalong3
         } startScriptOnZone;
+
+                                                            // SCRIPT_COMMAND_ATTACK_STOP (93)
+
+        struct                                              // SCRIPT_COMMAND_CLEAR_MOVEMENT (94)
+        {
+            uint32 movementType;                            // datalong
+        } clearMovement;
+
+        struct                                              // SCRIPT_COMMAND_CLEAR_POINT (95)
+        {
+            uint32 pointId;                                 // datalong
+        } clearPoint;
+
+        struct                                              // SCRIPT_COMMAND_TOGGLE_CAN_TARGET (96)
+        {
+            uint32 canTarget;                               // datalong
+        } toggleCanTarget;
 
         struct
         {

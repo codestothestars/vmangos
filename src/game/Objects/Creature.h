@@ -334,7 +334,8 @@ class Creature : public Unit
         bool CanFleeFromCallForHelpAgainst(Unit const* pEnemy) const;
         bool CanAssistTo(Unit const* pFriend, Unit const* pEnemy, bool checkfaction = true) const;
         bool CanInitiateAttack() const;
-        bool CanHaveTarget() const { return !HasExtraFlag(CREATURE_FLAG_EXTRA_NO_TARGET); }
+        bool CanHaveTarget() const { return m_canTarget && !HasExtraFlag(CREATURE_FLAG_EXTRA_NO_TARGET); }
+        void SetCanTarget(bool canTarget) { m_canTarget = canTarget; }
 
         uint32 GetDefaultMount() const { return m_mountId; }
         void SetDefaultMount(uint32 id) { m_mountId = id; }
@@ -621,6 +622,7 @@ class Creature : public Unit
 
         bool m_isDeadByDefault;
         bool m_AI_locked;
+        bool m_canTarget = true;
         uint16 m_creatureStateFlags;
         uint32 m_temporaryFactionFlags;                     // used for real faction changes (not auras etc)
         int32 m_reputationId;                               // Id of the creature's faction in the client reputations list.

@@ -70,6 +70,20 @@ void PointMovementGenerator<T>::Interrupt(T& unit)
 template<class T>
 void PointMovementGenerator<T>::Reset(T& unit)
 {
+    if (Creature* creature = unit.ToCreature())
+    {
+        if (creature->GetEntry() == 12416)
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "PointMovementGenerator::Reset 12416");
+        }
+    }
+
+    if (m_resumeOnReset)
+    {
+        Initialize(unit);
+        return;
+    }
+
     if (!unit.IsStopped())
         unit.StopMoving();
 
