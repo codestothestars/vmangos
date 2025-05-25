@@ -77,6 +77,7 @@ enum MoveOptions
     MOVE_FORCE_DESTINATION   = 0x040,
     MOVE_EXCLUDE_STEEP_SLOPES= 0x080,
     MOVE_STRAIGHT_PATH       = 0x100,
+    MOVE_WAIT_FOR_SPELLS     = 0x200,
 };
 
 class MotionMaster : std::stack<MovementGenerator *>

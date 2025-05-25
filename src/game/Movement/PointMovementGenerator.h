@@ -30,7 +30,7 @@ class PointMovementGenerator
 {
     public:
         PointMovementGenerator(uint32 _id, float _x, float _y, float _z, uint32 options, float speed = 0.0f, float finalOrientation = -10.0f, bool resumeOnReset = false) :
-          m_id(_id), m_x(_x), m_y(_y), m_z(_z), m_o(finalOrientation), m_options(options), m_speed(speed), m_recalculateSpeed(false), m_resumeOnReset(resumeOnReset) {}
+          m_id(_id), m_x(_x), m_y(_y), m_z(_z), m_o(finalOrientation), m_options(options), m_speed(speed), m_recalculateSpeed(false), m_resumeOnReset(resumeOnReset), i_nextMoveTime(0) {}
         virtual ~PointMovementGenerator() {}
 
         virtual void Initialize(T&);
@@ -52,8 +52,10 @@ class PointMovementGenerator
         float m_x,m_y,m_z,m_o;
         uint32 m_options;
         float m_speed;
+        bool m_paused;
         bool m_recalculateSpeed;
         bool m_resumeOnReset;
+        ShortTimeTracker i_nextMoveTime;
 };
 
 template<class T>

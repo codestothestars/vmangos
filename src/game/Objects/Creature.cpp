@@ -2859,14 +2859,26 @@ void Creature::SendZoneUnderAttackMessage(Player const* attacker)
 
 void Creature::SetInCombatWithZone(bool initialPulse)
 {
+    if (GetEntry() == 12416)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416");
+    }
     if (!CanHaveThreatList())
     {
         sLog.Out(LOG_BASIC, LOG_LVL_ERROR, "Creature entry %u call SetInCombatWithZone but creature cannot have threat list.", GetEntry());
         return;
     }
 
+    if (GetEntry() == 12416)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416 - GetMap");
+    }
     Map* pMap = GetMap();
 
+    if (GetEntry() == 12416)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416 - !pMap->IsDungeon()");
+    }
     if (!pMap->IsDungeon())
     {
         sLog.Out(LOG_BASIC, LOG_LVL_ERROR, "Creature entry %u call SetInCombatWithZone for map (id: %u) that isn't an instance.", GetEntry(), pMap->GetId());
@@ -2875,22 +2887,60 @@ void Creature::SetInCombatWithZone(bool initialPulse)
 
     Map::PlayerList const& PlList = pMap->GetPlayers();
 
+    if (GetEntry() == 12416)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416 - if (PlList.isEmpty())");
+    }
     if (PlList.isEmpty())
         return;
 
+    if (GetEntry() == 12416)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416 - if (!HasCreatureState(CSTATE_COMBAT_WITH_ZONE))");
+    }
     if (!HasCreatureState(CSTATE_COMBAT_WITH_ZONE))
     {
         UpdateCombatWithZoneState(true);
 
         // Attack closest player first.
         // Prevent case where boss runs to somebody who just entered raid.
+        if (GetEntry() == 12416)
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416 - if (initialPulse && !GetVictim() && AI())");
+        }
+        if (GetEntry() == 12416)
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416 - initialPulse %u", initialPulse);
+        }
+        if (GetEntry() == 12416)
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416 - GetVictim() %u", (bool)GetVictim());
+        }
+        if (GetEntry() == 12416)
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416 - AI() %u", (bool)AI());
+        }
         if (initialPulse && !GetVictim() && AI())
         {
+            if (GetEntry() == 12416)
+            {
+                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416 - if (Player* pPlayer = FindNearestHostilePlayer(MAX_VISIBILITY_DISTANCE))");
+            }
             if (Player* pPlayer = FindNearestHostilePlayer(MAX_VISIBILITY_DISTANCE))
+            {
+                if (GetEntry() == 12416)
+                {
+                    sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416 - AI()->AttackStart(pPlayer)");
+                }
                 AI()->AttackStart(pPlayer);
+            }
         }
     }
 
+    if (GetEntry() == 12416)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416 - for (const auto& i : PlList)");
+    }
     for (const auto& i : PlList)
     {
         if (Player* pPlayer = i.getSource())

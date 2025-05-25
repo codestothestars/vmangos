@@ -452,7 +452,9 @@ bool Map::ScriptCommand_SummonCreature(ScriptInfo const& script, WorldObject* so
 
     Creature* pCreature = pSummoner->SummonCreature(script.summonCreature.creatureEntry, x, y, z, o,
         TempSummonType(script.summonCreature.despawnType), script.summonCreature.despawnDelay, script.summonCreature.flags & SF_SUMMONCREATURE_ACTIVE, 0,
-        (script.summonCreature.flags & SF_SUMMONCREATURE_NULL_AI) ? (CreatureAiSetter)([](Creature* pCreature) { pCreature->GetMotionMaster()->Initialize(); pCreature->SetAI(new NullCreatureAI(pCreature));}) : nullptr);
+        (script.summonCreature.flags & SF_SUMMONCREATURE_NULL_AI) ? (CreatureAiSetter)([](Creature* pCreature) { pCreature->GetMotionMaster()->Initialize(); pCreature->SetAI(new NullCreatureAI(pCreature));}) : nullptr,
+        nullptr,
+        script.summonCreature.flags & SF_SUMMONCREATURE_PASSIVE);
 
     if (!pCreature)
     {
@@ -1583,9 +1585,9 @@ bool Map::ScriptCommand_ZoneCombatPulse(ScriptInfo const& script, WorldObject* s
         return ShouldAbortScript(script);
     }
 
-    if (script.id == 830201)
+    if (pSource->GetEntry() == 12416)
     {
-        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "830201 - combat pulse - %u guid %u", source->GetEntry(), source->GetGUIDLow());
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ScriptCommand_ZoneCombatPulse 12416");
     }
     if (!pSource->IsAlive())
         return ShouldAbortScript(script);

@@ -388,7 +388,8 @@ enum eSummonCreatureFlags
     SF_SUMMONCREATURE_ACTIVE      = 0x02,                       // active creatures are always updated
     SF_SUMMONCREATURE_UNIQUE      = 0x04,                       // not actually unique, just checks for same entry in certain range
     SF_SUMMONCREATURE_UNIQUE_TEMP = 0x08,                       // same as 0x10 but check for TempSummon only creatures
-    SF_SUMMONCREATURE_NULL_AI     = 0x10                        // use Null AI instead of the normal creature script
+    SF_SUMMONCREATURE_NULL_AI     = 0x10,                       // use Null AI instead of the normal creature script
+    SF_SUMMONCREATURE_PASSIVE     = 0x20                        // start with passive react state
 };
 
 // FLags used by SCRIPT_COMMAND_CAST_SPELL

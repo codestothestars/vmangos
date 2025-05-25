@@ -4738,6 +4738,10 @@ bool Unit::Attack(Unit* victim, bool meleeAttack)
     if (meleeAttack)
         AddUnitState(UNIT_STATE_MELEE_ATTACKING);
 
+    if (GetEntry() == 12416)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Unit::Attack 12416 - m_attacking = victim");
+    }
     m_attacking = victim;
     m_attacking->_addAttacker(this);
 

@@ -212,7 +212,7 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, char const* tablename)
                 }
 
                 // combined flags of MoveOptions enum
-                if (tmp.moveTo.movementOptions > 511)
+                if (tmp.moveTo.movementOptions > 1023)
                 {
                     sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "Table `%s` has invalid movement options (datalong3 = %u) in SCRIPT_COMMAND_MOVE_TO for script id %u", tablename, tmp.moveTo.movementOptions, tmp.id);
                     continue;
