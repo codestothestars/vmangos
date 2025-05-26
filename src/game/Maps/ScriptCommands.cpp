@@ -2108,14 +2108,14 @@ bool Map::ScriptCommand_RespawnCreature(ScriptInfo const& script, WorldObject* s
 {
     Creature* pSource = ToCreature(source);
 
-    if (script.id == 1243504) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn creature"); }
-    if (script.id == 1243504 && !pSource) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn creature - !pSource"); }
-    if (script.id == 1243504 && pSource) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn creature - %u", pSource->GetEntry()); }
+    // if (script.id == 1243504) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn creature"); }
+    // if (script.id == 1243504 && !pSource) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn creature - !pSource"); }
+    // if (script.id == 1243504 && pSource) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn creature - %u", pSource->GetEntry()); }
 
-    if (script.id == 1243504 && pSource && pSource->GetEntry() == 12435) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Razorgore the Untamed"); }
-    if (script.id == 1243504 && pSource && pSource->GetEntry() == 14456) {
-        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Blackwing Guardsman");
-    }
+    // if (script.id == 1243504 && pSource && pSource->GetEntry() == 12435) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Razorgore the Untamed"); }
+    // if (script.id == 1243504 && pSource && pSource->GetEntry() == 14456) {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Blackwing Guardsman");
+    // }
 
     if (!pSource)
     {
@@ -2129,7 +2129,7 @@ bool Map::ScriptCommand_RespawnCreature(ScriptInfo const& script, WorldObject* s
             pSource->SetDeathState(JUST_DIED);
         else
         {
-            if (script.id == 1243504 && pSource) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn creature - %u - ShouldAbortScript", pSource->GetEntry()); }
+            // if (script.id == 1243504 && pSource) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn creature - %u - ShouldAbortScript", pSource->GetEntry()); }
             return ShouldAbortScript(script);
         }
     }
@@ -2137,7 +2137,7 @@ bool Map::ScriptCommand_RespawnCreature(ScriptInfo const& script, WorldObject* s
     if (script.respawnCreature.flags & SF_RESPAWNCREATURE_CLEAR_DESPAWN)
         pSource->CancelDespawn();
 
-    if (script.id == 1243504 && pSource) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn creature - %u - pSource->Respawn()", pSource->GetEntry()); }
+    // if (script.id == 1243504 && pSource) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn creature - %u - pSource->Respawn()", pSource->GetEntry()); }
     pSource->Respawn();
 
     return false;

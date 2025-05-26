@@ -249,6 +249,12 @@ INSERT `generic_scripts`
 -- then immediately run back to their spawn point and despawn from their on-home script.
 -- I think it happened when changing from possessed to not, or vice versa.
 -- Probably rename the comment prefix to something less specific like "Razorgore Event Adds".
+-- What happens when Razorgore is the last to die?
+-- sniff_33302_bwl_first_boss_try_wipe      - Creatures die.
+-- sniff_33302_bwl_progression_raid         - Creatures start running and then die. It appears they were running to a nearby spawn point, but not necessarily the one they spawned from and not even necessarily the nearest one!
+-- sniff_33598_bwl                          - Creatures die.
+-- sniff_36035_bwl_stopped_before_dragons 1 - Creatures start running back to spawn point and die on the way.
+-- sniff_36035_bwl_stopped_before_dragons 2 - Creatures start running back to spawn point and die on the way.
 (8302001,       0,          0,        44,          1,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Set phase'),
 (8302001,       0,          1,        59,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Set react state'),
 (8302001,       0,          2,        94,          2,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Clear movement (waypoint)'),
