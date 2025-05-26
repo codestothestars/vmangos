@@ -108,10 +108,10 @@ bool PointMovementGenerator<T>::Update(T& unit, uint32 const& diff)
 {
     if (!&unit)
         return false;
-    if (unit.GetEntry() == 12416)
-    {
-        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "PointMovementGenerator::Update 12416");
-    }
+    // if (unit.GetEntry() == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "PointMovementGenerator::Update 12416");
+    // }
 
     if (unit.HasUnitState(UNIT_STATE_CAN_NOT_MOVE))
     {
@@ -127,10 +127,10 @@ bool PointMovementGenerator<T>::Update(T& unit, uint32 const& diff)
 
         if (i_nextMoveTime.Passed())
         {
-            if (unit.GetEntry() == 12416)
-            {
-                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "PointMovementGenerator::Update 12416 - Unpause");
-            }
+            // if (unit.GetEntry() == 12416)
+            // {
+            //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "PointMovementGenerator::Update 12416 - Unpause");
+            // }
             m_paused = false;
 
             Initialize(unit);
@@ -146,10 +146,10 @@ bool PointMovementGenerator<T>::Update(T& unit, uint32 const& diff)
         m_recalculateSpeed = false;
         Initialize(unit);
     }
-    if (unit.GetEntry() == 12416)
-    {
-        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "PointMovementGenerator::Update 12416 - return %u", !unit.movespline->Finalized());
-    }
+    // if (unit.GetEntry() == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "PointMovementGenerator::Update 12416 - return %u", !unit.movespline->Finalized());
+    // }
     return !unit.movespline->Finalized();
 }
 
