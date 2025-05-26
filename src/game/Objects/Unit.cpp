@@ -9225,10 +9225,10 @@ void Unit::StopMoving(bool force)
 
     if (!IsMovedByPlayer() || !IsInWorld() || force)
     {
-        if (GetEntry() == 12416)
-        {
-            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "StopMoving 12416 - ClearUnitState");
-        }
+        // if (GetEntry() == 12416)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "StopMoving 12416 - ClearUnitState");
+        // }
         ClearUnitState(UNIT_STATE_MOVING);
         RemoveUnitMovementFlag(MOVEFLAG_MASK_MOVING);
     }

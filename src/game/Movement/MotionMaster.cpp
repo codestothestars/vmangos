@@ -322,13 +322,10 @@ void MotionMaster::DirectClean(bool reset, bool all)
     {
         MovementGenerator* curr = top();
         pop();
-        if (Creature* creature = m_owner->ToCreature())
-        {
-            if (creature->GetCreatureInfo()->entry == 12416)
-            {
-                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DirectClean - pop %s", GetMovementGeneratorTypeName(curr->GetMovementGeneratorType()));
-            }
-        }
+        // if (m_owner->GetEntry() == 12416)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::DirectClean 12416 - pop %s", GetMovementGeneratorTypeName(curr->GetMovementGeneratorType()));
+        // }
         mvtGensToFinalize.push_back(curr);
     }
     if (!all && reset)

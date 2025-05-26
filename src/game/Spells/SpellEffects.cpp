@@ -22,6 +22,7 @@
 #include "Common.h"
 #include "CreatureEventAI.h"
 #include "SharedDefines.h"
+#include "SpellCaster.h"
 #include "WorldPacket.h"
 #include "Opcodes.h"
 #include "Log.h"
@@ -567,6 +568,14 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                     // Make sure 20038 misses the Orbs of Domination and Blackwing Spell Markers.
                     // Probably need ymir to verify that.
                     unitTarget->CastSpell(nullptr, 20038, false);
+                    return;
+                }
+                case 23032: // Nefarian's Troops Flee
+                {
+                    if (Player* player = unitTarget->ToPlayer())
+                        if (Spell* spell = player->GetCurrentSpell(CURRENT_CHANNELED_SPELL))
+                            if (spell->m_spellInfo->Id == 19832) // Possess
+                                player->InterruptSpell(CURRENT_CHANNELED_SPELL);
                     return;
                 }
                 case 23024: // Fireball

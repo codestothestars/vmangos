@@ -700,17 +700,9 @@ bool Map::ScriptCommand_CreateItem(ScriptInfo const& script, WorldObject* source
 // SCRIPT_COMMAND_DESPAWN_CREATURE (18)
 bool Map::ScriptCommand_DespawnCreature(ScriptInfo const& script, WorldObject* source, WorldObject* target)
 {
-    if (script.id == 1241601)
+    if (script.id == 1242003)
     {
-        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "1241601 - SCRIPT_COMMAND_DESPAWN_CREATURE");
-    }
-    if (script.id == 1241604)
-    {
-        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "1241604 - SCRIPT_COMMAND_DESPAWN_CREATURE");
-    }
-    if (script.id == 1242001)
-    {
-        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "1242001 - SCRIPT_COMMAND_DESPAWN_CREATURE");
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ScriptCommand_DespawnCreature 1242003");
     }
 
     Creature* pSource = ToCreature(source);
