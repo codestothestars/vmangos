@@ -1665,7 +1665,8 @@ float Creature::_GetHealthMod(int32 rank)
     };
 
     uint32 fortyPersonRaids[] = {
-        409 // Molten Core
+        249, // Onyxia's Lair
+        409  // Molten Core
     };
 
     uint32 map = GetMapId();
