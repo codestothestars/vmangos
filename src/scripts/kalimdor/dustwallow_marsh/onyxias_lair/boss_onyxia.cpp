@@ -121,6 +121,7 @@ struct boss_onyxiaAI : public ScriptedAI
         Reset();
     }
 
+    float m_playerScale = ((float)sWorld.getConfig(CONFIG_UINT32_CODESTOTHESTARS_SCALE_PLAYERS)) / 40.0f;
     uint32 m_uiPhase;
     uint32 m_uiTransTimer;
     uint32 m_uiTransCount;
@@ -169,7 +170,7 @@ struct boss_onyxiaAI : public ScriptedAI
         m_uiKnockAwayTimer     = urand(15000, 25000);
         m_uiTailSweepTimer     = 5000;
 
-        m_uiFireballTimer      = 3000;
+        m_uiFireballTimer      = 3000 / m_playerScale;
         m_uiMovementTimer      = 20000;
         m_uiMovePoint          = 7; // set North as the initial Phase 2 waypoint
         m_pPointData           = GetMoveData();
@@ -428,12 +429,12 @@ struct boss_onyxiaAI : public ScriptedAI
         if (m_uiMovementTimer < uiDiff)
         {
             m_uiMovementTimer = urand(15000, 25000);
-            m_uiFireballTimer = 5000;
+            m_uiFireballTimer = 5000 / m_playerScale;
             if (DoMovement())
             {
                 // casting Deep Breath
                 m_uiMovementTimer = urand(20000, 25000);
-                m_uiFireballTimer = 10000;
+                m_uiFireballTimer = 10000 / m_playerScale;
             }
         }
         else
@@ -465,7 +466,7 @@ struct boss_onyxiaAI : public ScriptedAI
                     {
                         if (m_creature->GetThreatManager().getThreat(pTarget))
                             m_creature->GetThreatManager().modifyThreatPercent(pTarget, -100);
-                        m_uiFireballTimer = 3000;
+                        m_uiFireballTimer = 3000 / m_playerScale;
                     }
                 }
             }
