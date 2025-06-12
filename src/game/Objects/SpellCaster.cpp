@@ -951,12 +951,6 @@ float SpellCaster::CalculateSpellEffectValue(Unit const* target, SpellEntry cons
         float CLSPowerSpell = spellCLS->melee_damage;
         value = value * (CLSPowerCreature / CLSPowerSpell);
     }
-
-    if (Creature const* creature = ToCreature())
-    {
-        value *= Creature::_GetSpellDamageMod(creature->GetCreatureInfo()->rank);
-    }
-
     return value;
 }
 
