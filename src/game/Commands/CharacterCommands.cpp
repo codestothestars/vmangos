@@ -1143,27 +1143,64 @@ bool ChatHandler::HandleHealCommand(char* args)
     return true;
 }
 
-bool ChatHandler::HandleHealFollowCommand(char*)
+bool ChatHandler::HandleHealFollowCommand(char* args)
 {
     Player* player = m_session->GetPlayer();
 
     Group* group = player->GetGroup();
 
+    uint32 targetIndex;
+
     if (!group) return true;
+
+    if (!ExtractUInt32(&args, targetIndex)) return true;
 
     GroupReference* groupIterator = group->GetFirstMember();
 
-    Player* healer = groupIterator->getSource();
+    Player* groupMemberLast = groupIterator->getSource();
+    Player* healer = nullptr;
+    Player* healer2 = nullptr;
 
-    if (healer)
+    groupIterator = groupIterator->next();
+
+    switch (group->GetMembersCount())
     {
-        MotionMaster* motionMaster = healer->GetMotionMaster();
-        
-        if (motionMaster->GetCurrentMovementGeneratorType() == FOLLOW_MOTION_TYPE)
-            motionMaster->Clear(true);
-        else
-            motionMaster->MoveFollow(player, 5, 0);
+        case 4:
+            if (groupMemberLast->GetClass() == CLASS_PRIEST) healer2 = groupMemberLast;
+
+            healer = groupIterator->getSource();
+            groupIterator = groupIterator->next();
+            break;
+        case 3:
+            healer = groupMemberLast;
+            break;
+        default:
+            return true;
     }
+
+    Unit* dps = groupIterator->getSource();
+
+    if (!dps || !healer) return true;
+
+    Unit* target;
+
+    if (targetIndex == 1)
+        target = healer;
+    else if (targetIndex == 2)
+        target = player;
+    else if (targetIndex == 3)
+        target = dps;
+    else if (targetIndex == 4)
+        target = dps->GetPet();
+    else
+        target = groupMemberLast;
+
+    MotionMaster* motionMaster = healer->GetMotionMaster();
+
+    if (motionMaster->GetCurrentMovementGeneratorType() == FOLLOW_MOTION_TYPE)
+        motionMaster->Clear(true);
+    else
+        motionMaster->MoveFollow(target, 5, 0);
 
     return true;
 }
