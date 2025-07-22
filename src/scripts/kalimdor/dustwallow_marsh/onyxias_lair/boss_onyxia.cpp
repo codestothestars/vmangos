@@ -429,7 +429,6 @@ struct boss_onyxiaAI : public ScriptedAI
         if (m_uiMovementTimer < uiDiff)
         {
             m_uiMovementTimer = urand(15000, 25000);
-            m_uiFireballTimer = 5000 / m_playerScale;
             if (DoMovement())
             {
                 // casting Deep Breath
@@ -466,7 +465,7 @@ struct boss_onyxiaAI : public ScriptedAI
                     {
                         if (m_creature->GetThreatManager().getThreat(pTarget))
                             m_creature->GetThreatManager().modifyThreatPercent(pTarget, -100);
-                        m_uiFireballTimer = 3000 / m_playerScale;
+                        m_uiFireballTimer = 5000 / m_playerScale;
                     }
                 }
             }
