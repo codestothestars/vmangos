@@ -151,6 +151,7 @@ class FollowMovementGenerator : public TargetedMovementGeneratorMedium<T, Follow
         bool _lostTarget(T &) const { return false; }
         void _reachTarget(T &) {}
     private:
+        bool m_interrupted = false;
         void _updateSpeed(T &u);
 
         // Needed to compile with gcc for some reason.
