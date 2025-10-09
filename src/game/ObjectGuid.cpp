@@ -128,7 +128,7 @@ void ObjectGuidGenerator<high>::LoadFromDB(char const* fieldName, char const* ta
 
     do
     {
-        upperBound = lowerBound - 1 + maxQuerySize * 2;
+        upperBound = lowerBound - 1 + maxQuerySize;
         result = CharacterDatabase.PQuery("SELECT `%s` FROM `%s` WHERE `%s` BETWEEN %u AND %u ORDER BY `%s` ASC", fieldName, tableName, fieldName, lowerBound, upperBound, fieldName);
         if (!result)
             goto end;
@@ -149,7 +149,7 @@ void ObjectGuidGenerator<high>::LoadFromDB(char const* fieldName, char const* ta
 
         } while (result->NextRow());
 
-        lowerBound += maxQuerySize * 2;
+        lowerBound += maxQuerySize;
     } while (upperBound < m_nextGuid);
 
 end:
