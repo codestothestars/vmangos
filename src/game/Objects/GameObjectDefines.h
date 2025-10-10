@@ -214,6 +214,7 @@ struct GameObjectInfo
     uint32  type;
     uint32  displayId;
     std::string name;
+    std::string icon;
     uint32  faction;
     uint32  flags;
     float   size;
