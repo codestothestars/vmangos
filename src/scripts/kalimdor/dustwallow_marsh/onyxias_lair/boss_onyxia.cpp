@@ -544,7 +544,11 @@ struct boss_onyxiaAI : public ScriptedAI
         {
             if (DoCastSpellIfCan(m_creature, SPELL_BELLOWINGROAR, true) == CAST_OK)
             {
-                m_uiBellowingRoarTimer = ((float)urand(15000, 30000)) / m_playerScale;
+                m_uiBellowingRoarTimer =
+                    ((float)urand(15000, 30000))
+                    / (m_playerScale * 1.67) // Convert raw player scale to ratio of healer count (i.e. 3 to 40 becomes 1 to 8)
+                    * .5; // Estimate 50% chance of death to each player per roar
+
                 // Do not be interrupted by other casts.
                 DelayCastEvents(2000);
             }
@@ -696,7 +700,10 @@ struct boss_onyxiaAI : public ScriptedAI
                 m_creature->SetLevitate(false);
                 m_creature->HandleEmote(EMOTE_ONESHOT_LAND);
                 m_creature->CastSpell(m_creature, SPELL_BELLOWINGROAR, true);
-                m_uiBellowingRoarTimer = ((float)urand(15000, 30000)) / m_playerScale;
+                m_uiBellowingRoarTimer =
+                    ((float)urand(15000, 30000))
+                    / (m_playerScale * 1.67) // Convert raw player scale to ratio of healer count (i.e. 3 to 40 becomes 1 to 8)
+                    * .5; // Estimate 50% chance of death to each player per roar
                 break;
         }
     }
