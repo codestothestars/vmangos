@@ -544,7 +544,7 @@ struct boss_onyxiaAI : public ScriptedAI
         {
             if (DoCastSpellIfCan(m_creature, SPELL_BELLOWINGROAR, true) == CAST_OK)
             {
-                m_uiBellowingRoarTimer = urand(15000, 30000);
+                m_uiBellowingRoarTimer = ((float)urand(15000, 30000)) / m_playerScale;
                 // Do not be interrupted by other casts.
                 DelayCastEvents(2000);
             }
@@ -696,7 +696,7 @@ struct boss_onyxiaAI : public ScriptedAI
                 m_creature->SetLevitate(false);
                 m_creature->HandleEmote(EMOTE_ONESHOT_LAND);
                 m_creature->CastSpell(m_creature, SPELL_BELLOWINGROAR, true);
-                m_uiBellowingRoarTimer = urand (15000, 30000);
+                m_uiBellowingRoarTimer = ((float)urand(15000, 30000)) / m_playerScale;
                 break;
         }
     }
