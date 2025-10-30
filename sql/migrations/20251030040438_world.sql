@@ -16,7 +16,7 @@ DELETE FROM `gameobject_template` WHERE `entry`=182509;
 UPDATE `gameobject_template` SET `script_name`='go_arathi_cannon_fire' WHERE `entry`=113529;
 DELETE FROM `gameobject_scripts` WHERE `id`=16636;
 INSERT INTO `gameobject_scripts` (`id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
-(16636, 0, 0, 15, 4170, 0, 0, 0, 113531, 10, 13, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Arathi Cannon Fire - Cast Spell Cannon Ball');
+(16636, 0, 0, 15, 4170, 0, 0, 0, 113529, 10, 13, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Arathi Cannon Fire - Cast Spell Cannon Ball');
 
 -- Add script to prevent spell from killing players.
 UPDATE `spell_template` SET `script_name`='spell_death_from_below_cannon_fire' WHERE `entry`=4170;
