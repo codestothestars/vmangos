@@ -654,10 +654,18 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
 #endif
             RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
         
-        RemoveSpellsCausingAura(SPELL_AURA_FEIGN_DEATH);
+        // feign death does not break from environmental damage, tested on classic
+        if (damagetype != SELF_DAMAGE)
+            RemoveSpellsCausingAura(SPELL_AURA_FEIGN_DEATH);
 
         if (pVictim->IsPlayer() && !pVictim->IsMounted() && !pVictim->IsStandingUp())
-            static_cast<Player*>(pVictim)->ScheduleStandUp();
+        {
+            // if it's environmental damage there are no procs so we cant schedule standup
+            if (damagetype != SELF_DAMAGE && sWorld.getConfig(CONFIG_UINT32_SPELL_PROC_DELAY))
+                static_cast<Player*>(pVictim)->ScheduleStandUp();
+            else
+                static_cast<Player*>(pVictim)->SetStandState(UNIT_STAND_STATE_STAND);
+        }
     }
 
     auto ShouldEnterCombat = [&]()
