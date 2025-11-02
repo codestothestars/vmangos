@@ -647,7 +647,13 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
     // remove affects from attacker at any non-DoT damage (including 0 damage)
     if (damagetype != DOT)
     {
-        RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
+        // World of Warcraft Client Patch 1.6.0 (2005-07-12)
+        // - Damage caused by environmental effects will now cancel stealth (e.g. swimming in lava).
+#if SUPPORTED_CLIENT_BUILD <= CLIENT_BUILD_1_5_1
+        if (damagetype != SELF_DAMAGE)
+#endif
+            RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
+        
         RemoveSpellsCausingAura(SPELL_AURA_FEIGN_DEATH);
 
         if (pVictim->IsPlayer() && !pVictim->IsMounted() && !pVictim->IsStandingUp())
@@ -810,12 +816,12 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
             pVictim->ModifyHealth(-(int32)dmg);
         }
 
-        if (damagetype != DOT)
+        if (damagetype != DOT && damagetype != SELF_DAMAGE)
         {
             if (!GetVictim() && IsPlayer())
             {
                 // if not have main target then attack state with target (including AI call)
-                //start melee attacks only after melee hit
+                // start melee attacks only after melee hit
                 Attack(pVictim, (damagetype == DIRECT_DAMAGE));
             }
 
@@ -865,49 +871,46 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
         else
             pVictim->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_DAMAGE_CANCELS, spellProto ? spellProto->Id : 0, true, SKIP_STEALTH);
 
-        if (damagetype != NODAMAGE && damage && pVictim->IsPlayer())
+        if (damagetype != NODAMAGE && damagetype != DOT && damage && pVictim->IsPlayer())
         {
-            if (damagetype != DOT)
+            for (uint32 i = CURRENT_FIRST_NON_MELEE_SPELL; i < CURRENT_MAX_SPELL; ++i)
             {
-                for (uint32 i = CURRENT_FIRST_NON_MELEE_SPELL; i < CURRENT_MAX_SPELL; ++i)
-                {
-                    // skip channeled spell (processed differently below)
-                    if (i == CURRENT_CHANNELED_SPELL)
-                        continue;
+                // skip channeled spell (processed differently below)
+                if (i == CURRENT_CHANNELED_SPELL)
+                    continue;
 
-                    if (Spell* spell = pVictim->GetCurrentSpell(CurrentSpellTypes(i)))
+                if (Spell* spell = pVictim->GetCurrentSpell(CurrentSpellTypes(i)))
+                {
+                    if (spell->getState() == SPELL_STATE_PREPARING)
                     {
-                        if (spell->getState() == SPELL_STATE_PREPARING)
-                        {
-                            if (spell->m_spellInfo->HasSpellInterruptFlag(SPELL_INTERRUPT_FLAG_DAMAGE_CANCELS))
-                                pVictim->InterruptSpell(CurrentSpellTypes(i));
-                            else
-                                spell->Delayed();
-                        }
+                        if (spell->m_spellInfo->HasSpellInterruptFlag(SPELL_INTERRUPT_FLAG_DAMAGE_CANCELS))
+                            pVictim->InterruptSpell(CurrentSpellTypes(i));
+                        else
+                            spell->Delayed();
                     }
                 }
+            }
 
-                if (Spell* spell = pVictim->m_currentSpells[CURRENT_CHANNELED_SPELL])
+            if (Spell* spell = pVictim->m_currentSpells[CURRENT_CHANNELED_SPELL])
+            {
+                if (spell->getState() == SPELL_STATE_CASTING)
                 {
-                    if (spell->getState() == SPELL_STATE_CASTING)
+                    if (spell->m_spellInfo->HasChannelInterruptFlag(AURA_INTERRUPT_DAMAGE_CHANNEL_DURATION))
                     {
-                        if (spell->m_spellInfo->HasChannelInterruptFlag(AURA_INTERRUPT_DAMAGE_CHANNEL_DURATION))
-                        {
-                            if (pVictim != this)                //don't shorten the duration of channeling if you damage yourself
-                                spell->DelayedChannel();
-                        }
-                        else if (spell->m_spellInfo->HasChannelInterruptFlag(AURA_INTERRUPT_DAMAGE_CANCELS))
-                        {
-                            sLog.Out(LOG_BASIC, LOG_LVL_DETAIL, "Spell %u canceled at damage!", spell->m_spellInfo->Id);
-                            pVictim->InterruptSpell(CURRENT_CHANNELED_SPELL);
-                        }
+                        if (pVictim != this)                //don't shorten the duration of channeling if you damage yourself
+                            spell->DelayedChannel();
                     }
-                    else if (spell->getState() == SPELL_STATE_DELAYED)
-                        // break channeled spell in delayed state on damage
+                    else if (spell->m_spellInfo->HasChannelInterruptFlag(AURA_INTERRUPT_DAMAGE_CANCELS))
                     {
                         sLog.Out(LOG_BASIC, LOG_LVL_DETAIL, "Spell %u canceled at damage!", spell->m_spellInfo->Id);
                         pVictim->InterruptSpell(CURRENT_CHANNELED_SPELL);
                     }
+                }
+                else if (spell->getState() == SPELL_STATE_DELAYED)
+                    // break channeled spell in delayed state on damage
+                {
+                    sLog.Out(LOG_BASIC, LOG_LVL_DETAIL, "Spell %u canceled at damage!", spell->m_spellInfo->Id);
+                    pVictim->InterruptSpell(CURRENT_CHANNELED_SPELL);
                 }
             }
         }
