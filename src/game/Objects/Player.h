@@ -374,7 +374,9 @@ enum PlayerFieldBytes2Offsets
 // used in (PLAYER_FIELD_BYTES, 0) byte values
 enum PlayerFieldByteFlags
 {
+    PLAYER_FIELD_BYTE_CONTROLLING_PET   = 0x01,
     PLAYER_FIELD_BYTE_TRACK_STEALTHED   = 0x02,
+    PLAYER_FIELD_BYTE_LOGGING_OUT       = 0x04,
     PLAYER_FIELD_BYTE_RELEASE_TIMER     = 0x08,             // Display time till auto release spirit
     PLAYER_FIELD_BYTE_NO_RELEASE_WINDOW = 0x10              // Display no "release spirit" window at all
 };
