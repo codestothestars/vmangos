@@ -23,6 +23,7 @@
 #include "Log.h"
 #include "Creature.h"
 #include "Player.h"
+#include "ScriptMgr.h"
 #include "Spell.h"
 #include "SpellAuras.h"
 #include "SpellModifier.h"

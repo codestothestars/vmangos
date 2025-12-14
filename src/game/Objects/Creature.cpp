@@ -2323,6 +2323,11 @@ void Creature::Respawn()
     }
 }
 
+void Creature::CancelDespawn()
+{
+    m_Events.KillEvents(false, [](BasicEvent* event) -> bool { return dynamic_cast<ForcedDespawnDelayEvent*>(event); });
+}
+
 void Creature::DespawnOrUnsummon(uint32 msTimeToDespawn /*= 0*/, uint32 secsTimeToRespawn /*= 0*/)
 {
     if (IsTemporarySummon())
@@ -2854,14 +2859,26 @@ void Creature::SendZoneUnderAttackMessage(Player const* attacker)
 
 void Creature::SetInCombatWithZone(bool initialPulse)
 {
-    if (!CanHaveThreatList())
-    {
-        sLog.Out(LOG_BASIC, LOG_LVL_ERROR, "Creature entry %u call SetInCombatWithZone but creature cannot have threat list.", GetEntry());
-        return;
-    }
+    // if (GetEntry() == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416");
+    // }
+    // if (!CanHaveThreatList())
+    // {
+    //     sLog.Out(LOG_BASIC, LOG_LVL_ERROR, "Creature entry %u call SetInCombatWithZone but creature cannot have threat list.", GetEntry());
+    //     return;
+    // }
 
+    // if (GetEntry() == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416 - GetMap");
+    // }
     Map* pMap = GetMap();
 
+    // if (GetEntry() == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416 - !pMap->IsDungeon()");
+    // }
     if (!pMap->IsDungeon())
     {
         sLog.Out(LOG_BASIC, LOG_LVL_ERROR, "Creature entry %u call SetInCombatWithZone for map (id: %u) that isn't an instance.", GetEntry(), pMap->GetId());
@@ -2870,22 +2887,60 @@ void Creature::SetInCombatWithZone(bool initialPulse)
 
     Map::PlayerList const& PlList = pMap->GetPlayers();
 
+    // if (GetEntry() == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416 - if (PlList.isEmpty())");
+    // }
     if (PlList.isEmpty())
         return;
 
+    // if (GetEntry() == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416 - if (!HasCreatureState(CSTATE_COMBAT_WITH_ZONE))");
+    // }
     if (!HasCreatureState(CSTATE_COMBAT_WITH_ZONE))
     {
         UpdateCombatWithZoneState(true);
 
         // Attack closest player first.
         // Prevent case where boss runs to somebody who just entered raid.
+        // if (GetEntry() == 12416)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416 - if (initialPulse && !GetVictim() && AI())");
+        // }
+        // if (GetEntry() == 12416)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416 - initialPulse %u", initialPulse);
+        // }
+        // if (GetEntry() == 12416)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416 - GetVictim() %u", (bool)GetVictim());
+        // }
+        // if (GetEntry() == 12416)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416 - AI() %u", (bool)AI());
+        // }
         if (initialPulse && !GetVictim() && AI())
         {
+            // if (GetEntry() == 12416)
+            // {
+            //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416 - if (Player* pPlayer = FindNearestHostilePlayer(MAX_VISIBILITY_DISTANCE))");
+            // }
             if (Player* pPlayer = FindNearestHostilePlayer(MAX_VISIBILITY_DISTANCE))
+            {
+                // if (GetEntry() == 12416)
+                // {
+                //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone %u - AI()->AttackStart('%s')", GetGUIDLow(), pPlayer->GetName());
+                // }
                 AI()->AttackStart(pPlayer);
+            }
         }
     }
 
+    // if (GetEntry() == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone 12416 - for (const auto& i : PlList)");
+    // }
     for (const auto& i : PlList)
     {
         if (Player* pPlayer = i.getSource())
@@ -2895,11 +2950,26 @@ void Creature::SetInCombatWithZone(bool initialPulse)
 
             if (IsValidAttackTarget(pPlayer))
             {
+                // if (GetEntry() == 12416)
+                // {
+                //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone %u - IsValidAttackTarget('%s') = true", GetGUIDLow(), pPlayer->GetName());
+                //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone %u - EnterCombatWithTarget('%s')", GetGUIDLow(), pPlayer->GetName());
+                // }
                 EnterCombatWithTarget(pPlayer);
                 Pet* pet = pPlayer->GetPet();
                 if (pet && IsValidAttackTarget(pet))
                     EnterCombatWithTarget(pet);
+                // Unit* charm = pPlayer->GetCharm();
+                // if (charm && IsValidAttackTarget(charm))
+                //     EnterCombatWithTarget(charm);
             }
+            // else
+            // {
+            //     if (GetEntry() == 12416)
+            //     {
+            //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::SetInCombatWithZone %u - IsValidAttackTarget('%s') = false", GetGUIDLow(), pPlayer->GetName());
+            //     }
+            // }
         }
     }
 }
@@ -3998,10 +4068,24 @@ void Creature::ResetCombatTime(bool combat)
 
 void Creature::EnterCombatWithTarget(Unit* pVictim)
 {
+    // if (GetEntry() == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::EnterCombatWithTarget %u", GetGUIDLow());
+    // }
     if (!GetVictim() && AI())
+    {
+        // if (GetEntry() == 12416)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::EnterCombatWithTarget %u - AttackStart", GetGUIDLow());
+        // }
         AI()->AttackStart(pVictim);
+    }
     else if (GetVictim() != pVictim)
     {
+        // if (GetEntry() == 12416)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::EnterCombatWithTarget %u - AddThreat", GetGUIDLow());
+        // }
         AddThreat(pVictim);
         pVictim->SetInCombatWith(this);
     }

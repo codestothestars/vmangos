@@ -119,12 +119,14 @@ enum ConditionType
                                                             // Requirement: WorldObject Target
                                                             // Value1: creature_id
                                                             // Value2: search_radius
-                                                            // Value3: dead
-                                                            // Value4: not_self
+                                                            // Value3: flags (see enum eNearbyCreatureFlags)
+                                                            // Value4: condition_id
     CONDITION_NEARBY_GAMEOBJECT     = 21,                   // Checks if there is a gameobject nearby with the given id.
                                                             // Requirement: WorldObject Target
                                                             // Value1: gobject_id
                                                             // Value2: search_radius
+                                                            // Value3: flags (see enum eNearbyGameobjectFlags)
+                                                            // Value4: condition_id
     CONDITION_QUEST_NONE            = 22,                   // Returns true if the player has not taken the given quest and has not been rewared for it before.
                                                             // Requirement: Player Target
                                                             // Value1: quest_id
@@ -260,6 +262,22 @@ enum ConditionType
     CONDITION_AREA_EXPLORED         = 59,                   // Checks if the player has explored the specified area.
                                                             // Requirement: Player Target
                                                             // Value1: area_id
+    CONDITION_NEARBY_HOSTILE        = 60,                   // Checks if there is a nearby enemy on the threat list.
+                                                            // Requirement: Creature Target
+                                                            // Value1: search_radius
+    CONDITION_UNIT_STATE            = 60,                   // Checks if the unit has the specified state flags.
+                                                            // Requirement: Unit Target
+                                                            // Value1: enum UnitState
+    CONDITION_CREATURE_FIT_CONDITION = 61,                  // Returns true if a creature with this guid exists and it satisfies the provided condition id.
+                                                            // Requirement: Map
+                                                            // Value1: guid
+                                                            // Value2: condition_id
+    CONDITION_CREATURE_PHASE         = 62,                  // Checks the source creature's phase.
+                                                            // Requirement: Creature
+                                                            // Value1: phase
+    CONDITION_MOVEMENT_TYPE          = 63,                  // Checks the source creature's current active movement type.
+                                                            // Requirement: Creature
+                                                            // Value1: enum MovementGeneratorType
 };
 
 enum ConditionFlags
@@ -309,6 +327,17 @@ enum eEscortConditionFlags
 {
     CF_ESCORT_SOURCE_DEAD = 0x1,
     CF_ESCORT_TARGET_DEAD = 0x2,
+};
+
+enum eNearbyCreatureFlags
+{
+    CF_NEARBY_CREATURE_DEAD     = 0x1,
+    CF_NEARBY_CREATURE_NOT_SELF = 0x2,
+};
+
+enum eNearbyGameobjectFlags
+{
+    CF_NEARBY_GAMEOBJECT_NOT_SELF = 0x1
 };
 
 class ConditionEntry

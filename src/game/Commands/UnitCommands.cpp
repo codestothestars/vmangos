@@ -2685,6 +2685,21 @@ bool ChatHandler::HandleDieCommand(char* /*args*/)
     return HandleDieHelper(target);
 }
 
+bool ChatHandler::HandleInvincibleCommand(char* /*args*/)
+{
+    Unit* target = GetSelectedUnit();
+    if (!target)
+    {
+        SendSysMessage(LANG_SELECT_CHAR_OR_CREATURE);
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    target->SetInvincibilityHpThreshold(1);
+
+    return true;
+}
+
 bool ChatHandler::HandleDieHelper(Unit* target)
 {
     if (!target)
@@ -2705,6 +2720,7 @@ bool ChatHandler::HandleDieHelper(Unit* target)
 
     if (target->IsAlive())
     {
+        target->SetInvincibilityHpThreshold(0);
         if (sWorld.getConfig(CONFIG_BOOL_DIE_COMMAND_CREDIT))
             m_session->GetPlayer()->DealDamage(target, target->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
         else

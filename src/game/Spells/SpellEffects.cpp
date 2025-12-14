@@ -20,7 +20,9 @@
  */
 
 #include "Common.h"
+#include "CreatureEventAI.h"
 #include "SharedDefines.h"
+#include "SpellCaster.h"
 #include "WorldPacket.h"
 #include "Opcodes.h"
 #include "Log.h"
@@ -49,6 +51,8 @@
 #include "InstanceData.h"
 #include "ScriptMgr.h"
 #include "SocialMgr.h"
+#include "scriptPCH.h"
+#include "../../scripts/eastern_kingdoms/burning_steppes/blackwing_lair/blackwing_lair.h"
 
 using namespace Spells;
 
@@ -329,6 +333,27 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                 {
                     if (Creature* pRanshalla = ToCreature(unitTarget))
                         pRanshalla->ForcedDespawn();
+                    return;
+                }
+                case 20037: // Explode Orb Effect
+                {
+                    // Make sure 20038 misses the Orbs of Domination and Blackwing Spell Markers.
+                    // Probably need ymir to verify that.
+                    unitTarget->CastSpell(nullptr, 20038, false);
+                    return;
+                }
+                case 23032: // Nefarian's Troops Flee
+                {
+                    if (Player* player = unitTarget->ToPlayer())
+                        if (Spell* spell = player->GetCurrentSpell(CURRENT_CHANNELED_SPELL))
+                            if (spell->m_spellInfo->Id == 19832) // Possess
+                                player->InterruptSpell(CURRENT_CHANNELED_SPELL);
+                    return;
+                }
+                case 23024: // Fireball
+                {
+                    // Make sure that the Orb of Domination despawns, and does so with its "falling apart" animation as in sniffs.
+                    if (effIdx == 0) unitTarget->CastSpell(nullptr, 20037, false);
                     return;
                 }
                 case 20863: // Muglash's Brazier Trap

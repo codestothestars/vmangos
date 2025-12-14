@@ -1562,7 +1562,12 @@ void GameObject::Use(Unit* user)
                     if (player->GetQuestStatus(info->goober.questId) != QUEST_STATUS_INCOMPLETE)
                         break;
                 }
+            }
 
+            // double-check whether this change is necessary
+            Player* player = user->GetCharmerOrOwnerPlayerOrPlayerItself();
+            if (player)
+            {
                 if (info->goober.eventId)
                 {
                     DEBUG_FILTER_LOG(LOG_FILTER_AI_AND_MOVEGENSS, "Goober ScriptStart id %u for GO entry %u (GUID %u).", info->goober.eventId, GetEntry(), GetGUIDLow());
@@ -1571,8 +1576,13 @@ void GameObject::Use(Unit* user)
                         GetMap()->ScriptsStart(sEventScripts, info->goober.eventId, player->GetObjectGuid(), GetObjectGuid());
                 }
                 else
+                {
                     GetMap()->ScriptsStart(sGameObjectScripts, GetGUIDLow(), user->GetObjectGuid(), GetObjectGuid());
+                }
+            }
 
+            if (Player* player = user->ToPlayer())
+            {
                 // possible quest objective for active quests
                 if (info->goober.questId > 0 && sObjectMgr.GetQuestTemplate(info->goober.questId))
                 {

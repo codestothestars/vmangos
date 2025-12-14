@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "Common.h"
 #include "Creature.h"
 #include "CreatureEventAI.h"
 #include "CreatureEventAIMgr.h"
@@ -106,12 +105,11 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, SpellCaster* 
 
     //Check the inverse phase mask (event doesn't trigger if current phase bit is set in mask)
     if (pHolder.Event.event_inverse_phase_mask & (1 << m_Phase))
+    {
         return false;
+    }
 
     if ((pHolder.Event.event_flags & EFLAG_NOT_CASTING) && m_creature->IsNonMeleeSpellCasted(false, false, true))
-        return false;
-
-    if (pHolder.Event.condition_id && !IsConditionSatisfied(pHolder.Event.condition_id, pActionInvoker ? pActionInvoker : m_creature->GetVictim(), m_creature->GetMap(), m_creature, CONDITION_FROM_EVENTAI))
         return false;
 
     CreatureEventAI_Event const& event = pHolder.Event;
@@ -387,6 +385,10 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, SpellCaster* 
             pHolder.UpdateRepeatTimer(m_creature, event.stealth_alert.repeatMin, event.stealth_alert.repeatMax);
             break;
         }
+        case EVENT_T_AURA_UNAPPLY:
+        {
+            break;
+        }
         default:
         {
             sLog.Out(LOG_SCRIPTS, LOG_LVL_MINIMAL, "CreatureEventAI: Creature %u using Event %u has invalid Event Type(%u), missing from ProcessEvent() Switch.", m_creature->GetEntry(), pHolder.Event.event_id, pHolder.Event.event_type);
@@ -525,8 +527,27 @@ void CreatureEventAI::JustReachedHome()
     Reset();
 }
 
+void CreatureEventAI::OnNoTargets()
+{
+    BasicAI::OnNoTargets();
+
+    if (m_bEmptyList)
+        return;
+
+    for (auto& i : m_CreatureEventAIList)
+    {
+        if (i.Event.event_type == EVENT_T_NO_TARGETS)
+            ProcessEvent(i);
+    }
+}
+
 void CreatureEventAI::EnterEvadeMode()
 {
+    if (m_creature->GetEntry() == 12416)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "CreatureEventAI::EnterEvadeMode");
+    }
+
     BasicAI::EnterEvadeMode();
 
     if (m_bEmptyList)
@@ -653,6 +674,25 @@ void CreatureEventAI::EnterCombat(Unit* enemy)
 
     m_EventUpdateTime = EVENT_UPDATE_TIME;
     m_EventDiff = 0;
+}
+
+void CreatureEventAI::AuraUnapply(SpellCaster* pCaster, SpellEntry const* pSpellEntry)
+{
+    if (m_bEmptyList)
+        return;
+
+    for (auto& i : m_CreatureEventAIList)
+    {
+        switch (i.Event.event_type)
+        {
+            case EVENT_T_AURA_UNAPPLY:
+            {
+                if (i.Event.aura_unapply.spellId == pSpellEntry->Id)
+                    ProcessEvent(i, pCaster);
+                break;
+            }
+        }
+    }
 }
 
 void CreatureEventAI::MoveInLineOfSight(Unit* pWho)

@@ -59,6 +59,10 @@ void CreatureAI::AttackedBy(Unit* attacker)
 
 void CreatureAI::AttackStart(Unit* pVictim)
 {
+    // if (m_creature->GetEntry() == 12435)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "CreatureAI::AttackStart 12435");
+    // }
     if (m_creature->HasReactState(REACT_PASSIVE))
         return;
 
@@ -68,8 +72,19 @@ void CreatureAI::AttackStart(Unit* pVictim)
         m_creature->SetInCombatWith(pVictim);
         pVictim->SetInCombatWith(m_creature);
 
+        // if (m_creature->GetEntry() == 12416)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "CreatureAI::AttackStart 12416 - if (m_bCombatMovement)");
+        // }
+
         if (m_bCombatMovement)
+        {
+            // if (m_creature->GetEntry() == 12416)
+            // {
+            //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "CreatureAI::AttackStart 12416 - m_creature->GetMotionMaster()->MoveChase(pVictim);");
+            // }
             m_creature->GetMotionMaster()->MoveChase(pVictim);
+        }
     }
 }
 

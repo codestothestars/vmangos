@@ -79,6 +79,12 @@ enum
     GO_ORB_OF_DOMINATION        = 177808,
     GO_SUPPRESSION_ENGINE       = 179784,
 
+    // Raz
+    MOB_BLACKWING_LEGIONNAIRE   = 12416,
+    MOB_BLACKWING_MAGE          = 12420,
+    MOB_DEATH_TALON_DRAGONSPAWN = 12422,
+    MOB_NEFARIANS_TROOPS        = 14459,
+
     GOSSIP_OPTION_NEFARIUS      = 6045,
 
     CONDITION_SCEPTER_FAIL      = 1,
@@ -936,6 +942,45 @@ InstanceData* GetInstanceData_instance_blackwing_lair(Map* pMap)
 
 bool GOHello_go_orb_of_domination(Player* pPlayer, GameObject* pGo)
 {
+    Map* map = pGo->GetMap();
+
+    // Player does not have Mind Exhaustion and Razorgore is not possessed.
+    if (IsConditionSatisfied(576, pPlayer, map, pGo, CONDITION_FROM_DBSCRIPTS))
+    {
+        Creature* razorgore = pGo->FindNearestCreature(12435, 100);
+
+        static ScriptInfo scriptAddMindExhaustion;
+        scriptAddMindExhaustion.command = SCRIPT_COMMAND_ADD_AURA;
+        scriptAddMindExhaustion.addAura.spellId = 23958;
+
+        static ScriptInfo scriptAddPossess;
+        scriptAddPossess.command = SCRIPT_COMMAND_ADD_AURA;
+        scriptAddPossess.addAura.spellId = 23021;
+
+        static ScriptInfo scriptPlayerCastPossess;
+        scriptPlayerCastPossess.command = SCRIPT_COMMAND_CAST_SPELL;
+        scriptPlayerCastPossess.castSpell.spellId = 19832;
+        scriptPlayerCastPossess.raw.data[4] = SF_GENERAL_ABORT_ON_FAILURE;
+
+        static ScriptInfo scriptTriggerCastPossess;
+        scriptTriggerCastPossess.command = SCRIPT_COMMAND_CAST_SPELL;
+        scriptTriggerCastPossess.castSpell.spellId = 23014;
+
+        if (razorgore)
+        {
+            if (!map->ScriptCommandStartDirect(scriptPlayerCastPossess, pPlayer, pGo))
+            {
+                map->ScriptCommandStartDirect(scriptAddMindExhaustion, pPlayer, pGo);
+                map->ScriptCommandStartDirect(scriptAddPossess, razorgore, pGo);
+                map->ScriptCommandStartDirect(scriptTriggerCastPossess, pGo->FindNearestCreature(14449, 5), pGo);
+            }
+        }
+        else
+            sLog.Out(LOG_DBERROR, LOG_LVL_ERROR, "GOHello_go_orbe_domination - Razorgore not found");
+    }
+
+    return true;
+
     if (ScriptedInstance* pInstance = (ScriptedInstance*)pGo->GetInstanceData())
     {
         if (!pPlayer->HasAura(SPELL_MIND_EXHAUSTION))
@@ -966,8 +1011,6 @@ bool GOHello_go_orb_of_domination(Player* pPlayer, GameObject* pGo)
             }
         }
     }
-
-    return true;
 }
 
 enum EggsOfRaz : uint32
@@ -977,6 +1020,7 @@ enum EggsOfRaz : uint32
     SAY_EGGS_BROKEN_3 = 9963
 };
 
+// need to remove this
 struct go_egg_razAI: public GameObjectAI
 {
     explicit go_egg_razAI(GameObject* pGo) : GameObjectAI(pGo) {}
@@ -1449,10 +1493,10 @@ void AddSC_instance_blackwing_lair()
     pNewscript->pGOHello = &GOHello_go_orb_of_domination;
     pNewscript->RegisterSelf();
 
-    pNewscript = new Script;
-    pNewscript->Name = "go_oeuf_raz";
-    pNewscript->GOGetAI = &GetAIgo_egg_raz;
-    pNewscript->RegisterSelf();
+    // pNewscript = new Script;
+    // pNewscript->Name = "go_oeuf_raz";
+    // pNewscript->GOGetAI = &GetAIgo_egg_raz;
+    // pNewscript->RegisterSelf();
 
     pNewscript = new Script;
     pNewscript->Name = "go_engin_suppression";

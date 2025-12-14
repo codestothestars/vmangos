@@ -171,6 +171,14 @@ SpellMissInfo SpellCaster::SpellHitResult(Unit* pVictim, SpellEntry const* spell
     if (pVictim->IsCreature() && ((Creature*)pVictim)->IsInEvadeMode())
         return SPELL_MISS_EVADE;
 
+    // Respect UNIT_FLAG_IMMUNE_TO_NPC
+    if (IsCreature()
+        && !spell->IsPositiveSpell(this, pVictim)
+        && pVictim->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC))
+        // need to verify from a sniff whether it's actually IMMUNE vs Resist, etc.
+        // SNIFF THIS NEXT
+        return SPELL_MISS_IMMUNE;
+
     // World of Warcraft Client Patch 1.7.0 (2005-09-13)
     // - Effects that make players immune to physical will no longer be immune
     //   to the "Recently Bandaged" effect from First Aid.

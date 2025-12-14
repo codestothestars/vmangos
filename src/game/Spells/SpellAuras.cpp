@@ -942,6 +942,10 @@ void Aura::ApplyModifier(bool apply, bool Real, bool skipCheckExclusive)
     if (GetAuraScript())
         GetAuraScript()->OnAfterApply(this, apply);
 
+    if (Creature* creature = GetTarget()->ToCreature())
+        if (CreatureAI* ai = creature->AI())
+            ai->AuraUnapply(GetCaster(), GetSpellProto());
+
     if (!apply && !skipCheckExclusive && IsExclusive())
         ExclusiveAuraUnapply();
 
@@ -1852,6 +1856,14 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                             caster->CastSpell(caster, 13360, true);
                         return;
                     }
+                    case 23018: // Use Dragon Orb
+                    {
+                        // see if a sniff (even if Cata) that sees the boss's original spawn
+                        // gives any more hint as to whether it would be done this way
+                        target->CastSpell(target, 23014, true); // Possess
+                        target->FindNearestCreature(12435, 100)->AddAura(23021); // Dragon Orb
+                        return;
+                    }
                     case 24596: // Intoxicating Venom
                     {
                         if (target)
@@ -2041,6 +2053,26 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                     if (pCreature->IsAlive() && !pCreature->HasCreatureState(CSTATE_DESPAWNING))
                         pCreature->DespawnOrUnsummon(2000);
                 }
+                return;
+            }
+            case 23018:                                     // Use Dragon Orb
+            {
+                uint32 razorgoreGuid = 84388;
+                target->InterruptSpell(CURRENT_CHANNELED_SPELL); // Possess
+                if (CreatureData const* razorgoreData = sObjectMgr.GetCreatureData(84388))
+                {
+                    if (Creature* razorgore = target->GetMap()->GetCreature(razorgoreData->GetObjectGuid(84388)))
+                    {
+                        // Dragon Orb
+                        razorgore->RemoveAura(23021, EFFECT_INDEX_0);
+                        razorgore->RemoveAura(23021, EFFECT_INDEX_1);
+                        razorgore->RemoveAura(23021, EFFECT_INDEX_2);
+                    }
+                    else
+                        sLog.Out(LOG_DBERROR, LOG_LVL_ERROR, "HandleAuraDummy: Use Dragon Orb unapply - Razorgore not found");
+                }
+                else
+                    sLog.Out(LOG_DBERROR, LOG_LVL_ERROR, "HandleAuraDummy: Use Dragon Orb unapply - Razorgore data not found");
                 return;
             }
             case 24906:                                     // Emeriss Aura
@@ -3202,7 +3234,14 @@ void Unit::ModPossess(Unit* pTarget, bool apply, AuraRemoveMode removeMode, Spel
 
         pTarget->CombatStop(true);
         pTarget->DeleteThreatList();
-        pTarget->GetHostileRefManager().deleteReferences();
+
+        // Evidence from Classic shows that this only happens for players.
+        // See sniffs:
+        // * "possessed creatures do not drop enemies" on media server
+        // * sniff_33302_bwl_first_second_boss_and_ony at 1581621041781 - a Dragonspawn is hitting Razorgore and keeps doing it on possess.
+        // Open a separate PR for this.
+        if (pTarget->IsPlayer())
+            pTarget->GetHostileRefManager().deleteReferences();
 
         if (CharmInfo *charmInfo = pTarget->InitCharmInfo(pTarget))
         {

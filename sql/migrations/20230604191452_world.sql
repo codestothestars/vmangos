@@ -8,7 +8,7 @@ IF v=0 THEN
 INSERT INTO `migrations` VALUES ('20230604191452');
 -- Add your query below.
 
--- 237: No player alive within 100 yards.
+-- 239: No player alive within 100 yards.
 INSERT `conditions`
 (`condition_entry`, `type`, `value1`, `value2`, `flags`) VALUES
 (              239,     56,        0,      100,       1);

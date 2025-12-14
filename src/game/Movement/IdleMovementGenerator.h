@@ -49,6 +49,7 @@ class DistractMovementGenerator : public MovementGenerator
         void Reset(Unit&);
         bool Update(Unit& owner, uint32 const& time_diff);
         MovementGeneratorType GetMovementGeneratorType() const { return DISTRACT_MOTION_TYPE; }
+        bool IsPersistent() const { return false; }
 
     private:
         uint32 m_timer;

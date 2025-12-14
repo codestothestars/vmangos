@@ -58,7 +58,7 @@ void AddSC_boss_overlordwyrmthalak();
 void AddSC_boss_shadowvosh();
 void AddSC_boss_thebeast();
 void AddSC_boss_warmastervoone();
-void AddSC_boss_razorgore();                         //blackwing_lair
+// void AddSC_boss_razorgore();                         //blackwing_lair
 void AddSC_boss_vael();
 void AddSC_boss_broodlord();
 void AddSC_boss_firemaw();
@@ -309,7 +309,7 @@ void AddScripts()
     AddSC_boss_warmastervoone();
 
     AddSC_instance_blackrock_spire();
-    AddSC_boss_razorgore();                                 //blackwing_lair
+    // AddSC_boss_razorgore();                                 //blackwing_lair
     AddSC_boss_vael();
     AddSC_boss_broodlord();
     AddSC_boss_firemaw();

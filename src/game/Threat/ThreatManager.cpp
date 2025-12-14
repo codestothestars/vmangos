@@ -22,6 +22,7 @@
 #include "ThreatManager.h"
 #include "Creature.h"
 #include "CreatureAI.h"
+#include "Log.h"
 #include "Map.h"
 #include "Player.h"
 #include "ObjectAccessor.h"
@@ -381,6 +382,17 @@ ThreatManager::ThreatManager(Unit* owner) : iCurrentVictim(nullptr), iOwner(owne
 
 void ThreatManager::clearReferences()
 {
+    // if (iOwner->IsInWorld())
+    // {
+    //     if (Creature* creature = iOwner->ToCreature())
+    //     {
+    //         if (creature->GetEntry() == 12416)
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ThreatManager::clearReferences %u", creature->GetGUIDLow());
+    //         }
+    //     }
+    // }
+
     iThreatContainer.clearReferences();
     iThreatOfflineContainer.clearReferences();
     iCurrentVictim = nullptr;
@@ -426,6 +438,22 @@ void ThreatManager::addThreat(Unit* pVictim, float threat, bool crit, SpellSchoo
 
 void ThreatManager::addThreatDirectly(Unit* pVictim, float threat, bool noNew)
 {
+    // if (Creature* creature = iOwner->ToCreature())
+    // {
+    //     if (creature->GetEntry() == 12416)
+    //     {
+    //         uint32 noNewLog = noNew?1:0;
+    //         if (pVictim)
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ThreatManager::addThreatDirectly %u - pVictim = %s, threat = %u, noNew = %u", creature->GetGUIDLow(), pVictim->GetName(), threat, noNewLog);
+    //         }
+    //         else
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ThreatManager::addThreatDirectly %u - pVictim = null, threat = %u, noNew = %u", creature->GetGUIDLow(), threat, noNewLog);
+    //         }
+    //     }
+    // }
+
     if (!pVictim || pVictim == getOwner() || !pVictim->IsAlive() || !pVictim->IsInMap(getOwner()))
         return;
 
@@ -450,6 +478,14 @@ void ThreatManager::addThreatDirectly(Unit* pVictim, float threat, bool noNew)
 
 void ThreatManager::modifyThreatPercent(Unit* pVictim, int32 pPercent)
 {
+    if (Creature* creature = iOwner->ToCreature())
+    {
+        if (creature->GetEntry() == 12416)
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ThreatManager::clearReferences %u - pVictim = %s, pPercent = %u", creature->GetGUIDLow(), pVictim->GetName(), pPercent);
+        }
+    }
+
     iThreatContainer.modifyThreatPercent(pVictim, pPercent);
 }
 
@@ -460,7 +496,23 @@ Unit* ThreatManager::getHostileTarget()
     iThreatContainer.update();
     HostileReference* nextVictim = iThreatContainer.selectNextVictim((Creature*) getOwner(), getCurrentVictim());
     setCurrentVictim(nextVictim);
-    return getCurrentVictim() != nullptr ? getCurrentVictim()->getTarget() : nullptr;
+    auto target = getCurrentVictim() != nullptr ? getCurrentVictim()->getTarget() : nullptr;
+    // if (Creature* creature = iOwner->ToCreature())
+    // {
+    //     if (creature->GetEntry() == 12416)
+    //     {
+    //         if (target)
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ThreatManager::getHostileTarget %u - return target = %s", creature->GetGUIDLow(), target->GetName());
+    //         }
+    //         else
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ThreatManager::getHostileTarget %u - return target = null", creature->GetGUIDLow());
+    //         }
+    //     }
+    // }
+
+    return target;
 }
 
 //============================================================
@@ -512,6 +564,14 @@ void ThreatManager::setCurrentVictim(HostileReference* pHostileReference)
 
 void ThreatManager::processThreatEvent(ThreatRefStatusChangeEvent* threatRefStatusChangeEvent)
 {
+    if (Creature* creature = iOwner->ToCreature())
+    {
+        if (creature->GetEntry() == 12416)
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ThreatManager::processThreatEvent %u", creature->GetGUIDLow());
+        }
+    }
+
     threatRefStatusChangeEvent->setThreatManager(this);     // now we can set the threat manager
 
     HostileReference* hostileReference = threatRefStatusChangeEvent->getReference();
@@ -519,11 +579,32 @@ void ThreatManager::processThreatEvent(ThreatRefStatusChangeEvent* threatRefStat
     switch (threatRefStatusChangeEvent->getType())
     {
         case UEV_THREAT_REF_THREAT_CHANGE:
+            if (Creature* creature = iOwner->ToCreature())
+            {
+                if (creature->GetEntry() == 12416)
+                {
+                    sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ThreatManager::processThreatEvent %u - UEV_THREAT_REF_THREAT_CHANGE", creature->GetGUIDLow());
+                }
+            }
             if ((getCurrentVictim() == hostileReference && threatRefStatusChangeEvent->getFValue() < 0.0f) ||
                     (getCurrentVictim() != hostileReference && threatRefStatusChangeEvent->getFValue() > 0.0f))
                 setDirty(true);                             // the order in the threat list might have changed
             break;
         case UEV_THREAT_REF_ONLINE_STATUS:
+            if (Creature* creature = iOwner->ToCreature())
+            {
+                if (creature->GetEntry() == 12416)
+                {
+                    sLog.Out(
+                        LOG_SCRIPTS,
+                        LOG_LVL_ERROR,
+                        "ThreatManager::processThreatEvent %u - UEV_THREAT_REF_ONLINE_STATUS - sourceUnit = %s, targetUnit = %s",
+                        creature->GetGUIDLow(),
+                        hostileReference->getSourceUnit()->GetName(),
+                        hostileReference->getTarget()->GetName()
+                    );
+                }
+            }
             if (!hostileReference->isOnline())
             {
                 if (hostileReference == getCurrentVictim())
@@ -543,6 +624,22 @@ void ThreatManager::processThreatEvent(ThreatRefStatusChangeEvent* threatRefStat
             }
             break;
         case UEV_THREAT_REF_REMOVE_FROM_LIST:
+            if (Creature* creature = iOwner->ToCreature())
+            {
+                if (creature->GetEntry() == 12416)
+                {
+                    auto source = hostileReference->getSourceUnit();
+                    auto target = hostileReference->getTarget();
+                    sLog.Out(
+                        LOG_SCRIPTS,
+                        LOG_LVL_ERROR,
+                        "ThreatManager::processThreatEvent %u - UEV_THREAT_REF_REMOVE_FROM_LIST - sourceUnit = %s, targetUnit = %s",
+                        creature->GetGUIDLow(),
+                        source ? source->GetName() : "null",
+                        target ? target->GetName() : "null"
+                    );
+                }
+            }
             if (hostileReference == getCurrentVictim())
             {
                 setCurrentVictim(nullptr);

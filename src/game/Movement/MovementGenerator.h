@@ -63,6 +63,9 @@ class MovementGenerator
         // used by Evade code for select point to evade with expected restart default movement
         virtual bool GetResetPosition(Unit &, float& /*x*/, float& /*y*/, float& /*z*/) { return false; }
 
+        // indicates that the generator should remain on the stack when a new one is added
+        virtual bool IsPersistent() const { return true; }
+
         // used for check from Update call is movegen still be active (top movement generator)
         // after some not safe for this calls
         bool IsActive(Unit& u);

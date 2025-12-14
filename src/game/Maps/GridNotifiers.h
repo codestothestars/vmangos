@@ -22,6 +22,7 @@
 #ifndef MANGOS_GRIDNOTIFIERS_H
 #define MANGOS_GRIDNOTIFIERS_H
 
+#include "Log.h"
 #include "ObjectGridLoader.h"
 #include "UpdateData.h"
 #include <iostream>
@@ -663,18 +664,45 @@ namespace MaNGOS
     class NearestGameObjectEntryFitConditionInObjectRangeCheck
     {
         public:
-            NearestGameObjectEntryFitConditionInObjectRangeCheck(WorldObject const& obj,uint32 entry, float range, uint32 conditionId) : i_obj(obj), i_entry(entry), i_range(range), i_conditionId(conditionId) {}
+            NearestGameObjectEntryFitConditionInObjectRangeCheck(WorldObject const& obj,uint32 entry, float range, uint32 conditionId, GameObject const* except = nullptr) : i_obj(obj), i_entry(entry), i_range(range), i_conditionId(conditionId), i_except(except) {}
             WorldObject const& GetFocusObject() const { return i_obj; }
             bool operator()(GameObject* go)
             {
+                // if (i_entry == 177807 && go->GetGUIDLow() == 234786)
+                // {
+                //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "NearestGameObjectEntryFitConditionInObjectRangeCheck::operator %u", go->GetGUIDLow());
+                // }
                 if (go->GetEntry() == i_entry && i_obj.IsWithinDistInMap(go, i_range))
                 {
-                    if (i_conditionId && !IsConditionSatisfied(i_conditionId, go, go->GetMap(), &i_obj, CONDITION_FROM_SPELL_AREA))
+                    if (go == i_except)
+                    {
+                        // if (i_entry == 177807 && go->GetGUIDLow() == 234786)
+                        // {
+                        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "NearestGameObjectEntryFitConditionInObjectRangeCheck::operator %u - go == i_except", go->GetGUIDLow());
+                        // }
                         return false;
+                    }
+
+                    if (i_conditionId && !IsConditionSatisfied(i_conditionId, go, go->GetMap(), &i_obj, CONDITION_FROM_SPELL_AREA))
+                    {
+                        // if (i_entry == 177807 && go->GetGUIDLow() == 234786)
+                        // {
+                        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "NearestGameObjectEntryFitConditionInObjectRangeCheck::operator %u - !IsConditionSatisfied", go->GetGUIDLow());
+                        // }
+                        return false;
+                    }
 
                     i_range = i_obj.GetDistance(go);        // use found GO range as new range limit for next check
+                    // if (i_entry == 177807 && go->GetGUIDLow() == 234786)
+                    // {
+                    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "NearestGameObjectEntryFitConditionInObjectRangeCheck::operator %u - return true", go->GetGUIDLow());
+                    // }
                     return true;
                 }
+                // if (i_entry == 177807 && go->GetGUIDLow() == 234786)
+                // {
+                //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "NearestGameObjectEntryFitConditionInObjectRangeCheck::operator %u - return false (final)", go->GetGUIDLow());
+                // }
                 return false;
             }
             float GetLastRange() const { return i_range; }
@@ -683,6 +711,7 @@ namespace MaNGOS
             uint32 i_entry;
             float  i_range;
             uint32 i_conditionId;
+            GameObject const* i_except;
 
             // prevent clone this object
             NearestGameObjectEntryFitConditionInObjectRangeCheck(NearestGameObjectEntryFitConditionInObjectRangeCheck const&);
@@ -1155,14 +1184,17 @@ namespace MaNGOS
     class NearestCreatureEntryWithLiveStateInObjectRangeCheck
     {
         public:
-            NearestCreatureEntryWithLiveStateInObjectRangeCheck(WorldObject const& obj,uint32 entry, bool alive, float range, Creature const* except = nullptr)
-                : i_obj(obj), i_entry(entry), i_alive(alive), i_range(range), i_except(except) {}
+            NearestCreatureEntryWithLiveStateInObjectRangeCheck(WorldObject const& obj,uint32 entry, bool alive, float range, Creature const* except = nullptr, uint32 conditionId = 0)
+                : i_obj(obj), i_entry(entry), i_alive(alive), i_range(range), i_except(except), i_conditionId(conditionId) {}
             WorldObject const& GetFocusObject() const { return i_obj; }
             bool operator()(Creature* u)
             {
                 if (u->GetEntry() == i_entry && ((i_alive && u->IsAlive()) || (!i_alive && u->IsCorpse())) && i_obj.IsWithinDistInMap(u, i_range))
                 {
                     if (u == i_except)
+                        return false;
+
+                    if (i_conditionId && !IsConditionSatisfied(i_conditionId, u, u->GetMap(), &i_obj, CONDITION_FROM_SPELL_AREA))
                         return false;
 
                     i_range = i_obj.GetDistance(u);         // use found unit range as new range limit for next check
@@ -1177,6 +1209,7 @@ namespace MaNGOS
             bool   i_alive;
             float  i_range;
             Creature const* i_except;
+            uint32 i_conditionId;
 
             // prevent clone this object
             NearestCreatureEntryWithLiveStateInObjectRangeCheck(NearestCreatureEntryWithLiveStateInObjectRangeCheck const&);
@@ -1360,7 +1393,14 @@ namespace MaNGOS
         AllCreaturesOfEntryInRange(WorldObject const* pObject, uint32 uiEntry, float fMaxRange) : m_pObject(pObject), m_uiEntry(uiEntry), m_fRange(fMaxRange) {}
         bool operator() (Unit* pUnit)
         {
-            return pUnit->GetEntry() == m_uiEntry && m_pObject->IsWithinDist(pUnit, m_fRange, false);
+            bool result = pUnit->GetEntry() == m_uiEntry && m_pObject->IsWithinDist(pUnit, m_fRange, false);
+            // if (m_pObject->GetEntry() == 12416)
+            // {
+            //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "AllCreaturesOfEntryInRange %u - %u == %u && IsWithinDist(%f)", m_pObject->GetGUIDLow(), pUnit->GetEntry(), m_uiEntry, m_fRange);
+            //     uint32 resultInt = result ? 1 : 0;
+            //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "AllCreaturesOfEntryInRange %u - return %u", resultInt);
+            // }
+            return result;
         }
 
     private:

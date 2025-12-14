@@ -18,6 +18,7 @@
 
 #include "Policies/SingletonImp.h"
 #include "Common.h"
+#include "Opcodes.h"
 #include "ProgressBar.h"
 #include "SharedDefines.h"
 #include "Player.h"

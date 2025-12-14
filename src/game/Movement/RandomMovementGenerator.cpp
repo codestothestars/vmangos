@@ -50,6 +50,10 @@ void RandomMovementGenerator::_setRandomLocation(Creature &creature)
     Movement::MoveSplineInit init(creature, "RandomMovementGenerator::_setRandomLocation");
     init.MoveTo(destX, destY, destZ, MOVE_PATHFINDING | MOVE_EXCLUDE_STEEP_SLOPES);
     init.SetWalk(!creature.HasExtraFlag(CREATURE_FLAG_EXTRA_ALWAYS_RUN));
+    if (creature.GetEntry() == 12416)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "RandomMovementGenerator::_setRandomLocation %u: init.Launch()", creature.GetGUIDLow());
+    }
     init.Launch();
 
     if (i_wanderSteps) // Creature has yet to do steps before pausing
@@ -81,12 +85,22 @@ void RandomMovementGenerator::Reset(Creature &creature)
 
 void RandomMovementGenerator::Interrupt(Creature &creature)
 {
+    if (creature.GetEntry() == 12416)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "RandomMovementGenerator::Interrupt %u", creature.GetGUIDLow());
+    }
+
     creature.ClearUnitState(UNIT_STATE_ROAMING | UNIT_STATE_ROAMING_MOVE);
     creature.SetWalk(!creature.HasUnitState(UNIT_STATE_RUNNING), false);
 }
 
 void RandomMovementGenerator::Finalize(Creature &creature)
 {
+    if (creature.GetEntry() == 12416)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "RandomMovementGenerator::Finalize %u", creature.GetGUIDLow());
+    }
+
     creature.ClearUnitState(UNIT_STATE_ROAMING | UNIT_STATE_ROAMING_MOVE);
     creature.SetWalk(!creature.HasUnitState(UNIT_STATE_RUNNING), false);
 }

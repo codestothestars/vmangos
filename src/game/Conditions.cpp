@@ -19,6 +19,8 @@
  */
 
 #include "Conditions.h"
+#include "CreatureEventAI.h"
+#include "Log.h"
 #include "Player.h"
 #include "GameEventMgr.h"
 #include "SpellAuras.h"
@@ -118,6 +120,10 @@ uint8 const* ConditionTargets = &ConditionTargetsInternal[3];
 // Checks if player meets the condition
 bool ConditionEntry::Meets(WorldObject const* target, Map const* map, WorldObject const* source, ConditionSource conditionSourceType) const
 {
+    // if (m_entry == 242)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ConditionEntry::Meets %u", m_entry);
+    // }
     sLog.Out(LOG_BASIC, LOG_LVL_DEBUG, "Condition-System: Check condition %u, type %i - called from %s with params target: %s, map %i, source %s",
               m_entry, m_condition, conditionSourceToStr[conditionSourceType], target ? target->GetGuidStr().c_str() : "<nullptr>", map ? map->GetId() : -1, source ? source->GetGuidStr().c_str() : "<nullptr>");
 
@@ -133,8 +139,20 @@ bool ConditionEntry::Meets(WorldObject const* target, Map const* map, WorldObjec
 
     bool result = Evaluate(target, map, source, conditionSourceType);
 
+    // if (m_entry == 242)
+    // {
+    //     uint32 resultInt = result ? 1 : 0;
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ConditionEntry::Meets %u - Evaluate result = %u", m_entry, resultInt);
+    // }
+
     if (m_flags & CONDITION_FLAG_REVERSE_RESULT)
         result = !result;
+
+    // if (m_entry == 242)
+    // {
+    //     uint32 resultInt = result ? 1 : 0;
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ConditionEntry::Meets %u - final result = %u", m_entry, resultInt);
+    // }
 
     return result;
 }
@@ -142,6 +160,10 @@ bool ConditionEntry::Meets(WorldObject const* target, Map const* map, WorldObjec
 // Actual evaluation of the condition done here.
 bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, WorldObject const* source, ConditionSource conditionSourceType) const
 {
+    // if (m_entry == 242)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ConditionEntry::Evaluate %u", m_entry);
+    // }
     switch (m_condition)
     {
         case CONDITION_NOT:
@@ -298,11 +320,21 @@ bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, 
         }
         case CONDITION_NEARBY_CREATURE:
         {
-            return (bool)(target->FindNearestCreature(m_value1, m_value2, !m_value3, m_value4 ? target->ToCreature() : nullptr));
+            return (bool)(target->FindNearestCreature(m_value1, m_value2, !(m_value3 & CF_NEARBY_CREATURE_DEAD), (m_value3 & CF_NEARBY_CREATURE_NOT_SELF) ? target->ToCreature() : nullptr, m_value4));
         }
         case CONDITION_NEARBY_GAMEOBJECT:
         {
-            return (bool)(target->FindNearestGameObject(m_value1, m_value2));
+            // if (m_entry == 242)
+            // {
+            //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ConditionEntry::Evaluate %u - m_value1 = %u, m_value2 = %u, m_value3 = %u, m_value4 = %u, target = %s", m_entry, m_value1, m_value2, m_value3, m_value4, target->GetName());
+            // }
+            bool result = (bool)(target->FindNearestGameObject(m_value1, m_value2, (m_value3 & CF_NEARBY_GAMEOBJECT_NOT_SELF) ? target->ToGameObject() : nullptr, m_value4));
+            uint32 resultInt = result ? 1 : 0;
+            // if (m_entry == 242)
+            // {
+            //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ConditionEntry::Evaluate %u - result = %u", m_entry, resultInt);
+            // }
+            return result;
         }
         case CONDITION_QUEST_NONE:
         {
@@ -668,6 +700,37 @@ bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, 
             uint32 val = (uint32)(1 << (areaFlag % 32));
             uint32 currFields = target->GetUInt32Value(PLAYER_EXPLORED_ZONES_1 + offset);
             return (currFields & val) != 0;
+        }
+        case CONDITION_NEARBY_HOSTILE:
+        {
+            if (target->IsCreature())
+            {
+                return (bool)((Creature*)target)->GetVictimInRange(0, m_value1);
+            }
+
+            return false;
+        }
+        case CONDITION_CREATURE_FIT_CONDITION:
+        {
+            Map* pMap = const_cast<Map*>(map ? map : (source ? source->GetMap() : target->GetMap()));
+            if (CreatureData const* creatureData = sObjectMgr.GetCreatureData(m_value1))
+                // is there a shortcut for all this? check other conditions that take a creature guid
+                if (Creature* pCreature = pMap->GetCreature(creatureData->GetObjectGuid(m_value1)))
+                    return sConditionStorage.LookupEntry<ConditionEntry>(m_value2)->Meets(pCreature, map, source, conditionSourceType);
+            return false;
+        }
+        case CONDITION_CREATURE_PHASE:
+        {
+            if (Creature const* pCreature = source->ToCreature())
+                if (auto const* pAI = dynamic_cast<CreatureEventAI const*>(pCreature->AI()))
+                    return pAI->m_Phase == m_value1;
+            return false;
+        }
+        case CONDITION_MOVEMENT_TYPE:
+        {
+            if (Creature const* pCreature = source->ToCreature())
+                return pCreature->GetMotionMaster()->GetCurrentMovementGeneratorType() == m_value1;
+            return false;
         }
     }
     return false;
@@ -1335,6 +1398,24 @@ bool ConditionEntry::IsValid()
             }
             break;
         }
+        case CONDITION_NEARBY_HOSTILE:
+        {
+            if (m_value1 <= 0)
+            {
+                sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "CONDITION_NEARBY_HOSTILE (entry %u, type %d) does not have max distance set in value1, skipped", m_entry, m_condition);
+                return false;
+            }
+            break;
+        }
+        case CONDITION_MOVEMENT_TYPE:
+        {
+            if (m_value1 > DISTANCING_MOTION_TYPE)
+            {
+                sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "CONDITION_MOVEMENT_TYPE (entry %u, type %u) has invalid MovementGeneratorType %u, skipped", m_entry, m_condition, m_value1);
+                return false;
+            }
+            break;
+        }
         case CONDITION_NONE:
         case CONDITION_INSTANCE_SCRIPT:
         case CONDITION_ACTIVE_HOLIDAY:
@@ -1351,6 +1432,8 @@ bool ConditionEntry::IsValid()
         case CONDITION_IS_PLAYER:
         case CONDITION_OBJECT_IS_SPAWNED:
         case CONDITION_CREATURE_GROUP_DEAD:
+        case CONDITION_CREATURE_FIT_CONDITION:
+        case CONDITION_CREATURE_PHASE:
             break;
         default:
             sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "Condition entry %u has bad type of %d, skipped ", m_entry, m_condition);

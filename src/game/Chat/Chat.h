@@ -965,6 +965,7 @@ class ChatHandler
         bool HandleModifyEmoteStateCommand(char* args);
         bool HandleNameDieCommand(char* args);
         bool HandleDieCommand(char* args);
+        bool HandleInvincibleCommand(char* args);
         bool HandleKnockBackCommand(char* args);
         bool HandleFearCommand(char* args);
         bool HandleDamageCommand(char* args);

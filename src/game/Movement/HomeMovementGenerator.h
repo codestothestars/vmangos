@@ -32,7 +32,7 @@ class HomeMovementGenerator<Creature>
 {
     public:
 
-        HomeMovementGenerator(): arrived(false) {}
+        HomeMovementGenerator(bool isPersistent = false): arrived(false), isPersistent(isPersistent) {}
         ~HomeMovementGenerator() {}
 
         void Initialize(Creature &);
@@ -41,9 +41,11 @@ class HomeMovementGenerator<Creature>
         void Reset(Creature &);
         bool Update(Creature &, uint32 const&);
         MovementGeneratorType GetMovementGeneratorType() const { return HOME_MOTION_TYPE; }
+        bool IsPersistent() const { return isPersistent; }
 
     private:
         void _setTargetLocation(Creature &);
         bool arrived;
+        bool isPersistent;
 };
 #endif

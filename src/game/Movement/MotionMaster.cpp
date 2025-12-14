@@ -22,6 +22,7 @@
 #include "MotionMaster.h"
 #include "CreatureAISelector.h"
 #include "Creature.h"
+#include "Log.h"
 #include "Transport.h"
 #include "Map.h"
 #include "ConfusedMovementGenerator.h"
@@ -45,6 +46,10 @@ inline bool isStatic(MovementGenerator* mv)
 
 void MotionMaster::Initialize()
 {
+    // if (m_owner->IsCreature() && m_owner->GetEntry() == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::Initialize 12420");
+    // }
     // stop current move
     if (!m_owner->IsStopped())
         m_owner->StopMoving();
@@ -102,9 +107,19 @@ void MotionMaster::InitializeNewDefault(bool alwaysReplace)
     if (!alwaysReplace && (size() == 1) && (top()->GetMovementGeneratorType() == new_default))
         return;
 
+    // if (pCreature->GetCreatureInfo()->entry == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "InitializeNewDefault %u - new_default %s", pCreature->GetGUIDLow(), GetMovementGeneratorTypeName(new_default));
+    // }
+
     // Get the current generator and eject it from the stack
     MovementGenerator* curr = top();
     pop();
+
+    // if (pCreature->GetCreatureInfo()->entry == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "InitializeNewDefault - pop %s", GetMovementGeneratorTypeName(curr->GetMovementGeneratorType()));
+    // }
 
     // Clear ALL other movement generators
     Clear(false, true);
@@ -143,7 +158,16 @@ void MotionMaster::InitializeNewDefault(bool alwaysReplace)
                 m_expList = new ExpireList();
             curr->Finalize(*m_owner);
             if (!isStatic(curr))
+            {
+                // if (
+                //     (curr)->GetMovementGeneratorType() == WAYPOINT_MOTION_TYPE &&
+                //     (static_cast<WaypointMovementGenerator<Creature>*>(curr))->m_overwriteEntry == 830203
+                // )
+                // {
+                //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::InitializeNewDefault - expire flee");
+                // }
                 m_expList->push_back(curr);
+            }
         }
     }
     else
@@ -175,6 +199,31 @@ MotionMaster::~MotionMaster()
 
 void MotionMaster::UpdateMotion(uint32 diff)
 {
+    // if (Creature* creature = m_owner->ToCreature())
+    // {
+    //     if (creature->GetEntry() == 12416)
+    //     {
+    //         if (empty())
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "UpdateMotion 12420: empty");
+    //         }
+    //         else
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "UpdateMotion 12420: top = %s", GetMovementGeneratorTypeName(top()->GetMovementGeneratorType()));
+    //         }
+    //         // for (iterator it = begin(); it != end(); it++)
+    //         // {
+    //         //     if (
+    //         //         (*it)->GetMovementGeneratorType() == WAYPOINT_MOTION_TYPE &&
+    //         //         (static_cast<WaypointMovementGenerator<Creature>*>(*it))->m_overwriteEntry == 830203
+    //         //     )
+    //         //     {
+    //         //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "UpdateMotion 12420: !ipath = %u", !(static_cast<WaypointMovementGenerator<Creature>*>(*it))->GetIpath());
+    //         //     }
+    //         // }
+    //     }
+    // }
+
     if (m_owner->HasUnitState(UNIT_STATE_CAN_NOT_MOVE))
         return;
 
@@ -183,14 +232,40 @@ void MotionMaster::UpdateMotion(uint32 diff)
 
     if (!top()->Update(*m_owner, diff))
     {
+        // if (Creature* creature = m_owner->ToCreature())
+        // {
+        //     if (creature->GetEntry() == 12416)
+        //     {
+        //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "UpdateMotion 12420: !top()->Update(*m_owner, diff)");
+        //     }
+        // }
+
         m_cleanFlag &= ~MMCF_UPDATE;
         MovementExpired();
     }
     else
+    {
+        // if (Creature* creature = m_owner->ToCreature())
+        // {
+        //     if (creature->GetEntry() == 12416)
+        //     {
+        //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "m_cleanFlag &= ~MMCF_UPDATE");
+        //     }
+        // }
+
         m_cleanFlag &= ~MMCF_UPDATE;
+    }
 
     if (m_expList)
     {
+        // if (Creature* creature = m_owner->ToCreature())
+        // {
+        //     if (creature->GetEntry() == 12416)
+        //     {
+        //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "m_expList");
+        //     }
+        // }
+
         for (const auto mg : *m_expList)
         {
             if (!isStatic(mg))
@@ -209,6 +284,24 @@ void MotionMaster::UpdateMotion(uint32 diff)
             m_cleanFlag &= ~MMCF_RESET;
         }
     }
+    // else
+    // {
+    //     if (Creature* creature = m_owner->ToCreature())
+    //     {
+    //         if (creature->GetEntry() == 12416)
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "!m_expList");
+    //         }
+    //     }
+    // }
+
+    // if (Creature* creature = m_owner->ToCreature())
+    // {
+    //     if (creature->GetEntry() == 12416 && !empty())
+    //     {
+    //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "UpdateMotion 12420: new top = %s", GetMovementGeneratorTypeName(top()->GetMovementGeneratorType()));
+    //     }
+    // }
 }
 
 void MotionMaster::UpdateMotionAsync(uint32 diff)
@@ -228,11 +321,35 @@ void MotionMaster::DirectClean(bool reset, bool all)
     // Nostalrius: We need to clean top mvt gens, and call Finalize once it's done
     // because Finalize calls CreatureAI::MovementInform that can call MovePoint / ...
 
+    // if (Creature* creature = m_owner->ToCreature())
+    // {
+    //     if (creature->GetEntry() == 12416)
+    //     {
+    //         if (empty())
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DirectClean %u: empty", creature->GetGUIDLow());
+    //         }
+    //         else
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DirectClean %u: reset = %u, all = %u", creature->GetGUIDLow(), reset, all);
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DirectClean %u: top = %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(top()->GetMovementGeneratorType()));
+    //             if (top()->GetMovementGeneratorType() == WAYPOINT_MOTION_TYPE)
+    //             {
+    //                 sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DirectClean %u: log", creature->GetGUIDLow());
+    //             }
+    //         }
+    //     }
+    // }
+
     std::vector<MovementGenerator*> mvtGensToFinalize;
     while (all ? !empty() : size() > 1)
     {
         MovementGenerator* curr = top();
         pop();
+        // if (m_owner->GetEntry() == 12416)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::DirectClean 12420 - pop %s", GetMovementGeneratorTypeName(curr->GetMovementGeneratorType()));
+        // }
         mvtGensToFinalize.push_back(curr);
     }
     if (!all && reset)
@@ -248,10 +365,34 @@ void MotionMaster::DirectClean(bool reset, bool all)
         if (!isStatic(itr))
             delete(itr);
     }
+
+    // if (Creature* creature = m_owner->ToCreature())
+    // {
+    //     if (creature->GetEntry() == 12416 && !empty())
+    //     {
+    //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DirectClean 12420: new top = %s", GetMovementGeneratorTypeName(top()->GetMovementGeneratorType()));
+    //     }
+    // }
 }
 
 void MotionMaster::DelayedClean(bool reset, bool all)
 {
+    // if (Creature* creature = m_owner->ToCreature())
+    // {
+    //     if (creature->GetEntry() == 12416)
+    //     {
+    //         if (empty())
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DelayedClean %u: empty", creature->GetGUIDLow());
+    //         }
+    //         else
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DelayedClean %u: reset = %u, all = %u", creature->GetGUIDLow(), reset, all);
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DelayedClean %u: top = %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(top()->GetMovementGeneratorType()));
+    //         }
+    //     }
+    // }
+
     if (reset)
         m_cleanFlag |= MMCF_RESET;
     else
@@ -268,6 +409,13 @@ void MotionMaster::DelayedClean(bool reset, bool all)
     {
         MovementGenerator* curr = top();
         pop();
+        // if (Creature* creature = m_owner->ToCreature())
+        // {
+        //     if (creature->GetCreatureInfo()->entry == 12416)
+        //     {
+        //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DelayedClean - pop %s", GetMovementGeneratorTypeName(curr->GetMovementGeneratorType()));
+        //     }
+        // }
         mvtGensToFinalize.push_back(curr);
     }
     for (auto const& itr : mvtGensToFinalize)
@@ -275,12 +423,45 @@ void MotionMaster::DelayedClean(bool reset, bool all)
         itr->Finalize(*m_owner);
 
         if (!isStatic(itr))
+        {
+            // if (
+            //     (itr)->GetMovementGeneratorType() == WAYPOINT_MOTION_TYPE &&
+            //     (static_cast<WaypointMovementGenerator<Creature>*>(itr))->m_overwriteEntry == 830203
+            // )
+            // {
+            //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::DelayedClean - expire flee");
+            // }
             m_expList->push_back(itr);
+        }
     }
+
+    // if (Creature* creature = m_owner->ToCreature())
+    // {
+    //     if (creature->GetEntry() == 12416 && !empty())
+    //     {
+    //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DelayedClean 12420: new top = %s", GetMovementGeneratorTypeName(top()->GetMovementGeneratorType()));
+    //     }
+    // }
 }
 
 void MotionMaster::DirectExpire(bool reset)
 {
+    if (Creature* creature = m_owner->ToCreature())
+    {
+        if (creature->GetEntry() == 12416)
+        {
+            if (empty())
+            {
+                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DirectExpire %u: empty", creature->GetGUIDLow());
+            }
+            else
+            {
+                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DirectExpire %u: reset = %u", creature->GetGUIDLow(), reset);
+                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DirectExpire %u: top = %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(top()->GetMovementGeneratorType()));
+            }
+        }
+    }
+
     if (empty() || size() == 1)
         return;
 
@@ -293,6 +474,13 @@ void MotionMaster::DirectExpire(bool reset)
     {
         MovementGenerator* temp = top();
         pop();
+        // if (Creature* creature = m_owner->ToCreature())
+        // {
+        //     if (creature->GetCreatureInfo()->entry == 12416)
+        //     {
+        //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DirectExpire - pop %s", GetMovementGeneratorTypeName(curr->GetMovementGeneratorType()));
+        //     }
+        // }
         mvtGensToFinalize.push_back(temp);
     }
     for (auto const& itr : mvtGensToFinalize)
@@ -314,10 +502,34 @@ void MotionMaster::DirectExpire(bool reset)
     // Prevent reseting possible new pushed MMGen
     if (reset && top() == nowTop)
         top()->Reset(*m_owner);
+
+    if (Creature* creature = m_owner->ToCreature())
+    {
+        if (creature->GetEntry() == 12416 && !empty())
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DirectExpire %u: new top = %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(top()->GetMovementGeneratorType()));
+        }
+    }
 }
 
 void MotionMaster::DelayedExpire(bool reset)
 {
+    if (Creature* creature = m_owner->ToCreature())
+    {
+        if (creature->GetEntry() == 12416)
+        {
+            if (empty())
+            {
+                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::DelayedExpire %u: empty", creature->GetGUIDLow());
+            }
+            else
+            {
+                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::DelayedExpire %u: reset = %u", creature->GetGUIDLow(), reset);
+                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::DelayedExpire %u: top = %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(top()->GetMovementGeneratorType()));
+            }
+        }
+    }
+
     if (reset)
         m_cleanFlag |= MMCF_RESET;
     else
@@ -338,10 +550,24 @@ void MotionMaster::DelayedExpire(bool reset)
     {
         MovementGenerator* temp = top();
         pop();
+        if (Creature* creature = m_owner->ToCreature())
+        {
+            if (creature->GetCreatureInfo()->entry == 12416)
+            {
+                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DelayedExpire - pop %s", GetMovementGeneratorTypeName(curr->GetMovementGeneratorType()));
+            }
+        }
         mvtGensToFinalize.push_back(temp);
     }
     for (auto const& itr : mvtGensToFinalize)
     {
+        // if (
+        //     (itr)->GetMovementGeneratorType() == WAYPOINT_MOTION_TYPE &&
+        //     (static_cast<WaypointMovementGenerator<Creature>*>(itr))->m_overwriteEntry == 830203
+        // )
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::DelayedExpire - expire flee");
+        // }
         itr->Finalize(*m_owner);
         m_expList->push_back(itr);
     }
@@ -349,7 +575,24 @@ void MotionMaster::DelayedExpire(bool reset)
     curr->Finalize(*m_owner);
 
     if (!isStatic(curr))
+    {
+        // if (
+        //     (curr)->GetMovementGeneratorType() == WAYPOINT_MOTION_TYPE &&
+        //     (static_cast<WaypointMovementGenerator<Creature>*>(curr))->m_overwriteEntry == 830203
+        // )
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::DelayedExpire - expire flee");
+        // }
         m_expList->push_back(curr);
+    }
+
+    // if (Creature* creature = m_owner->ToCreature())
+    // {
+    //     if (creature->GetEntry() == 12416 && !empty())
+    //     {
+    //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DelayedExpire 12420: new top = %s", GetMovementGeneratorTypeName(top()->GetMovementGeneratorType()));
+    //     }
+    // }
 }
 
 void MotionMaster::MoveIdle()
@@ -369,7 +612,7 @@ void MotionMaster::MoveRandom(bool use_current_position, float wander_distance, 
     }
 }
 
-void MotionMaster::MoveTargetedHome()
+void MotionMaster::MoveTargetedHome(bool isPersistent)
 {
     if (m_owner->HasUnitState(UNIT_STATE_LOST_CONTROL))
         return;
@@ -387,7 +630,7 @@ void MotionMaster::MoveTargetedHome()
                 m_owner->GetTransport()->RemovePassenger(m_owner);
 
             DEBUG_FILTER_LOG(LOG_FILTER_AI_AND_MOVEGENSS, "%s targeted home", m_owner->GetGuidStr().c_str());
-            Mutate(new HomeMovementGenerator<Creature>());
+            Mutate(new HomeMovementGenerator<Creature>(isPersistent));
         }
     }
     else if (m_owner->IsCreature() && ((Creature*)m_owner)->GetCharmerOrOwnerGuid())
@@ -439,12 +682,13 @@ void MotionMaster::MoveChase(Unit* target, float dist, float angle)
     }
 }
 
-void MotionMaster::MoveFollow(Unit* target, float dist, float angle)
+void MotionMaster::MoveFollow(Unit* target, float dist, float angle, bool clear)
 {
     if (m_owner->HasUnitState(UNIT_STATE_LOST_CONTROL))
         return;
 
-    Clear();
+    if (clear)
+        Clear();
 
     // ignore movement request if target not exist
     if (!target)
@@ -458,14 +702,35 @@ void MotionMaster::MoveFollow(Unit* target, float dist, float angle)
         Mutate(new FollowMovementGenerator<Creature>(*target, dist, angle));
 }
 
-void MotionMaster::MovePoint(uint32 id, float x, float y, float z, uint32 options, float speed, float finalOrientation)
+void MotionMaster::MovePoint(uint32 id, float x, float y, float z, uint32 options, float speed, float finalOrientation, bool resumeOnReset)
 {
     DEBUG_FILTER_LOG(LOG_FILTER_AI_AND_MOVEGENSS, "%s targeted point (Id: %u X: %f Y: %f Z: %f)", m_owner->GetGuidStr().c_str(), id, x, y, z);
 
     if (m_owner->IsPlayer())
-        Mutate(new PointMovementGenerator<Player>(id, x, y, z, options, speed, finalOrientation));
+        Mutate(new PointMovementGenerator<Player>(id, x, y, z, options, speed, finalOrientation, resumeOnReset));
     else
-        Mutate(new PointMovementGenerator<Creature>(id, x, y, z, options, speed, finalOrientation));
+        Mutate(new PointMovementGenerator<Creature>(id, x, y, z, options, speed, finalOrientation, resumeOnReset));
+}
+
+void MotionMaster::ClearPoint(uint32 id)
+{
+    if (m_owner->IsPlayer())
+        sLog.Out(LOG_BASIC, LOG_LVL_ERROR, "Player %s: ClearPoint not implemented for players", m_owner->GetGuidStr().c_str());
+
+    for (iterator it = begin(); it != end();)
+    {
+        if (
+            (*it)->GetMovementGeneratorType() == POINT_MOTION_TYPE &&
+            (static_cast<PointMovementGenerator<Creature>*>(*it))->GetId() == id
+        )
+        {
+            (*it)->Finalize(*m_owner);
+            erase(it);
+            it = begin();
+        }
+        else
+            ++it;
+    }
 }
 
 void MotionMaster::MoveSeekAssistance(float x, float y, float z)
@@ -546,6 +811,13 @@ void MotionMaster::MoveWaypointAsDefault(uint32 startPoint /*=0*/, uint32 source
             // Get the current generator and eject it from the stack
             MovementGenerator* curr = top();
             pop();
+            // if (Creature* creature = m_owner->ToCreature())
+            // {
+            //     if (creature->GetCreatureInfo()->entry == 12416)
+            //     {
+            //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MoveWaypointAsDefault - pop %s", GetMovementGeneratorTypeName(curr->GetMovementGeneratorType()));
+            //     }
+            // }
 
             // Clear ALL other movement generators
             Clear(false, true);
@@ -569,11 +841,12 @@ void MotionMaster::MoveWaypoint(uint32 startPoint /*=0*/, uint32 source /*=0==PA
 {
     if (m_owner->IsCreature())
     {
-        if (GetCurrentMovementGeneratorType() == WAYPOINT_MOTION_TYPE)
-        {
-            sLog.Out(LOG_BASIC, LOG_LVL_ERROR, "Creature %s (Entry %u) attempt to MoveWaypoint() but creature is already using waypoint", m_owner->GetGuidStr().c_str(), m_owner->GetEntry());
-            return;
-        }
+        // if commenting this out works, can have some new parameter like replaceSame to have the same effect
+        // if (GetCurrentMovementGeneratorType() == WAYPOINT_MOTION_TYPE)
+        // {
+        //     sLog.Out(LOG_BASIC, LOG_LVL_ERROR, "Creature %s (Entry %u) attempt to MoveWaypoint() but creature is already using waypoint", m_owner->GetGuidStr().c_str(), m_owner->GetEntry());
+        //     return;
+        // }
 
         Creature* creature = (Creature*)m_owner;
 
@@ -679,6 +952,35 @@ void MotionMaster::MoveDistract(uint32 timer)
 
 void MotionMaster::Mutate(MovementGenerator* m)
 {
+    // MovementGeneratorType before = empty() ? IDLE_MOTION_TYPE : top()->GetMovementGeneratorType();
+    // if (Creature* creature = m_owner->ToCreature())
+    // {
+    //     if (creature->GetEntry() == 12416)
+    //     {
+    //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Mutate %u - %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(m->GetMovementGeneratorType()));
+    //         if (m->GetMovementGeneratorType() == CHASE_MOTION_TYPE)
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Mutate %u - chase", creature->GetGUIDLow());
+    //         }
+    //         if (m->GetMovementGeneratorType() == HOME_MOTION_TYPE)
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Mutate %u - home", creature->GetGUIDLow());
+    //         }
+    //         if (m->GetMovementGeneratorType() == POINT_MOTION_TYPE)
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Mutate %u - point", creature->GetGUIDLow());
+    //         }
+    //         if (empty())
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Mutate %u - top empty", creature->GetGUIDLow());
+    //         }
+    //         else
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Mutate %u - top = %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(top()->GetMovementGeneratorType()));
+    //         }
+    //     }
+    // }
+
     if (!empty())
     {
         switch (top()->GetMovementGeneratorType())
@@ -689,12 +991,9 @@ void MotionMaster::Mutate(MovementGenerator* m)
                 if (m->GetMovementGeneratorType() == DISTANCING_MOTION_TYPE)
                     break;
             }
-            // HomeMovement is not that important, delete it if meanwhile a new comes
-            case HOME_MOTION_TYPE:
-            // Distract and Distancing movement interrupted by any other movement
-            case DISTRACT_MOTION_TYPE:
-            case DISTANCING_MOTION_TYPE:
-                MovementExpired(false);
+            default:
+                if (!top()->IsPersistent()) // add a parameter to IsPersistent with the new movement type so it can cover the above case as well
+                    MovementExpired(false);
                 break;
         }
 
@@ -704,6 +1003,18 @@ void MotionMaster::Mutate(MovementGenerator* m)
 
     m->Initialize(*m_owner);
     push(m);
+
+    // if (Creature* creature = m_owner->ToCreature())
+    // {
+    //     if (creature->GetEntry() == 12416 && !empty())
+    //     {
+    //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Mutate %u: new top = %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(top()->GetMovementGeneratorType()));
+    //         // if (before == WAYPOINT_MOTION_TYPE && top()->GetMovementGeneratorType() == CHASE_MOTION_TYPE)
+    //         // {
+    //         //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Mutate 12420: log");
+    //         // }
+    //     }
+    // }
 }
 
 void MotionMaster::PropagateSpeedChange()
@@ -900,19 +1211,133 @@ bool MotionMaster::MoveDistance(Unit const* pTarget, float distance)
     return true;
 }
 
-void MotionMaster::ClearType(MovementGeneratorType moveType)
+void MotionMaster::ClearType(MovementGeneratorType moveType, uint32 limit, uint32 param1)
 {
-    for (iterator it = begin(); it != end();)
+    if (Creature* creature = m_owner->ToCreature())
     {
-        if ((*it)->GetMovementGeneratorType() == moveType)
+        if (creature->GetEntry() == 12416)
         {
-            (*it)->Finalize(*m_owner);
-            erase(it);
-            it = begin();
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::ClearType %u - %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(moveType));
+            if (empty())
+            {
+                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::ClearType %u: empty", creature->GetGUIDLow());
+            }
+            else
+            {
+                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::ClearType %u: top = %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(top()->GetMovementGeneratorType()));
+            }
+        }
+    }
+
+    if (limit == 0) limit = size();
+
+    uint32 originalSize = size();
+    bool clearedTop = false;
+    std::vector<MovementGenerator*> mvtGensToFinalize;
+    std::vector<MovementGenerator*> mvtGensToKeep;
+
+    for (uint32 i = originalSize; i > 0 && limit > 0; --i)
+    {
+        MovementGenerator* current = top();
+        MovementGeneratorType currentType = current->GetMovementGeneratorType();
+
+        pop();
+
+        bool remove = false;
+
+        if (currentType == moveType)
+        {
+            if (param1 == 0)
+                remove = true;
+            else
+            {
+                switch(currentType)
+                {
+                    case WAYPOINT_MOTION_TYPE:
+                        remove = (dynamic_cast<WaypointMovementGenerator<Creature>*>(current))->GetWaypointId() == param1;
+                        break;
+                    case POINT_MOTION_TYPE:
+                        remove = (dynamic_cast<PointMovementGenerator<Creature>*>(current))->GetId() == param1;
+                        break;
+                }
+            }
+        }
+
+        if (remove)
+        {
+            mvtGensToFinalize.push_back(current);
+
+            clearedTop = clearedTop || i == originalSize;
+
+            --limit;
         }
         else
-            ++it;
+        {
+            mvtGensToKeep.push_back(current);
+        }
     }
+
+    for (auto rItr = mvtGensToKeep.rbegin(); rItr != mvtGensToKeep.rend(); ++rItr)
+    {
+        push(*rItr);
+    }
+
+    for (auto const& it : mvtGensToFinalize)
+    {
+        if (Creature* creature = m_owner->ToCreature())
+        {
+            if (creature->GetEntry() == 12416)
+            {
+                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::ClearType %u - Finalize %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(it->GetMovementGeneratorType()));
+            }
+        }
+
+        it->Finalize(*m_owner);
+        if (!isStatic(it))
+        {
+            if (Creature* creature = m_owner->ToCreature())
+            {
+                if (creature->GetEntry() == 12416)
+                {
+                    sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::ClearType %u - delete %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(it->GetMovementGeneratorType()));
+                }
+            }
+
+            delete(it);
+        }
+    }
+
+    // if (Creature* creature = m_owner->ToCreature())
+    // {
+    //     if (creature->GetEntry() == 12416)
+    //     {
+    //         if (!empty())
+    //         {
+    //             if (clearedTop && top()->GetMovementGeneratorType() == WAYPOINT_MOTION_TYPE)
+    //             {
+    //                 sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ClearType 12420: new top is waypoint");
+    //             }
+    //         }
+    //     }
+    // }
+
+    if (clearedTop && !empty())
+        top()->Reset(*m_owner);
+
+    // if (Creature* creature = m_owner->ToCreature())
+    // {
+    //     if (creature->GetEntry() == 12416)
+    //     {
+    //         if (empty())
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ClearType 12420: new top = empty");
+    //         }
+    //         else
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ClearType 12420: new top = %s", GetMovementGeneratorTypeName(top()->GetMovementGeneratorType()));
+    //         }
+    //     }
+    // }
 }
 
 void MotionMaster::ReInitializePatrolMovement()

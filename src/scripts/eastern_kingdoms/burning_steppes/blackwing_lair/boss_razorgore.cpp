@@ -670,17 +670,17 @@ CreatureAI* GetAI_trigger_orb_of_command(Creature* pCreature)
     return new trigger_orb_of_commandAI(pCreature);
 }
 
-void AddSC_boss_razorgore()
-{
-    Script* pNewScript;
+// void AddSC_boss_razorgore()
+// {
+//     Script* pNewScript;
 
-    pNewScript = new Script;
-    pNewScript->Name = "boss_razorgore";
-    pNewScript->GetAI = &GetAI_boss_razorgore;
-    pNewScript->RegisterSelf();
+//     pNewScript = new Script;
+//     pNewScript->Name = "boss_razorgore";
+//     pNewScript->GetAI = &GetAI_boss_razorgore;
+//     pNewScript->RegisterSelf();
 
-    pNewScript = new Script;
-    pNewScript->Name = "trigger_orb_of_command";
-    pNewScript->GetAI = &GetAI_trigger_orb_of_command;
-    pNewScript->RegisterSelf();
-}
+//     pNewScript = new Script;
+//     pNewScript->Name = "trigger_orb_of_command";
+//     pNewScript->GetAI = &GetAI_trigger_orb_of_command;
+//     pNewScript->RegisterSelf();
+// }

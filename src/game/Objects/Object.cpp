@@ -2415,7 +2415,7 @@ Creature* Map::SummonCreature(uint32 entry, float x, float y, float z, float ang
     return pCreature;
 }
 
-Creature* WorldObject::SummonCreature(uint32 id, float x, float y, float z, float ang, TempSummonType spwtype, uint32 despwtime, bool asActiveObject, uint32 pacifiedTimer, CreatureAiSetter pFuncAiSetter, GenericTransport* pTransport)
+Creature* WorldObject::SummonCreature(uint32 id, float x, float y, float z, float ang, TempSummonType spwtype, uint32 despwtime, bool asActiveObject, uint32 pacifiedTimer, CreatureAiSetter pFuncAiSetter, GenericTransport* pTransport, bool passive)
 {
     CreatureInfo const* cinfo = sObjectMgr.GetCreatureTemplate(id);
     if (!cinfo)
@@ -2452,6 +2452,9 @@ Creature* WorldObject::SummonCreature(uint32 id, float x, float y, float z, floa
 
     if (pTransport)
         pTransport->AddPassenger(pCreature);
+
+    if (passive)
+        pCreature->SetReactState(REACT_PASSIVE);
 
     pCreature->SetTempPacified(pacifiedTimer);
     pCreature->SetSummonPoint(pos);
@@ -2931,7 +2934,7 @@ void WorldObject::DestroyForNearbyPlayers()
     }
 }
 
-Creature* WorldObject::FindNearestCreature(uint32 entry, float range, bool alive, Creature const* except) const
+Creature* WorldObject::FindNearestCreature(uint32 entry, float range, bool alive, Creature const* except, uint32 conditionId) const
 {
     Creature* pCreature = nullptr;
 
@@ -2939,7 +2942,7 @@ Creature* WorldObject::FindNearestCreature(uint32 entry, float range, bool alive
     Cell cell(pair);
     cell.SetNoCreate();
 
-    MaNGOS::NearestCreatureEntryWithLiveStateInObjectRangeCheck creature_check(*this, entry, alive, range, except);
+    MaNGOS::NearestCreatureEntryWithLiveStateInObjectRangeCheck creature_check(*this, entry, alive, range, except, conditionId);
     MaNGOS::CreatureLastSearcher<MaNGOS::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(pCreature, creature_check);
 
     TypeContainerVisitor<MaNGOS::CreatureLastSearcher<MaNGOS::NearestCreatureEntryWithLiveStateInObjectRangeCheck>, GridTypeMapContainer> creature_searcher(searcher);
@@ -2983,18 +2986,23 @@ Creature* WorldObject::FindRandomCreature(uint32 entry, float range, bool alive,
     return *tcIter;
 }
 
-GameObject* WorldObject::FindNearestGameObject(uint32 entry, float range) const
+GameObject* WorldObject::FindNearestGameObject(uint32 entry, float range, GameObject const* except, uint32 conditionId) const
 {
     GameObject* pGo = nullptr;
+
+    // if (entry == 177807)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "WorldObject::FindNearestGameObject %u - GetPositionX() = %f, GetPositionY() = %f", entry, GetPositionX(), GetPositionY());
+    // }
 
     CellPair pair(MaNGOS::ComputeCellPair(GetPositionX(), GetPositionY()));
     Cell cell(pair);
     cell.SetNoCreate();
 
-    MaNGOS::NearestGameObjectEntryInObjectRangeCheck go_check(*this, entry, range);
-    MaNGOS::GameObjectLastSearcher<MaNGOS::NearestGameObjectEntryInObjectRangeCheck> searcher(pGo, go_check);
+    MaNGOS::NearestGameObjectEntryFitConditionInObjectRangeCheck go_check(*this, entry, range, conditionId, except);
+    MaNGOS::GameObjectLastSearcher<MaNGOS::NearestGameObjectEntryFitConditionInObjectRangeCheck> searcher(pGo, go_check);
 
-    TypeContainerVisitor<MaNGOS::GameObjectLastSearcher<MaNGOS::NearestGameObjectEntryInObjectRangeCheck>, GridTypeMapContainer> go_searcher(searcher);
+    TypeContainerVisitor<MaNGOS::GameObjectLastSearcher<MaNGOS::NearestGameObjectEntryFitConditionInObjectRangeCheck>, GridTypeMapContainer> go_searcher(searcher);
 
     cell.Visit(pair, go_searcher, *(GetMap()), *this, range);
 

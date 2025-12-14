@@ -16,6 +16,7 @@
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "Log.h"
 #include "Map.h"
 #include "ScriptMgr.h"
 #include "GridSearchers.h"
@@ -211,7 +212,7 @@ bool Map::ScriptCommand_MoveTo(ScriptInfo const& script, WorldObject* source, Wo
         orientation = -10.0f;
 
     if (script.moveTo.flags & SF_MOVETO_POINT_MOVEGEN)
-        pSource->GetMotionMaster()->MovePoint(script.moveTo.pointId, x, y, z, script.moveTo.movementOptions, speed, orientation);
+        pSource->GetMotionMaster()->MovePoint(script.moveTo.pointId, x, y, z, script.moveTo.movementOptions, speed, orientation, script.moveTo.flags & SF_MOVETO_RESUME_ON_RESET);
     else
         pSource->MonsterMoveWithSpeed(x, y, z, orientation, speed, script.moveTo.movementOptions);
 
@@ -378,7 +379,7 @@ bool Map::ScriptCommand_RespawnGameObject(ScriptInfo const& script, WorldObject*
         return ShouldAbortScript(script);
     }
 
-    int32 time_to_despawn = script.respawnGo.despawnDelay < 5 ? 5 : script.respawnGo.despawnDelay;
+    int32 time_to_respawn = script.respawnGo.respawnDelay < 5 ? 5 : script.respawnGo.respawnDelay;
 
     if (pGo->GetGoType() == GAMEOBJECT_TYPE_FISHINGNODE ||
         pGo->GetGoType() == GAMEOBJECT_TYPE_DOOR)
@@ -388,12 +389,17 @@ bool Map::ScriptCommand_RespawnGameObject(ScriptInfo const& script, WorldObject*
     }
 
     if (pGo->isSpawned())
+    {
         return ShouldAbortScript(script);          //gameobject already spawned
+    }
 
     pGo->SetLootState(GO_READY);
-    pGo->SetRespawnTime(time_to_despawn);        //despawn object in ? seconds
+    pGo->SetRespawnTime(time_to_respawn);        //respawn object in ? seconds
 
     Add(pGo);
+
+    if (script.respawnGo.nextRespawnDelay)
+        pGo->SetRespawnDelay(script.respawnGo.nextRespawnDelay);
 
     return false;
 }
@@ -446,7 +452,9 @@ bool Map::ScriptCommand_SummonCreature(ScriptInfo const& script, WorldObject* so
 
     Creature* pCreature = pSummoner->SummonCreature(script.summonCreature.creatureEntry, x, y, z, o,
         TempSummonType(script.summonCreature.despawnType), script.summonCreature.despawnDelay, script.summonCreature.flags & SF_SUMMONCREATURE_ACTIVE, 0,
-        (script.summonCreature.flags & SF_SUMMONCREATURE_NULL_AI) ? (CreatureAiSetter)([](Creature* pCreature) { pCreature->GetMotionMaster()->Initialize(); pCreature->SetAI(new NullCreatureAI(pCreature));}) : nullptr);
+        (script.summonCreature.flags & SF_SUMMONCREATURE_NULL_AI) ? (CreatureAiSetter)([](Creature* pCreature) { pCreature->GetMotionMaster()->Initialize(); pCreature->SetAI(new NullCreatureAI(pCreature));}) : nullptr,
+        nullptr,
+        script.summonCreature.flags & SF_SUMMONCREATURE_PASSIVE);
 
     if (!pCreature)
     {
@@ -632,7 +640,10 @@ bool Map::ScriptCommand_CastSpell(ScriptInfo const& script, WorldObject* source,
     if (pCreatureSource && pUnitTarget)
         result = pCreatureSource->TryToCast(pUnitTarget, script.castSpell.spellId, script.castSpell.flags, 0u);
     else
+    {
+        if (script.id == 1243503 && script.castSpell.spellId == 23024) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Cast Fireball - CastSpell"); }
         result = pSource->CastSpell(pTarget, script.castSpell.spellId, (script.castSpell.flags & CF_TRIGGERED) != 0);
+    }
 
     if (result != SPELL_CAST_OK)
         return ShouldAbortScript(script);
@@ -696,6 +707,11 @@ bool Map::ScriptCommand_DespawnCreature(ScriptInfo const& script, WorldObject* s
         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_DESPAWN_CREATURE (script id %u) call for a nullptr or non-creature source (TypeId: %u), skipping.", script.id, source ? source->GetTypeId() : 0);
         return ShouldAbortScript(script);
     }
+
+    // if (pSource->GetEntry() == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ScriptCommand_DespawnCreature");
+    // }
 
     // Fix possible crash due to double aura deletion when creature is despawned on death.
     uint32 const despawnDelay = !pSource->IsAlive() && (script.despawn.despawnDelay == 0) ? 1 : script.despawn.despawnDelay;
@@ -789,7 +805,9 @@ bool Map::ScriptCommand_SetMovementType(ScriptInfo const& script, WorldObject* s
                 pSource->GetMotionMaster()->MoveChase(pTarget, script.x, script.o);
             break;
         case HOME_MOTION_TYPE:
-            pSource->GetMotionMaster()->MoveTargetedHome();
+            if (script.movement.clear)
+                pSource->GetMotionMaster()->Clear(false, true);
+            pSource->GetMotionMaster()->MoveTargetedHome(script.movement.boolParam);
             break;
         case FLEEING_MOTION_TYPE:
             if (script.movement.boolParam) // flee from victim
@@ -806,7 +824,7 @@ bool Map::ScriptCommand_SetMovementType(ScriptInfo const& script, WorldObject* s
             break;
         case FOLLOW_MOTION_TYPE:
             if (pTarget)
-                pSource->GetMotionMaster()->MoveFollow(pTarget, script.x, script.o < 0 ? frand(0, 2 * M_PI_F) : script.o);
+                pSource->GetMotionMaster()->MoveFollow(pTarget, script.x, script.o < 0 ? frand(0, 2 * M_PI_F) : script.o, !script.movement.boolParam);
             break;
         case CHARGE_MOTION_TYPE:
             if (pTarget)
@@ -1311,10 +1329,16 @@ static uint32 ChooseScriptIdToStart(ScriptInfo const& script)
 // SCRIPT_COMMAND_START_SCRIPT (39)
 bool Map::ScriptCommand_StartScript(ScriptInfo const& script, WorldObject* source, WorldObject* target)
 {
+    if (script.id == 1242006)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "1242006 - SCRIPT_COMMAND_START_SCRIPT");
+    }
     uint32 const scriptId = ChooseScriptIdToStart(script);
 
     if (scriptId)
+    {
         ScriptsStart(sGenericScripts, scriptId, source ? source->GetObjectGuid() : ObjectGuid(), target ? target->GetObjectGuid() : ObjectGuid());
+    }
     else
         return ShouldAbortScript(script);
 
@@ -1403,6 +1427,10 @@ bool Map::ScriptCommand_SetCombatMovement(ScriptInfo const& script, WorldObject*
 // SCRIPT_COMMAND_SET_PHASE (44)
 bool Map::ScriptCommand_SetPhase(ScriptInfo const& script, WorldObject* source, WorldObject* target)
 {
+    // if (script.setPhase.phase == 6)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Map::ScriptCommand_SetPhase - script.id = %u", script.id);
+    // }
     Creature* pSource = ToCreature(source);
 
     if (!pSource)
@@ -1562,10 +1590,49 @@ bool Map::ScriptCommand_ZoneCombatPulse(ScriptInfo const& script, WorldObject* s
         return ShouldAbortScript(script);
     }
 
+    // if (pSource->GetEntry() == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ScriptCommand_ZoneCombatPulse %u - script.id = %u, script.combatPulse.creatureEntry = %u, script.combatPulse.searchRadius = %u", pSource->GetGUIDLow(), script.id, script.combatPulse.creatureEntry, script.combatPulse.searchRadius);
+    // }
     if (!pSource->IsAlive())
         return ShouldAbortScript(script);
 
     pSource->SetInCombatWithZone(script.combatPulse.initialPulse);
+
+    if (script.combatPulse.creatureEntry)
+    {
+        std::list<Creature*> foundCreatures;
+
+        // if (pSource->GetEntry() == 12416)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ScriptCommand_ZoneCombatPulse %u - GetCreatureListWithEntryInGrid", pSource->GetGUIDLow());
+        // }
+        GetCreatureListWithEntryInGrid(foundCreatures, pSource, script.combatPulse.creatureEntry, script.combatPulse.searchRadius);
+
+        // if (pSource->GetEntry() == 12416)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ScriptCommand_ZoneCombatPulse %u - foundCreatures.size() = %u", pSource->GetGUIDLow(), foundCreatures.size());
+        // }
+
+        for (const auto creature : foundCreatures)
+        {
+            if (pSource->IsValidAttackTarget(creature))
+            {
+                // if (pSource->GetEntry() == 12416)
+                // {
+                //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ScriptCommand_ZoneCombatPulse %u - EnterCombatWithTarget", pSource->GetGUIDLow());
+                // }
+                pSource->EnterCombatWithTarget(creature);
+            }
+            // else
+            // {
+            //     if (pSource->GetEntry() == 12416)
+            //     {
+            //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ScriptCommand_ZoneCombatPulse %u - Not valid attack target", pSource->GetGUIDLow());
+            //     }
+            // }
+        }
+    }
 
     return false;
 }
@@ -1776,7 +1843,9 @@ bool Map::ScriptCommand_StartWaypoints(ScriptInfo const& script, WorldObject* so
     if (!pSource->IsAlive())
         return ShouldAbortScript(script);
 
-    pSource->GetMotionMaster()->Clear(false, true);
+    if (!script.startWaypoints.preserveExisting)
+        pSource->GetMotionMaster()->Clear(false, true);
+
     pSource->GetMotionMaster()->MoveWaypoint(script.startWaypoints.startPoint, script.startWaypoints.wpSource, script.startWaypoints.initialDelay, script.startWaypoints.overwriteGuid, script.startWaypoints.overwriteEntry, script.startWaypoints.canRepeat);
 
     return false;
@@ -1798,6 +1867,11 @@ bool Map::ScriptCommand_EndMapEvent(ScriptInfo const& script, WorldObject* sourc
 
     if (itr == m_mScriptedEvents.end())
         return ShouldAbortScript(script);
+
+    // if (script.id == 1243514)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Map::ScriptCommand_EndMapEvent %u", script.id);
+    // }
 
     itr->second.EndEvent(script.endMapEvent.success);
 
@@ -1981,6 +2055,11 @@ bool Map::ScriptCommand_SetDefaultMovement(ScriptInfo const& script, WorldObject
 // SCRIPT_COMMAND_START_SCRIPT_FOR_ALL (68)
 bool Map::ScriptCommand_StartScriptForAll(ScriptInfo const& script, WorldObject* source, WorldObject* target)
 {
+    if (script.id == 17780701)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Black Dragon Egg - Nefarian's Troops Flee - %u", script.startScriptForAll.objectEntry);
+    }
+
     if (!source)
     {
         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_START_SCRIPT_FOR_ALL (script id %u) call for a nullptr source, skipping.", script.id);
@@ -2082,6 +2161,15 @@ bool Map::ScriptCommand_RespawnCreature(ScriptInfo const& script, WorldObject* s
 {
     Creature* pSource = ToCreature(source);
 
+    // if (script.id == 1243504) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn creature"); }
+    // if (script.id == 1243504 && !pSource) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn creature - !pSource"); }
+    // if (script.id == 1243504 && pSource) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn creature - %u", pSource->GetEntry()); }
+
+    // if (script.id == 1243504 && pSource && pSource->GetEntry() == 12435) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Razorgore the Untamed"); }
+    // if (script.id == 1243504 && pSource && pSource->GetEntry() == 14456) {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn Blackwing Guardsman");
+    // }
+
     if (!pSource)
     {
         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_RESPAWN_CREATURE (script id %u) call for a nullptr or non-creature source (TypeId: %u), skipping.", script.id, source ? source->GetTypeId() : 0);
@@ -2090,12 +2178,19 @@ bool Map::ScriptCommand_RespawnCreature(ScriptInfo const& script, WorldObject* s
 
     if (pSource->IsAlive())
     {
-        if (script.respawnCreature.evenAlive)
+        if (script.respawnCreature.flags & SF_RESPAWNCREATURE_EVEN_IF_ALIVE)
             pSource->SetDeathState(JUST_DIED);
         else
+        {
+            // if (script.id == 1243504 && pSource) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn creature - %u - ShouldAbortScript", pSource->GetEntry()); }
             return ShouldAbortScript(script);
+        }
     }
 
+    if (script.respawnCreature.flags & SF_RESPAWNCREATURE_CLEAR_DESPAWN)
+        pSource->CancelDespawn();
+
+    // if (script.id == 1243504 && pSource) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Respawn creature - %u - pSource->Respawn()", pSource->GetEntry()); }
     pSource->Respawn();
 
     return false;
@@ -2529,6 +2624,88 @@ bool Map::ScriptCommand_StartScriptOnZone(ScriptInfo const& script, WorldObject*
                     ScriptsStart(sGenericScripts, script.startScriptOnZone.scriptId, pPet->GetObjectGuid(), target ? target->GetObjectGuid() : ObjectGuid());
         }
     }
+
+    return false;
+}
+
+// SCRIPT_COMMAND_ATTACK_STOP (93)
+bool Map::ScriptCommand_AttackStop(ScriptInfo const& script, WorldObject* source, WorldObject* target)
+{
+    Unit* pAttacker = ToUnit(source);
+
+    if (!pAttacker)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_ATTACK_START (script id %u) call for a nullptr source or target (TypeIdSource: %u)(TypeIdTarget: %u), skipping.", script.id, source ? source->GetTypeId() : 0, target ? target->GetTypeId() : 0);
+        return ShouldAbortScript(script);
+    }
+
+    if (!pAttacker->IsAlive())
+        return ShouldAbortScript(script);
+
+    pAttacker->AttackStop();
+
+    return false;
+}
+
+// SCRIPT_COMMAND_CLEAR_MOVEMENT (94)
+bool Map::ScriptCommand_ClearMovement(ScriptInfo const& script, WorldObject* source, WorldObject* target)
+{
+    Creature* pSource;
+
+    if (!(pSource = ToCreature(source)) && (pSource = ToCreature(target)))
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_CLEAR_MOVEMENT (script id %u) call for a nullptr or non-creature source and target (TypeIdSource: %u)(TypeIdTarget: %u), skipping", script.id, source ? source->GetTypeId() : 0, target ? target->GetTypeId() : 0);
+        return ShouldAbortScript(script);
+    }
+
+    if (!pSource->IsAlive())
+        return ShouldAbortScript(script);
+
+    // if (script.id == 1242201)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_CLEAR_MOVEMENT - script.clearMovement.movementType = %u", script.clearMovement.movementType);
+    // }
+
+    pSource->GetMotionMaster()->ClearType(MovementGeneratorType(script.clearMovement.movementType), script.clearMovement.limit, script.clearMovement.param1);
+
+    return false;
+}
+
+// SCRIPT_COMMAND_CLEAR_POINT (95)
+bool Map::ScriptCommand_ClearPoint(ScriptInfo const& script, WorldObject* source, WorldObject* target)
+{
+    Creature* pSource;
+
+    if (!(pSource = ToCreature(source)) && (pSource = ToCreature(target)))
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_POINT (script id %u) call for a nullptr or non-creature source and target (TypeIdSource: %u)(TypeIdTarget: %u), skipping", script.id, source ? source->GetTypeId() : 0, target ? target->GetTypeId() : 0);
+        return ShouldAbortScript(script);
+    }
+
+    if (!pSource->IsAlive())
+        return ShouldAbortScript(script);
+
+    pSource->GetMotionMaster()->ClearPoint(script.clearPoint.pointId);
+
+    return false;
+}
+
+// SCRIPT_COMMAND_TOGGLE_CAN_TARGET (96)
+bool Map::ScriptCommand_ToggleCanTarget(ScriptInfo const& script, WorldObject* source, WorldObject* target)
+{
+    Creature* pSource;
+
+    if (!(pSource = ToCreature(source)) && (pSource = ToCreature(target)))
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_TOGGLE_CAN_TARGET (script id %u) call for a nullptr or non-creature source and target (TypeIdSource: %u)(TypeIdTarget: %u), skipping", script.id, source ? source->GetTypeId() : 0, target ? target->GetTypeId() : 0);
+        return ShouldAbortScript(script);
+    }
+
+    if (!pSource->IsAlive())
+        return ShouldAbortScript(script);
+
+    pSource->SetCanTarget(script.toggleCanTarget.canTarget);
+    pSource->AttackStop();
 
     return false;
 }

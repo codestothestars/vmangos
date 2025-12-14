@@ -53,6 +53,10 @@ void GetGameObjectListWithEntryInGrid(std::list<GameObject*>& lList, WorldObject
 void GetCreatureListWithEntryInGrid(std::list<Creature*>& lList, WorldObject* pSource, uint32 uiEntry, float fMaxSearchRange)
 {
     ASSERT(pSource);
+    // if (pSource->GetEntry() == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "GetCreatureListWithEntryInGrid %u - uiEntry = %u", pSource->GetGUIDLow(), uiEntry);
+    // }
     MaNGOS::AllCreaturesOfEntryInRange check(pSource, uiEntry, fMaxSearchRange);
     MaNGOS::CreatureListSearcher<MaNGOS::AllCreaturesOfEntryInRange> searcher(lList, check);
 

@@ -381,7 +381,17 @@ bool ChaseMovementGenerator<T>::Update(T &owner, uint32 const&  time_diff)
                     if (m_bRecalculateTravel && TargetDeepInBounds(owner, i_target.getTarget()))
                         DoBackMovement(owner, i_target.getTarget());
                     else if (m_bCanSpread)
+                    {
+                        // if (Creature* creature = owner.ToCreature())
+                        // {
+                        //     if (creature->GetEntry() == 12416)
+                        //     {
+                        //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ChaseMovementGenerator<T>::Update %u: DoSpreadIfNeeded", creature->GetGUIDLow());
+                        //     }
+                        // }
+                    
                         DoSpreadIfNeeded(owner, i_target.getTarget());
+                    }
                 }
             }
         }
@@ -434,6 +444,13 @@ void ChaseMovementGenerator<T>::DoBackMovement(T &owner, Unit* target)
     Movement::MoveSplineInit init(owner, "ChaseMovementGenerator<T>::DoBackMovement");
     init.MoveTo(x, y, z, MOVE_WALK_MODE);
     init.SetWalk(true);
+    if (Creature* creature = owner.ToCreature())
+    {
+        if (creature->GetEntry() == 12416)
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ChaseMovementGenerator<T>::DoBackMovement %u: init.Launch()", creature->GetGUIDLow());
+        }
+    }
     init.Launch();
 }
 
@@ -486,6 +503,13 @@ void ChaseMovementGenerator<T>::DoSpreadIfNeeded(T &owner, Unit* target)
     Movement::MoveSplineInit init(owner, "ChaseMovementGenerator<T>::DoSpreadIfNeeded");
     init.MoveTo(x, y, z, MOVE_WALK_MODE);
     init.SetWalk(true);
+    if (Creature* creature = owner.ToCreature())
+    {
+        if (creature->GetEntry() == 12416)
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ChaseMovementGenerator<T>::DoSpreadIfNeeded %u: init.Launch()", creature->GetGUIDLow());
+        }
+    }
     init.Launch();
 }
 

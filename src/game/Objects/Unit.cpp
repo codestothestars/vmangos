@@ -18,6 +18,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "ScriptMgr.h"
 #include "Unit.h"
 #include "Creature.h"
 #include "Pet.h"
@@ -316,6 +317,14 @@ void Unit::Update(uint32 update_diff, uint32 p_time)
 
     CheckPendingMovementChanges();
     UpdateSplineMovement(p_time);
+    // if (Creature* creature = ToCreature())
+    // {
+    //     if (creature->GetEntry() == 12416)
+    //     {
+    //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Unit::Update %u - GetMotionMaster()->UpdateMotion(p_time)", creature->GetGUIDLow());
+    //     }
+    // }
+
     GetMotionMaster()->UpdateMotion(p_time);
     if (GetMotionMaster()->NeedsAsyncUpdate() && IsInWorld())
     {
@@ -4765,6 +4774,10 @@ bool Unit::Attack(Unit* victim, bool meleeAttack)
     if (meleeAttack)
         AddUnitState(UNIT_STATE_MELEE_ATTACKING);
 
+    // if (GetEntry() == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Unit::Attack %u - m_attacking = victim", GetGUIDLow());
+    // }
     m_attacking = victim;
     m_attacking->_addAttacker(this);
 
@@ -6174,7 +6187,7 @@ void Unit::SetInCombatState(uint32 combatTimer, Unit* pEnemy)
         OnEnterCombat(pEnemy, true);
 
         // Some bosses are set into combat with zone
-        if (GetMap()->IsDungeon() && pCreature->HasStaticFlag(CREATURE_STATIC_FLAG_2_FORCE_RAID_COMBAT) && pEnemy && pEnemy->IsControlledByPlayer())
+        if (GetMap()->IsDungeon() && pCreature->HasStaticFlag(CREATURE_STATIC_FLAG_2_FORCE_RAID_COMBAT) && pEnemy && (IsControlledByPlayer() || pEnemy->IsControlledByPlayer()))
             pCreature->SetInCombatWithZone();
 
         InterruptSpellsWithChannelFlags(AURA_INTERRUPT_HOSTILE_ACTION_RECEIVED_CANCELS);
@@ -7741,6 +7754,9 @@ bool Unit::SelectHostileTarget()
     if (!IsAlive())
         return false;
 
+    if (!((Creature*)this)->CanHaveTarget())
+        return false;
+
     // This function is only useful once AI has been initialized
     if (!((Creature*)this)->AI())
         return false;
@@ -7751,13 +7767,44 @@ bool Unit::SelectHostileTarget()
 
     Unit* target = GetTauntTarget();
 
+    // if (GetEntry() == 12416)
+    // {
+    //     if (target)
+    //     {
+    //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Unit::SelectHostileTarget %u - yes taunt target", GetGUIDLow());
+    //     }
+    //     else
+    //     {
+    //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Unit::SelectHostileTarget %u - no taunt target", GetGUIDLow());
+    //     }
+    // }
+
     // No taunt aura or taunt aura caster is dead, standard target selection
     if (!target && !m_threatManager.isThreatListEmpty())
+    {
+        // if (GetEntry() == 12416)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Unit::SelectHostileTarget %u - threat list not empty", GetGUIDLow());
+        // }
         target = m_threatManager.getHostileTarget();
+    }
+    else if (m_threatManager.isThreatListEmpty())
+    {
+        // if (GetEntry() == 12416)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Unit::SelectHostileTarget %u - threat list empty", GetGUIDLow());
+        // }
+    }
 
     // stick to current target if no threat list
     if (!target && ((Creature*)this)->HasExtraFlag(CREATURE_FLAG_EXTRA_NO_THREAT_LIST))
+    {
+        // if (GetEntry() == 12416)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Unit::SelectHostileTarget %u - creature has no threat list", GetGUIDLow());
+        // }
         target = GetVictim();
+    }
 
     if (target)
     {
@@ -7769,6 +7816,13 @@ bool Unit::SelectHostileTarget()
         }
         return true;
     }
+    // else
+    // {
+    //     if (GetEntry() == 12416)
+    //     {
+    //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Unit::SelectHostileTarget %u - no target", GetGUIDLow());
+    //     }
+    // }
 
     // mobs that dont have threat list use 5 second combat timer like players
     if (((Creature*)this)->HasExtraFlag(CREATURE_FLAG_EXTRA_NO_THREAT_LIST))
@@ -7790,6 +7844,8 @@ bool Unit::SelectHostileTarget()
                 return false;
         }
     }
+
+    ((Creature*)this)->AI()->OnNoTargets();
 
     // enter in evade mode in other case
     OnLeaveCombat();
@@ -9265,6 +9321,10 @@ void Unit::StopMoving(bool force)
 
     if (!IsMovedByPlayer() || !IsInWorld() || force)
     {
+        // if (GetEntry() == 12416)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "StopMoving 12416 - ClearUnitState");
+        // }
         ClearUnitState(UNIT_STATE_MOVING);
         RemoveUnitMovementFlag(MOVEFLAG_MASK_MOVING);
     }
@@ -10102,6 +10162,13 @@ void Unit::MonsterMoveWithSpeed(float x, float y, float z, float o, float speed,
         init.SetVelocity(speed);
     if (o > -7.0f)
         init.SetFacing(o);
+    if (Creature* creature = ToCreature())
+    {
+        if (creature->GetEntry() == 12416)
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Unit::MonsterMoveWithSpeed %u: init.Launch()", creature->GetGUIDLow());
+        }
+    }
     init.Launch();
 }
 
@@ -10891,6 +10958,16 @@ void Unit::MonsterMove(float x, float y, float z)
 
 void Unit::SetWalk(bool enable, bool asDefault)
 {
+    // if (Creature* creature = ToCreature())
+    // {
+    //     if (creature->GetEntry() == 12416)
+    //     {
+    //         uint32 enableInt = enable ? 1 : 0;
+    //         uint32 asDefaultInt = asDefault ? 1 : 0;
+    //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Unit::SetWalk %u: enable = %u, asDefault = %u", GetGUIDLow(), enableInt, asDefaultInt);
+    //     }
+    // }
+
     if (asDefault)
     {
         if (enable)
@@ -10900,7 +10977,16 @@ void Unit::SetWalk(bool enable, bool asDefault)
     }
 
     if (enable == m_movementInfo.HasMovementFlag(MOVEFLAG_WALK_MODE))
+    {
+        // if (Creature* creature = ToCreature())
+        // {
+        //     if (creature->GetEntry() == 12416)
+        //     {
+        //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Unit::SetWalk %u: enable == m_movementInfo.HasMovementFlag(MOVEFLAG_WALK_MODE)", GetGUIDLow());
+        //     }
+        // }
         return;
+    }
 
     if (enable)
         m_movementInfo.AddMovementFlag(MOVEFLAG_WALK_MODE);

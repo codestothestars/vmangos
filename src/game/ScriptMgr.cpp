@@ -213,7 +213,7 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, char const* tablename)
                 }
 
                 // combined flags of MoveOptions enum
-                if (tmp.moveTo.movementOptions > 511)
+                if (tmp.moveTo.movementOptions > 1023)
                 {
                     sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "Table `%s` has invalid movement options (datalong3 = %u) in SCRIPT_COMMAND_MOVE_TO for script id %u", tablename, tmp.moveTo.movementOptions, tmp.id);
                     continue;
@@ -565,7 +565,8 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, char const* tablename)
                             break;
                         default:
                         {
-                            sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "Table `%s` has datalong2 = %u in SCRIPT_COMMAND_SET_FACTION for script id %u, but this faction does not exist.", tablename, tmp.faction.factionId, tmp.id);
+                            // datalong2 was a typo
+                            sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "Table `%s` has datalong = %u in SCRIPT_COMMAND_SET_FACTION for script id %u, but this faction does not exist.", tablename, tmp.faction.factionId, tmp.id);
                             continue;
                         }
                     }
@@ -1225,6 +1226,53 @@ void ScriptMgr::LoadScripts(ScriptMapMap& scripts, char const* tablename)
                     sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "Table `%s` has no provided zone id in SCRIPT_COMMAND_START_SCRIPT_ON_ZONE for script id %u.", tablename, tmp.id);
                     continue;
                 }
+                break;
+            }
+            case SCRIPT_COMMAND_ATTACK_STOP:
+            {
+                break;
+            }
+            case SCRIPT_COMMAND_CLEAR_MOVEMENT:
+            {
+                switch (tmp.movement.movementType)
+                {
+                    case IDLE_MOTION_TYPE:
+                    case RANDOM_MOTION_TYPE:
+                    case WAYPOINT_MOTION_TYPE:
+                    case CYCLIC_MOTION_TYPE:
+                    case MAX_DB_MOTION_TYPE:
+                    case CONFUSED_MOTION_TYPE:
+                    case CHASE_MOTION_TYPE:
+                    case HOME_MOTION_TYPE:
+                    case FLIGHT_MOTION_TYPE:
+                    case POINT_MOTION_TYPE:
+                    case FLEEING_MOTION_TYPE:
+                    case DISTRACT_MOTION_TYPE:
+                    case ASSISTANCE_MOTION_TYPE:
+                    case ASSISTANCE_DISTRACT_MOTION_TYPE:
+                    case TIMED_FLEEING_MOTION_TYPE:
+                    case FOLLOW_MOTION_TYPE:
+                    case EFFECT_MOTION_TYPE:
+                    case PATROL_MOTION_TYPE:
+                    case CHARGE_MOTION_TYPE:
+                    case DISTANCING_MOTION_TYPE:
+                        break;
+                    default:
+                    {
+                        sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "Table `%s` SCRIPT_COMMAND_CLEAR_MOVEMENT has invalid MovementType %u for script id %u",
+                            tablename, tmp.clearMovement.movementType, tmp.id);
+                        continue;
+                    }
+                }
+
+                break;
+            }
+            case SCRIPT_COMMAND_CLEAR_POINT:
+            {
+                break;
+            }
+            case SCRIPT_COMMAND_TOGGLE_CAN_TARGET:
+            {
                 break;
             }
         }

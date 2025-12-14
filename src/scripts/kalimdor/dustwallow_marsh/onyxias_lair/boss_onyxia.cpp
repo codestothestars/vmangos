@@ -27,6 +27,8 @@ SDCategory: Onyxia's Lair
 EndScriptData
 */
 
+// CODESTOTHESTARS - TODO - Scale damage from gameobjects along with damage from creatures.
+
 #include "scriptPCH.h"
 #include "instance_onyxia_lair.h"
 

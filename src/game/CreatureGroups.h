@@ -20,6 +20,7 @@
 #define _CREATURE_GROUPS_H
 
 #include "Common.h"
+#include "Map.h"
 #include "ObjectGuid.h"
 
 #include <map>
