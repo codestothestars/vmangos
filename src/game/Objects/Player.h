@@ -2003,6 +2003,7 @@ class Player final: public Unit
         ObjectGuid m_selectedGobj; // For GM commands
         ObjectGuid m_escortingGuid;
         ObjectGuid m_currentBankerGuid;
+        Creature* m_mountCreature = nullptr;
 
         void SendMountResult(UnitMountResult result) const;
         void SendDismountResult(UnitDismountResult result) const;
@@ -2087,6 +2088,11 @@ class Player final: public Unit
         uint32 GetDeathTimer() const { return m_deathTimer; }
         uint32 GetCorpseReclaimDelay(bool pvp) const;
         void SendCorpseReclaimDelay(bool load = false) const;
+
+        void ClearMountCreature() { m_mountCreature = nullptr; }
+        Creature* GetMountCreature() { return m_mountCreature; }
+        void RemoveMountCreature();
+        void SetMountCreature(Creature* mount) { m_mountCreature = mount; }
 
         /*********************************************************/
         /***                    CHAT SYSTEM                    ***/

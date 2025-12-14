@@ -17,6 +17,7 @@
 */
 
 #include "Map.h"
+#include "PetAI.h"
 #include "ScriptMgr.h"
 #include "GridSearchers.h"
 #include "InstanceData.h"
@@ -289,9 +290,33 @@ bool Map::ScriptCommand_TeleportTo(ScriptInfo const& script, WorldObject* source
     bool result;
 
     if (pSource->GetTypeId() == TYPEID_PLAYER)
-        result = (static_cast<Player*>(pSource))->TeleportTo(script.teleportTo.mapId, script.x, script.y, script.z, script.o, script.teleportTo.teleportOptions);
+    {
+        Player* player = (static_cast<Player*>(pSource));
+
+        if (script.teleportTo.teleportOptions & TELE_TO_RELATIVE)
+            result = player->TeleportTo(
+                target->GetMapId(),
+                script.x + target->GetPositionX(),
+                script.y + target->GetPositionY(),
+                script.z + target->GetPositionZ(),
+                script.o + target->GetOrientation(),
+                script.teleportTo.teleportOptions
+            );
+        else
+            result = player->TeleportTo(script.teleportTo.mapId, script.x, script.y, script.z, script.o, script.teleportTo.teleportOptions);
+    }
     else
-        result = pSource->NearTeleportTo(script, script.teleportTo.teleportOptions);
+    {
+        if (script.teleportTo.teleportOptions & TELE_TO_RELATIVE)
+            result = pSource->NearTeleportTo(
+                script.x + target->GetPositionX(),
+                script.y + target->GetPositionY(),
+                script.z + target->GetPositionZ(),
+                script.o + target->GetOrientation(),
+                script.teleportTo.teleportOptions
+            );
+        else result = pSource->NearTeleportTo(script, script.teleportTo.teleportOptions);
+    }
 
     if (!result)
         return ShouldAbortScript(script);
@@ -3244,5 +3269,72 @@ bool Map::ScriptCommand_StartScriptOnZone(ScriptInfo const& script, WorldObject*
         }
     }
 
+    return false;
+}
+
+// SCRIPT_COMMAND_SUMMON_MOUNT (93)
+bool Map::ScriptCommand_SummonMount(ScriptInfo const& script, WorldObject* source, WorldObject* target)
+{
+    Player* player = ToPlayer(source);
+
+    if (!player)
+    {
+        sLog.Out(LOG_BASIC, LOG_LVL_ERROR, "SCRIPT_COMMAND_SUMMON_MOUNT (script id %u) call for a nullptr or non-player source (TypeId: %u), skipping.", script.id, source ? source->GetTypeId() : 0);
+        return ShouldAbortScript(script);
+    }
+
+    if (player->HasAuraWithAttributes(
+        SPELL_ATTR_CANCELS_AUTO_ATTACK_COMBAT
+        | SPELL_ATTR_DO_NOT_LOG
+        | SPELL_ATTR_IS_ABILITY
+        | SPELL_ATTR_NOT_IN_COMBAT_ONLY_PEACEFUL
+        | SPELL_ATTR_NOT_SHAPESHIFT
+        | SPELL_ATTR_ONLY_OUTDOORS
+    ))
+        player->RemoveAurasWithAttributes(
+            SPELL_ATTR_CANCELS_AUTO_ATTACK_COMBAT
+            | SPELL_ATTR_DO_NOT_LOG
+            | SPELL_ATTR_IS_ABILITY
+            | SPELL_ATTR_NOT_IN_COMBAT_ONLY_PEACEFUL
+            | SPELL_ATTR_NOT_SHAPESHIFT
+            | SPELL_ATTR_ONLY_OUTDOORS
+        );
+    else if (Creature* mount = player->GetMountCreature())
+    {
+        mount->InitCharmInfo(mount);
+
+        PetAI* ai = new PetAI(mount);
+
+        mount->SetAI(ai);
+
+        ai->UpdateAI(0);
+
+        if (mount->GetDistance(player) > 100) mount->NearTeleportTo(
+            player->GetPositionX(),
+            player->GetPositionY(),
+            player->GetPositionZ(),
+            player->GetOrientation()
+        );
+    }
+    else
+    {
+        Creature* creature = SummonCreature(
+            script.summonMount.creatureEntry,
+            player->GetPositionX(),
+            player->GetPositionY(),
+            player->GetPositionZ(),
+            player->GetOrientation(),
+            TEMPSUMMON_DEAD_DESPAWN,
+            25000,
+            false,
+            player->GetNativeScale() * .9
+        );
+    
+        creature->SetMountOwner(player);
+        creature->SetOwnerGuid(player->GetObjectGuid());
+        player->PlayDirectSound(7518); // G_HunterTrapOpen
+        player->SetMountCreature(creature);
+    }
+       
     return false;
 }

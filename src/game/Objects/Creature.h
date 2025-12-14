@@ -597,6 +597,9 @@ class Creature : public Unit
         bool CanSummonGuards() const { return HasStaticFlag(CREATURE_STATIC_FLAG_CALLS_GUARDS); }
         uint32 GetOriginalEntry() const { return m_originalEntry; }
 
+        void ClearMountOwner() { m_mountOwner = nullptr; }
+        void SetMountOwner(Player* player) { m_mountOwner = player; }
+
     protected:
         bool MeetsSelectAttackingRequirement(Unit const* pTarget, SpellEntry const* pSpellInfo, uint32 selectFlags) const;
 
@@ -670,6 +673,7 @@ class Creature : public Unit
         CreatureInfo const* m_creatureInfo;
         CreatureData const* m_creatureData;
         CreatureDataAddon const* m_creatureDataAddon;
+        Player* m_mountOwner = nullptr;
 };
 
 inline Creature* Object::ToCreature()

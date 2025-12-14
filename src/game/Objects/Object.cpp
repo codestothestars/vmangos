@@ -2385,7 +2385,7 @@ void WorldObject::IncrementSummonCounter()
         sLog.Out(LOG_BASIC, LOG_LVL_ERROR, "Attempt to increment summon count for %s but object is not added to map yet!", GetObjectGuid().GetString().c_str());
 }
 
-Creature* Map::SummonCreature(uint32 entry, float x, float y, float z, float ang, TempSummonType spwtype, uint32 despwtime, bool asActiveObject)
+Creature* Map::SummonCreature(uint32 entry, float x, float y, float z, float ang, TempSummonType spwtype, uint32 despwtime, bool asActiveObject, float scale)
 {
     CreatureInfo const* pInf = sObjectMgr.GetCreatureTemplate(entry);
     if (!pInf)
@@ -2400,6 +2400,8 @@ Creature* Map::SummonCreature(uint32 entry, float x, float y, float z, float ang
         delete pCreature;
         return nullptr;
     }
+
+    if (scale) pCreature->SetNativeScale(scale);
 
     pCreature->SetSummonPoint(pos);
 

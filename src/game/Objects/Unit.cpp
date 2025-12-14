@@ -3985,11 +3985,39 @@ void Unit::RemoveAurasWithInterruptFlags(uint32 flags, uint32 except, bool check
     }
 }
 
+bool Unit::HasAuraWithAttributes(uint32 flags)
+{
+    for (SpellAuraHolderMap::iterator iter = m_spellAuraHolders.begin(); iter != m_spellAuraHolders.end();)
+    {
+        if ((iter->second->GetSpellProto()->Attributes & flags) == flags)
+        {
+            return true;
+        }
+        else
+            ++iter;
+    }
+    return false;
+}
+
 void Unit::RemoveAurasWithAttribute(uint32 flags)
 {
     for (SpellAuraHolderMap::iterator iter = m_spellAuraHolders.begin(); iter != m_spellAuraHolders.end();)
     {
         if (iter->second->GetSpellProto()->Attributes & flags)
+        {
+            RemoveSpellAuraHolder(iter->second);
+            iter = m_spellAuraHolders.begin();
+        }
+        else
+            ++iter;
+    }
+}
+
+void Unit::RemoveAurasWithAttributes(uint32 flags)
+{
+    for (SpellAuraHolderMap::iterator iter = m_spellAuraHolders.begin(); iter != m_spellAuraHolders.end();)
+    {
+        if ((iter->second->GetSpellProto()->Attributes & flags) == flags)
         {
             RemoveSpellAuraHolder(iter->second);
             iter = m_spellAuraHolders.begin();

@@ -1485,6 +1485,7 @@ void Player::SetDeathState(DeathState s)
 
         // remove uncontrolled pets
         RemoveMiniPet();
+        RemoveMountCreature();
 
         if (ObjectGuid lootGuid = GetLootGuid())
             GetSession()->DoLootRelease(lootGuid);
@@ -2185,6 +2186,7 @@ void Player::RemoveFromWorld()
         // Release charmed creatures, unsummon totems and remove pets/guardians
         UnsummonAllTotems();
         RemoveMiniPet();
+        RemoveMountCreature();
         sZoneScriptMgr.HandlePlayerLeaveZone(this, m_zoneUpdateId);
         TradeCancel(!GetSession()->PlayerLogout());
 
@@ -12226,6 +12228,10 @@ void Player::SendPreparedGossip(WorldObject* pSource)
     if (pSource->GetTypeId() == TYPEID_GAMEOBJECT && PlayerTalkClass->GetQuestMenu().Empty() && PlayerTalkClass->GetGossipMenu().Empty() && textId == DEFAULT_GOSSIP_MESSAGE)
         return;
 
+    // NPC pet should not greet owner
+    if (pSource == GetMountCreature())
+        return;
+
     PlayerTalkClass->SendGossipMenu(textId, pSource->GetObjectGuid());
 }
 
@@ -17376,6 +17382,17 @@ Pet* Player::GetMiniPet() const
     return GetMap()->GetPet(m_miniPetGuid);
 }
 
+void Player::RemoveMountCreature()
+{
+    if (Creature* mount = GetMountCreature())
+    {
+        ClearMountCreature();
+
+        mount->ClearMountOwner();
+        mount->DespawnOrUnsummon();
+    }
+}
+
 void Player::Say(char const* text, uint32 const language) const
 {
     WorldPacket data;
@@ -18323,6 +18340,7 @@ UnitDismountResult Player::Unmount(bool from_aura)
     }
 
     Unit::Unmount(from_aura);
+    ClearMountCreature();
 
     // only resummon old pet if the player is already added to a map
     // this prevents adding a pet to a not created map which would otherwise cause a crash
