@@ -18186,9 +18186,9 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature const
     return true;
 }
 
-bool Player::ActivateTaxiPathTo(uint32 taxi_path_id, uint32 spellid /*= 0*/, bool nocheck)
+bool Player::ActivateTaxiPathTo(uint32 taxi_node_id, uint32 spellid /*= 0*/, bool nocheck)
 {
-    TaxiPathEntry const* entry = sTaxiPathStore.LookupEntry(taxi_path_id);
+    TaxiPathEntry const* entry = sTaxiPathStore.LookupEntry(taxi_node_id);
     if (!entry)
         return false;
 
