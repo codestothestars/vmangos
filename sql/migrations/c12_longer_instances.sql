@@ -6,7 +6,9 @@ UPDATE `creature` SET `spawntimesecsmax` = 2678400, `spawntimesecsmin` = 2678400
     209, -- Zul'Farrak
     229, -- Blackrock Spire
     230, -- Blackrock Depths
+    249, -- Onyxia's Lair
     289, -- Scholomance
+    329, -- Stratholme
     349, -- Maraudon
     429  -- Dire Maul
 );
