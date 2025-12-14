@@ -170,6 +170,8 @@ void Player::UpdateMaxHealth()
     value += GetModifierValue(unitMod, TOTAL_VALUE) + GetHealthBonusFromStamina(GetStat(STAT_STAMINA));
     value *= GetModifierValue(unitMod, TOTAL_PCT);
 
+    value *= sWorld.getConfig(CONFIG_FLOAT_CODESTOTHESTARS_RATE_PLAYER_HP);
+
     SetMaxHealth(std::max(1, int(value)));
 }
 
@@ -770,7 +772,11 @@ void Creature::UpdateMaxHealth()
 
     float value = GetModifierValue(unitMod, BASE_VALUE);
     if (IsPet())
+    {
         value += GetCreateHealth();
+
+        if ((Player*)GetOwner()) value *= sWorld.getConfig(CONFIG_FLOAT_CODESTOTHESTARS_RATE_PLAYER_HP);
+    }
     value *= GetModifierValue(unitMod, BASE_PCT);
     value += GetModifierValue(unitMod, TOTAL_VALUE) + stamina * 10.0f;
     value *= GetModifierValue(unitMod, TOTAL_PCT);
