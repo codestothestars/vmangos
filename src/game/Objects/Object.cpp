@@ -3517,17 +3517,11 @@ ReputationRank WorldObject::GetReactionTo(WorldObject const* target) const
     {
         if (selfPlayerOwner->IsGameMaster())
             return REP_NEUTRAL;
-        if (FactionTemplateEntry const* targetFactionTemplateEntry = target->GetFactionTemplateEntry())
-            if (ReputationRank const* repRank = selfPlayerOwner->GetReputationMgr().GetForcedRankIfAny(targetFactionTemplateEntry))
-                return *repRank;
     }
     else if (targetPlayerOwner)
     {
         if (targetPlayerOwner->IsGameMaster())
             return REP_NEUTRAL;
-        if (FactionTemplateEntry const* selfFactionTemplateEntry = GetFactionTemplateEntry())
-            if (ReputationRank const* repRank = targetPlayerOwner->GetReputationMgr().GetForcedRankIfAny(selfFactionTemplateEntry))
-                return *repRank;
     }
 
     if (IsUnit() && HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED))
@@ -3566,8 +3560,6 @@ ReputationRank WorldObject::GetReactionTo(WorldObject const* target) const
         {
             if (FactionTemplateEntry const* targetFactionTemplateEntry = target->GetFactionTemplateEntry())
             {
-                if (ReputationRank const* repRank = selfPlayerOwner->GetReputationMgr().GetForcedRankIfAny(targetFactionTemplateEntry))
-                    return *repRank;
                 if (FactionEntry const* targetFactionEntry = sObjectMgr.GetFactionEntry(targetFactionTemplateEntry->faction))
                 {
                     if (targetFactionEntry->CanHaveReputation())
@@ -3607,8 +3599,6 @@ ReputationRank WorldObject::GetFactionReactionTo(FactionTemplateEntry const* fac
         if (factionTemplateEntry->IsContestedGuardFaction()
                 && targetPlayerOwner->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_CONTESTED_PVP))
             return REP_HOSTILE;
-        if (ReputationRank const* repRank = targetPlayerOwner->GetReputationMgr().GetForcedRankIfAny(factionTemplateEntry))
-            return *repRank;
         if (FactionEntry const* factionEntry = sObjectMgr.GetFactionEntry(factionTemplateEntry->faction))
         {
             if (factionEntry->CanHaveReputation())
@@ -3617,7 +3607,7 @@ ReputationRank WorldObject::GetFactionReactionTo(FactionTemplateEntry const* fac
                 ReputationRank repRank = targetPlayerOwner->GetReputationMgr().GetRank(factionEntry);
                 if (FactionState const* factionState = targetPlayerOwner->GetReputationMgr().GetState(factionEntry))
                     if (factionState->Flags & FACTION_FLAG_AT_WAR)
-                        repRank = std::min(REP_NEUTRAL, repRank);
+                        repRank = REP_HOSTILE;
                 return repRank;
             }
         }
@@ -3676,11 +3666,10 @@ bool WorldObject::IsValidAttackTarget(Unit const* target, bool checkAlive) const
 
             if (FactionTemplateEntry const* factionTemplate = object->GetFactionTemplateEntry())
             {
-                if (!(player->GetReputationMgr().GetForcedRankIfAny(factionTemplate)))
-                    if (FactionEntry const* factionEntry = sObjectMgr.GetFactionEntry(factionTemplate->faction))
-                        if (FactionState const* repState = player->GetReputationMgr().GetState(factionEntry))
-                            if (!(repState->Flags & FACTION_FLAG_AT_WAR))
-                                return false;
+                if (FactionEntry const* factionEntry = sObjectMgr.GetFactionEntry(factionTemplate->faction))
+                    if (FactionState const* repState = player->GetReputationMgr().GetState(factionEntry))
+                        if (!(repState->Flags & FACTION_FLAG_AT_WAR))
+                            return false;
 
             }
         }
