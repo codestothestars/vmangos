@@ -45,6 +45,7 @@
 #include "CharacterDatabaseCache.h"
 #include "ZoneScript.h"
 #include "TradeData.h"
+#include "Geometry.h"
 
 using namespace Spells;
 
@@ -3399,51 +3400,82 @@ void Spell::SetTargetMap(SpellEffectIndex effIndex, uint32 targetMode, UnitList&
             if (!pUnitTarget)
                 break;
 
-            float dis = GetSpellRadius(sSpellRadiusStore.LookupEntry(m_spellInfo->EffectRadiusIndex[effIndex]));
-            float x, y, z;
-            float srcX, srcY, srcZ;
-            float zSearchDist = 20.0f; // Falling case
+            float dist = GetSpellRadius(sSpellRadiusStore.LookupEntry(m_spellInfo->EffectRadiusIndex[effIndex]));
+            G3D::Vector3 dest;
+            G3D::Vector3 src;
             float ground = 0.0f;
-            pUnitTarget->GetSafePosition(x, y, z);
-            pUnitTarget->GetSafePosition(srcX, srcY, srcZ);
-            float waterLevel = pUnitTarget->GetTerrain()->GetWaterLevel(x, y, z, &ground);
-            x += dis * cos(pUnitTarget->GetOrientation());
-            y += dis * sin(pUnitTarget->GetOrientation());
+
+            pUnitTarget->GetSafePosition(src.x, src.y, src.z);
+            pUnitTarget->GetSafePosition(dest.x, dest.y, dest.z);
+
+            float waterLevel = pUnitTarget->GetTerrain()->GetWaterLevel(dest.x, dest.y, dest.z, &ground);
+            dest.x += dist * cos(pUnitTarget->GetOrientation());
+            dest.y += dist * sin(pUnitTarget->GetOrientation());
+
             // Underwater blink case
             if (waterLevel != VMAP_INVALID_HEIGHT_VALUE && waterLevel > ground)
             {
-                if (z < ground)
-                    z = ground;
+                if (dest.z < ground)
+                    dest.z = ground;
                 // If blinking up to the surface, limit z position (do not teleport out of water)
-                if (z > waterLevel && (z - srcZ) > 1.0f)
+                if (dest.z > waterLevel && (dest.z - src.z) > 1.0f)
                 {
-                    float t = (waterLevel - srcZ) / (z - srcZ);
-                    x = (x - srcX) * t + srcX;
-                    y = (y - srcY) * t + srcY;
-                    z = waterLevel;
+                    float t = (waterLevel - src.z) / (dest.z - src.z);
+                    dest.x = (dest.x - src.x) * t + src.x;
+                    dest.y = (dest.y - src.y) * t + src.y;
+                    dest.z = waterLevel;
                 }
 
-                if (!MapManager::IsValidMapCoord(pUnitTarget->GetMapId(), x, y, z))
+                if (!MapManager::IsValidMapCoord(pUnitTarget->GetMapId(), dest.x, dest.y, dest.z))
                     break;
 
-                pUnitTarget->GetMap()->GetLosHitPosition(srcX, srcY, srcZ, x, y, z, -0.5f);
-                ground = pUnitTarget->GetMap()->GetHeight(x, y, z);
-                if (ground < z)
+                pUnitTarget->GetMap()->GetLosHitPosition(src.x, src.y, src.z, dest.x, dest.y, dest.z, -0.5f);
+                ground = pUnitTarget->GetMap()->GetHeight(dest.x, dest.y, dest.z);
+                if (ground < dest.z)
                 {
-                    m_targets.setDestination(x, y, z);
+                    m_targets.setDestination(dest.x, dest.y, dest.z);
                     break;
                 }
-                // If we are leaving water, rather use pathfinding, but increase z-range position research.
-                zSearchDist = 20.0f;
             }
-            if (!pUnitTarget->GetMap()->GetWalkHitPosition(pUnitTarget->GetTransport(), srcX, srcY, srcZ, x, y, z, NAV_GROUND | NAV_WATER, zSearchDist, false))
+
+            GameObject* pDoor = pUnitTarget->FindNearbyClosedDoor(dist);
+            G3D::Vector2 doorLeft;
+            G3D::Vector2 doorRight;
+            bool directionThroughDoor;
+
+            if (pDoor)
             {
-                x = srcX;
-                y = srcY;
-                z = srcZ;
+                pDoor->GetRelativePositions(0, 3, doorLeft.x, doorLeft.y);
+                pDoor->GetRelativePositions(0, -3, doorRight.x, doorRight.y);
+                directionThroughDoor = Geometry::IsPointLeftOfLine(doorLeft, doorRight, src) != Geometry::IsPointLeftOfLine(doorLeft, doorRight, dest);
             }
 
-            m_targets.setDestination(x, y, z);
+            if (pDoor && directionThroughDoor && pDoor->IsAtInteractDistance(pUnitTarget->GetPosition(), INTERACTION_DISTANCE))
+            {
+                // no blinking too near to doors if destination is on the other side
+                dest = src;
+            }
+            else if (pUnitTarget->GetMap()->GetWalkHitPosition(pUnitTarget->GetTransport(), src.x, src.y, src.z, dest.x, dest.y, dest.z, NAV_GROUND | NAV_WATER, 20.0f, false))
+            {
+                // move back so we dont clip into a door
+                if (pDoor)
+                {
+                    if (directionThroughDoor)
+                        Geometry::Move2dPointTowards(src, dest, 3.0f);
+
+                    // we've gone backwards or sideways or through the floor or the door
+                    if (Geometry::IsPointLeftOfLine(doorLeft, doorRight, src) != Geometry::IsPointLeftOfLine(doorLeft, doorRight, dest) ||
+                       !pUnitTarget->HasInArc(M_PI_F / 2.0f, dest.x, dest.y) || !pUnitTarget->IsWithinLOS(dest.x, dest.y, dest.z, true, 0.1f))
+                        dest = src;
+                }
+            }
+            else
+            {
+                // unable to walk to position
+                dest = src;
+            }
+
+            m_targets.setDestination(dest.x, dest.y, dest.z);
         }
         default:
             //sLog.Out(LOG_BASIC, LOG_LVL_ERROR, "SPELL: Unknown implicit target (%u) for spell ID %u", targetMode, m_spellInfo->Id);

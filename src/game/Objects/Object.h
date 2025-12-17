@@ -622,8 +622,9 @@ class WorldObject : public Object
         static float GetLeewayBonusRangeForTargets(Player const* player, Unit const* target, bool ability);
         float GetLeewayBonusRadius() const;
 
-        // Gestion des positions
+        // Position Management
         void GetRelativePositions(float fForwardBackward, float fLeftRight, float fUpDown, float &x, float &y, float &z) const;
+        void GetRelativePositions(float fForwardBackward, float fLeftRight, float &x, float &y) const;
         void GetInCirclePositions(float dist, uint32 curr, uint32 total, float &x, float &y, float &z, float &o) const;
         void GetNearRandomPositions(float distance, float &x, float &y, float &z) const;
         void GetFirstCollision(float dist, float angle, float &x, float &y, float &z) const;
@@ -757,6 +758,7 @@ class WorldObject : public Object
         Creature* FindRandomCreature(uint32 entry, float range, bool alive = true, Creature const* except = nullptr) const;
         GameObject* FindNearestGameObject(uint32 entry, float range) const;
         GameObject* FindRandomGameObject(uint32 entry, float range) const;
+        GameObject* FindNearbyClosedDoor(float range) const;
         Player* FindNearestPlayer(float range) const;
         Player* FindNearestHostilePlayer(float range) const;
         Player* FindNearestFriendlyPlayer(float range) const;

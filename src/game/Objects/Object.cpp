@@ -3031,6 +3031,15 @@ GameObject* WorldObject::FindRandomGameObject(uint32 entry, float range) const
     return *tcIter;
 }
 
+GameObject* WorldObject::FindNearbyClosedDoor(float range) const
+{
+    GameObject* door = nullptr;
+    MaNGOS::AnyClosedDoorInRangeCheck go_check(this, range);
+    MaNGOS::GameObjectSearcher<MaNGOS::AnyClosedDoorInRangeCheck> checker(door, go_check);
+    Cell::VisitGridObjects(this, checker, range);
+    return door;
+}
+
 Player* WorldObject::FindNearestPlayer(float range) const
 {
     Player* target = nullptr;
@@ -3130,6 +3139,12 @@ uint32 WorldObject::RespawnNearCreaturesByEntry(uint32 entry, float range)
 
 void WorldObject::GetRelativePositions(float fForwardBackward, float fLeftRight, float fUpDown, float &x, float &y, float &z) const
 {
+    GetRelativePositions(fForwardBackward, fLeftRight, x, y);
+    z = GetPositionZ() + fUpDown;
+}
+
+void WorldObject::GetRelativePositions(float fForwardBackward, float fLeftRight, float &x, float &y) const
+{
     float orientation = GetOrientation() + M_PI / 2.0f;
 
     float x_coef = cos(orientation);
@@ -3140,7 +3155,6 @@ void WorldObject::GetRelativePositions(float fForwardBackward, float fLeftRight,
 
     x = GetPositionX() + x_coef * fLeftRight + x_range_add;
     y = GetPositionY() + y_coef * fLeftRight + y_range_add;
-    z = GetPositionZ() + fUpDown;
 }
 
 void WorldObject::GetInCirclePositions(float dist, uint32 curr, uint32 total, float &x, float &y, float &z, float &o) const
