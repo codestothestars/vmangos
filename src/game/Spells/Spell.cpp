@@ -1754,7 +1754,7 @@ void Spell::DoSpellHitOnUnit(Unit* unit, uint32 effectMask)
 
     if (!effectMask)
     {
-        if (pRealUnitCaster)
+        if (pRealUnitCaster && !m_spellInfo->IsPositiveSpell(pRealUnitCaster, unit))
             unit->AttackedBy(pRealUnitCaster);
         return;
     }
