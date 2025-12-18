@@ -5724,7 +5724,7 @@ SpellCastResult Spell::CheckCast(bool strict)
         if (non_caster_target)
         {
             // Not allow casting on flying player unless its a ritual of summoning
-            if (target->IsTaxiFlying() && m_spellInfo->Id != 7720)
+            if (target->IsTaxiFlying() && !m_spellInfo->HasEffect(SPELL_EFFECT_SUMMON_PLAYER))
                 return SPELL_FAILED_BAD_TARGETS;
 
             if (!m_IsTriggeredSpell)
@@ -6023,77 +6023,6 @@ SpellCastResult Spell::CheckCast(bool strict)
         // for effects of spells that have only one target
         switch (m_spellInfo->Effect[i])
         {
-            case SPELL_EFFECT_DUMMY:
-            {
-                if (m_spellInfo->SpellIconID == 156) // Holy Shock
-                {
-                    // spell different for friends and enemies
-                    // hart version required facing
-                    if (m_targets.getUnitTarget() &&
-                       !m_caster->IsFriendlyTo(m_targets.getUnitTarget()) &&
-                       !m_caster->IsFacingTarget(m_targets.getUnitTarget()))
-                        return SPELL_FAILED_UNIT_NOT_INFRONT;
-                }
-                else if (m_spellInfo->Id == 18153) // Kodo Kombobulator
-                {
-                    if (m_casterUnit && m_casterUnit->HasAura(18172))
-                        return SPELL_FAILED_ITEM_NOT_READY;
-                }
-                else if (m_spellInfo->Id == 21050) // Melodious Rapture
-                {
-                    if (!m_targets.getUnitTarget() || m_targets.getUnitTarget()->GetEntry() != 13016)
-                        return SPELL_FAILED_BAD_TARGETS;
-                }
-                else if (m_spellInfo->IsFitToFamilyMask<CF_WARLOCK_LIFE_TAP>() && m_casterUnit)
-                {
-                    float cost = m_currentBasePoints[EFFECT_INDEX_0];
-
-                    if (Player* modOwner = m_casterUnit->GetSpellModOwner())
-                        modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_COST, cost, this);
-
-                    float dmg = m_casterUnit->SpellDamageBonusDone(m_casterUnit, m_spellInfo, SpellEffectIndex(i), uint32(cost > 0 ? cost : 0), SPELL_DIRECT_DAMAGE);
-                    dmg = m_casterUnit->SpellDamageBonusTaken(m_casterUnit, m_spellInfo, SpellEffectIndex(i), dmg, SPELL_DIRECT_DAMAGE);
-
-                    // use cail as dithering might round up later.
-                    if (int32(m_casterUnit->GetHealth()) <= std::ceil(dmg))
-                        return SPELL_FAILED_FIZZLE;
-                }
-                break;
-            }
-            case SPELL_EFFECT_SEND_EVENT:
-            {
-                // Quest The Blackwood Corrupted - Don't allow cast if event already started.
-                if (m_spellInfo->Id == 16072 && m_caster->GetMap()->GetScriptedMapEvent(3938))
-                    return SPELL_FAILED_NOT_READY;
-                break;
-            }
-            case SPELL_EFFECT_SCHOOL_DAMAGE:
-            {
-                // Conflagrate
-                if (m_spellInfo->IsFitToFamily<SPELLFAMILY_WARLOCK, CF_WARLOCK_CONFLAGRATE>())
-                {
-                    if (!m_targets.getUnitTarget())
-                        return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
-
-                    // for caster applied auras only
-                    bool found = false;
-                    auto const& mPeriodic = m_targets.getUnitTarget()->GetAurasByType(SPELL_AURA_PERIODIC_DAMAGE);
-                    for (const auto periodicDamageAura : mPeriodic)
-                    {
-                        // Immolate
-                        if (periodicDamageAura->GetSpellProto()->IsFitToFamily<SPELLFAMILY_WARLOCK, CF_WARLOCK_IMMOLATE>() &&
-                            periodicDamageAura->GetCasterGuid() == m_caster->GetObjectGuid())
-                        {
-                            found = true;
-                            break;
-                        }
-                    }
-
-                    if (!found)
-                        return SPELL_FAILED_TARGET_AURASTATE;
-                }
-                break;
-            }
             case SPELL_EFFECT_RESURRECT:
             case SPELL_EFFECT_RESURRECT_NEW:
             {
@@ -6276,19 +6205,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                     return SPELL_FAILED_LOW_CASTLEVEL;
 
                 if (creature->GetCreatureType() != CREATURE_TYPE_CRITTER && (creature->lootForSkin || !creature->loot.isLooted()))
-                {
-                    /*
-                    if (creature->GetEntry() == 10184) // Onyxia, Y U NO SKIN ?
-                    {
-                        sLog.nostalrius("[OnyxiaSkin] Instance %u Player %s", m_caster->GetInstanceId(), m_caster->GetName());
-                        sLog.nostalrius("[OnyxiaSkin] Remaining gold: %u. creature->lootForSkin:%u", creature->loot.gold, creature->lootForSkin);
-                        for (LootItemList::const_iterator it = creature->loot.items.begin(); it != creature->loot.items.end(); ++it)
-                            sLog.nostalrius("[OnyxiaSkin] Remaining item: %u [Cond%u:Looted%u:Blocked%u:RollWinner%u]", it->itemid, it->conditionId, it->is_looted, it->is_blocked, it->lootOwner.GetCounter());
-                    }
-                    else
-                    */
                     return SPELL_FAILED_TARGET_NOT_LOOTED;
-                }
 
                 // chance for fail at orange skinning attempt
                 if ((m_selfContainer && (*m_selfContainer) == this) &&
@@ -6444,30 +6361,6 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (!m_casterUnit)
                     return SPELL_FAILED_BAD_TARGETS;
 
-                if (m_casterUnit->GetClass() == CLASS_WARLOCK &&  m_spellInfo->Id == 698)
-                {
-                    if (!m_caster->IsPlayer())
-                        return SPELL_FAILED_BAD_TARGETS;
-                    if (!((Player*)m_caster)->GetSelectionGuid())
-                        return SPELL_FAILED_BAD_TARGETS;
-
-                    Player* target = sObjectMgr.GetPlayer(((Player*)m_caster)->GetSelectionGuid());
-                    if (!target || ((Player*)m_caster) == target || !target->IsInSameRaidWith((Player*)m_caster))
-                        return SPELL_FAILED_BAD_TARGETS;
-
-                    if (target->IsInCombat())
-                        return SPELL_FAILED_TARGET_IN_COMBAT;
-
-                    // check if our map is dungeon
-                    MapEntry const* mapEntry = sMapStorage.LookupEntry<MapEntry>(m_caster->GetMapId());
-                    if (mapEntry && mapEntry->IsDungeon())
-                    {
-                        if (m_caster->GetMap() != target->GetMap())
-                            return SPELL_FAILED_TARGET_NOT_IN_INSTANCE;
-                    }
-                    else if (m_caster->ToPlayer()->InBattleGround())
-                        return SPELL_FAILED_NOT_HERE;
-                }
                 break;
             }
             case SPELL_EFFECT_SUMMON_PLAYER:
@@ -6523,42 +6416,6 @@ SpellCastResult Spell::CheckCast(bool strict)
                     return SPELL_FAILED_TARGET_DUELING;
 
                 break;
-            }
-            case SPELL_EFFECT_SCRIPT_EFFECT:
-            {
-                if (!m_casterUnit)
-                    break;
-
-                // Black Qiraji Battle Tank
-                if (m_spellInfo->Id == 26656)
-                {
-                    if (m_casterUnit->IsMounted())
-                    {
-                        m_casterUnit->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
-                        return SPELL_FAILED_DONT_REPORT;
-                    }
-
-                    if (m_casterUnit->IsInWater() && (!m_casterUnit->IsPlayer() || static_cast<Player*>(m_casterUnit)->IsInHighLiquid()))
-                        return SPELL_FAILED_ONLY_ABOVEWATER;
-
-                    if (Player* pPlayer = m_casterUnit->ToPlayer())
-                    {
-                        if (pPlayer->GetTransport())
-                            return SPELL_FAILED_NO_MOUNTS_ALLOWED;
-
-                        if (m_casterUnit->GetMapId() != MAP_AHN_QIRAJ_TEMPLE && !sMapStorage.LookupEntry<MapEntry>(m_casterUnit->GetMapId())->IsMountAllowed() && !m_IsTriggeredSpell)
-                            return SPELL_FAILED_NO_MOUNTS_ALLOWED;
-                    }
-
-                    if (m_casterUnit->GetAreaId() == 35)
-                        return SPELL_FAILED_NO_MOUNTS_ALLOWED;
-
-                    if (m_casterUnit->IsInDisallowedMountForm())
-                        return SPELL_FAILED_NOT_SHAPESHIFT;
-
-                    if (m_casterUnit->GetMapId() == MAP_AHN_QIRAJ_TEMPLE)
-                        break;
-                }
             }
             default:
                 break;

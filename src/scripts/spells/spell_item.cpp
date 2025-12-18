@@ -614,6 +614,106 @@ SpellScript* GetScript_WolfsheadHelm(SpellEntry const*)
     return new WolfsheadHelmScript();
 }
 
+enum
+{
+    SPELL_KODO_KOMBOBULATOR_QEUST_CREDIT = 18172,
+};
+
+// 18153 - Kodo Kombobulator
+struct KodoKombobulatorScript : public SpellScript
+{
+    SpellCastResult OnCheckCast(Spell* spell, bool /*strict*/) const final
+    {
+        if (spell->m_casterUnit && spell->m_casterUnit->HasAura(SPELL_KODO_KOMBOBULATOR_QEUST_CREDIT))
+            return SPELL_FAILED_ITEM_NOT_READY;
+
+        return SPELL_CAST_OK;
+    }
+};
+
+SpellScript* GetScript_KodoKombobulator(SpellEntry const*)
+{
+    return new KodoKombobulatorScript();
+}
+
+enum
+{
+    NPC_DEEPRUN_RAT = 13016,
+};
+
+// 21050 - Melodious Rapture (Rat Catcher's Flute)
+struct MelodiusRaptureScript : public SpellScript
+{
+    SpellCastResult OnCheckCast(Spell* spell, bool /*strict*/) const final
+    {
+        if (!spell->m_targets.getUnitTarget() || spell->m_targets.getUnitTarget()->GetEntry() != NPC_DEEPRUN_RAT)
+            return SPELL_FAILED_BAD_TARGETS;
+
+        return SPELL_CAST_OK;
+    }
+};
+
+SpellScript* GetScript_MelodiusRapture(SpellEntry const*)
+{
+    return new MelodiusRaptureScript();
+}
+
+// 16072 - Purify and Place Food (Filled Cleansing Bowl)
+struct PurifyAndPlaceFoodScript : public SpellScript
+{
+    SpellCastResult OnCheckCast(Spell* spell, bool /*strict*/) const final
+    {
+        // Quest The Blackwood Corrupted - Don't allow cast if event already started.
+        if (spell->m_spellInfo->Id == 16072 && spell->m_caster->GetMap()->GetScriptedMapEvent(3938))
+            return SPELL_FAILED_NOT_READY;
+
+        return SPELL_CAST_OK;
+    }
+};
+
+SpellScript* GetScript_PurifyAndPlaceFood(SpellEntry const*)
+{
+    return new PurifyAndPlaceFoodScript();
+}
+
+// 26656 - Summon Black Qiraji Battle Tank (Black Qiraji Resonating Crystal)
+struct SummonBlackQirajiBattleTankScript : public SpellScript
+{
+    SpellCastResult OnCheckCast(Spell* spell, bool /*strict*/) const final
+    {
+        if (spell->m_casterUnit->IsMounted())
+        {
+            spell->m_casterUnit->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
+            return SPELL_FAILED_DONT_REPORT;
+        }
+
+        if (spell->m_casterUnit->IsInWater() && (!spell->m_casterUnit->IsPlayer() || static_cast<Player*>(spell->m_casterUnit)->IsInHighLiquid()))
+            return SPELL_FAILED_ONLY_ABOVEWATER;
+
+        if (Player* pPlayer = spell->m_casterUnit->ToPlayer())
+        {
+            if (pPlayer->GetTransport())
+                return SPELL_FAILED_NO_MOUNTS_ALLOWED;
+
+            if (spell->m_casterUnit->GetMapId() != MAP_AHN_QIRAJ_TEMPLE && !sMapStorage.LookupEntry<MapEntry>(spell->m_casterUnit->GetMapId())->IsMountAllowed() && !spell->IsTriggered())
+                return SPELL_FAILED_NO_MOUNTS_ALLOWED;
+        }
+
+        if (spell->m_casterUnit->GetAreaId() == 35)
+            return SPELL_FAILED_NO_MOUNTS_ALLOWED;
+
+        if (spell->m_casterUnit->IsInDisallowedMountForm())
+            return SPELL_FAILED_NOT_SHAPESHIFT;
+
+        return SPELL_CAST_OK;
+    }
+};
+
+SpellScript* GetScript_SummonBlackQirajiBattleTank(SpellEntry const*)
+{
+    return new SummonBlackQirajiBattleTankScript();
+}
+
 void AddSC_item_spell_scripts()
 {
     Script* newscript;
@@ -741,5 +841,24 @@ void AddSC_item_spell_scripts()
     newscript = new Script;
     newscript->Name = "spell_wolfshead_helm";
     newscript->GetSpellScript = &GetScript_WolfsheadHelm;
+    newscript->RegisterSelf();
+
+    newscript->Name = "spell_kodo_kombobulator";
+    newscript->GetSpellScript = &GetScript_KodoKombobulator;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "spell_melodius_rapture";
+    newscript->GetSpellScript = &GetScript_MelodiusRapture;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "spell_purify_and_place_food";
+    newscript->GetSpellScript = &GetScript_PurifyAndPlaceFood;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "spell_summon_black_qiraji_battle_tank";
+    newscript->GetSpellScript = &GetScript_SummonBlackQirajiBattleTank;
     newscript->RegisterSelf();
 }

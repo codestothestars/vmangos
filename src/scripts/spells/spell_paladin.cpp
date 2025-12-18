@@ -85,6 +85,16 @@ SpellScript* GetScript_PaladinJudgementOfCommandDummy(SpellEntry const*)
 // 20473, 20929, 20930 - Holy Shock
 struct PaladinHolyShockScript : SpellScript
 {
+    SpellCastResult OnCheckCast(Spell* spell, bool /*strict*/) const final
+    {
+        if (spell->m_targets.getUnitTarget() &&
+            !spell->m_caster->IsFriendlyTo(spell->m_targets.getUnitTarget()) &&
+            !spell->m_caster->IsFacingTarget(spell->m_targets.getUnitTarget()))
+            return SPELL_FAILED_UNIT_NOT_INFRONT;
+
+        return SPELL_CAST_OK;
+    }
+
     bool OnEffectExecute(Spell* spell, SpellEffectIndex effIdx) const final
     {
         if (effIdx == EFFECT_INDEX_0 && spell->GetUnitTarget())
