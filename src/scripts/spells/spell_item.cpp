@@ -843,6 +843,7 @@ void AddSC_item_spell_scripts()
     newscript->GetSpellScript = &GetScript_WolfsheadHelm;
     newscript->RegisterSelf();
 
+    newscript = new Script;
     newscript->Name = "spell_kodo_kombobulator";
     newscript->GetSpellScript = &GetScript_KodoKombobulator;
     newscript->RegisterSelf();
