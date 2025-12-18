@@ -545,6 +545,55 @@ SpellScript* GetScript_TanarisFieldSampling(SpellEntry const*)
     return new TanarisFieldSamplingScript();
 }
 
+// 26374 - Elune's Candle
+struct ElunesCandleScript : public SpellScript
+{
+    void OnCast(Spell* spell) const final
+    {
+        static uint32 const OmenSpells[] = { 26622, 26623, 26624, 26625, 26649 };
+
+        uint32 spellId = 26636;
+
+        Unit* target = spell->m_targets.getUnitTarget();
+
+        if (target && target->ToUnit())
+        {
+            if (target->GetEntry() == 15467)
+                spellId = OmenSpells[urand(0, 4)];
+
+            if (target->GetEntry() == 15466)
+                spellId = 26624;
+        }
+
+        spell->m_caster->CastSpell(target, spellId, true);
+    }
+};
+
+SpellScript* GetScript_ElunesCandle(SpellEntry const*)
+{
+    return new ElunesCandleScript();
+}
+
+enum
+{
+    SPELL_RECENTLY_BANDAGED = 11196,
+};
+
+// 746, 1159, 3267, 3268, 7926, 7927, 10838, 10839, 18608, 18610, 20803, 23567, 23568, 23569, 23696, 24412, 24413, 24414, 30020 - First Aid
+struct FirstAidScript : public SpellScript
+{
+    void OnAfterHit(Spell* spell) const final
+    {
+        if (spell->GetUnitTarget())
+            spell->m_caster->CastSpell(spell->GetUnitTarget(), SPELL_RECENTLY_BANDAGED, true, spell->m_CastItem);
+    }
+};
+
+SpellScript* GetScript_FirstAid(SpellEntry const*)
+{
+    return new FirstAidScript();
+}
+
 void AddSC_item_spell_scripts()
 {
     Script* newscript;
@@ -657,5 +706,15 @@ void AddSC_item_spell_scripts()
     newscript = new Script;
     newscript->Name = "spell_tanaris_field_sampling";
     newscript->GetSpellScript = &GetScript_TanarisFieldSampling;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "spell_elunes_candle";
+    newscript->GetSpellScript = &GetScript_ElunesCandle;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "spell_first_aid";
+    newscript->GetSpellScript = &GetScript_FirstAid;
     newscript->RegisterSelf();
 }
