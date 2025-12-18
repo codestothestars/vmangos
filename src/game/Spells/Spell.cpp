@@ -1769,9 +1769,9 @@ void Spell::DoSpellHitOnUnit(Unit* unit, uint32 effectMask)
         }
 
     // Recheck immune (only for delayed spells)
-    if (m_caster != unit && m_spellInfo->speed && (
-                unit->IsImmuneToDamage(m_spellInfo->GetSpellSchoolMask(), m_spellInfo) ||
-                unit->IsImmuneToSpell(m_spellInfo, unit == pRealUnitCaster)))
+    if (m_caster != unit && m_spellInfo->speed &&
+       (unit->IsImmuneToDamage(m_spellInfo->GetSpellSchoolMask(), m_spellInfo) ||
+        unit->IsImmuneToSpell(m_spellInfo, unit == pRealUnitCaster)))
     {
         if (pRealCaster)
             pRealCaster->SendSpellMiss(unit, m_spellInfo->Id, SPELL_MISS_IMMUNE);
@@ -3400,14 +3400,14 @@ void Spell::SetTargetMap(SpellEffectIndex effIndex, uint32 targetMode, UnitList&
             if (!pUnitTarget)
                 break;
 
-            float dist = GetSpellRadius(sSpellRadiusStore.LookupEntry(m_spellInfo->EffectRadiusIndex[effIndex]));
+            float const dist = GetSpellRadius(sSpellRadiusStore.LookupEntry(m_spellInfo->EffectRadiusIndex[effIndex]));
             G3D::Vector3 dest;
             G3D::Vector3 src;
-            float ground = 0.0f;
 
             pUnitTarget->GetSafePosition(src.x, src.y, src.z);
             pUnitTarget->GetSafePosition(dest.x, dest.y, dest.z);
 
+            float ground = 0.0f;
             float waterLevel = pUnitTarget->GetTerrain()->GetWaterLevel(dest.x, dest.y, dest.z, &ground);
             dest.x += dist * cos(pUnitTarget->GetOrientation());
             dest.y += dist * sin(pUnitTarget->GetOrientation());
@@ -3438,17 +3438,8 @@ void Spell::SetTargetMap(SpellEffectIndex effIndex, uint32 targetMode, UnitList&
                 }
             }
 
-            GameObject* pDoor = pUnitTarget->FindNearbyClosedDoor(dist);
-            G3D::Vector2 doorLeft;
-            G3D::Vector2 doorRight;
-            bool directionThroughDoor;
-
-            if (pDoor)
-            {
-                pDoor->GetRelativePositions(0, 3, doorLeft.x, doorLeft.y);
-                pDoor->GetRelativePositions(0, -3, doorRight.x, doorRight.y);
-                directionThroughDoor = Geometry::IsPointLeftOfLine(doorLeft, doorRight, src) != Geometry::IsPointLeftOfLine(doorLeft, doorRight, dest);
-            }
+            GameObject const* const pDoor = pUnitTarget->FindNearbyClosedDoor(dist);
+            bool const directionThroughDoor = pDoor ? pDoor->HasInArc(M_PI_F, src.x, src.y) != pDoor->HasInArc(M_PI_F, dest.x, dest.y) : false;
 
             if (pDoor && directionThroughDoor && pDoor->IsAtInteractDistance(pUnitTarget->GetPosition(), INTERACTION_DISTANCE))
             {
@@ -3463,11 +3454,14 @@ void Spell::SetTargetMap(SpellEffectIndex effIndex, uint32 targetMode, UnitList&
                     if (directionThroughDoor)
                         Geometry::Move2dPointTowards(src, dest, 3.0f);
 
-                    // we've gone backwards or sideways or through the floor or the door
-                    if (Geometry::IsPointLeftOfLine(doorLeft, doorRight, src) != Geometry::IsPointLeftOfLine(doorLeft, doorRight, dest) ||
-                       !pUnitTarget->HasInArc(M_PI_F / 2.0f, dest.x, dest.y) || !pUnitTarget->IsWithinLOS(dest.x, dest.y, dest.z, true, 0.1f))
+                    if (pDoor->HasInArc(M_PI_F, src.x, src.y) != pDoor->HasInArc(M_PI_F, dest.x, dest.y) ||
+                       !pUnitTarget->IsWithinLOS(dest.x, dest.y, dest.z, true, 0.1f))
                         dest = src;
                 }
+
+                // should never go backwards or sideways
+                if (!pUnitTarget->HasInArc(M_PI_F / 2.0f, dest.x, dest.y))
+                    dest = src;
             }
             else
             {

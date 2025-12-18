@@ -80,7 +80,7 @@ bool PlayerBotAI::SpawnNewPlayer(WorldSession* sess, uint8 class_, uint32 race_,
     std::string name = sObjectMgr.GenerateFreePlayerName();
     normalizePlayerName(name);
 
-    uint8 gender = pClone ? pClone->GetByteValue(UNIT_FIELD_BYTES_0, UNIT_BYTES_0_OFFSET_GENDER) : urand(0, 1);
+    uint8 gender;
     uint8 skin;
     uint8 face;
     uint8 hairStyle;
@@ -89,6 +89,7 @@ bool PlayerBotAI::SpawnNewPlayer(WorldSession* sess, uint8 class_, uint32 race_,
 
     if (pClone)
     {
+        gender = pClone->GetByteValue(UNIT_FIELD_BYTES_0, UNIT_BYTES_0_OFFSET_GENDER);
         skin = pClone->GetByteValue(PLAYER_BYTES, PLAYER_BYTES_OFFSET_SKIN_ID);
         face = pClone->GetByteValue(PLAYER_BYTES, PLAYER_BYTES_OFFSET_FACE_ID);
         hairStyle = pClone->GetByteValue(PLAYER_BYTES, PLAYER_BYTES_OFFSET_HAIR_STYLE_ID);
@@ -97,6 +98,7 @@ bool PlayerBotAI::SpawnNewPlayer(WorldSession* sess, uint8 class_, uint32 race_,
     }
     else
     {
+        uint8 gender = urand(0, 1);
         Player::SelectRandomAppearance(race_, gender, hairStyle, hairColor, face, facialHair, skin);
     }
     
