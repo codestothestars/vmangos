@@ -3441,12 +3441,7 @@ void Spell::SetTargetMap(SpellEffectIndex effIndex, uint32 targetMode, UnitList&
             GameObject const* const pDoor = pUnitTarget->FindNearbyClosedDoor(dist);
             bool const directionThroughDoor = pDoor ? pDoor->HasInArc(M_PI_F, src.x, src.y) != pDoor->HasInArc(M_PI_F, dest.x, dest.y) : false;
 
-            if (pDoor && directionThroughDoor && pDoor->IsAtInteractDistance(pUnitTarget->GetPosition(), INTERACTION_DISTANCE))
-            {
-                // no blinking too near to doors if destination is on the other side
-                dest = src;
-            }
-            else if (pUnitTarget->GetMap()->GetWalkHitPosition(pUnitTarget->GetTransport(), src.x, src.y, src.z, dest.x, dest.y, dest.z, NAV_GROUND | NAV_WATER, 20.0f, false))
+            if (pUnitTarget->GetMap()->GetWalkHitPosition(pUnitTarget->GetTransport(), src.x, src.y, src.z, dest.x, dest.y, dest.z, NAV_GROUND | NAV_WATER, 20.0f, false))
             {
                 // move back so we dont clip into a door
                 if (pDoor)
