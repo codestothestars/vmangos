@@ -2982,6 +2982,9 @@ bool Creature::MeetsSelectAttackingRequirement(Unit const* pTarget, SpellEntry c
         if ((selectFlags & SELECT_FLAG_PLAYER) && pTarget->GetTypeId() != TYPEID_PLAYER)
             return false;
 
+        if ((selectFlags & SELECT_FLAG_HUMANOID) && pTarget->GetCreatureType() != CREATURE_TYPE_HUMANOID)
+            return false;
+
         if ((selectFlags & SELECT_FLAG_NO_TOTEM) && pTarget->ToCreature() && pTarget->ToCreature()->IsTotem())
             return false;
 

@@ -242,7 +242,7 @@ INSERT `generic_scripts`
 (8302001,       0,          3,        94,         15,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Clear movement (follow)'),
 (8302001,       0,          4,        96,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Set can target'),
 (8302001,       0,          5,        94,          6,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Clear movement (chase)'),
-(8302003,       0,          0,        20,         15,           1,           0,           0,             8,           12435,             150,         0x00,         0,          0,          0,          0,     5   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Follow Razorgore'),
+(8302003,       0,          0,        20,         15,           1,           0,           0,            10,           12435,             150,         0x00,         0,          0,          0,          0,     5   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Follow Razorgore'),
 (8302004,       0,          0,        60,          3,           0,           0,           0,             0,               0,               0,         0x00,         0,     830202,          1,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Initial Movement (North) - Move to spawn point'),
 (8302004,       0,          1,        67,          2,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Initial Movement (North) - Set default movement'),
 (8302004,       0,          2,        60,          3,           0,           0,           0,             0,               0,               0,         0x00,         0,     830203,          1,          0,     0   ,     0    ,   0    ,  0 ,            273, 'Razorgore Event Spawning Adds - Initial Movement (North) - Move to exit'),
@@ -925,8 +925,14 @@ INSERT INTO `creature_movement_special`
 DELETE FROM creature_movement_template WHERE entry = 12416; -- testing
 DELETE FROM creature_movement_scripts WHERE LENGTH(id) = 7 AND id LIKE '12416%'; -- testing
 REPLACE `creature_spells`
-(`entry`, `name`,                  `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `spellId_3`, `probability_3`, `castTarget_3`, `targetParam1_3`, `targetParam2_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`) VALUES
-( 124160, 'Blackwing Legionnaire',       15580,             100,              1,                   3,                  16,                  5,                 16,       15754,             100,              1,                   0,                  15,                  6,                 13,       23967,             100,              8,            12435,                7,                   1,                  24,                  6,                 27);
+(`entry`, `name`,
+                                   `spellId_1`, `probability_1`, `castTarget_1`,                                     `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`,
+                                   `spellId_2`, `probability_2`, `castTarget_2`,                                     `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`,
+                                   `spellId_3`, `probability_3`, `castTarget_3`, `targetParam1_3`, `targetParam2_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`) VALUES
+( 124160, 'Blackwing Legionnaire',
+                                         15580,             100,              1,                                                       3,                  16,                  5,                 16,
+                                         15754,             100,              1,                                                       0,                  15,                  6,                 13,
+                                         23967,             100,             10,            12435,                7,                   1,                  24,                  6,                 27);
 DELETE FROM `creature_ai_events` WHERE `creature_id` = 12416;
 INSERT `creature_ai_events`
 (   `id`, `creature_id`, `event_type`, `event_inverse_phase_mask`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
@@ -948,7 +954,6 @@ INSERT INTO `creature_ai_scripts`
 (1241605,          0,        39,    8302001,           0,           0,           0,       100,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Legionnaire - Flee (hit by spell)'),
 (1241607,          0,        94,          7,           0,           0,           0,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Legionnaire - Clear movement (home)'),
 (1241607,          0,        94,          2,           0,      830203,           0,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Legionnaire - Clear movement (waypoint)');
-SELECT * FROM generic_scripts WHERE LENGTH(id) = 7 AND id LIKE '12416%'; -- testing
 
 -- Events list for Blackwing Mage
 DELETE FROM creature_movement_template WHERE entry = 12420; -- testing
@@ -969,7 +974,7 @@ INSERT `creature_ai_events`
 DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '12420%'; -- testing
 INSERT INTO `creature_ai_scripts`
 (   `id`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `dataint`,    `x`  ,    `y`  ,  `z`  ,  `o`, `condition_id`, `comments`) VALUES
-(1242001,          0,        15,      22271,           0,           0,           0,             6,         0,     0   ,     0   ,   0   ,   0 ,            588, 'Blackwing Mage - Cast Arcane Explosion'),
+(1242001,          0,        15,      22271,           0,           0,           0,             8,         0,     0   ,     0   ,   0   ,   0 ,            588, 'Blackwing Mage - Cast Arcane Explosion'),
 (1242002,          0,        49,          1,       12435,         150,           0,             0,         0,     0   ,     0   ,   0   ,   0 ,              0, 'Blackwing Mage - Combat Pulse'),
 (1242004,          0,        65,       8302,           0,           1,           2,             0,         0,     0   ,     0   ,   0   ,   0 ,           8302, 'Blackwing Mage - Decrement Creature Count'),
 (1242004,          0,        18,       5000,           0,           0,           0,             0,         0,     0   ,     0   ,   0   ,   0 ,            579, 'Blackwing Mage - Despawn (death)'),
@@ -983,8 +988,14 @@ UPDATE `creature_template` SET `spell_list_id` = 0 WHERE `entry` = 12420;
 
 -- Events list for Death Talon Dragonspawn
 REPLACE `creature_spells`
-(`entry`, `name`,                    `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`, `spellId_3`, `probability_3`, `castTarget_3`, `targetParam1_3`, `targetParam2_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`) VALUES
-( 124220, 'Death Talon Dragonspawn',       15580,             100,              1,                   0,                  32,                  4,                  27,       15663,             100,              1,                  0,                  32,                 13,                 36,       23967,             100,              8,            12435,                7,                   0,                  34,                  6,                 36);
+(`entry`, `name`,
+                                     `spellId_1`, `probability_1`, `castTarget_1`,                                     `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`,
+                                     `spellId_2`, `probability_2`, `castTarget_2`,                                     `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`,
+                                     `spellId_3`, `probability_3`, `castTarget_3`, `targetParam1_3`, `targetParam2_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`) VALUES
+( 124220, 'Death Talon Dragonspawn',
+                                           15580,             100,              1,                                                       0,                  32,                  4,                 27,
+                                           15663,             100,              1,                                                       0,                  32,                 13,                 36,
+                                           23967,             100,             10,            12435,                7,                   0,                  34,                  6,                 36);
 DELETE FROM `creature_ai_events` WHERE `creature_id` = 12422;
 REPLACE `creature_ai_events`
 (   `id`, `creature_id`, `condition_id`, `event_type`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
@@ -1029,7 +1040,7 @@ DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '12435%'; -- te
 INSERT `creature_ai_scripts`
 (   `id`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_type`, `data_flags`, `dataint`,      `o`, `condition_id`, `comments`) VALUES
 (1243501,          0,        35,          1,           0,           0,           0,               0,             0,         0x00,         0, 4.64258 ,            573, 'Razorgore the Untamed - Turn to point 5'),
-(1243501,          1,        15,      21389,       0x003,           0,           0,               0,             6,         0x00,         0, 0       ,            573, 'Razorgore the Untamed - Cast Fire Channeling'),
+(1243501,          1,        15,      21389,       0x003,           0,           0,               0,             8,         0x00,         0, 0       ,            573, 'Razorgore the Untamed - Cast Fire Channeling'),
 (1243501,          1,        35,          1,           0,           0,           0,               0,             0,         0x00,         0, 2.44346 ,            573, 'Razorgore the Untamed - Turn to point 1'),
 (1243501,          1,        39,    1243502,           0,           0,           0,               0,             0,         0x00,       100, 0       ,            573, 'Razorgore the Untamed - Increment phase (point 1)'),
 (1243502,          0,        35,          1,           0,           0,           0,               0,             0,         0x00,         0, 3.33358 ,            573, 'Razorgore the Untamed - Turn to point 2'),
@@ -1056,7 +1067,7 @@ INSERT `creature_ai_scripts`
 (1243513,          0,        39,    1243504,           0,           0,           0,               0,             0,         0x00,       100, 0       ,              0, 'Razorgore the Untamed - Respawn encounter (death on phase 5)'),
 (1243514,          0,        62,       8302,           1,           0,           0,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - End map event (success)'),
 (1243516,          0,        65,       8302,           1,           0,           0,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Set map event data 1 to 0 (Possess removed)'),
-(1243516,          0,         5,          0,           0,           0,           0,           12784,             9,         0x02,         0, 0       ,            572, 'Razorgore the Untamed - Interrupt casts on Blackwing Orb Trigger'),
+(1243516,          0,         5,          0,           0,           0,           0,           12784,            11,         0x02,         0, 0       ,            572, 'Razorgore the Untamed - Interrupt casts on Blackwing Orb Trigger'),
 (1243516,          0,        14,      23021,           0,           0,           0,               0,             0,         0x00,         0, 0       ,            572, 'Razorgore the Untamed - Remove aura Dragon Orb'),
 (1243517,          0,        44,          6,           0,           0,           0,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Set phase 6'),
 (1243518,          0,        68,    1243505,           2,       12416,         125,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Evade Blackwing Legionnaire'),
@@ -1070,15 +1081,15 @@ REPLACE `creature_spells`
                                    `spellId_4`, `castTarget_4`, `targetParam1_4`, `targetParam2_4`, `delayInitialMin_4`, `delayInitialMax_4`, `delayRepeatMin_4`, `delayRepeatMax_4`,
                                    `spellId_5`, `castTarget_5`, `targetParam1_5`, `targetParam2_5`, `delayInitialMin_5`, `delayInitialMax_5`, `delayRepeatMin_5`, `delayRepeatMax_5`) VALUES
 ( 124350, 'Razorgore the Untamed',       19632,              1,                0,                0,                  14,                  38,                  8,                 28,
-                                         19872,             26,            12422,               60,                   6,                  38,                  6,                 38,
-                                         22425,              6,                0,                0,                  12,                  41,                 18,                 44,
-                                         23023,              6,                0,                0,                  11,                  39,                 13,                 42,
-                                         24375,              6,                0,                0,                   8,                  29,                 22,                 43);
+                                         19872,             28,            12422,               60,                   6,                  38,                  6,                 38,
+                                         22425,              8,                0,                0,                  12,                  41,                 18,                 44,
+                                         23023,              8,                0,                0,                  11,                  39,                 13,                 42,
+                                         24375,              8,                0,                0,                   8,                  29,                 22,                 43);
 DELETE FROM generic_scripts WHERE LENGTH(id) = 7 AND id LIKE '12435%'; -- testing
 INSERT `generic_scripts`
 (   `id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `target_type`, `data_flags`, `dataint`, `target_param1`, `comments`) VALUES
 (1243502,       0,          0,        44,          1,           1,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Increment phase'),
-(1243503,       0,          0,        15,      23024,       0x002,           0,             6,         0x00,         0,               0, 'Razorgore the Untamed - Cast Fireball'),
+(1243503,       0,          0,        15,      23024,       0x002,           0,             8,         0x00,         0,               0, 'Razorgore the Untamed - Cast Fireball'),
 (1243503,       0,          0,        62,       8302,           0,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - End map event (Failure)'),
 (1243503,       1,          0,        39,     176964,           0,           0,             0,         0x00,       100,               0, 'Razorgore the Untamed - Open Portcullis'),
 (1243504,      55,          0,         9,     234786,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 1 (spawn)'),
@@ -1111,12 +1122,12 @@ INSERT `generic_scripts`
 (1243504,      55,          0,         9,     234813,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 28 (spawn)'),
 (1243504,      55,          0,         9,     234814,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 29 (spawn)'),
 (1243504,      55,          0,         9,     234815,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 30 (spawn)'),
-(1243504,      60,          0,         4,          9,  0x00000010,           2,            12,         0x03,         0,          234816, 'Razorgore the Untamed - Remove GAMEOBJECT_FLAGS flag GO_FLAG_NO_INTERACT'),
-(1243504,      60,          0,        71,          0,           0,           0,             9,         0x00,         0,           84388, 'Razorgore the Untamed - Respawn Razorgore the Untamed'),
-(1243504,      60,          1,        71,          0,           0,           0,             9,         0x02,         0,           84389, 'Razorgore the Untamed - Respawn Grethok the Controller'),
-(1243504,      60,          0,        71,        0x2,           0,           0,             9,         0x02,         0,           84390, 'Razorgore the Untamed - Respawn Blackwing Guardsman 1'),
+(1243504,      60,          0,         4,          9,  0x00000010,           2,            14,         0x03,         0,          234816, 'Razorgore the Untamed - Remove GAMEOBJECT_FLAGS flag GO_FLAG_NO_INTERACT'),
+(1243504,      60,          0,        71,          0,           0,           0,            11,         0x00,         0,           84388, 'Razorgore the Untamed - Respawn Razorgore the Untamed'),
+(1243504,      60,          1,        71,          0,           0,           0,            11,         0x02,         0,           84389, 'Razorgore the Untamed - Respawn Grethok the Controller'),
+(1243504,      60,          0,        71,        0x2,           0,           0,            11,         0x02,         0,           84390, 'Razorgore the Untamed - Respawn Blackwing Guardsman 1'),
 (1243504,      60,          1,        91,      84390,           0,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Load Blackwing Guardsman 1 Spawn'),
-(1243504,      60,          0,        71,        0x2,           0,           0,             9,         0x02,         0,           84391, 'Razorgore the Untamed - Respawn Blackwing Guardsman 2'),
+(1243504,      60,          0,        71,        0x2,           0,           0,            11,         0x02,         0,           84391, 'Razorgore the Untamed - Respawn Blackwing Guardsman 2'),
 (1243504,      60,          1,        91,      84391,           0,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Load Blackwing Guardsman 2 Spawn'),
 (1243505,       0,          0,        33,          0,           0,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Enter evade mode');
 UPDATE `creature_template` SET `ai_name` = 'EventAI', `auras` = '18943', `script_name` = '', `spell_list_id` = 124350 WHERE `entry` = 12435;
@@ -1130,33 +1141,35 @@ INSERT `creature_ai_events`
 (1255703,         12557,              0,            4,          0x00,              0,              0,              0,              0,          1255703, 'Grethok the Controller - Aggro'),
 (1255704,         12557,              0,            0,          0x00,           1000,           5000,              0,              0,          1255704, 'Grethok the Controller - In Combat (Summon Monster Generators)'),
 (1255705,         12557,              0,           21,          0x00,              0,              0,              0,              0,          1255705, 'Grethok the Controller - Reached Home'),
-(1255706,         12557,              0,            6,          0x00,              0,              0,              0,              0,          1255706, 'Grethok the Controller - Death');
+(1255706,         12557,              0,            6,          0x00,              0,              0,              0,              0,          1255706, 'Grethok the Controller - Death'),
+(1255707,         12557,              0,           36,          0x01,          14515,             -1,              0,              0,          1255707, 'Grethok the Controller - Dominate Mind hit target');
 DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '12557%'; -- testing
 INSERT `creature_ai_scripts`
-(   `id`, `command`, `datalong`, `datalong2`, `target_type`, `dataint`, `dataint4`,      `x`,      `y`,     `z`,     `o`, `condition_id`, `comments`) VALUES
-(1255701,        15,      23018,           0,             6,         0,          0,        0,        0,       0,       0,            581, 'Grethok the Controller - Cast Use Dragon Orb'),
-(1255702,        15,      14515,           0,             4,         0,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Cast Spell Dominate Mind'),
-(1255702,         0,          1,           0,             0,      9960,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Say Text'),
-(1255703,        39,    1255701,           0,             0,       100,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Close Portcullis'),
-(1255703,        49,          1,           0,             0,         0,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Combat Pulse'),
-(1255703,         0,          1,           0,             0,      9958,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Yell'),
-(1255703,        37,          0,           4,             0,         0,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Set Instance Data (Encounter Special)'),
-(1255704,        10,      12434,         400,             0,         0,          3, -7643.39, -1064.69, 407.288, 1.71042,              0, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
-(1255704,        10,      12434,         400,             0,         0,          3, -7623.1 , -1094.06, 407.288, 1.44862,              0, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
-(1255704,        10,      12434,         400,             0,         0,          3, -7568.61, -1012.67, 407.288, 1.51844,              0, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
-(1255704,        10,      12434,         400,             0,         0,          3, -7548.46, -1041.98, 407.288, 2.02458,              0, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
-(1255705,        16,       8274,           0,             0,         0,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Play Sound 8274'),
-(1255706,        18,       4000,           0,             0,         0,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Despawn');
+(   `id`, `command`, `datalong`, `datalong2`, `target_param1`, `target_type`, `data_flags`, `dataint`, `dataint4`,      `x`,      `y`,     `z`,     `o`, `condition_id`, `comments`) VALUES
+(1255701,        15,      23018,           0,               0,             8,         0x00,         0,          0,        0,        0,       0,       0,            581, 'Grethok the Controller - Cast Use Dragon Orb'),
+(1255702,        15,      14515,           0,           0x020,             6,         0x10,         0,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Cast Spell Dominate Mind'),
+(1255703,        39,    1255701,           0,               0,             0,         0x00,       100,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Close Portcullis'),
+(1255703,        49,          1,           0,               0,             0,         0x00,         0,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Combat Pulse'),
+(1255703,         0,          1,           0,               0,             0,         0x00,      9958,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Yell'),
+(1255703,        37,          0,           4,               0,             0,         0x00,         0,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Set Instance Data (Encounter Special)'),
+(1255704,        10,      12434,         400,               0,             0,         0x00,         0,          3, -7643.39, -1064.69, 407.288, 1.71042,              0, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
+(1255704,        10,      12434,         400,               0,             0,         0x00,         0,          3, -7623.1 , -1094.06, 407.288, 1.44862,              0, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
+(1255704,        10,      12434,         400,               0,             0,         0x00,         0,          3, -7568.61, -1012.67, 407.288, 1.51844,              0, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
+(1255704,        10,      12434,         400,               0,             0,         0x00,         0,          3, -7548.46, -1041.98, 407.288, 2.02458,              0, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
+(1255705,        16,       8274,           0,               0,             0,         0x00,         0,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Play Sound 8274'),
+(1255706,        18,       4000,           0,               0,             0,         0x00,         0,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Despawn'),
+(1255707,         0,          1,           0,               0,             0,         0x00,      9960,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Say text');
 REPLACE `creature_spells`
 (`entry`, `name`,                   `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`,
                                     `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`,
                                     `spellId_3`, `probability_3`, `castTarget_3`, `delayInitialMin_3`, `delayInitialMax_3`, `delayRepeatMin_3`, `delayRepeatMax_3`) VALUES
-( 125570, 'Grethok the Controller',       13747,             100,              6,                   8,                  22,                 20,                 37,
+( 125570, 'Grethok the Controller',       13747,             100,              8,                   8,                  22,                 20,                 37,
                                           22272,             100,              4,                   0,                  16,                 10,                 18,
                                           22274,             100,              4,                   2,                  20,                  3,                 42);
-REPLACE `generic_scripts`
+DELETE FROM generic_scripts WHERE LENGTH(id) = 7 AND id LIKE '12557%'; -- testing
+INSERT `generic_scripts`
 (   `id`, `delay`, `command`, `datalong`, `target_param1`, `target_type`, `comments`) VALUES
-(1255701,       1,        80,          1,          234783,            12, 'Grethok the Controller - Close Portcullis');
+(1255701,       1,        80,          1,          234783,            14, 'Grethok the Controller - Close Portcullis');
 UPDATE `creature_template` SET `auras` = '18950' WHERE `entry` = 12557;
 -- spells
 -- Need to check spell targets against what's in the current list.
@@ -1210,7 +1223,7 @@ INSERT `creature_ai_scripts`
 DELETE FROM generic_scripts WHERE LENGTH(id) = 7 AND id LIKE '14459%'; -- testing
 INSERT `generic_scripts`
 (   `id`, `delay`, `command`, `datalong`, `target_param1`, `target_type`, `dataint`, `comments`) VALUES
-(1445901,       2,         0,          3,           84388,             9,      9592, 'Nefarian''s Troops - Emote');
+(1445901,       2,         0,          3,           84388,            11,      9592, 'Nefarian''s Troops - Emote');
 UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry` = 14459;
 
 -- Events list for Blackwing Spell Marker
@@ -1222,9 +1235,10 @@ REPLACE `generic_scripts`
 -- double check that creature's spawn/despawn behavior.
 
 -- Portcullis (Entry: 176964 Guid: 234783) Open Script
+DELETE FROM generic_scripts WHERE id = 176964;-- testing
 INSERT `generic_scripts`
 (  `id`, `command`, `datalong`, `target_param1`, `target_type`, `comments`) VALUES
-(176964,        80,          0,          234783,            12, 'Portcullis - Open');
+(176964,        80,          0,          234783,            14, 'Portcullis - Open');
 
 -- Portcullis (Entry: 176965 Guid: 234784) Open Script
 INSERT `generic_scripts`
@@ -1270,8 +1284,8 @@ INSERT `generic_scripts`
 (    `id`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `condition_id`, `comments`) VALUES
 (17780701,          0,        68,    1660401,           2,       14453,         100,               0,             0,         0x00,         0,          0,          0,            275, 'Black Dragon Egg - Nefarian''s Troops Flee (Orb of Domination)'),
 (17780701,          0,        68,    1660401,           2,       16604,         100,               0,             0,         0x00,         0,          0,          0,            275, 'Black Dragon Egg - Nefarian''s Troops Flee (Blackwing Spell Marker)'),
-(17780701,          0,         4,          9,  0x00000010,           1,           0,          234816,            12,         0x03,         0,          0,          0,            275, 'Black Dragon Egg - Set GAMEOBJECT_FLAGS to GO_FLAG_NO_INTERACT'),
-(17780701,          0,         0,          1,           0,           0,           0,           84388,             9,         0x02,      9961,       9962,       9963,            591, 'Black Dragon Egg - Yell (destroyed egg)'),
+(17780701,          0,         4,          9,  0x00000010,           1,           0,          234816,            14,         0x03,         0,          0,          0,            275, 'Black Dragon Egg - Set GAMEOBJECT_FLAGS to GO_FLAG_NO_INTERACT'),
+(17780701,          0,         0,          1,           0,           0,           0,           84388,            11,         0x02,      9961,       9962,       9963,            591, 'Black Dragon Egg - Yell (destroyed egg)'),
 (17780701,          0,        65,       8302,           2,           1,           0,               0,             0,         0x00,         0,          0,          0,            591, 'Black Dragon Egg - Set map event data 2 to 1'),
 (17780701,          0,        65,       8302,           2,           0,           0,               0,             0,         0x00,         0,          0,          0,            592, 'Black Dragon Egg - Set map event data 2 to 0'),
 (17780701,          1,        65,       8302,           1,           1,           0,               0,             0,         0x00,         0,          0,          0,            594, 'Black Dragon Egg - Set map event data 1 to 1'),
@@ -1366,6 +1380,967 @@ JOIN (
 JOIN gameobject portcullis ON portcullis_close.object_guid = portcullis.guid
 WHERE grethok.id = 12557 AND portcullis.id = 176964
 ORDER BY aggro_unixtimems;
+
+-- Grethok Dominate Mind target
+SET @encounter_creature_id = 12557;
+SET @target_spell_id = 14515;
+DROP TABLE IF EXISTS encounter;
+DROP TABLE IF EXISTS event_unit_enemy_distance;
+DROP TABLE IF EXISTS event_unit_faction_time;
+DROP TABLE IF EXISTS event_unit_health_time;
+DROP TABLE IF EXISTS event_unit_position;
+DROP TABLE IF EXISTS event_unit_last_point;
+DROP TABLE IF EXISTS unit_activity_time;
+DROP TABLE IF EXISTS unit_create_time;
+DROP TABLE IF EXISTS unit_death;
+DROP TABLE IF EXISTS unit_faction_update;
+DROP TABLE IF EXISTS unit_health_update;
+DROP TABLE IF EXISTS unit_point;
+DROP TABLE IF EXISTS event_unit_faction;
+DROP TABLE IF EXISTS unit_faction_update;
+DROP TABLE IF EXISTS unit_movement;
+DROP TABLE IF EXISTS event;
+DROP TABLE IF EXISTS unit;
+
+CREATE TABLE unit(
+  unit_type TINYINT UNSIGNED NOT NULL REFERENCES unit_type(unit_type_id),
+  guid INT(10) UNSIGNED NOT NULL,
+  faction INT(10) UNSIGNED NOT NULL,
+  PRIMARY KEY(unit_type, guid)
+);
+CREATE TABLE unit_activity_time(
+  unit_type TINYINT UNSIGNED NOT NULL,
+  guid INT(10) UNSIGNED NOT NULL,
+  unixtimems BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY(unit_type, guid, unixtimems),
+  FOREIGN KEY(unit_type, guid) REFERENCES unit(unit_type, guid)
+);
+CREATE TABLE unit_create_time(
+  unit_type TINYINT UNSIGNED NOT NULL,
+  guid INT(10) UNSIGNED NOT NULL,
+  unixtimems BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY(unit_type, guid),
+  FOREIGN KEY(unit_type, guid) REFERENCES unit(unit_type, guid)
+);
+CREATE TABLE unit_death(
+  unit_type TINYINT UNSIGNED NOT NULL,
+  guid INT(10) UNSIGNED NOT NULL,
+  unixtimems BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY(unit_type, guid, unixtimems),
+  FOREIGN KEY(unit_type, guid) REFERENCES unit(unit_type, guid)
+);
+CREATE TABLE unit_faction_update(
+  unit_type TINYINT UNSIGNED NOT NULL,
+  guid INT(10) UNSIGNED NOT NULL,
+  unixtimems BIGINT(20) UNSIGNED NOT NULL,
+  faction INT(10) UNSIGNED NOT NULL,
+  PRIMARY KEY(unit_type, guid, unixtimems),
+  FOREIGN KEY(unit_type, guid) REFERENCES unit(unit_type, guid)
+);
+CREATE TABLE unit_health_update(
+  unit_type TINYINT UNSIGNED NOT NULL,
+  guid INT(10) UNSIGNED NOT NULL,
+  unixtimems BIGINT(20) UNSIGNED NOT NULL,
+  current_health INT(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (unit_type, guid, unixtimems),
+  FOREIGN KEY(unit_type, guid) REFERENCES unit(unit_type, guid),
+  INDEX ix_unit_health_update_unixtimems(unixtimems)
+);
+CREATE TABLE unit_movement(
+  unit_type TINYINT UNSIGNED NOT NULL,
+  guid INT(10) UNSIGNED NOT NULL,
+  unixtimems BIGINT(20) UNSIGNED NOT NULL,
+  move_time INT(10) UNSIGNED NOT NULL,
+  movement_type TINYINT UNSIGNED NOT NULL,
+  spline_count SMALLINT(5) UNSIGNED NOT NULL,
+  position_x FLOAT NOT NULL,
+  position_y FLOAT NOT NULL,
+  position_z FLOAT NOT NULL,
+  PRIMARY KEY(unit_type, guid, unixtimems),
+  FOREIGN KEY(unit_type, guid) REFERENCES unit(unit_type, guid)
+);
+CREATE TABLE unit_point(
+  unit_type TINYINT UNSIGNED NOT NULL,
+  guid INT(10) UNSIGNED NOT NULL,
+  parent_unixtimems BIGINT(20) UNSIGNED NOT NULL,
+  unixtimems BIGINT(20) UNSIGNED NOT NULL,
+  spline_point SMALLINT(5) UNSIGNED NOT NULL,
+  position_x FLOAT NOT NULL,
+  position_y FLOAT NOT NULL,
+  position_z FLOAT NOT NULL,
+  PRIMARY KEY(unit_type, guid, parent_unixtimems, unixtimems),
+  FOREIGN KEY(unit_type, guid, parent_unixtimems) REFERENCES unit_movement(unit_type, guid, unixtimems)
+);
+CREATE TABLE encounter(
+  unit_type TINYINT UNSIGNED NOT NULL,
+  guid INT(10) UNSIGNED NOT NULL,
+  start_unixtimems BIGINT(20) UNSIGNED NOT NULL,
+  end_unixtimems BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY(unit_type, guid),
+  FOREIGN KEY(unit_type, guid) REFERENCES unit(unit_type, guid)
+);
+CREATE TABLE event(
+  unixtimems BIGINT(20) UNSIGNED NOT NULL PRIMARY KEY
+);
+CREATE TABLE event_unit_enemy_distance(
+  event_unixtimems BIGINT(20) UNSIGNED NOT NULL REFERENCES event(unixtimems),
+  unit_type TINYINT UNSIGNED NOT NULL,
+  guid INT(10) UNSIGNED NOT NULL,
+  enemy_unit_type TINYINT UNSIGNED NOT NULL,
+  enemy_guid INT(10) UNSIGNED NOT NULL,
+  distance FLOAT UNSIGNED NOT NULL,
+  PRIMARY KEY(event_unixtimems, unit_type, guid, enemy_unit_type, enemy_guid),
+  FOREIGN KEY(unit_type, guid) REFERENCES unit(unit_type, guid),
+  FOREIGN KEY(enemy_unit_type, enemy_guid) REFERENCES unit(unit_type, guid)
+);
+CREATE TABLE event_unit_faction_time(
+  event_unixtimems BIGINT(20) UNSIGNED NOT NULL REFERENCES event(unixtimems),
+  unit_type TINYINT UNSIGNED NOT NULL,
+  guid INT(10) UNSIGNED NOT NULL,
+  update_unixtimems BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY(event_unixtimems, unit_type, guid),
+  FOREIGN KEY(unit_type, guid, update_unixtimems) REFERENCES unit_faction_update(unit_type, guid, unixtimems)
+);
+CREATE TABLE event_unit_position(
+  event_unixtimems BIGINT(20) UNSIGNED NOT NULL REFERENCES event(unixtimems),
+  unit_type TINYINT UNSIGNED NOT NULL,
+  guid INT(10) UNSIGNED NOT NULL,
+  position_x FLOAT NOT NULL,
+  position_y FLOAT NOT NULL,
+  position_z FLOAT NOT NULL,
+  PRIMARY KEY(event_unixtimems, unit_type, guid),
+  FOREIGN KEY(unit_type, guid) REFERENCES unit(unit_type, guid),
+  INDEX event_unit_position_guid(unit_type, guid)
+);
+CREATE TABLE event_unit_faction(
+  event_unixtimems BIGINT(20) UNSIGNED NOT NULL REFERENCES event(unixtimems),
+  unit_type TINYINT UNSIGNED NOT NULL,
+  guid INT(10) UNSIGNED NOT NULL,
+  faction INT(10) UNSIGNED NOT NULL,
+  PRIMARY KEY(event_unixtimems, unit_type, guid),
+  FOREIGN KEY(unit_type, guid) REFERENCES unit(unit_type, guid)
+);
+CREATE TABLE event_unit_health_time(
+  event_unixtimems BIGINT(20) UNSIGNED NOT NULL REFERENCES event(unixtimems),
+  unit_type TINYINT UNSIGNED NOT NULL,
+  guid INT(10) UNSIGNED NOT NULL,
+  update_unixtimems BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY(event_unixtimems, unit_type, guid),
+  FOREIGN KEY(unit_type, guid, update_unixtimems) REFERENCES unit_health_update(unit_type, guid, unixtimems)
+);
+CREATE TABLE event_unit_last_point(
+  event_unixtimems BIGINT(20) UNSIGNED NOT NULL REFERENCES event(unixtimems),
+  unit_type TINYINT UNSIGNED NOT NULL,
+  guid INT(10) UNSIGNED NOT NULL,
+  movement_unixtimems BIGINT(20) UNSIGNED NOT NULL,
+  point_unixtimems BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY(event_unixtimems, unit_type, guid),
+  FOREIGN KEY(unit_type, guid, movement_unixtimems, point_unixtimems)
+    REFERENCES unit_point(unit_type, guid, parent_unixtimems, unixtimems)
+);
+
+INSERT event SELECT unixtimems FROM spell_cast_start WHERE spell_id = @target_spell_id;
+
+
+
+
+INSERT unit SELECT * FROM (
+  SELECT 1 unit_type, guid, faction FROM creature
+  UNION ALL
+  SELECT 2 unit_type, guid, faction FROM player
+) unit;
+INSERT unit_create_time
+WITH
+creature_create_time AS (
+  SELECT guid, unixtimems FROM creature_create1_time UNION ALL SELECT guid, unixtimems FROM creature_create2_time
+),
+player_create_time AS (
+  SELECT guid, unixtimems FROM player_create1_time UNION ALL SELECT guid, unixtimems FROM player_create2_time
+)
+SELECT * FROM (
+  SELECT 1 unit_type, creature_create_time.guid, creature_create_time.unixtimems
+  FROM creature_create_time
+  JOIN (SELECT guid, MIN(unixtimems) unixtimems FROM creature_create_time GROUP BY guid) min_time
+    ON creature_create_time.guid = min_time.guid AND creature_create_time.unixtimems = min_time.unixtimems
+  UNION ALL
+  SELECT 2 unit_type, player_create_time.guid, player_create_time.unixtimems
+  FROM player_create_time
+  JOIN (SELECT guid, MIN(unixtimems) unixtimems FROM player_create_time GROUP BY guid) min_time
+    ON player_create_time.guid = min_time.guid AND player_create_time.unixtimems = min_time.unixtimems
+) unit_create_time;
+INSERT unit_activity_time
+SELECT * FROM (
+  -- Target change
+  SELECT 1 unit_type, guid, unixtimems FROM creature_guid_values_update
+  UNION
+  -- Spawn
+  SELECT unit_type, guid, unixtimems FROM unit_create_time
+  UNION
+  -- Creature spell cast
+  SELECT 1, spell_cast_go.caster_unit_guid, spell_cast_go.unixtimems
+  FROM spell_cast_go
+  JOIN creature ON spell_cast_go.caster_unit_id = creature.id AND spell_cast_go.caster_unit_guid = creature.guid
+  UNION
+  -- Player spell cast
+  SELECT 2, spell_cast_go.caster_unit_guid, spell_cast_go.unixtimems
+  FROM spell_cast_go
+  JOIN player ON spell_cast_go.caster_unit_guid = player.guid
+  WHERE spell_cast_go.caster_unit_id = 0
+) unit_activity_time;
+INSERT unit_death SELECT 1 unit_type, guid, unixtimems FROM creature_values_update WHERE current_health = 0;
+INSERT unit_faction_update SELECT * FROM (
+  SELECT 1 unit_type, guid, unixtimems, faction FROM creature_values_update
+  UNION ALL
+  SELECT 2 unit_type, guid, unixtimems, faction FROM player_values_update
+) unit_faction_update WHERE faction IS NOT NULL;
+INSERT encounter
+SELECT
+  1 unit_type,
+  creature.guid,
+  first_guid_value_update.unixtimems start_unixtimems,
+  last_event.unixtimems end_unixtimems
+FROM creature
+  JOIN (SELECT guid, MIN(unixtimems) unixtimems FROM creature_guid_values_update GROUP BY guid) first_guid_value_update
+    ON creature.guid = first_guid_value_update.guid
+  JOIN (
+    SELECT guid, MAX(unixtimems) unixtimems
+    FROM (
+      SELECT guid, unixtimems FROM creature_values_update
+      UNION
+      SELECT caster_guid, unixtimems FROM spell_cast_go
+    ) event
+    GROUP BY guid
+  ) last_event
+    ON creature.guid = last_event.guid
+WHERE creature.id = @encounter_creature_id;
+INSERT unit_health_update
+WITH unit_health_update AS (
+  -- Starting health
+  SELECT
+    1 unit_type,
+    creature.guid,
+    creature_create1_time.unixtimems,
+    creature.current_health,
+    1 source
+  FROM creature JOIN creature_create1_time ON creature.guid = creature_create1_time.guid
+  UNION ALL
+  SELECT
+    1 unit_type,
+    guid,
+    unixtimems,
+    AVG(current_health) current_health, -- AVG in case of ambiguous simultaneous updates
+    2 source
+  FROM creature_values_update
+  GROUP BY unit_type, guid, unixtimems, source
+  UNION ALL
+  SELECT
+    2 unit_type,
+    guid,
+    unixtimems,
+    AVG(current_health) current_health,
+    2 source
+  FROM player_values_update
+  GROUP BY unit_type, guid, unixtimems, source
+)
+SELECT
+  unit_health_update.unit_type,
+  unit_health_update.guid,
+  unit_health_update.unixtimems,
+  unit_health_update.current_health
+FROM unit_health_update
+JOIN (
+  SELECT unit_type, guid, unixtimems, MAX(source) source
+  FROM unit_health_update
+  GROUP BY unit_type, guid, unixtimems
+) unit_health_update_best_source
+  ON unit_health_update.unit_type = unit_health_update_best_source.unit_type
+  AND unit_health_update.guid = unit_health_update_best_source.guid
+  AND unit_health_update.unixtimems = unit_health_update_best_source.unixtimems
+  AND unit_health_update.source = unit_health_update_best_source.source
+WHERE unit_health_update.current_health IS NOT NULL;
+INSERT unit_movement
+WITH unit_movement AS (
+  -- Charmed creature
+  SELECT
+    1 unit_type,
+    guid,
+    unixtimems,
+    0 move_time,
+    1 movement_type,
+    0 `point`,
+    0 spline_count,
+    AVG(position_x) position_x,
+    AVG(position_y) position_y,
+    AVG(position_z) position_z
+  FROM creature_movement_client
+  GROUP BY guid, unixtimems
+  UNION ALL
+  SELECT
+    1 unit_type,
+    guid,
+    unixtimems,
+    move_time,
+    2 movement_type,
+    `point`,
+    spline_count,
+    start_position_x,
+    start_position_y,
+    start_position_z
+  FROM creature_movement_server
+  UNION ALL
+  -- Creature in combat
+  SELECT
+    1 unit_type,
+    guid,
+    unixtimems,
+    move_time,
+    3 movement_type,
+    `point`,
+    spline_count,
+    start_position_x,
+    start_position_y,
+    start_position_z
+  FROM creature_movement_server_combat
+  UNION ALL
+  -- Player client
+  SELECT
+    2 unit_type,
+    guid,
+    unixtimems,
+    0 move_time,
+    1 movement_type,
+    0 `point`,
+    0 spline_count,
+    AVG(position_x) position_x,
+    AVG(position_y) position_y,
+    AVG(position_z) position_z
+  FROM player_movement_client
+  GROUP BY guid, unixtimems
+  UNION ALL
+  -- Player server
+  SELECT
+    2 unit_type,
+    guid,
+    unixtimems,
+    move_time,
+    2 movement_type,
+    `point`,
+    spline_count,
+    start_position_x position_x,
+    start_position_y position_y,
+    start_position_z position_z
+  FROM player_movement_server
+)
+SELECT
+  unit_movement.unit_type,
+  unit_movement.guid,
+  unit_movement.unixtimems,
+  unit_movement.move_time,
+  unit_movement.movement_type,
+  unit_movement.spline_count,
+  unit_movement.position_x,
+  unit_movement.position_y,
+  unit_movement.position_z
+FROM unit_movement
+JOIN (
+  SELECT unit_type, guid, unixtimems, MAX(movement_type) movement_type
+  FROM unit_movement
+  GROUP BY unit_type, guid, unixtimems
+) unit_movement_type
+  ON unit_movement.unit_type = unit_movement_type.unit_type
+  AND unit_movement.guid = unit_movement_type.guid
+  AND unit_movement.unixtimems = unit_movement_type.unixtimems
+  AND unit_movement.movement_type = unit_movement_type.movement_type
+JOIN (
+  SELECT unit_type, guid, unixtimems, movement_type, MAX(`point`) `point`
+  FROM unit_movement
+  GROUP BY unit_type, guid, unixtimems, movement_type
+) unit_movement_point
+  ON unit_movement.unit_type = unit_movement_point.unit_type
+  AND unit_movement.guid = unit_movement_point.guid
+  AND unit_movement.unixtimems = unit_movement_point.unixtimems
+  AND unit_movement.movement_type = unit_movement_point.movement_type
+  AND unit_movement.`point` = unit_movement_point.`point`
+-- store only the movements within an encounter and the latest one within 90 seconds before an encounter
+WHERE
+  unit_movement.unixtimems IN (
+    SELECT unixtimems
+    FROM unit_movement JOIN encounter
+    WHERE unixtimems BETWEEN encounter.start_unixtimems AND encounter.end_unixtimems
+  )
+  OR unit_movement.unixtimems IN (
+    SELECT MAX(movement.unixtimems)
+    FROM unit_movement movement JOIN encounter
+    WHERE movement.unixtimems > (encounter.start_unixtimems - 90000)
+      AND movement.unixtimems < encounter.start_unixtimems
+    GROUP BY movement.unit_type, movement.guid, encounter.start_unixtimems
+  );
+INSERT unit_point
+WITH unit_point AS (
+  -- Creature start point out of combat
+  SELECT
+    1 unit_type,
+    guid,
+    unixtimems parent_unixtimems,
+    0 spline_point,
+    2 movement_type,
+    `point`,
+    start_position_x position_x,
+    start_position_y position_y,
+    start_position_z position_z
+  FROM creature_movement_server
+  UNION ALL
+  -- Creature start point in combat
+  SELECT
+    1 unit_type,
+    guid,
+    unixtimems parent_unixtimems,
+    0 spline_point,
+    3 movement_type,
+    `point`,
+    start_position_x position_x,
+    start_position_y position_y,
+    start_position_z position_z
+  FROM creature_movement_server_combat
+  UNION ALL
+  -- Creature single-point spline end point out of combat
+  SELECT
+    1 unit_type,
+    guid,
+    unixtimems parent_unixtimems,
+    1 spline_point,
+    2 movement_type,
+    `point`,
+    end_position_x position_x,
+    end_position_y position_y,
+    end_position_z position_z
+  FROM creature_movement_server
+  WHERE spline_count = 1
+  UNION ALL
+  -- Creature single-point spline end point in combat
+  SELECT
+    1 unit_type,
+    guid,
+    unixtimems parent_unixtimems,
+    1 spline_point,
+    3 movement_type,
+    `point`,
+    end_position_x position_x,
+    end_position_y position_y,
+    end_position_z position_z
+  FROM creature_movement_server_combat
+  WHERE spline_count = 1
+  UNION ALL
+  -- Creature multi-point spline point out of combat
+  SELECT
+    1 unit_type,
+    creature_movement_server.guid,
+    creature_movement_server.unixtimems parent_unixtimems,
+    spline_point,
+    2 movement_type,
+    `point`,
+    position_x,
+    position_y,
+    position_z
+  FROM creature_movement_server_spline
+  JOIN creature_movement_server
+    ON creature_movement_server_spline.guid = creature_movement_server.guid
+    AND creature_movement_server_spline.parent_point = creature_movement_server.`point`
+  UNION ALL
+  -- Creature multi-point spline point in combat
+  SELECT
+    1 unit_type,
+    creature_movement_server_combat.guid,
+    creature_movement_server_combat.unixtimems parent_unixtimems,
+    spline_point,
+    3 movement_type,
+    `point`,
+    position_x,
+    position_y,
+    position_z
+  FROM creature_movement_server_combat_spline
+  JOIN creature_movement_server_combat
+    ON creature_movement_server_combat_spline.guid = creature_movement_server_combat.guid
+    AND creature_movement_server_combat_spline.parent_point = creature_movement_server_combat.`point`
+  UNION ALL
+  -- Charmed creature
+  SELECT
+    1 unit_type,
+    guid,
+    unixtimems parent_unixtimems,
+    0 spline_point,
+    1 movement_type,
+    0 `point`,
+    position_x,
+    position_y,
+    position_z
+  FROM creature_movement_client
+  UNION ALL
+  -- Player client
+  SELECT
+    2 unit_type,
+    guid,
+    unixtimems parent_unixtimems,
+    0 spline_point,
+    1 movement_type,
+    0 `point`,
+    position_x,
+    position_y,
+    position_z
+  FROM player_movement_client
+  UNION ALL
+  -- Player start point (only point for non-spline)
+  SELECT
+    2 unit_type,
+    guid,
+    unixtimems parent_unixtimems,
+    0 spline_point,
+    2 movement_type,
+    `point`,
+    start_position_x position_x,
+    start_position_y position_y,
+    start_position_z position_z
+  FROM player_movement_server
+  UNION ALL
+  -- Player end point of single-point spline
+  SELECT
+    2 unit_type,
+    guid,
+    unixtimems parent_unixtimems,
+    1 spline_point,
+    2 movement_type,
+    `point`,
+    end_position_x position_x,
+    end_position_y position_y,
+    end_position_z position_z
+  FROM player_movement_server
+  WHERE spline_count = 1
+  UNION ALL
+  -- Player multi-point spline point
+  SELECT
+    2 unit_type,
+    player_movement_server.guid,
+    player_movement_server.unixtimems parent_unixtimems,
+    spline_point,
+    2 movement_type,
+    `point`,
+    position_x,
+    position_y,
+    position_z
+  FROM player_movement_server_spline
+  JOIN player_movement_server
+    ON player_movement_server_spline.guid = player_movement_server.guid
+    AND player_movement_server_spline.parent_point = player_movement_server.`point`
+),
+unit_point_distance_from_previous AS (
+  SELECT
+    unit_point.unit_type,
+    unit_point.guid,
+    unit_point.parent_unixtimems,
+    unit_point.spline_point,
+    unit_point.movement_type,
+    CASE WHEN previous_point.unit_type IS NULL THEN 0 ELSE SQRT(
+      POW(unit_point.position_x - previous_point.position_x, 2)
+      + POW(unit_point.position_y - previous_point.position_y, 2)
+      + POW(unit_point.position_z - previous_point.position_z, 2)
+    ) END distance
+  FROM unit_point
+  LEFT JOIN unit_point previous_point
+    ON unit_point.unit_type = previous_point.unit_type
+    AND unit_point.guid = previous_point.guid
+    AND unit_point.parent_unixtimems = previous_point.parent_unixtimems
+    AND (unit_point.spline_point - 1) = previous_point.spline_point
+    AND unit_point.movement_type = previous_point.movement_type
+),
+unit_movement_speed AS (
+  SELECT
+    unit_movement.unit_type,
+    unit_movement.guid,
+    unit_movement.unixtimems,
+    unit_movement.movement_type,
+    SUM(unit_point_distance_from_previous.distance) / unit_movement.move_time speed
+  FROM unit_movement
+  JOIN unit_point_distance_from_previous
+    ON unit_movement.unit_type = unit_point_distance_from_previous.unit_type
+    AND unit_movement.guid = unit_point_distance_from_previous.guid
+    AND unit_movement.unixtimems = unit_point_distance_from_previous.parent_unixtimems
+    AND unit_movement.movement_type = unit_point_distance_from_previous.movement_type
+  WHERE unit_movement.move_time > 0 
+  GROUP BY
+    unit_movement.unit_type,
+    unit_movement.guid,
+    unit_movement.unixtimems,
+    unit_movement.movement_type,
+    unit_movement.move_time
+),
+unit_point_distance_from_movement AS (
+  SELECT
+    unit_point.unit_type,
+    unit_point.guid,
+    unit_point.parent_unixtimems,
+    unit_point.spline_point,
+    unit_point.movement_type,
+    SUM(unit_point_distance_from_previous.distance) distance
+  FROM unit_point
+  JOIN unit_point_distance_from_previous
+    ON unit_point.unit_type = unit_point_distance_from_previous.unit_type
+    AND unit_point.guid = unit_point_distance_from_previous.guid
+    AND unit_point.parent_unixtimems = unit_point_distance_from_previous.parent_unixtimems
+    AND unit_point.movement_type = unit_point_distance_from_previous.movement_type
+  WHERE unit_point.spline_point >= unit_point_distance_from_previous.spline_point
+  GROUP BY
+    unit_point.unit_type,
+    unit_point.guid,
+    unit_point.parent_unixtimems,
+    unit_point.spline_point,
+    unit_point.movement_type
+)
+SELECT
+  unit_movement.unit_type,
+  unit_movement.guid,
+  unit_movement.unixtimems parent_unixtimems,
+  unit_movement.unixtimems
+    + CASE WHEN unit_movement_speed.unit_type IS NULL THEN 0 ELSE
+      ROUND(unit_point_distance_from_movement.distance / unit_movement_speed.speed)
+    END
+    + ROW_NUMBER() OVER( -- offset consecutive points rounding to same time
+      PARTITION BY
+        unit_movement.unit_type,
+        unit_movement.guid,
+        unit_movement.unixtimems,
+        CASE WHEN unit_movement_speed.unit_type IS NULL THEN 0 ELSE
+          ROUND(unit_point_distance_from_movement.distance / unit_movement_speed.speed)
+        END
+      ORDER BY unit_point.spline_point
+    ) - 1 point_unixtimems,
+  unit_point.spline_point,
+  unit_point.position_x,
+  unit_point.position_y,
+  unit_point.position_z
+FROM unit_movement
+JOIN unit_point
+  ON unit_movement.unit_type = unit_point.unit_type
+  AND unit_movement.guid = unit_point.guid
+  AND unit_movement.movement_type = unit_point.movement_type
+  AND unit_movement.unixtimems = unit_point.parent_unixtimems
+JOIN (
+  SELECT unit_type, guid, parent_unixtimems, movement_type, MAX(`point`) `point`
+  FROM unit_point
+  GROUP BY unit_type, guid, parent_unixtimems, movement_type
+) unit_point_max_point
+  ON unit_movement.unit_type = unit_point_max_point.unit_type
+  AND unit_movement.guid = unit_point_max_point.guid
+  AND unit_movement.unixtimems = unit_point_max_point.parent_unixtimems
+  AND unit_movement.movement_type = unit_point_max_point.movement_type
+  AND unit_point.`point` = unit_point_max_point.`point`
+LEFT JOIN unit_movement_speed
+  ON unit_movement.unit_type = unit_movement_speed.unit_type
+  AND unit_movement.guid = unit_movement_speed.guid
+  AND unit_movement.unixtimems = unit_movement_speed.unixtimems
+  AND unit_movement.movement_type = unit_movement_speed.movement_type
+LEFT JOIN unit_point_distance_from_movement
+  ON unit_movement.unit_type = unit_point_distance_from_movement.unit_type
+  AND unit_movement.guid = unit_point_distance_from_movement.guid
+  AND unit_movement.unixtimems = unit_point_distance_from_movement.parent_unixtimems
+  AND unit_point.spline_point = unit_point_distance_from_movement.spline_point
+  AND unit_movement.movement_type = unit_point_distance_from_movement.movement_type;
+INSERT event_unit_faction_time
+SELECT
+  event.unixtimems event_unixtimems,
+  unit_faction_update.unit_type,
+  unit_faction_update.guid,
+  MAX(unit_faction_update.unixtimems) update_unixtimems
+FROM event
+JOIN unit_faction_update
+WHERE unit_faction_update.unixtimems < event.unixtimems
+GROUP BY event.unixtimems, unit_faction_update.unit_type, unit_faction_update.guid;
+INSERT event_unit_faction
+SELECT DISTINCT
+  event.unixtimems event_unixtimems,
+  unit.unit_type,
+  unit.guid,
+  COALESCE(unit_faction_update.faction, unit.faction) faction
+FROM event
+JOIN unit
+JOIN unit_activity_time ON unit.unit_type = unit_activity_time.unit_type AND unit.guid = unit_activity_time.guid
+LEFT JOIN event_unit_faction_time
+  ON event.unixtimems = event_unit_faction_time.event_unixtimems
+  AND unit.unit_type = event_unit_faction_time.unit_type
+  AND unit.guid = event_unit_faction_time.guid
+LEFT JOIN unit_faction_update
+  ON unit.unit_type = unit_faction_update.unit_type
+  AND unit.guid = unit_faction_update.guid
+  AND event_unit_faction_time.update_unixtimems = unit_faction_update.unixtimems
+WHERE unit_activity_time.unixtimems BETWEEN (event.unixtimems - 300000) AND event.unixtimems;
+INSERT event_unit_health_time
+SELECT
+  event.unixtimems event_unixtimems,
+  unit_health_update.unit_type,
+  unit_health_update.guid,
+  MAX(unit_health_update.unixtimems) update_unixtimems
+FROM event
+JOIN unit_health_update
+WHERE unit_health_update.unixtimems BETWEEN (event.unixtimems - 300000) AND event.unixtimems
+GROUP BY
+  event.unixtimems,
+  unit_health_update.unit_type,
+  unit_health_update.guid;
+INSERT event_unit_last_point
+SELECT
+  event.unixtimems event_unixtimems,
+  event_unit_last_movement.unit_type,
+  event_unit_last_movement.guid,
+  event_unit_last_movement.movement_unixtimems,
+  MAX(unit_point.unixtimems) point_unixtimems
+FROM event
+JOIN (
+  SELECT
+    event.unixtimems event_unixtimems,
+    unit_movement.unit_type,
+    unit_movement.guid,
+    MAX(unit_movement.unixtimems) movement_unixtimems
+  FROM event JOIN unit_movement
+  WHERE event.unixtimems >= unit_movement.unixtimems
+  GROUP BY event.unixtimems, unit_movement.unit_type, unit_movement.guid
+) event_unit_last_movement ON event.unixtimems = event_unit_last_movement.event_unixtimems
+JOIN unit_point
+  ON event_unit_last_movement.unit_type = unit_point.unit_type
+  AND event_unit_last_movement.guid = unit_point.guid
+  AND event_unit_last_movement.movement_unixtimems = unit_point.parent_unixtimems
+WHERE unit_point.unixtimems <= event.unixtimems
+GROUP BY
+  event.unixtimems,
+  event_unit_last_movement.unit_type,
+  event_unit_last_movement.guid,
+  event_unit_last_movement.movement_unixtimems;
+INSERT event_unit_position
+SELECT
+  event_unit_last_point.event_unixtimems,
+  1 unit_type,
+  creature.guid,
+  last_point.position_x + CASE WHEN next_point.unixtimems IS NULL THEN 0 ELSE
+    (next_point.position_x - last_point.position_x) * (
+      (event_unit_last_point.event_unixtimems - last_point.unixtimems)
+      / (next_point.unixtimems - last_point.unixtimems)
+    )
+  END position_x,
+  last_point.position_y + CASE WHEN next_point.unixtimems IS NULL THEN 0 ELSE
+    (next_point.position_y - last_point.position_y) * (
+      (event_unit_last_point.event_unixtimems - last_point.unixtimems)
+      / (next_point.unixtimems - last_point.unixtimems)
+    )
+  END position_y,
+  last_point.position_z + CASE WHEN next_point.unixtimems IS NULL THEN 0 ELSE
+    (next_point.position_z - last_point.position_z) * (
+      (event_unit_last_point.event_unixtimems - last_point.unixtimems)
+      / (next_point.unixtimems - last_point.unixtimems)
+    )
+  END position_z
+FROM creature
+JOIN event_unit_last_point ON creature.guid = event_unit_last_point.guid
+JOIN unit_point last_point
+  ON event_unit_last_point.unit_type = last_point.unit_type
+  AND event_unit_last_point.guid = last_point.guid
+  AND event_unit_last_point.movement_unixtimems = last_point.parent_unixtimems
+  AND event_unit_last_point.point_unixtimems = last_point.unixtimems
+LEFT JOIN unit_point next_point
+  ON event_unit_last_point.unit_type = next_point.unit_type
+  AND event_unit_last_point.guid = next_point.guid
+  AND last_point.parent_unixtimems = next_point.parent_unixtimems
+  AND (last_point.spline_point + 1) = next_point.spline_point
+WHERE creature.id = @encounter_creature_id AND event_unit_last_point.unit_type = 1;
+INSERT event_unit_enemy_distance
+SELECT
+  event_unit_position.event_unixtimems,
+  event_unit_position.unit_type,
+  event_unit_position.guid,
+  enemy_last_point_time.unit_type enemy_unit_type,
+  enemy_last_point_time.guid enemy_guid,
+  SQRT(
+    POW(event_unit_position.position_x - (
+      enemy_last_point.position_x + CASE WHEN enemy_next_point.unixtimems IS NULL THEN 0 ELSE
+        (enemy_next_point.position_x - enemy_last_point.position_x) * (
+          (event_unit_position.event_unixtimems - enemy_last_point.unixtimems)
+          / (enemy_next_point.unixtimems - enemy_last_point.unixtimems)
+        )
+      END
+    ), 2)
+    + POW(event_unit_position.position_y - (
+      enemy_last_point.position_y + CASE WHEN enemy_next_point.unixtimems IS NULL THEN 0 ELSE
+        (enemy_next_point.position_y - enemy_last_point.position_y) * (
+          (event_unit_position.event_unixtimems - enemy_last_point.unixtimems)
+          / (enemy_next_point.unixtimems - enemy_last_point.unixtimems)
+        )
+      END
+    ), 2)
+  ) distance
+FROM event_unit_position
+JOIN event_unit_faction
+  ON event_unit_position.unit_type = event_unit_faction.unit_type
+  AND event_unit_position.guid = event_unit_faction.guid
+  AND event_unit_position.event_unixtimems = event_unit_faction.event_unixtimems
+JOIN faction_template unit_faction
+  ON event_unit_faction.faction = unit_faction.id
+JOIN event_unit_last_point enemy_last_point_time
+  ON event_unit_position.event_unixtimems = enemy_last_point_time.event_unixtimems
+JOIN unit_point enemy_last_point
+  ON enemy_last_point_time.unit_type = enemy_last_point.unit_type
+  AND enemy_last_point_time.guid = enemy_last_point.guid
+  AND enemy_last_point_time.movement_unixtimems = enemy_last_point.parent_unixtimems
+  AND enemy_last_point_time.point_unixtimems = enemy_last_point.unixtimems
+JOIN event_unit_faction enemy_faction_update
+  ON event_unit_position.event_unixtimems = enemy_faction_update.event_unixtimems
+  AND enemy_last_point_time.unit_type = enemy_faction_update.unit_type
+  AND enemy_last_point_time.guid = enemy_faction_update.guid
+LEFT JOIN event_unit_health_time enemy_health_time
+  ON event_unit_position.event_unixtimems = enemy_health_time.event_unixtimems
+  AND enemy_last_point_time.unit_type = enemy_health_time.unit_type
+  AND enemy_last_point_time.guid = enemy_health_time.guid
+LEFT JOIN unit_health_update enemy_health
+  ON enemy_last_point_time.unit_type = enemy_health.unit_type
+  AND enemy_last_point_time.guid = enemy_health.guid
+  AND enemy_health_time.update_unixtimems = enemy_health.unixtimems
+LEFT JOIN unit_point enemy_next_point
+  ON enemy_last_point_time.unit_type = enemy_next_point.unit_type
+  AND enemy_last_point_time.guid = enemy_next_point.guid
+  AND enemy_last_point.parent_unixtimems = enemy_next_point.parent_unixtimems
+  AND (enemy_last_point.spline_point + 1) = enemy_next_point.spline_point
+JOIN faction_template enemy_faction
+  ON enemy_faction_update.faction = enemy_faction.id
+WHERE
+  unit_faction.hostile_mask & 0x1 -- target unit was hostile to players on event
+  AND (
+    enemy_faction.faction_id IN (
+      unit_faction.enemy_faction1,
+      unit_faction.enemy_faction2,
+      unit_faction.enemy_faction3,
+      unit_faction.enemy_faction4
+    )
+    OR enemy_faction.our_mask & unit_faction.hostile_mask
+  )
+  AND (enemy_health.unit_type IS NULL OR enemy_health.current_health > 1);
+
+-- SELECT * FROM event_unit_enemy_distance ORDER BY event_unixtimems, distance;
+
+
+SELECT
+  spell_cast_start.unixtimems,
+  spell_cast_start.caster_guid,
+  spell_cast_start.target_guid spell_target,
+  creature_guid_values_update.object_guid existing_target,
+  creature_guid_values_update.object_type existing_target_type,
+  target_time.update_unixtimems existing_target_unixtimems,
+  next_target.object_guid next_target,
+  next_target_time.update_unixtimems next_target_time,
+  spell_threat_update.unixtimems threat_unixtimems,
+  spell_max_threat_target.target_guid max_threat_target_guid,
+  spell_max_threat_target.target_type max_threat_target_type,
+  spell_min_threat_target.target_guid min_threat_target_guid,
+  spell_min_threat_target.target_type min_threat_target_type,
+  spell_threat_update.target_list_id threat_target_list_id,
+  closest_enemy.enemy_unit_type closest_enemy_unit_type,
+  closest_enemy.enemy_guid closest_enemy_guid,
+  furthest_enemy.enemy_unit_type furthest_enemy_unit_type,
+  furthest_enemy.enemy_guid furthest_enemy_guid
+FROM spell_cast_start
+JOIN (
+  SELECT
+    spell_cast_start.unixtimems spell_unixtimems,
+    spell_cast_start.caster_guid,
+    creature_guid_values_update.field_name,
+    MAX(creature_guid_values_update.unixtimems) update_unixtimems
+  FROM spell_cast_start
+  JOIN creature_guid_values_update
+    ON spell_cast_start.caster_guid = creature_guid_values_update.guid
+    AND spell_cast_start.unixtimems > creature_guid_values_update.unixtimems
+  WHERE spell_cast_start.caster_type = 'Creature'
+  GROUP BY spell_cast_start.unixtimems, spell_cast_start.caster_guid, creature_guid_values_update.field_name
+) target_time
+  ON spell_cast_start.caster_guid = target_time.caster_guid
+  AND spell_cast_start.unixtimems = target_time.spell_unixtimems
+JOIN creature_guid_values_update
+  ON spell_cast_start.caster_guid = creature_guid_values_update.guid
+  AND target_time.field_name = creature_guid_values_update.field_name
+  AND target_time.update_unixtimems = creature_guid_values_update.unixtimems
+JOIN (
+  SELECT
+    spell_cast_start.unixtimems spell_unixtimems,
+    spell_cast_start.caster_guid,
+    creature_guid_values_update.field_name,
+    MIN(creature_guid_values_update.unixtimems) update_unixtimems
+  FROM spell_cast_start
+  JOIN creature_guid_values_update
+    ON spell_cast_start.caster_guid = creature_guid_values_update.guid
+    AND spell_cast_start.unixtimems < creature_guid_values_update.unixtimems
+  WHERE creature_guid_values_update.unixtimems > spell_cast_start.unixtimems + 31 -- allow for small delay in target update
+    AND spell_cast_start.caster_type = 'Creature'
+  GROUP BY spell_cast_start.unixtimems, spell_cast_start.caster_guid, creature_guid_values_update.field_name
+) next_target_time
+  ON spell_cast_start.caster_guid = next_target_time.caster_guid
+  AND spell_cast_start.unixtimems = next_target_time.spell_unixtimems
+JOIN creature_guid_values_update next_target
+  ON spell_cast_start.caster_guid = next_target.guid
+  AND next_target_time.field_name = next_target.field_name
+  AND next_target_time.update_unixtimems = next_target.unixtimems
+JOIN (
+  SELECT event_unixtimems, guid, MIN(distance) distance
+  FROM event_unit_enemy_distance
+  GROUP BY event_unixtimems, guid
+) closest_enemy_distance
+  ON spell_cast_start.unixtimems = closest_enemy_distance.event_unixtimems
+  AND spell_cast_start.caster_guid = closest_enemy_distance.guid
+JOIN event_unit_enemy_distance closest_enemy
+  ON spell_cast_start.unixtimems = closest_enemy.event_unixtimems
+  AND spell_cast_start.caster_guid = closest_enemy.guid
+  AND closest_enemy_distance.distance = closest_enemy.distance
+JOIN (
+  SELECT event_unixtimems, guid, MAX(distance) distance
+  FROM event_unit_enemy_distance
+  GROUP BY event_unixtimems, guid
+) furthest_enemy_distance
+  ON spell_cast_start.unixtimems = furthest_enemy_distance.event_unixtimems
+  AND spell_cast_start.caster_guid = furthest_enemy_distance.guid
+JOIN event_unit_enemy_distance furthest_enemy
+  ON spell_cast_start.unixtimems = furthest_enemy.event_unixtimems
+  AND spell_cast_start.caster_guid = furthest_enemy.guid
+  AND furthest_enemy_distance.distance = furthest_enemy.distance
+LEFT JOIN (
+  SELECT
+    spell_cast_start.unixtimems spell_unixtimems,
+    creature_threat_update.guid,
+    MAX(creature_threat_update.unixtimems) threat_unixtimems
+  FROM spell_cast_start
+  JOIN creature_threat_update ON spell_cast_start.unixtimems >= creature_threat_update.unixtimems
+  GROUP BY spell_cast_start.unixtimems, creature_threat_update.guid
+) spell_threat_update_time
+  ON spell_cast_start.unixtimems = spell_threat_update_time.spell_unixtimems
+  AND spell_cast_start.caster_guid = spell_threat_update_time.guid
+LEFT JOIN creature_threat_update spell_threat_update
+  ON spell_cast_start.caster_guid = spell_threat_update.guid
+  AND spell_threat_update_time.threat_unixtimems = spell_threat_update.unixtimems
+LEFT JOIN (
+  SELECT list_id, MAX(threat) threat
+  FROM creature_threat_update_target
+  GROUP BY list_id
+) creature_threat_update_max_threat
+  ON spell_threat_update.target_list_id = creature_threat_update_max_threat.list_id
+LEFT JOIN creature_threat_update_target spell_max_threat_target
+  ON spell_threat_update.target_list_id = spell_max_threat_target.list_id
+  AND creature_threat_update_max_threat.threat = spell_max_threat_target.threat
+LEFT JOIN (
+  SELECT list_id, MIN(threat) threat
+  FROM creature_threat_update_target
+  GROUP BY list_id
+) creature_threat_update_min_threat
+  ON spell_threat_update.target_list_id = creature_threat_update_min_threat.list_id
+LEFT JOIN creature_threat_update_target spell_min_threat_target
+  ON spell_threat_update.target_list_id = spell_min_threat_target.list_id
+  AND creature_threat_update_min_threat.threat = spell_min_threat_target.threat
+WHERE next_target_time.field_name = 'Target'
+  AND spell_cast_start.caster_id = 12557
+  AND spell_cast_start.spell_id = 14515
+  AND target_time.field_name = 'Target'
+ORDER BY unixtimems;
 
 -- Creature spawn delays from Possess and previous spawn.
 WITH
