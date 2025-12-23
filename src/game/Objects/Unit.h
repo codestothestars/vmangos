@@ -1006,6 +1006,7 @@ class Unit : public SpellCaster
                     return true;
             }
         }
+        virtual bool CanBeDisarmed() const = 0;
 
         void AttackerStateUpdate(Unit* pVictim, WeaponAttackType attType = BASE_ATTACK, bool extra = false);
         void SendAttackStateUpdate(CalcDamageInfo const* damageInfo) const;

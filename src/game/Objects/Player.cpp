@@ -8678,6 +8678,11 @@ Item* Player::GetWeaponForParry() const
     return pWeapon;
 }
 
+bool Player::CanBeDisarmed() const
+{
+    return GetWeaponForAttack(BASE_ATTACK, true, true) != nullptr;
+}
+
 uint32 Player::GetAttackBySlot(uint8 slot)
 {
     switch (slot)
