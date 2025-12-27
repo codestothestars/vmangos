@@ -82,7 +82,6 @@ set (SCRIPTS_SRCS
     eastern_kingdoms/burning_steppes/molten_core/boss_gehennas.cpp
     eastern_kingdoms/burning_steppes/molten_core/boss_golemagg.cpp
     eastern_kingdoms/burning_steppes/molten_core/boss_lucifron.cpp
-    eastern_kingdoms/burning_steppes/molten_core/boss_magmadar.cpp
     eastern_kingdoms/burning_steppes/molten_core/boss_majordomo_executus.cpp
     eastern_kingdoms/burning_steppes/molten_core/boss_ragnaros.cpp
     eastern_kingdoms/burning_steppes/molten_core/boss_shazzrah.cpp
