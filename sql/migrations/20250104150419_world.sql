@@ -1174,10 +1174,6 @@ UPDATE `creature_template` SET `auras` = '18950' WHERE `entry` = 12557;
 -- spells
 -- Need to check spell targets against what's in the current list.
 -- No data for repeating delays on spell 14515.
--- 13747
--- Implicit target A - TARGET_LOCATION_CASTER_SRC
--- Implicit target B - TARGET_ENUM_UNITS_ENEMY_AOE_AT_SRC_LOC
--- Test and make sure it affects all players in a radius.
 
 -- Events list for Blackwing Orb Trigger
 -- INSERT `creature_ai_events`
@@ -2219,9 +2215,6 @@ WHERE
     OR enemy_faction.our_mask & unit_faction.hostile_mask
   )
   AND (enemy_health.unit_type IS NULL OR enemy_health.current_health > 1);
-
--- SELECT * FROM event_unit_enemy_distance ORDER BY event_unixtimems, distance;
-
 
 SELECT
   spell_cast_start.unixtimems,
