@@ -4428,7 +4428,7 @@ void Spell::update(uint32 difftime)
             {
                 if (difftime >= m_channeledVisualTimer)
                 {
-                    m_casterUnit->SendPlaySpellVisual(m_channeledVisualKit);
+                    m_casterUnit->SendPlaySpellVisualKit(m_channeledVisualKit);
                     m_channeledVisualTimer = SPELL_CHANNEL_VISUAL_TIMER;
                 }
                 else
