@@ -1137,7 +1137,7 @@ DELETE FROM `creature_ai_events` WHERE `creature_id` = 12557;
 INSERT `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
 (1255701,         12557,              0,            1,          0x00,              0,              0,              0,              0,          1255701, 'Grethok the Controller - Out of Combat'),
-(1255702,         12557,              0,            0,          0x01,           6000,           6000,          18000,          29000,          1255702, 'Grethok the Controller - Cast Dominate Mind'),
+(1255702,         12557,              0,            0,          0x01,           6000,          14000,          16000,          29000,          1255702, 'Grethok the Controller - Cast Dominate Mind'),
 (1255703,         12557,              0,            4,          0x00,              0,              0,              0,              0,          1255703, 'Grethok the Controller - Aggro'),
 (1255704,         12557,              0,            0,          0x00,           1000,           5000,              0,              0,          1255704, 'Grethok the Controller - In Combat (Summon Monster Generators)'),
 (1255705,         12557,              0,           21,          0x00,              0,              0,              0,              0,          1255705, 'Grethok the Controller - Reached Home'),
@@ -1171,9 +1171,6 @@ INSERT `generic_scripts`
 (   `id`, `delay`, `command`, `datalong`, `target_param1`, `target_type`, `comments`) VALUES
 (1255701,       1,        80,          1,          234783,            14, 'Grethok the Controller - Close Portcullis');
 UPDATE `creature_template` SET `auras` = '18950' WHERE `entry` = 12557;
--- spells
--- Need to check spell targets against what's in the current list.
--- No data for repeating delays on spell 14515.
 
 -- Events list for Blackwing Orb Trigger
 -- INSERT `creature_ai_events`
