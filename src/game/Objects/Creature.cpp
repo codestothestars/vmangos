@@ -2554,7 +2554,7 @@ bool Creature::CanRespondToCallForHelpAgainst(Unit const* pEnemy) const
         return false;
 
     // prevent player from being stuck in combat with creature out of visibility radius
-    if (pEnemy->IsCharmerOrOwnerPlayerOrPlayerItself() && !isWithinVisibilityDistanceOf(pEnemy, pEnemy) && !GetMap()->IsDungeon())
+    if (pEnemy->IsCharmerOrOwnerPlayerOrPlayerItself() && !IsWithinVisibilityDistanceOf(pEnemy, pEnemy) && !GetMap()->IsDungeon())
         return false;
 
     return true;

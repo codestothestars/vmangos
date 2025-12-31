@@ -1666,7 +1666,7 @@ void Aura::TriggerSpell()
 
             if (WorldObject* channelTarget = target->GetMap()->GetWorldObject(target->GetChannelObjectGuid()))
             {
-                if (channelTarget->isType(TYPEMASK_UNIT))
+                if (channelTarget->IsType(TYPEMASK_UNIT))
                     triggerTarget = (Unit*)channelTarget;
                 else
                     triggerTargetObject = channelTarget;
@@ -6867,7 +6867,7 @@ SpellAuraHolder::SpellAuraHolder(SpellEntry const* spellproto, Unit* target, Uni
     else
     {
         // remove this assert when not unit casters will be supported
-        MANGOS_ASSERT(caster->isType(TYPEMASK_UNIT))
+        MANGOS_ASSERT(caster->IsType(TYPEMASK_UNIT))
         m_casterGuid = caster->GetObjectGuid();
     }
 
@@ -6889,7 +6889,7 @@ SpellAuraHolder::SpellAuraHolder(SpellEntry const* spellproto, Unit* target, Uni
     if (m_spellProto->Id == 12292) // Sweeping Strikes
         m_isRemovedOnShapeLost = false;
 
-    Unit* unitCaster = caster && caster->isType(TYPEMASK_UNIT) ? (Unit*)caster : nullptr;
+    Unit* unitCaster = caster && caster->IsType(TYPEMASK_UNIT) ? (Unit*)caster : nullptr;
 
     m_duration = m_maxDuration = spellproto->CalculateDuration(unitCaster, target, m_auraScript);
 
