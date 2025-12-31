@@ -1174,13 +1174,9 @@ UPDATE `creature_template` SET `auras` = '18950' WHERE `entry` = 12557;
 
 -- Events list for Blackwing Orb Trigger
 -- INSERT `creature_ai_events`
--- -- problem: the Trigger isn't in combat and doesn't actually target Razorgore while channeling
--- -- Instead, use Razorgore's AI to cancel the Trigger's channel on Aggro.
--- (   `id`,  `creature_id`, `event_type`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
--- (1444901,          14449,           28,          19832,              1,          1444901, 'Blackwing Orb Trigger - Target missing aura Possess');
+-- (   `id`,  `creature_id`, `event_type`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES;
 -- INSERT `creature_ai_scripts`
--- (   `id`, `command`, `comments`) VALUES
--- (1444901,         5, 'Blackwing Orb Trigger - Interrupt casts');
+-- (   `id`, `command`, `comments`) VALUES;
 -- UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry` = 14449;
 -- Note that Blackwing Orb Trigger casts 23031 (Cancel Bob Possession) at some point.
 
