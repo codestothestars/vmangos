@@ -1329,10 +1329,10 @@ static uint32 ChooseScriptIdToStart(ScriptInfo const& script)
 // SCRIPT_COMMAND_START_SCRIPT (39)
 bool Map::ScriptCommand_StartScript(ScriptInfo const& script, WorldObject* source, WorldObject* target)
 {
-    if (script.id == 1242006)
-    {
-        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "1242006 - SCRIPT_COMMAND_START_SCRIPT");
-    }
+    // if (script.id == 1242006)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "1242006 - SCRIPT_COMMAND_START_SCRIPT");
+    // }
     uint32 const scriptId = ChooseScriptIdToStart(script);
 
     if (scriptId)
@@ -2055,10 +2055,10 @@ bool Map::ScriptCommand_SetDefaultMovement(ScriptInfo const& script, WorldObject
 // SCRIPT_COMMAND_START_SCRIPT_FOR_ALL (68)
 bool Map::ScriptCommand_StartScriptForAll(ScriptInfo const& script, WorldObject* source, WorldObject* target)
 {
-    if (script.id == 17780701)
-    {
-        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Black Dragon Egg - Nefarian's Troops Flee - %u", script.startScriptForAll.objectEntry);
-    }
+    // if (script.id == 17780701)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Black Dragon Egg - Nefarian's Troops Flee - %u", script.startScriptForAll.objectEntry);
+    // }
 
     if (!source)
     {

@@ -315,6 +315,11 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
     if (!unitTarget && !gameObjTarget && !itemTarget && !corpseTarget)
         return;
 
+    // if (m_spellInfo->Id == 23031)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Spell::EffectDummy %u - %u", m_spellInfo->Id, unitTarget->GetEntry());
+    // }
+
     // selection by spell family
     switch (m_spellInfo->SpellFamilyName)
     {

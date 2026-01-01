@@ -737,6 +737,11 @@ void CreatureEventAI::SpellHit(SpellCaster* pCaster, SpellEntry const* pSpellEnt
         {
             case EVENT_T_HIT_BY_SPELL:
             {
+                // if (pSpellEntry->Id == 23032 && m_creature->GetEntry() == 14449)
+                // {
+                //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "CreatureEventAI::SpellHit %u - %u", i.Event.hit_by_spell.spellId, m_creature->GetEntry());
+                // }
+
                 //If spell id matches (or no spell id) & if spell school matches (or no spell school)
                 if (!i.Event.hit_by_spell.spellId || pSpellEntry->Id == i.Event.hit_by_spell.spellId)
                     if (GetSchoolMask(pSpellEntry->School) & i.Event.hit_by_spell.schoolMask)

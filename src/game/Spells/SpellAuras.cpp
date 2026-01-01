@@ -1861,7 +1861,20 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                         // see if a sniff (even if Cata) that sees the boss's original spawn
                         // gives any more hint as to whether it would be done this way
                         target->CastSpell(target, 23014, true); // Possess
-                        target->FindNearestCreature(12435, 100)->AddAura(23021); // Dragon Orb
+                        // trying to resolve IsDeleted crash
+                        uint32 razorgoreGuid = 84388;
+
+                        if (CreatureData const* razorgoreData = sObjectMgr.GetCreatureData(84388))
+                        {
+                            if (Creature* razorgore = target->GetMap()->GetCreature(razorgoreData->GetObjectGuid(84388)))
+                            {
+                                razorgore->AddAura(23021); // Dragon Orb
+                            }
+                            else
+                                sLog.Out(LOG_DBERROR, LOG_LVL_ERROR, "HandleAuraDummy: Use Dragon Orb unapply - Razorgore not found");
+                        }
+                        else
+                            sLog.Out(LOG_DBERROR, LOG_LVL_ERROR, "HandleAuraDummy: Use Dragon Orb unapply - Razorgore data not found");
                         return;
                     }
                     case 24596: // Intoxicating Venom

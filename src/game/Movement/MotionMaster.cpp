@@ -1213,21 +1213,21 @@ bool MotionMaster::MoveDistance(Unit const* pTarget, float distance)
 
 void MotionMaster::ClearType(MovementGeneratorType moveType, uint32 limit, uint32 param1)
 {
-    if (Creature* creature = m_owner->ToCreature())
-    {
-        if (creature->GetEntry() == 12416)
-        {
-            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::ClearType %u - %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(moveType));
-            if (empty())
-            {
-                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::ClearType %u: empty", creature->GetGUIDLow());
-            }
-            else
-            {
-                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::ClearType %u: top = %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(top()->GetMovementGeneratorType()));
-            }
-        }
-    }
+    // if (Creature* creature = m_owner->ToCreature())
+    // {
+    //     if (creature->GetEntry() == 12416)
+    //     {
+    //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::ClearType %u - %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(moveType));
+    //         if (empty())
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::ClearType %u: empty", creature->GetGUIDLow());
+    //         }
+    //         else
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::ClearType %u: top = %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(top()->GetMovementGeneratorType()));
+    //         }
+    //     }
+    // }
 
     if (limit == 0) limit = size();
 
@@ -1284,24 +1284,24 @@ void MotionMaster::ClearType(MovementGeneratorType moveType, uint32 limit, uint3
 
     for (auto const& it : mvtGensToFinalize)
     {
-        if (Creature* creature = m_owner->ToCreature())
-        {
-            if (creature->GetEntry() == 12416)
-            {
-                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::ClearType %u - Finalize %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(it->GetMovementGeneratorType()));
-            }
-        }
+        // if (Creature* creature = m_owner->ToCreature())
+        // {
+        //     if (creature->GetEntry() == 12416)
+        //     {
+        //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::ClearType %u - Finalize %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(it->GetMovementGeneratorType()));
+        //     }
+        // }
 
         it->Finalize(*m_owner);
         if (!isStatic(it))
         {
-            if (Creature* creature = m_owner->ToCreature())
-            {
-                if (creature->GetEntry() == 12416)
-                {
-                    sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::ClearType %u - delete %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(it->GetMovementGeneratorType()));
-                }
-            }
+            // if (Creature* creature = m_owner->ToCreature())
+            // {
+            //     if (creature->GetEntry() == 12416)
+            //     {
+            //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MotionMaster::ClearType %u - delete %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(it->GetMovementGeneratorType()));
+            //     }
+            // }
 
             delete(it);
         }

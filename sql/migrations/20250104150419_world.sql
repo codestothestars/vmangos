@@ -117,10 +117,52 @@ INSERT `spell_script_target`
 (  20038,      1,         16604,                0b10),
 (  20038,      3,             0,                0b10);
 
+-- Correct target for spell Use Dragon Orb.
+UPDATE `spell_script_target` SET `targetEntry` = 14449, `type` = 1 WHERE `entry` = 23018;
+
 -- Define targets for Fireball.
 INSERT `spell_script_target`
-(`entry`, `type`, `targetEntry`) VALUES
+(`entry`, `type`, `targetEntry`) VALUE
 (  23024,      1,         14449);
+
+-- Define targets for Cancel Bob Possession.
+INSERT `spell_script_target`
+(`entry`, `type`, `targetEntry`) VALUE
+(  23031,      1,         12435);
+
+-- Define targets for Nefarian's Troops Flee.
+INSERT `spell_script_target`
+(`entry`, `type`, `targetEntry`) VALUES
+(  23032,      1,          7386),
+(  23032,      1,         10259),
+(  23032,      1,         12017),
+(  23032,      1,         12416),
+(  23032,      1,         12420),
+(  23032,      1,         12422),
+(  23032,      1,         12434),
+(  23032,      1,         12435),
+(  23032,      1,         12457),
+(  23032,      1,         12458),
+(  23032,      1,         12459),
+(  23032,      1,         12460),
+(  23032,      1,         12461),
+(  23032,      1,         12463),
+(  23032,      1,         12464),
+(  23032,      1,         12465),
+(  23032,      1,         12467),
+(  23032,      1,         12468),
+(  23032,      1,         12999),
+(  23032,      1,         13020),
+(  23032,      1,         13996),
+(  23032,      1,         14020),
+(  23032,      1,         14022),
+(  23032,      1,         14023),
+(  23032,      1,         14024),
+(  23032,      1,         14025),
+(  23032,      1,         14449),
+(  23032,      1,         14459),
+(  23032,      1,         16604),
+(  23032,      3,             0);
 
 -- Correct Portcullis values.
 UPDATE `gameobject` SET `orientation` = 3.75246, `rotation2` = -0.953716, `rotation3` = 0.300708 WHERE `id` = 176964;
@@ -1067,7 +1109,7 @@ INSERT `creature_ai_scripts`
 (1243513,          0,        39,    1243504,           0,           0,           0,               0,             0,         0x00,       100, 0       ,              0, 'Razorgore the Untamed - Respawn encounter (death on phase 5)'),
 (1243514,          0,        62,       8302,           1,           0,           0,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - End map event (success)'),
 (1243516,          0,        65,       8302,           1,           0,           0,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Set map event data 1 to 0 (Possess removed)'),
-(1243516,          0,         5,          0,           0,           0,           0,           12784,            11,         0x02,         0, 0       ,            572, 'Razorgore the Untamed - Interrupt casts on Blackwing Orb Trigger'),
+(1243516,          0,         5,          0,       23014,           0,           0,           12784,            11,         0x02,         0, 0       ,            572, 'Razorgore the Untamed - Interrupt Possess cast on Blackwing Orb Trigger'),
 (1243516,          0,        14,      23021,           0,           0,           0,               0,             0,         0x00,         0, 0       ,            572, 'Razorgore the Untamed - Remove aura Dragon Orb'),
 (1243517,          0,        44,          6,           0,           0,           0,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Set phase 6'),
 (1243518,          0,        68,    1243505,           2,       12416,         125,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Evade Blackwing Legionnaire'),
@@ -1173,12 +1215,18 @@ INSERT `generic_scripts`
 UPDATE `creature_template` SET `auras` = '18950' WHERE `entry` = 12557;
 
 -- Events list for Blackwing Orb Trigger
--- INSERT `creature_ai_events`
--- (   `id`,  `creature_id`, `event_type`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES;
--- INSERT `creature_ai_scripts`
--- (   `id`, `command`, `comments`) VALUES;
--- UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry` = 14449;
--- Note that Blackwing Orb Trigger casts 23031 (Cancel Bob Possession) at some point.
+DELETE FROM `creature_ai_events` WHERE `creature_id` = 14449;
+INSERT `creature_ai_events`
+(   `id`,  `creature_id`, `event_type`, `event_inverse_phase_mask`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
+(1444901,          14449,            8,                       0x10,          23032,             -1,          1444901, 'Blackwing Orb Trigger - Cast Cancel Bob Possession on Hit By Spell Nefarian''s Troops Flee'),
+(1444902,          14449,            6,                       0x00,              0,              0,          1444902, 'Blackwing Orb Trigger - Death');
+DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '14449%'; -- testing
+INSERT `creature_ai_scripts`
+(   `id`, `priority`, `command`, `datalong`, `datalong2`, `comments`) VALUES
+(1444901,          0,        44,          1,           0, 'Blackwing Orb Trigger - Set phase 1'),
+(1444901,          1,        15,      23031,       0x001, 'Blackwing Orb Trigger - Cast Cancel Bob Possession'),
+(1444902,          0,        18,       3000,           0, 'Blackwing Orb Trigger - Despawn');
+UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry` = 14449;
 
 -- Events list for Orb of Domination
 UPDATE `creature_template` SET `script_name` = '' WHERE `entry` = 14453;
@@ -1279,43 +1327,6 @@ INSERT `generic_scripts`
 (17780701,          0,        65,       8302,           2,           0,           0,               0,             0,         0x00,         0,          0,          0,            592, 'Black Dragon Egg - Set map event data 2 to 0'),
 (17780701,          1,        65,       8302,           1,           1,           0,               0,             0,         0x00,         0,          0,          0,            594, 'Black Dragon Egg - Set map event data 1 to 1'),
 (17780701,          1,        65,       8302,           1,           0,           0,               0,             0,         0x00,         0,          0,          0,            593, 'Black Dragon Egg - Set map event data 1 to 0');
-
--- Correct target for spell Use Dragon Orb.
-UPDATE `spell_script_target` SET `targetEntry` = 14449, `type` = 1 WHERE `entry` = 23018;
-
--- Define targets for Nefarian's Troops Flee.
-INSERT `spell_script_target`
-(`entry`, `type`, `targetEntry`) VALUES
-(  23032,      1,          7386),
-(  23032,      1,         10259),
-(  23032,      1,         12017),
-(  23032,      1,         12416),
-(  23032,      1,         12420),
-(  23032,      1,         12422),
-(  23032,      1,         12434),
-(  23032,      1,         12435),
-(  23032,      1,         12457),
-(  23032,      1,         12458),
-(  23032,      1,         12459),
-(  23032,      1,         12460),
-(  23032,      1,         12461),
-(  23032,      1,         12463),
-(  23032,      1,         12464),
-(  23032,      1,         12465),
-(  23032,      1,         12467),
-(  23032,      1,         12468),
-(  23032,      1,         12999),
-(  23032,      1,         13020),
-(  23032,      1,         13996),
-(  23032,      1,         14020),
-(  23032,      1,         14022),
-(  23032,      1,         14023),
-(  23032,      1,         14024),
-(  23032,      1,         14025),
-(  23032,      1,         14449),
-(  23032,      1,         14459),
-(  23032,      1,         16604),
-(  23032,      3,             0);
 
 -- TESTING
 -- UPDATE creature_template SET display_id1 = 1311 WHERE entry = 12434; -- was 11686

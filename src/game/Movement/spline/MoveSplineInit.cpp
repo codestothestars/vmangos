@@ -110,13 +110,13 @@ int32 MoveSplineInit::Launch()
             moveFlags &= ~MOVEFLAG_WALK_MODE;
         else
         {
-            if (Creature* creature = unit.ToCreature())
-            {
-                if (creature->GetEntry() == 12416)
-                {
-                    sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MoveSplineInit::Launch %u: moveFlags |= MOVEFLAG_WALK_MODE", creature->GetGUIDLow());
-                }
-            }
+            // if (Creature* creature = unit.ToCreature())
+            // {
+            //     if (creature->GetEntry() == 12416)
+            //     {
+            //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "MoveSplineInit::Launch %u: moveFlags |= MOVEFLAG_WALK_MODE", creature->GetGUIDLow());
+            //     }
+            // }
         
             moveFlags |= MOVEFLAG_WALK_MODE;
         }

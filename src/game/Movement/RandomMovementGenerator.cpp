@@ -85,10 +85,10 @@ void RandomMovementGenerator::Reset(Creature &creature)
 
 void RandomMovementGenerator::Interrupt(Creature &creature)
 {
-    if (creature.GetEntry() == 12416)
-    {
-        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "RandomMovementGenerator::Interrupt %u", creature.GetGUIDLow());
-    }
+    // if (creature.GetEntry() == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "RandomMovementGenerator::Interrupt %u", creature.GetGUIDLow());
+    // }
 
     creature.ClearUnitState(UNIT_STATE_ROAMING | UNIT_STATE_ROAMING_MOVE);
     creature.SetWalk(!creature.HasUnitState(UNIT_STATE_RUNNING), false);
@@ -96,10 +96,10 @@ void RandomMovementGenerator::Interrupt(Creature &creature)
 
 void RandomMovementGenerator::Finalize(Creature &creature)
 {
-    if (creature.GetEntry() == 12416)
-    {
-        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "RandomMovementGenerator::Finalize %u", creature.GetGUIDLow());
-    }
+    // if (creature.GetEntry() == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "RandomMovementGenerator::Finalize %u", creature.GetGUIDLow());
+    // }
 
     creature.ClearUnitState(UNIT_STATE_ROAMING | UNIT_STATE_ROAMING_MOVE);
     creature.SetWalk(!creature.HasUnitState(UNIT_STATE_RUNNING), false);

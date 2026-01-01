@@ -579,32 +579,32 @@ void ThreatManager::processThreatEvent(ThreatRefStatusChangeEvent* threatRefStat
     switch (threatRefStatusChangeEvent->getType())
     {
         case UEV_THREAT_REF_THREAT_CHANGE:
-            if (Creature* creature = iOwner->ToCreature())
-            {
-                if (creature->GetEntry() == 12416)
-                {
-                    sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ThreatManager::processThreatEvent %u - UEV_THREAT_REF_THREAT_CHANGE", creature->GetGUIDLow());
-                }
-            }
+            // if (Creature* creature = iOwner->ToCreature())
+            // {
+            //     if (creature->GetEntry() == 12416)
+            //     {
+            //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ThreatManager::processThreatEvent %u - UEV_THREAT_REF_THREAT_CHANGE", creature->GetGUIDLow());
+            //     }
+            // }
             if ((getCurrentVictim() == hostileReference && threatRefStatusChangeEvent->getFValue() < 0.0f) ||
                     (getCurrentVictim() != hostileReference && threatRefStatusChangeEvent->getFValue() > 0.0f))
                 setDirty(true);                             // the order in the threat list might have changed
             break;
         case UEV_THREAT_REF_ONLINE_STATUS:
-            if (Creature* creature = iOwner->ToCreature())
-            {
-                if (creature->GetEntry() == 12416)
-                {
-                    sLog.Out(
-                        LOG_SCRIPTS,
-                        LOG_LVL_ERROR,
-                        "ThreatManager::processThreatEvent %u - UEV_THREAT_REF_ONLINE_STATUS - sourceUnit = %s, targetUnit = %s",
-                        creature->GetGUIDLow(),
-                        hostileReference->getSourceUnit()->GetName(),
-                        hostileReference->getTarget()->GetName()
-                    );
-                }
-            }
+            // if (Creature* creature = iOwner->ToCreature())
+            // {
+            //     if (creature->GetEntry() == 12416)
+            //     {
+            //         sLog.Out(
+            //             LOG_SCRIPTS,
+            //             LOG_LVL_ERROR,
+            //             "ThreatManager::processThreatEvent %u - UEV_THREAT_REF_ONLINE_STATUS - sourceUnit = %s, targetUnit = %s",
+            //             creature->GetGUIDLow(),
+            //             hostileReference->getSourceUnit()->GetName(),
+            //             hostileReference->getTarget()->GetName()
+            //         );
+            //     }
+            // }
             if (!hostileReference->isOnline())
             {
                 if (hostileReference == getCurrentVictim())
