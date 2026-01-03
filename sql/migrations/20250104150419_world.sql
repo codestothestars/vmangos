@@ -1259,7 +1259,6 @@ INSERT `creature_ai_events`
 DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '14459%'; -- testing
 INSERT `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `dataint`, `comments`) VALUES
--- Need to reset phase at the beginning of the encounter.
 (1445901,        44,          1,         0, 'Nefarian''s Troops - Set phase'),
 (1445901,        39,    1445901,       100, 'Nefarian''s Troops - Emote');
 DELETE FROM generic_scripts WHERE LENGTH(id) = 7 AND id LIKE '14459%'; -- testing
