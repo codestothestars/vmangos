@@ -1060,6 +1060,9 @@ INSERT INTO `creature_ai_scripts`
 (1242204,        18,          0,           0,           0,           0,         0,              0, 'Death Talon Dragonspawn - Despawn'),
 (1242205,        39,    8302036,           0,           0,           0,       100,              0, 'Death Talon Dragonspawn - Increment Creature Count');
 
+-- Events list for Monster Generator (Blackwing)
+UPDATE `creature_template` SET `auras` = '8149' WHERE `entry` = 12434;
+
 -- Events list for Razorgore the Untamed
 DELETE FROM `creature_ai_events` WHERE `creature_id` = 12435;
 INSERT `creature_ai_events`
@@ -1195,10 +1198,10 @@ INSERT `creature_ai_scripts`
 (1255703,        49,          1,           0,               0,             0,         0x00,         0,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Combat Pulse'),
 (1255703,         0,          1,           0,               0,             0,         0x00,      9958,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Yell'),
 (1255703,        37,          0,           4,               0,             0,         0x00,         0,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Set Instance Data (Encounter Special)'),
-(1255704,        10,      12434,         400,               0,             0,         0x00,         0,          3, -7643.39, -1064.69, 407.288, 1.71042,              0, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
-(1255704,        10,      12434,         400,               0,             0,         0x00,         0,          3, -7623.1 , -1094.06, 407.288, 1.44862,              0, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
-(1255704,        10,      12434,         400,               0,             0,         0x00,         0,          3, -7568.61, -1012.67, 407.288, 1.51844,              0, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
-(1255704,        10,      12434,         400,               0,             0,         0x00,         0,          3, -7548.46, -1041.98, 407.288, 2.02458,              0, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
+(1255704,        10,      12434,           0,               0,             0,         0x00,         0,          5, -7643.39, -1064.69, 407.288, 1.71042,              0, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
+(1255704,        10,      12434,           0,               0,             0,         0x00,         0,          5, -7623.1 , -1094.06, 407.288, 1.44862,              0, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
+(1255704,        10,      12434,           0,               0,             0,         0x00,         0,          5, -7568.61, -1012.67, 407.288, 1.51844,              0, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
+(1255704,        10,      12434,           0,               0,             0,         0x00,         0,          5, -7548.46, -1041.98, 407.288, 2.02458,              0, 'Grethok the Controller - Summon Monster Generator (Blackwing)'),
 (1255705,        16,       8274,           0,               0,             0,         0x00,         0,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Play Sound 8274'),
 (1255706,        18,       4000,           0,               0,             0,         0x00,         0,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Despawn'),
 (1255707,         0,          1,           0,               0,             0,         0x00,      9960,          0,        0,        0,       0,       0,              0, 'Grethok the Controller - Say text');
@@ -1271,9 +1274,6 @@ UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry` = 14459;
 REPLACE `generic_scripts`
 (   `id`, `command`, `datalong`, `comments`) VALUES
 (1660401,        15,      23032, 'Blackwing Spell Marker - Cast Nefarian''s Troops Flee');
-
--- Nefarian's Troops Flee hits creature 12434 (Monster Generator (Blackwing))
--- double check that creature's spawn/despawn behavior.
 
 -- Portcullis (Entry: 176964 Guid: 234783) Open Script
 DELETE FROM generic_scripts WHERE id = 176964;-- testing
