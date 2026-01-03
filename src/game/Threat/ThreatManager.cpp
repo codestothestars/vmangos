@@ -478,13 +478,13 @@ void ThreatManager::addThreatDirectly(Unit* pVictim, float threat, bool noNew)
 
 void ThreatManager::modifyThreatPercent(Unit* pVictim, int32 pPercent)
 {
-    if (Creature* creature = iOwner->ToCreature())
-    {
-        if (creature->GetEntry() == 12416)
-        {
-            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ThreatManager::clearReferences %u - pVictim = %s, pPercent = %u", creature->GetGUIDLow(), pVictim->GetName(), pPercent);
-        }
-    }
+    // if (Creature* creature = iOwner->ToCreature())
+    // {
+    //     if (creature->GetEntry() == 12416)
+    //     {
+    //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ThreatManager::clearReferences %u - pVictim = %s, pPercent = %u", creature->GetGUIDLow(), pVictim->GetName(), pPercent);
+    //     }
+    // }
 
     iThreatContainer.modifyThreatPercent(pVictim, pPercent);
 }
@@ -564,13 +564,13 @@ void ThreatManager::setCurrentVictim(HostileReference* pHostileReference)
 
 void ThreatManager::processThreatEvent(ThreatRefStatusChangeEvent* threatRefStatusChangeEvent)
 {
-    if (Creature* creature = iOwner->ToCreature())
-    {
-        if (creature->GetEntry() == 12416)
-        {
-            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ThreatManager::processThreatEvent %u", creature->GetGUIDLow());
-        }
-    }
+    // if (Creature* creature = iOwner->ToCreature())
+    // {
+    //     if (creature->GetEntry() == 12416)
+    //     {
+    //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ThreatManager::processThreatEvent %u", creature->GetGUIDLow());
+    //     }
+    // }
 
     threatRefStatusChangeEvent->setThreatManager(this);     // now we can set the threat manager
 
@@ -624,22 +624,22 @@ void ThreatManager::processThreatEvent(ThreatRefStatusChangeEvent* threatRefStat
             }
             break;
         case UEV_THREAT_REF_REMOVE_FROM_LIST:
-            if (Creature* creature = iOwner->ToCreature())
-            {
-                if (creature->GetEntry() == 12416)
-                {
-                    auto source = hostileReference->getSourceUnit();
-                    auto target = hostileReference->getTarget();
-                    sLog.Out(
-                        LOG_SCRIPTS,
-                        LOG_LVL_ERROR,
-                        "ThreatManager::processThreatEvent %u - UEV_THREAT_REF_REMOVE_FROM_LIST - sourceUnit = %s, targetUnit = %s",
-                        creature->GetGUIDLow(),
-                        source ? source->GetName() : "null",
-                        target ? target->GetName() : "null"
-                    );
-                }
-            }
+            // if (Creature* creature = iOwner->ToCreature())
+            // {
+            //     if (creature->GetEntry() == 12416)
+            //     {
+            //         auto source = hostileReference->getSourceUnit();
+            //         auto target = hostileReference->getTarget();
+            //         sLog.Out(
+            //             LOG_SCRIPTS,
+            //             LOG_LVL_ERROR,
+            //             "ThreatManager::processThreatEvent %u - UEV_THREAT_REF_REMOVE_FROM_LIST - sourceUnit = %s, targetUnit = %s",
+            //             creature->GetGUIDLow(),
+            //             source ? source->GetName() : "null",
+            //             target ? target->GetName() : "null"
+            //         );
+            //     }
+            // }
             if (hostileReference == getCurrentVictim())
             {
                 setCurrentVictim(nullptr);

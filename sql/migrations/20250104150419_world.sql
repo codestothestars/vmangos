@@ -256,14 +256,15 @@ INSERT `event_scripts`
 (8302,          0,        39,    8302146,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8303, 'Razorgore Event - Start Spawning Adds (West)'),
 (8302,          0,        39,    8302147,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8303, 'Razorgore Event - Start Spawning Adds (West North)'),
 (8302,          0,        39,    8302148,           0,           0,           0,             0,               0,               0,            0,       100,          0,          0,          0,           8303, 'Razorgore Event - Start Spawning Adds (North West)'),
-(8302,          1,        61,       8302,     9000000,           0,           0,             0,               0,               0,            0,         0,     830201,          0,          0,              0, 'Razorgore Event - Start Map Event');
+(8302,          1,        61,       8302,     9000000,           0,           0,             0,               0,               0,            0,         0,     830201,          0,     830202,              0, 'Razorgore Event - Start Map Event');
 
 -- Success Script for Scripted Map Event
 DELETE FROM generic_scripts WHERE LENGTH(id) = 6 AND id LIKE '8302%'; -- testing
 INSERT `generic_scripts`
-(  `id`, `delay`, `command`, `datalong`, `dataint`, `comments`) VALUES
-(830201,       4,        39,     176964,       100, 'Razorgore Event - Open Portcullis (entrance) (success)'),
-(830201,       4,        39,     176965,       100, 'Razorgore Event - Open Portcullis (exit)');
+(  `id`, `delay`, `command`, `datalong`, `dataint`, `target_param1`, `target_type`, `data_flags`, `comments`) VALUES
+(830201,       4,        39,     176964,       100,               0,             0,         0x00, 'Razorgore Event - Open Portcullis (entrance) (success)'),
+(830201,       4,        39,     176965,       100,               0,             0,         0x00, 'Razorgore Event - Open Portcullis (exit)'),
+(830202,       0,        44,          0,         0,           12796,            11,         0x02, 'Razorgore Event - Set phase on Nefarian''s Troops');
 
 -- Spawning Adds
 DELETE FROM generic_scripts WHERE LENGTH(id) = 7 AND id LIKE '8302%'; -- testing
@@ -1243,14 +1244,18 @@ INSERT `creature_ai_scripts`
 (1445601,        18,     300000, 'Blackwing Guardsman - Despawn'),
 (1445602,        49,          1, 'Blackwing Guardsman - Combat Pulse');
 REPLACE `creature_spells`
-(`entry`, `name`,                                 `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`) VALUES
-( 144560, 'Blackwing Lair - Blackwing Guardsman',       15580,             100,              1,                   5,                  23,                  1,                 16,       15754,             100,              1,                   3,                  24,                  8,                 11);
+(`entry`, `name`,                                
+                                                  `spellId_1`, `probability_1`, `castTarget_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`,
+                                                  `spellId_2`, `probability_2`, `castTarget_2`, `delayInitialMin_2`, `delayInitialMax_2`, `delayRepeatMin_2`, `delayRepeatMax_2`) VALUES
+( 144560, 'Blackwing Lair - Blackwing Guardsman', 
+                                                        15580,             100,              1,                   5,                  23,                  1,                 16,
+                                                        15754,             100,              1,                   3,                  24,                  8,                 11);
 
 -- Events list for Nefarian's Troops
 DELETE FROM creature_ai_events WHERE creature_id = 14459; -- testing
 INSERT `creature_ai_events`
-(   `id`, `creature_id`, `event_type`, `event_inverse_phase_mask`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
-(1445901,         14459,            8,                       0b10,          23032,             -1,          1445901, 'Nefarian''s Troops - Hit by spell');
+(   `id`, `creature_id`, `event_type`, `event_inverse_phase_mask`, `event_flags`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
+(1445901,         14459,            8,                       0b10,          0x01,          23032,             -1,          1445901, 'Nefarian''s Troops - Hit by spell');
 DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '14459%'; -- testing
 INSERT `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `dataint`, `comments`) VALUES
