@@ -1276,7 +1276,7 @@ REPLACE `generic_scripts`
 (1660401,        15,      23032, 'Blackwing Spell Marker - Cast Nefarian''s Troops Flee');
 
 -- Portcullis (Entry: 176964 Guid: 234783) Open Script
-DELETE FROM generic_scripts WHERE id = 176964;-- testing
+DELETE FROM generic_scripts WHERE id = 176964; -- testing
 INSERT `generic_scripts`
 (  `id`, `command`, `datalong`, `target_param1`, `target_type`, `comments`) VALUES
 (176964,        80,          0,          234783,            14, 'Portcullis - Open');
