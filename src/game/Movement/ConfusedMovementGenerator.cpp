@@ -83,13 +83,13 @@ bool ConfusedMovementGenerator<T>::Update(T &unit, uint32 const& diff)
     Movement::MoveSplineInit init(unit, "ConfusedMovementGenerator<T>::Update");
     init.Move(&path);
     init.SetWalk(true);
-    if (Creature* creature = unit.ToCreature())
-    {
-        if (creature->GetEntry() == 12416)
-        {
-            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ConfusedMovementGenerator<T>::Update %u: init.Launch()", creature->GetGUIDLow());
-        }
-    }
+    // if (Creature* creature = unit.ToCreature())
+    // {
+    //     if (creature->GetEntry() == 12416)
+    //     {
+    //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ConfusedMovementGenerator<T>::Update %u: init.Launch()", creature->GetGUIDLow());
+    //     }
+    // }
     init.Launch();
     return true;
 }

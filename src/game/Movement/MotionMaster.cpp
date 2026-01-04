@@ -446,21 +446,21 @@ void MotionMaster::DelayedClean(bool reset, bool all)
 
 void MotionMaster::DirectExpire(bool reset)
 {
-    if (Creature* creature = m_owner->ToCreature())
-    {
-        if (creature->GetEntry() == 12416)
-        {
-            if (empty())
-            {
-                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DirectExpire %u: empty", creature->GetGUIDLow());
-            }
-            else
-            {
-                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DirectExpire %u: reset = %u", creature->GetGUIDLow(), reset);
-                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DirectExpire %u: top = %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(top()->GetMovementGeneratorType()));
-            }
-        }
-    }
+    // if (Creature* creature = m_owner->ToCreature())
+    // {
+    //     if (creature->GetEntry() == 12416)
+    //     {
+    //         if (empty())
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DirectExpire %u: empty", creature->GetGUIDLow());
+    //         }
+    //         else
+    //         {
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DirectExpire %u: reset = %u", creature->GetGUIDLow(), reset);
+    //             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DirectExpire %u: top = %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(top()->GetMovementGeneratorType()));
+    //         }
+    //     }
+    // }
 
     if (empty() || size() == 1)
         return;
@@ -503,13 +503,13 @@ void MotionMaster::DirectExpire(bool reset)
     if (reset && top() == nowTop)
         top()->Reset(*m_owner);
 
-    if (Creature* creature = m_owner->ToCreature())
-    {
-        if (creature->GetEntry() == 12416 && !empty())
-        {
-            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DirectExpire %u: new top = %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(top()->GetMovementGeneratorType()));
-        }
-    }
+    // if (Creature* creature = m_owner->ToCreature())
+    // {
+    //     if (creature->GetEntry() == 12416 && !empty())
+    //     {
+    //         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "DirectExpire %u: new top = %s", creature->GetGUIDLow(), GetMovementGeneratorTypeName(top()->GetMovementGeneratorType()));
+    //     }
+    // }
 }
 
 void MotionMaster::DelayedExpire(bool reset)

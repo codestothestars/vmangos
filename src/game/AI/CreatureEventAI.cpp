@@ -543,10 +543,10 @@ void CreatureEventAI::OnNoTargets()
 
 void CreatureEventAI::EnterEvadeMode()
 {
-    if (m_creature->GetEntry() == 12416)
-    {
-        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "CreatureEventAI::EnterEvadeMode");
-    }
+    // if (m_creature->GetEntry() == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "CreatureEventAI::EnterEvadeMode");
+    // }
 
     BasicAI::EnterEvadeMode();
 

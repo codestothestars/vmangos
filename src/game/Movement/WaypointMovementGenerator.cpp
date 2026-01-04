@@ -405,10 +405,10 @@ bool WaypointMovementGenerator<Creature>::Update(Creature &creature, uint32 cons
 
 bool WaypointMovementGenerator<Creature>::GetResetPosition(Creature& creature, float& x, float& y, float& z)
 {
-    if (creature.GetEntry() == 12416)
-    {
-        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "GetResetPosition %u", creature.GetGUIDLow());
-    }
+    // if (creature.GetEntry() == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "GetResetPosition %u", creature.GetGUIDLow());
+    // }
     // prevent a crash at empty waypoint path.
     if (!i_path || i_path->empty() || !m_lastReachedWaypoint)
         return false;
