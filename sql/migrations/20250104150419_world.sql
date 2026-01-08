@@ -271,7 +271,6 @@ DELETE FROM generic_scripts WHERE LENGTH(id) = 7 AND id LIKE '8302%'; -- testing
 INSERT `generic_scripts`
 (  `id` , `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_type`, `target_param1`, `target_param2`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`,    `x`  ,    `y`   ,  `z`   , `o`, `condition_id`, `comments`) VALUES
 -- Probably rename the comment prefix to something less specific like "Razorgore Event Adds".
-
 (8302001,       0,          0,        44,          8,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Set phase'),
 (8302001,       0,          1,        59,          0,           0,           0,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Set react state'),
 (8302001,       0,          2,        94,          2,           0,      830204,           0,             0,               0,               0,         0x00,         0,          0,          0,          0,     0   ,     0    ,   0    ,  0 ,              0, 'Razorgore Event Spawning Adds - Clear movement (waypoint - North)'),
@@ -613,7 +612,7 @@ DELETE FROM creature_movement_special WHERE LENGTH(id) = 6 AND id LIKE '8302%'; 
 INSERT INTO `creature_movement_special`
 (  `id`, `point`, `position_x`, `position_y`, `position_z`, `waittime`, `orientation`, `script_id`, `path_id`) VALUES
 (830202,       1,     -7532.72,     -1063.49,      407.366,      30000,             0,           0,         0),
-(830203,       1,     -7556.65,     -1025.56,      408.56 ,          0,           100,      830202,         0),
+(830203,       1,     -7556.65,     -1025.56,      408.56 ,      30000,           100,      830202,         0),
 (830204,       1,     -7611.79,     -1022.45,      413.597,          0,             0,      830201,    830205),
 (830205,       1,     -7529.6 ,     -1064.9 ,      407.344,          0,             0,           0,         0),
 (830205,       2,     -7532.72,     -1063.49,      407.344,          0,             0,           0,         0),
