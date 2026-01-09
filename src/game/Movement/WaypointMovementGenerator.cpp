@@ -310,10 +310,10 @@ bool WaypointMovementGenerator<Creature>::Update(Creature &creature, uint32 cons
 {
     // if (creature.GetEntry() == 12416)
     // {
-    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Update 12420");
-    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Update 12420 - !i_path = %u", !i_path);
-        
-    //     if (i_path) sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Update 12420 - i_path->empty() = %u", i_path->empty());
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "WaypointMovementGenerator<Creature>::Update %u", creature.GetGUIDLow());
+
+    //     uint32 isConfused = creature.HasUnitState(UNIT_STATE_CAN_NOT_MOVE | UNIT_STATE_CONFUSED | UNIT_STATE_DISTRACTED) ? 1 : 0;
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "WaypointMovementGenerator<Creature>::Update %u - isConfused = %u", creature.GetGUIDLow(), isConfused);
     // }
     // Waypoint movement can be switched on/off
     // This is quite handy for escort quests and other stuff

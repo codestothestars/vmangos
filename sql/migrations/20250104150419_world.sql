@@ -36,8 +36,8 @@ INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `v
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 575, 20,      12435,  125, 0x0, 572, 0x0);
 --  576: (574: Does not have aura Mind Exhaustion) And (575: Nearby Razorgore within 125 yards without aura Possess)
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 576, -1,        574,  575,   0,   0, 0x0);
---  577: Source is on phase 0
-INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 577, 62,          0,    0,   0,   0, 0x0);
+--  577: Target is on phase 0
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 577, 62,          0,    0,   0,   0, 0x2);
 --  579: Nefarian's Troops is on phase 0
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 579, 61,      12796,  577,   0,   0, 0x0);
 --  581: Instance data 0 (Razorgore) equals 0 (not started)
