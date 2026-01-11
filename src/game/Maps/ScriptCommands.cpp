@@ -1329,9 +1329,9 @@ static uint32 ChooseScriptIdToStart(ScriptInfo const& script)
 // SCRIPT_COMMAND_START_SCRIPT (39)
 bool Map::ScriptCommand_StartScript(ScriptInfo const& script, WorldObject* source, WorldObject* target)
 {
-    // if (script.id == 1242006)
+    // if (source && source->GetEntry() == 12422 && script.startScript.scriptId[0] == 8302003)
     // {
-    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "1242006 - SCRIPT_COMMAND_START_SCRIPT");
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Map::ScriptCommand_StartScript %u", source->GetGUIDLow());
     // }
     uint32 const scriptId = ChooseScriptIdToStart(script);
 
@@ -1590,9 +1590,9 @@ bool Map::ScriptCommand_ZoneCombatPulse(ScriptInfo const& script, WorldObject* s
         return ShouldAbortScript(script);
     }
 
-    // if (pSource->GetEntry() == 12416)
+    // if (pSource->GetEntry() == 12422)
     // {
-    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ScriptCommand_ZoneCombatPulse %u - script.id = %u, script.combatPulse.creatureEntry = %u, script.combatPulse.searchRadius = %u", pSource->GetGUIDLow(), script.id, script.combatPulse.creatureEntry, script.combatPulse.searchRadius);
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ScriptCommand_ZoneCombatPulse %u - script.id = %u", pSource->GetGUIDLow(), script.id);
     // }
     if (!pSource->IsAlive())
         return ShouldAbortScript(script);
@@ -1820,6 +1820,10 @@ bool Map::ScriptCommand_SetReactState(ScriptInfo const& script, WorldObject* sou
         sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_SET_REACT_STATE (script id %u) call for a nullptr or non-creature source (TypeId: %u), skipping.", script.id, source ? source->GetTypeId() : 0);
         return ShouldAbortScript(script);
     }
+    // if (pSource->GetEntry() == 12422)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ScriptCommand_SetReactState %u - script.id = %u", pSource->GetGUIDLow(), script.id);
+    // }
 
     if (CharmInfo* pCharmInfo = pSource->GetCharmInfo())
         pCharmInfo->SetReactState(ReactStates(script.setReactState.state));

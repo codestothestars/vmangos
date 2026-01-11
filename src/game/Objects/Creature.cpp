@@ -640,7 +640,14 @@ bool Creature::UpdateEntry(uint32 entry, GameEventCreatureData const* eventData 
 void Creature::InitializeReactState()
 {
     if (IsTotem() || IsTrigger() || !CanHaveTarget() || HasStaticFlag(CREATURE_STATIC_FLAG_IGNORE_COMBAT))
+    {
+        // if (GetEntry() == 12422)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Creature::InitializeReactState %u", GetGUIDLow());
+        // }
+
         SetCreatureReactState(REACT_PASSIVE);
+    }
     else if (HasExtraFlag(CREATURE_FLAG_EXTRA_NO_AGGRO))
         SetCreatureReactState(REACT_DEFENSIVE);
     else

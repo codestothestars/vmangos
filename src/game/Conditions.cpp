@@ -732,6 +732,12 @@ bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, 
                 return pCreature->GetMotionMaster()->GetCurrentMovementGeneratorType() == m_value1;
             return false;
         }
+        case CONDITION_REACT_STATE:
+        {
+            if (Creature const* pCreature = source->ToCreature())
+                return pCreature->GetReactState() == m_value1;
+            return false;
+        }
     }
     return false;
 }
@@ -1412,6 +1418,15 @@ bool ConditionEntry::IsValid()
             if (m_value1 > DISTANCING_MOTION_TYPE)
             {
                 sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "CONDITION_MOVEMENT_TYPE (entry %u, type %u) has invalid MovementGeneratorType %u, skipped", m_entry, m_condition, m_value1);
+                return false;
+            }
+            break;
+        }
+        case CONDITION_REACT_STATE:
+        {
+            if (m_value1 > REACT_AGGRESSIVE)
+            {
+                sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "CONDITION_REACT_STATE (entry %u, type %u) has invalid ReactStates %u, skipped", m_entry, m_condition, m_value1);
                 return false;
             }
             break;

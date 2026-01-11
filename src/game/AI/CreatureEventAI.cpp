@@ -543,10 +543,11 @@ void CreatureEventAI::OnNoTargets()
 
 void CreatureEventAI::EnterEvadeMode()
 {
-    // if (m_creature->GetEntry() == 12416)
-    // {
-    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "CreatureEventAI::EnterEvadeMode");
-    // }
+    if (m_creature->GetEntry() == 12416 || m_creature->GetEntry() == 12420)
+    {
+        // troubleshooting occasional evade right after running to altar
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "CreatureEventAI::EnterEvadeMode %u", m_creature->GetGUIDLow());
+    }
 
     BasicAI::EnterEvadeMode();
 
@@ -655,6 +656,10 @@ void CreatureEventAI::EnterCombat(Unit* enemy)
             switch (event.event_type)
             {
                 case EVENT_T_AGGRO:
+                    // if (m_creature->GetEntry() == 12422 && m_creature->GetReactState() == REACT_PASSIVE)
+                    // {
+                    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "CreatureEventAI::EnterCombat %u", m_creature->GetGUIDLow());
+                    // }
                     i.Enabled = true;
                     ProcessEvent(i, enemy);
                     break;

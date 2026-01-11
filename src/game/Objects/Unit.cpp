@@ -11163,7 +11163,14 @@ void Unit::SetReactState(ReactStates state)
     if (CharmInfo* pCharmInfo = GetCharmInfo())
         pCharmInfo->SetReactState(state);
     else if (Creature* pCreature = ToCreature())
+    {
+        // if (GetEntry() == 12422)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Unit::SetReactState %u - %u", GetGUIDLow(), (uint32) state);
+        // }
+
         pCreature->SetCreatureReactState(state);
+    }
     else
         sLog.Out(LOG_BASIC, LOG_LVL_ERROR, "SetReactState called for non-charmed player!");
 }

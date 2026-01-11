@@ -278,6 +278,8 @@ enum ConditionType
     CONDITION_MOVEMENT_TYPE          = 63,                  // Checks the source creature's current active movement type.
                                                             // Requirement: Creature
                                                             // Value1: enum MovementGeneratorType
+    CONDITION_REACT_STATE            = 64,                  // Checks the source creature's current react state.
+                                                            // Value1: react_state (see enum ReactStates)
 };
 
 enum ConditionFlags
