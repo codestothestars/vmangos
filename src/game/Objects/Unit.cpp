@@ -3450,7 +3450,11 @@ bool Unit::AddSpellAuraHolder(SpellAuraHolder* holder)
 
             if (stop)
             {
-                RemoveSpellAuraHolder(foundHolder, AURA_REMOVE_BY_STACK);
+                Player* holderPlayer = holder->GetRealCaster()->ToPlayer();
+                Group* group = holderPlayer ? holderPlayer->GetGroup() : nullptr;
+
+                if (!group || !group->IsMember(foundHolder->GetRealCasterGuid()))
+                    RemoveSpellAuraHolder(foundHolder, AURA_REMOVE_BY_STACK);
                 break;
             }
         }
@@ -3699,9 +3703,7 @@ bool Unit::RemoveNoStackAurasDueToAuraHolder(SpellAuraHolder* holder)
         if (i_spellId == spellId)
         {
             // Nostalrius - fix stack same HoT rank / diff caster
-            if (firstInChain)
-                aurasToRemove.emplace_back(spellId, i.second->GetCasterGuid());
-            else switch (spellId)
+            switch (spellId)
             {
             // Blessing of Light does not stack between casters.
                 case 19977:
