@@ -7225,7 +7225,7 @@ void SpellAuraHolder::Update(uint32 diff)
                 uint32 missChance = 10000 - _pveHeartBeatData->hitChance;
                 uint32 rand = urand(0, 10000);
 
-                if (rand < missChance)
+                if (rand < missChance && !(GetSpellProto()->AttributesEx4 & SPELL_ATTR_EX4_IGNORE_RESISTANCES))
                 {
                     delete _pveHeartBeatData;
                     _pveHeartBeatData = nullptr;
