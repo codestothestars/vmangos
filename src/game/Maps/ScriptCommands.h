@@ -336,6 +336,7 @@ enum eScriptCommand
                                                             // datalong = generic_script_id
                                                             // datalong2 = zone_id
                                                             // datalong3 = (bool) with_pets
+    SCRIPT_COMMAND_SUMMON_MOUNT             = 93,           // datalong = creature entry
 
     SCRIPT_COMMAND_MAX,
 
@@ -1076,6 +1077,11 @@ struct ScriptInfo
             uint32 zoneId;                                  // datalong2
             uint32 withPets;                                // datalong3
         } startScriptOnZone;
+
+        struct                                              // SCRIPT_COMMAND_SUMMON_MOUNT (92)
+        {
+            uint32 creatureEntry;                           // datalong
+        } summonMount;
 
         struct
         {
