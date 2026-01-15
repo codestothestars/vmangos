@@ -120,6 +120,7 @@ struct boss_onyxiaAI : public ScriptedAI
         Reset();
     }
 
+    float m_playerScale = ((float)sWorld.getConfig(CONFIG_UINT32_CODESTOTHESTARS_SCALE_PLAYERS)) / 40.0f;
     uint32 m_uiPhase;
     uint32 m_uiTransTimer;
     uint32 m_uiTransCount;
@@ -168,7 +169,7 @@ struct boss_onyxiaAI : public ScriptedAI
         m_uiKnockAwayTimer     = urand(15000, 25000);
         m_uiTailSweepTimer     = 5000;
 
-        m_uiFireballTimer      = 3000;
+        m_uiFireballTimer      = 3000 / m_playerScale;
         m_uiMovementTimer      = 20000;
         m_uiMovePoint          = 7; // set North as the initial Phase 2 waypoint
         m_pPointData           = GetMoveData();
@@ -425,12 +426,11 @@ struct boss_onyxiaAI : public ScriptedAI
         if (m_uiMovementTimer < uiDiff)
         {
             m_uiMovementTimer = urand(15000, 25000);
-            m_uiFireballTimer = 5000;
             if (DoMovement())
             {
                 // casting Deep Breath
                 m_uiMovementTimer = urand(20000, 25000);
-                m_uiFireballTimer = 10000;
+                m_uiFireballTimer = 10000 / m_playerScale;
             }
         }
         else
@@ -462,7 +462,7 @@ struct boss_onyxiaAI : public ScriptedAI
                     {
                         if (m_creature->GetThreatManager().getThreat(pTarget))
                             m_creature->GetThreatManager().modifyThreatPercent(pTarget, -100);
-                        m_uiFireballTimer = 3000;
+                        m_uiFireballTimer = 5000 / m_playerScale;
                     }
                 }
             }
@@ -541,7 +541,11 @@ struct boss_onyxiaAI : public ScriptedAI
         {
             if (DoCastSpellIfCan(m_creature, SPELL_BELLOWINGROAR, true) == CAST_OK)
             {
-                m_uiBellowingRoarTimer = urand(15000, 30000);
+                m_uiBellowingRoarTimer =
+                    ((float)urand(15000, 30000))
+                    / (m_playerScale * 1.67) // Convert raw player scale to ratio of healer count (i.e. 3 to 40 becomes 1 to 8)
+                    * .5; // Estimate 50% chance of death to each player per roar
+
                 // Do not be interrupted by other casts.
                 DelayCastEvents(2000);
             }
@@ -687,7 +691,10 @@ struct boss_onyxiaAI : public ScriptedAI
                 m_creature->SetLevitate(false);
                 m_creature->HandleEmote(EMOTE_ONESHOT_LAND);
                 m_creature->CastSpell(m_creature, SPELL_BELLOWINGROAR, true);
-                m_uiBellowingRoarTimer = urand (15000, 30000);
+                m_uiBellowingRoarTimer =
+                    ((float)urand(15000, 30000))
+                    / (m_playerScale * 1.67) // Convert raw player scale to ratio of healer count (i.e. 3 to 40 becomes 1 to 8)
+                    * .5; // Estimate 50% chance of death to each player per roar
                 break;
         }
     }

@@ -4833,14 +4833,9 @@ void Aura::HandleAuraModIncreaseHealth(bool apply, bool Real)
             if (Real)
             {
                 float fHealthPercent = float(target->GetHealth()) / target->GetMaxHealth();
-                int32 newMaxHealth = target->GetMaxHealth();
-                if (apply)
-                    newMaxHealth += m_modifier.m_amount;
-                else
-                    newMaxHealth -= m_modifier.m_amount;
 
-                uint32 newHealth = ceil(newMaxHealth * fHealthPercent);
                 target->HandleStatModifier(UNIT_MOD_HEALTH, TOTAL_VALUE, m_modifier.m_amount, apply);
+                uint32 newHealth = ceil(target->GetMaxHealth() * fHealthPercent);
                 target->SetHealth(newHealth);
             }
             return;

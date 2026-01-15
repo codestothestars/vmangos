@@ -517,6 +517,11 @@ void World::LoadConfigSettings(bool reload)
     setConfigPos(CONFIG_FLOAT_RATE_CREATURE_ELITE_RAREELITE_HP,          "Rate.Creature.Elite.RAREELITE.HP", 1.0f);
     setConfigPos(CONFIG_FLOAT_RATE_CREATURE_ELITE_WORLDBOSS_HP,          "Rate.Creature.Elite.WORLDBOSS.HP", 1.0f);
     setConfigPos(CONFIG_FLOAT_RATE_CREATURE_ELITE_RARE_HP,               "Rate.Creature.Elite.RARE.HP", 1.0f);
+    setConfigPos(CONFIG_FLOAT_CODESTOTHESTARS_RATE_CREATURE_DUNGEON_HP,  "codestothestars.Rate.Creature.Dungeon.HP", 1.0f);
+    setConfigPos(CONFIG_FLOAT_CODESTOTHESTARS_RATE_CREATURE_RAID10_HP,   "codestothestars.Rate.Creature.Raid10.HP", 1.0f);
+    setConfigPos(CONFIG_FLOAT_CODESTOTHESTARS_RATE_CREATURE_RAID40_HP,   "codestothestars.Rate.Creature.Raid40.HP", 1.0f);
+    setConfigPos(CONFIG_FLOAT_CODESTOTHESTARS_RATE_PLAYER_HP,            "codestothestars.Rate.Player.HP", 1.0f);
+    setConfigPos(CONFIG_UINT32_CODESTOTHESTARS_SCALE_PLAYERS,            "codestothestars.Scale.Players", 3);
     setConfigPos(CONFIG_FLOAT_RATE_CREATURE_NORMAL_SPELLDAMAGE,          "Rate.Creature.Normal.SpellDamage", 1.0f);
     setConfigPos(CONFIG_FLOAT_RATE_CREATURE_ELITE_ELITE_SPELLDAMAGE,     "Rate.Creature.Elite.Elite.SpellDamage", 1.0f);
     setConfigPos(CONFIG_FLOAT_RATE_CREATURE_ELITE_RAREELITE_SPELLDAMAGE, "Rate.Creature.Elite.RAREELITE.SpellDamage", 1.0f);
