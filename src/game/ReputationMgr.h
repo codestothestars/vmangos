@@ -67,6 +67,7 @@ class ReputationMgr
         void SaveToDB();
         void LoadFromDB(std::unique_ptr<QueryResult> result);
     public:                                                 // statics
+        static const int32 OppositeTeamBaseReputation;
         static int32 const PointsInRank[MAX_REPUTATION_RANK];
         static int32 const Reputation_Cap    =  42999;
         static int32 const Reputation_Bottom = -42000;
@@ -93,12 +94,6 @@ class ReputationMgr
 
         ReputationRank GetRank(FactionEntry const* factionEntry) const;
         ReputationRank GetBaseRank(FactionEntry const* factionEntry) const;
-
-        ReputationRank const* GetForcedRankIfAny(FactionTemplateEntry const* factionTemplateEntry) const
-        {
-            ForcedReactions::const_iterator forceItr = m_forcedReactions.find(factionTemplateEntry->faction);
-            return forceItr != m_forcedReactions.end() ? &forceItr->second : nullptr;
-        }
 
     public:                                                 // modifiers
         bool SetReputation(FactionEntry const* factionEntry, int32 standing)

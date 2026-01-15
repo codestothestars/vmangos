@@ -2099,9 +2099,6 @@ bool GameObject::IsHostileTo(WorldObject const* target) const
         // forced reaction
         if (tester_faction->faction)
         {
-            if (ReputationRank const* force = ((Player*)target)->GetReputationMgr().GetForcedRankIfAny(tester_faction))
-                return *force <= REP_HOSTILE;
-
             // apply reputation state
             FactionEntry const* raw_tester_faction = sObjectMgr.GetFactionEntry(tester_faction->faction);
             if (raw_tester_faction && raw_tester_faction->reputationListID >= 0)
@@ -2145,9 +2142,6 @@ bool GameObject::IsFriendlyTo(WorldObject const* target) const
         // forced reaction
         if (tester_faction->faction)
         {
-            if (ReputationRank const* force = ((Player*)target)->GetReputationMgr().GetForcedRankIfAny(tester_faction))
-                return *force >= REP_FRIENDLY;
-
             // apply reputation state
             if (FactionEntry const* raw_tester_faction = sObjectMgr.GetFactionEntry(tester_faction->faction))
                 if (raw_tester_faction->reputationListID >= 0)
