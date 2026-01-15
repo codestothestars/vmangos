@@ -74,7 +74,8 @@ enum eScriptCommand
     SCRIPT_COMMAND_RESPAWN_GAMEOBJECT       = 9,            // source = Map
                                                             // target = GameObject (from datalong, provided source or target)
                                                             // datalong = db_guid
-                                                            // datalong2 = despawn_delay
+                                                            // datalong2 = respawn_delay
+                                                            // datalong3 = next_respawn_delay
     SCRIPT_COMMAND_TEMP_SUMMON_CREATURE     = 10,           // source = WorldObject (from provided source or buddy)
                                                             // datalong = creature_entry
                                                             // datalong2 = despawn_delay
@@ -201,6 +202,8 @@ enum eScriptCommand
                                                             // datalong2 = (bool) is_percent
     SCRIPT_COMMAND_ZONE_COMBAT_PULSE        = 49,           // source = Creature
                                                             // datalong = (bool) initialPulse
+                                                            // datalong2 = creature_entry
+                                                            // datalong3 = search_radius
     SCRIPT_COMMAND_CALL_FOR_HELP            = 50,           // source = Creature
                                                             // x = radius
     SCRIPT_COMMAND_SET_SHEATH               = 51,           // source = Unit
@@ -234,6 +237,8 @@ enum eScriptCommand
                                                             // datalong4 = (bool) repeat
                                                             // dataint = overwrite_guid
                                                             // dataint2 = overwrite_entry
+                                                            // dataint3 = preserve_existing
+                                                            // dataint4 = movement_options (see enum MoveOptions)
     SCRIPT_COMMAND_START_MAP_EVENT          = 61,           // source = Map
                                                             // datalong = event_id
                                                             // datalong2 = time_limit
@@ -283,7 +288,7 @@ enum eScriptCommand
     SCRIPT_COMMAND_FAIL_QUEST               = 70,           // source = Player
                                                             // datalong = quest_id
     SCRIPT_COMMAND_RESPAWN_CREATURE         = 71,           // source = Creature
-                                                            // datalong = (bool) even_if_alive
+                                                            // datalong = eRespawnCreatureFlags
     SCRIPT_COMMAND_ASSIST_UNIT              = 72,           // source = Creature
                                                             // target = Unit
     SCRIPT_COMMAND_COMBAT_STOP              = 73,           // source = Unit
@@ -336,7 +341,15 @@ enum eScriptCommand
                                                             // datalong = generic_script_id
                                                             // datalong2 = zone_id
                                                             // datalong3 = (bool) with_pets
-
+    SCRIPT_COMMAND_ATTACK_STOP              = 93,           // source = Unit
+    SCRIPT_COMMAND_CLEAR_MOVEMENT           = 94,           // source = Creature
+                                                            // datalong = enum MovementGeneratorType
+                                                            // datalong2 = limit
+                                                            // datalong3 = param1
+    SCRIPT_COMMAND_CLEAR_POINT              = 95,           // source = Creature
+                                                            // datalong = point_id
+    SCRIPT_COMMAND_TOGGLE_CAN_TARGET        = 96,           // source = Creature
+                                                            // datalong = (bool) 0 = off, 1 = on
     SCRIPT_COMMAND_MAX,
 
     SCRIPT_COMMAND_DISABLED                 = 9999          // Script action was disabled during loading.
@@ -348,8 +361,9 @@ static constexpr uint32 MAX_EMOTE_ID = 4;                   // used for SCRIPT_C
 // Flags used by SCRIPT_COMMAND_MOVE_TO
 enum eMoveToFlags
 {
-    SF_MOVETO_FORCED        = 0x1,                          // No check if creature can move.
-    SF_MOVETO_POINT_MOVEGEN = 0x2,                          // Changes movement generator to point movement.
+    SF_MOVETO_FORCED          = 0x1,                          // No check if creature can move.
+    SF_MOVETO_POINT_MOVEGEN   = 0x2,                          // Changes movement generator to point movement.
+    SF_MOVETO_RESUME_ON_RESET = 0x4,                          // Continue when overriding movement is removed.
 };
 
 // Possible datalong3 values for SCRIPT_COMMAND_MOVE_TO
@@ -378,7 +392,8 @@ enum eSummonCreatureFlags
     SF_SUMMONCREATURE_ACTIVE      = 0x02,                       // active creatures are always updated
     SF_SUMMONCREATURE_UNIQUE      = 0x04,                       // not actually unique, just checks for same entry in certain range
     SF_SUMMONCREATURE_UNIQUE_TEMP = 0x08,                       // same as 0x10 but check for TempSummon only creatures
-    SF_SUMMONCREATURE_NULL_AI     = 0x10                        // use Null AI instead of the normal creature script
+    SF_SUMMONCREATURE_NULL_AI     = 0x10,                       // use Null AI instead of the normal creature script
+    SF_SUMMONCREATURE_PASSIVE     = 0x20                        // start with passive react state
 };
 
 // FLags used by SCRIPT_COMMAND_CAST_SPELL
@@ -511,6 +526,15 @@ enum eStartScriptForAllOptions
     SO_STARTFORALL_MAX
 };
 
+// Flags used by SCRIPT_COMMAND_RESPAWN_CREATURE
+enum eRespawnCreatureFlags
+{
+    SF_RESPAWNCREATURE_EVEN_IF_ALIVE = 0x1,
+    SF_RESPAWNCREATURE_CLEAR_DESPAWN = 0x2,
+
+    SF_RESPAWNCREATURE_MAX
+};
+
 enum eDataFlags
 {
     SF_GENERAL_SWAP_INITIAL_TARGETS = 0x01,                 // Swaps the original source and target, before buddy is checked.
@@ -599,7 +623,8 @@ struct ScriptInfo
         struct                                              // SCRIPT_COMMAND_RESPAWN_GAMEOBJECT (9)
         {
             uint32 goGuid;                                  // datalong
-            int32 despawnDelay;                             // datalong2
+            int32 respawnDelay;                             // datalong2
+            int32 nextRespawnDelay;                         // datalong3
         } respawnGo;
 
         struct                                              // SCRIPT_COMMAND_TEMP_SUMMON_CREATURE (10)
@@ -829,6 +854,8 @@ struct ScriptInfo
         struct                                              // SCRIPT_COMMAND_ZONE_COMBAT_PULSE (49)
         {
             uint32 initialPulse;                            // datalong
+            uint32 creatureEntry;                           // datalong2
+            uint32 searchRadius;                            // datalong3
         } combatPulse;
 
                                                             // SCRIPT_COMMAND_CALL_FOR_HELP (50)
@@ -894,6 +921,7 @@ struct ScriptInfo
             uint32 unused;                                  // data_flags
             int32  overwriteGuid;                           // dataint
             int32  overwriteEntry;                          // dataint2
+            int32  preserveExisting;                        // dataint3
         } startWaypoints;
         
         struct                                              // SCRIPT_COMMAND_START_MAP_EVENT (61)
@@ -985,7 +1013,7 @@ struct ScriptInfo
 
         struct                                              // SCRIPT_COMMAND_RESPAWN_CREATURE (71)
         {
-            uint32 evenAlive;                               // datalong
+            uint32 flags;                                   // datalong
         } respawnCreature;
 
                                                             // SCRIPT_COMMAND_ASSIST_UNIT (72)
@@ -1076,6 +1104,25 @@ struct ScriptInfo
             uint32 zoneId;                                  // datalong2
             uint32 withPets;                                // datalong3
         } startScriptOnZone;
+
+                                                            // SCRIPT_COMMAND_ATTACK_STOP (93)
+
+        struct                                              // SCRIPT_COMMAND_CLEAR_MOVEMENT (94)
+        {
+            uint32 movementType;                            // datalong
+            uint32 limit;                                   // datalong2
+            uint32 param1;                                  // datalong3
+        } clearMovement;
+
+        struct                                              // SCRIPT_COMMAND_CLEAR_POINT (95)
+        {
+            uint32 pointId;                                 // datalong
+        } clearPoint;
+
+        struct                                              // SCRIPT_COMMAND_TOGGLE_CAN_TARGET (96)
+        {
+            uint32 canTarget;                               // datalong
+        } toggleCanTarget;
 
         struct
         {

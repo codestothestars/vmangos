@@ -74,6 +74,8 @@ enum EventAI_Type
     EVENT_T_HIT_BY_AURA             = 34,                   // AuraType, Unused, RepeatMin, RepeatMax
     EVENT_T_STEALTH_ALERT           = 35,                   // RepeatMin, RepeatMax
     EVENT_T_SPELL_HIT_TARGET        = 36,                   // SpellID, School, RepeatMin, RepeatMax
+    EVENT_T_AURA_UNAPPLY            = 37,                   // SpellID
+    EVENT_T_NO_TARGETS              = 38,                   // NONE
 
     EVENT_T_END,
 };
@@ -264,6 +266,11 @@ struct CreatureEventAI_Event
             uint32 repeatMin;
             uint32 repeatMax;
         } stealth_alert;
+        // EVENT_T_AURA_UNAPPLY                             = 37
+        struct
+        {
+            uint32 spellId;
+        } aura_unapply;
         // RAW
         struct
         {
@@ -308,11 +315,13 @@ class CreatureEventAI : public BasicAI
         void Reset();
         void JustReachedHome() override;
         void EnterCombat(Unit* enemy) override;
+        void OnNoTargets() override;
         void EnterEvadeMode() override;
         void OnCombatStop() override;
         void JustDied(Unit* killer) override;
         void KilledUnit(Unit* victim) override;
         void JustSummoned(Creature* pUnit) override;
+        void AuraUnapply(SpellCaster* pCaster, SpellEntry const* pSpellEntry) override;
         void MoveInLineOfSight(Unit* who) override;
         void SpellHit(SpellCaster* pCaster, SpellEntry const* pSpellEntry) override;
         void SpellHitTarget(Unit* pTarget, SpellEntry const* pSpellEntry) override;

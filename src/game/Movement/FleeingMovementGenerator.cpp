@@ -67,6 +67,13 @@ void FleeingMovementGenerator<T>::_setTargetLocation(T &owner)
     init.SetWalk(_forceWalking);
     if (_customSpeed > 0)
         init.SetVelocity(_customSpeed);
+    if (Creature* creature = owner.ToCreature())
+    {
+        if (creature->GetEntry() == 12416)
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "FleeingMovementGenerator<T>::_setTargetLocation %u: init.Launch()", creature->GetGUIDLow());
+        }
+    }
     int32 traveltime = init.Launch();
     i_nextCheckTime.Reset(traveltime + urand(800, 1500));
     _forceUpdate = false;
@@ -151,6 +158,11 @@ void FleeingMovementGenerator<Player>::Finalize(Player &owner)
 template<>
 void FleeingMovementGenerator<Creature>::Finalize(Creature &owner)
 {
+    if (owner.GetEntry() == 12416)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "FleeingMovementGenerator<Creature>::Finalize %u", owner.GetGUIDLow());
+    }
+
     owner.SetWalk(!owner.HasUnitState(UNIT_STATE_RUNNING), false);
     owner.ClearUnitState(UNIT_STATE_FLEEING | UNIT_STATE_FLEEING_MOVE);
     owner.UpdateControl();

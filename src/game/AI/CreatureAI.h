@@ -62,11 +62,17 @@ class CreatureAI
 
         // == Reactions At =================================
 
+        // Called when aura removed
+        virtual void AuraUnapply(SpellCaster*, SpellEntry const*) {}
+
         // Called when an unit moves within visibility distance
         virtual void MoveInLineOfSight(Unit*) {}
 
         // Called for reaction at enter to combat if not in combat yet (enemy can be nullptr)
         virtual void EnterCombat(Unit* /*enemy*/) {}
+
+        // Called for reaction at no targets, before evade
+        virtual void OnNoTargets() {}
 
         // Called for reaction at stopping attack at no attackers or targets
         virtual void EnterEvadeMode();

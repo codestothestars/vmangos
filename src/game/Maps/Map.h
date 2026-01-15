@@ -863,6 +863,10 @@ class Map : public GridRefManager<NGridType>
         bool ScriptCommand_StartScriptOnGroup(ScriptInfo const& script, WorldObject* source, WorldObject* target);
         bool ScriptCommand_LoadCreatureSpawn(ScriptInfo const& script, WorldObject* source, WorldObject* target);
         bool ScriptCommand_StartScriptOnZone(ScriptInfo const& script, WorldObject* source, WorldObject* target);
+        bool ScriptCommand_AttackStop(ScriptInfo const& script, WorldObject* source, WorldObject* target);
+        bool ScriptCommand_ClearMovement(ScriptInfo const& script, WorldObject* source, WorldObject* target);
+        bool ScriptCommand_ClearPoint(ScriptInfo const& script, WorldObject* source, WorldObject* target);
+        bool ScriptCommand_ToggleCanTarget(ScriptInfo const& script, WorldObject* source, WorldObject* target);
 
         // Add any new script command functions to the array.
         ScriptCommandFunction const m_ScriptCommands[SCRIPT_COMMAND_MAX] =
@@ -960,6 +964,10 @@ class Map : public GridRefManager<NGridType>
             &Map::ScriptCommand_StartScriptOnGroup,     // 90
             &Map::ScriptCommand_LoadCreatureSpawn,      // 91
             &Map::ScriptCommand_StartScriptOnZone,      // 92
+            &Map::ScriptCommand_AttackStop,             // 93
+            &Map::ScriptCommand_ClearMovement,          // 94
+            &Map::ScriptCommand_ClearPoint,             // 95
+            &Map::ScriptCommand_ToggleCanTarget,        // 96
         };
 
     public:

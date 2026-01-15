@@ -22,6 +22,7 @@
 #include "GameObject.h"
 #include "GameObjectAI.h"
 #include "Player.h"
+#include "Log.h"
 #include "PlayerAI.h"
 #include "TemporarySummon.h"
 #include "Map.h"
@@ -34,6 +35,22 @@
 template<class T>
 void PointMovementGenerator<T>::Initialize(T& unit)
 {
+    if (unit.GetEntry() == 12416)
+    {
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "PointMovementGenerator::Initialize %u", unit.GetGUIDLow());
+    }
+
+    if (m_options & MOVE_WAIT_FOR_SPELLS && unit.IsNoMovementSpellCasted())
+    {
+        if (unit.GetEntry() == 12416)
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "PointMovementGenerator::Initialize %u - Pause", unit.GetGUIDLow());
+        }
+        i_nextMoveTime.Reset(1);
+        m_paused = true;
+        return;
+    }
+
     if (!unit.IsStopped())
         unit.StopMoving();
 
@@ -54,6 +71,13 @@ void PointMovementGenerator<T>::Initialize(T& unit)
         init.SetCyclic();
     if (m_o > -7.0f)
         init.SetFacing(m_o);
+    if (Creature* creature = unit.ToCreature())
+    {
+        if (creature->GetEntry() == 12416)
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "PointMovementGenerator<T>::Initialize %u: init.Launch()", creature->GetGUIDLow());
+        }
+    }
     init.Launch();
 }
 
@@ -73,6 +97,16 @@ void PointMovementGenerator<T>::Interrupt(T& unit)
 template<class T>
 void PointMovementGenerator<T>::Reset(T& unit)
 {
+    if (m_resumeOnReset)
+    {
+        if (unit.GetEntry() == 12416)
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "PointMovementGenerator::Reset 12416 - Resume");
+        }
+        Initialize(unit);
+        return;
+    }
+
     if (!unit.IsStopped())
         unit.StopMoving();
 
@@ -80,10 +114,14 @@ void PointMovementGenerator<T>::Reset(T& unit)
 }
 
 template<class T>
-bool PointMovementGenerator<T>::Update(T& unit, uint32 const& /*diff*/)
+bool PointMovementGenerator<T>::Update(T& unit, uint32 const& diff)
 {
     if (!&unit)
         return false;
+    // if (unit.GetEntry() == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "PointMovementGenerator::Update 12416");
+    // }
 
     if (unit.HasUnitState(UNIT_STATE_CAN_NOT_MOVE))
     {
@@ -93,11 +131,35 @@ bool PointMovementGenerator<T>::Update(T& unit, uint32 const& /*diff*/)
 
     unit.AddUnitState(UNIT_STATE_ROAMING_MOVE);
 
+    if (m_paused)
+    {
+        i_nextMoveTime.Update(diff);
+
+        if (i_nextMoveTime.Passed())
+        {
+            // if (unit.GetEntry() == 12416)
+            // {
+            //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "PointMovementGenerator::Update 12416 - Unpause");
+            // }
+            m_paused = false;
+
+            Initialize(unit);
+
+            if (m_paused) return true;
+        }
+        else
+            return true;
+    }
+
     if (!unit.movespline->Finalized() && m_recalculateSpeed)
     {
         m_recalculateSpeed = false;
         Initialize(unit);
     }
+    // if (unit.GetEntry() == 12416)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "PointMovementGenerator::Update 12416 - return %u", !unit.movespline->Finalized());
+    // }
     return !unit.movespline->Finalized();
 }
 
@@ -200,6 +262,13 @@ void AssistanceMovementGenerator::Initialize(Creature& unit)
     init.MoveTo(m_x, m_y, m_z, (m_options & (MOVE_PATHFINDING | MOVE_FORCE_DESTINATION)));
     init.SetWalk(true);
     init.SetVelocity(unit.GetFleeingSpeed());
+    if (Creature* creature = unit.ToCreature())
+    {
+        if (creature->GetEntry() == 12416)
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "AssistanceMovementGenerator::Initialize %u: init.Launch()", creature->GetGUIDLow());
+        }
+    }
     init.Launch();
 }
 

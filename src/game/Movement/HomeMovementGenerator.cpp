@@ -27,8 +27,13 @@ void HomeMovementGenerator<Creature>::Initialize(Creature & owner)
     _setTargetLocation(owner);
 }
 
-void HomeMovementGenerator<Creature>::Reset(Creature &)
+void HomeMovementGenerator<Creature>::Reset(Creature & owner)
 {
+    if(owner.GetEntry() == 12416)
+    {
+        owner.GetEntry();
+    }
+    _setTargetLocation(owner);
 }
 
 void HomeMovementGenerator<Creature>::_setTargetLocation(Creature & owner)
@@ -87,8 +92,17 @@ void HomeMovementGenerator<Creature>::Finalize(Creature& owner)
         if (owner.GetTemporaryFactionFlags() & TEMPFACTION_RESTORE_REACH_HOME)
             owner.ClearTemporaryFaction();
 
+        if (owner.GetEntry() == 12416)
+        {
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "HomeMovementGenerator<Creature>::Finalize %u", owner.GetGUIDLow());
+        }
+
         owner.SetWalk(!owner.HasUnitState(UNIT_STATE_RUNNING) && !owner.IsLevitating(), false);
         owner.LoadCreatureAddon(true);
+        if(owner.GetEntry() == 12416)
+        {
+            owner.GetEntry();
+        }
         owner.AI()->JustReachedHome();
     }
 }

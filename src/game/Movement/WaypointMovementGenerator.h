@@ -25,6 +25,7 @@
  * packets for the players.
  */
 
+#include "Log.h"
 #include "MovementGenerator.h"
 #include "WaypointManager.h"
 #include "CreatureGroups.h"
@@ -68,8 +69,15 @@ class WaypointMovementGenerator<Creature>
   public PathMovementBase<Creature, WaypointPath const*>
 {
     public:
-        WaypointMovementGenerator(Creature &, bool repeating = true) : i_nextMoveTime(0), m_isArrivalDone(false), m_repeating(repeating), m_isWandering(false), m_lastReachedWaypoint(0) {}
-        ~WaypointMovementGenerator() { i_path = nullptr; }
+        WaypointMovementGenerator(Creature &creature, bool repeating = true) : i_nextMoveTime(0), m_isArrivalDone(false), m_repeating(repeating), m_isWandering(false), m_lastReachedWaypoint(0), m_entry(creature.GetEntry()) {}
+        ~WaypointMovementGenerator() {
+            // if (m_entry == 12416)
+            // {
+            //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "~WaypointMovementGenerator() - m_overwriteEntry = %u", m_overwriteEntry);
+            // }
+            i_path = nullptr;
+        }
+        const std::map<unsigned int, WaypointNode>* GetIpath() { return i_path; }
         void Initialize(Creature &u);
         void Interrupt(Creature &);
         void Finalize(Creature &);
@@ -84,6 +92,7 @@ class WaypointMovementGenerator<Creature>
         uint32 getLastReachedWaypoint() const { return m_lastReachedWaypoint; }
         void GetPathInformation(WaypointPathOrigin& wpOrigin) const { wpOrigin = m_PathOrigin; }
         void GetPathInformation(std::ostringstream& oss) const;
+        uint32 GetWaypointId() { return m_waypointId; }
         bool SetNextWaypoint(uint32 pointId);
 
         void AddPauseTime(int32 waitTimeDiff)
@@ -91,6 +100,7 @@ class WaypointMovementGenerator<Creature>
             if (i_nextMoveTime.GetExpiry() < waitTimeDiff)
                 i_nextMoveTime.Reset(waitTimeDiff);
         }
+        // uint32 m_overwriteEntry;
         
     protected:
         void LoadPath(uint32 guid, uint32 entry, WaypointPathOrigin wpOrigin);
@@ -120,6 +130,8 @@ class WaypointMovementGenerator<Creature>
         uint32 m_lastReachedWaypoint;
 
         WaypointPathOrigin m_PathOrigin;
+        uint32 m_waypointId;
+        uint32 m_entry;
 };
 
 /** FlightPathMovementGenerator generates movement of the player for the paths

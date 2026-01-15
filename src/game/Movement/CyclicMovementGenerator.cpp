@@ -81,6 +81,13 @@ void CyclicMovementGenerator<Creature>::_setTargetLocation(Creature & owner)
             init.SetFly();
         init.SetWalk(!owner.HasExtraFlag(CREATURE_FLAG_EXTRA_ALWAYS_RUN));
         init.Move(&path);
+        if (Creature* creature = owner.ToCreature())
+        {
+            if (creature->GetEntry() == 12416)
+            {
+                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "CyclicMovementGenerator<Creature>::_setTargetLocation %u: init.Launch() 1", creature->GetGUIDLow());
+            }
+        }
         init.Launch();
     }
     else
@@ -96,6 +103,13 @@ void CyclicMovementGenerator<Creature>::_setTargetLocation(Creature & owner)
         init.SetWalk(!owner.HasExtraFlag(CREATURE_FLAG_EXTRA_ALWAYS_RUN));
         init.MovebyPath(genPath);
         init.SetFirstPointId(1);
+        if (Creature* creature = owner.ToCreature())
+        {
+            if (creature->GetEntry() == 12416)
+            {
+                sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "CyclicMovementGenerator<Creature>::_setTargetLocation %u: init.Launch() 2", creature->GetGUIDLow());
+            }
+        }
         init.Launch();
     }
 }

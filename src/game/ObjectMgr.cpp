@@ -2007,8 +2007,10 @@ void ObjectMgr::LoadCreatureSpells()
                 uint32 targetParam1    = fields[4 + i * CREATURE_SPELLS_MAX_COLUMNS].GetUInt32();
                 uint32 targetParam2    = fields[5 + i * CREATURE_SPELLS_MAX_COLUMNS].GetUInt32();
 
-                if (!sScriptMgr.CheckScriptTargets(castTarget, targetParam1, targetParam2, "creature_spells", entry))
-                    continue;
+                // codestothestars - Need to instead check all of these after loading creature templates.
+                // Spells with target 8 all fail to load because creature templates aren't loaded yet!
+                // if (!sScriptMgr.CheckScriptTargets(castTarget, targetParam1, targetParam2, "creature_spells", entry))
+                //     continue;
 
                 uint16 castFlags        = fields[6 + i * CREATURE_SPELLS_MAX_COLUMNS].GetUInt16();
 

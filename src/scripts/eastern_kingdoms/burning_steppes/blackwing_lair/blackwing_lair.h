@@ -31,7 +31,7 @@ enum
     DATA_GRETOK_GUID            = 9,
     DATA_TRIGGER_GUID           = 10,
     DATA_ORB_DOMINATION_GUID    = 11,
-    DATA_EGG                    = 12,
+    DATA_EGG                    = 12, // I don't think we need this anymore. Can always just check for exising eggs.
     DATA_HOW_EGG                = 13,
     DATA_CHROM_BREATH           = 14,
     DATA_NEF_COLOR              = 15,
@@ -45,7 +45,8 @@ enum
     DATA_DOOR_NEFARIAN          = 23,
     DATA_SCEPTER_CHAMPION       = 24,
     DATA_SCEPTER_RUN_TIME       = 25,
-    MAX_DATAS                   = 26,
+    DATA_RAZORGORE_TROOPS       = 26, // must set in script when dying and resetting.
+    MAX_DATAS                   = 27,
 
     GO_DRAKONID_BONES           = 179804,
 
