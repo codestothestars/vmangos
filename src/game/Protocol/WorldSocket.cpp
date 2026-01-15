@@ -309,18 +309,6 @@ WorldSocket::HandlerResult WorldSocket::_HandleAuthSession(WorldPacket& recvPack
 
     Field* fields = accountQueryResult->Fetch();
 
-    // Prevent connecting directly to mangosd by checking
-    // that same ip connected to realmd previously.
-    if (fields[3].GetCppString() != GetRemoteIpString() && serverAddressList.find(GetRemoteIpString()) == serverAddressList.end())
-    {
-        packet.Initialize(SMSG_AUTH_RESPONSE, 1);
-        packet << uint8(AUTH_FAILED);
-        SendPacket(packet);
-
-        sLog.Out(LOG_BASIC, LOG_LVL_BASIC, "WorldSocket::HandleAuthSession: Sent Auth Response (Account IP differs from realmd).");
-        return HandlerResult::Fail;
-    }
-
     accountId = fields[0].GetUInt32();
     security = fields[1].GetString() ? (AccountTypes)(fields[1].GetUInt32()) : SEC_PLAYER;
     if (security > SEC_ADMINISTRATOR) // prevent invalid security settings in DB
