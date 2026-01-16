@@ -1085,7 +1085,7 @@ DELETE FROM `creature_ai_events` WHERE `creature_id` = 12422;
 REPLACE `creature_ai_events`
 (   `id`, `creature_id`, `condition_id`, `event_type`, `event_inverse_phase_mask`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
 (1242202,         12422,              0,           29,                 0b00000000,             15,          84388,          1242202, 'Death Talon Dragonspawn - Movement inform (follow)'),
-(1242203,         12422,           8302,            6,                 0b00000000,              0,              0,          1242203, 'Death Talon Dragonspawn - Death'),
+(1242203,         12422,              0,            6,                 0b00000000,              0,              0,          1242203, 'Death Talon Dragonspawn - Death'),
 -- Lower this ID at the end as needed.
 (1242204,         12422,              0,           21,                 0b00000000,              0,              0,          1242204, 'Death Talon Dragonspawn - Reached Home'),
 (1242205,         12422,              0,           11,                 0b00000000,              0,              0,          1242205, 'Death Talon Dragonspawn - Spawned'),
@@ -1106,7 +1106,7 @@ INSERT INTO `creature_ai_scripts`
 (   `id`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `dataint`, `condition_id`, `comments`) VALUES
 (1242202,          0,        59,          2,           0,           0,           0,         0,            624, 'Death Talon Dragonspawn - Set react state'),
 (1242202,          1,        49,          1,       12435,         150,           0,         0,              0, 'Death Talon Dragonspawn - Combat Pulse'),
-(1242203,          0,        65,       8302,           0,           1,           2,         0,              0, 'Death Talon Dragonspawn - Decrement Creature Count'),
+(1242203,          0,        65,       8302,           0,           1,           2,         0,           8302, 'Death Talon Dragonspawn - Decrement Creature Count'),
 (1242204,          0,        18,          0,           0,           0,           0,         0,              0, 'Death Talon Dragonspawn - Despawn'),
 (1242205,          0,        39,    8302036,           0,           0,           0,       100,              0, 'Death Talon Dragonspawn - Increment Creature Count'),
 (1242208,          0,        39,    8302149,           0,           0,           0,       100,              0, 'Death Talon Dragonspawn - Run to spawn point (North)'),
