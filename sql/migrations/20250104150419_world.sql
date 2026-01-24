@@ -267,11 +267,18 @@ INSERT `event_scripts`
 (8302,          1,        61,       8302,     9000000,           0,           0,             0,               0,               0,            0,         0,     830201,          0,     830202,              0, 'Razorgore Event - Start Map Event');
 
 -- Success Script for Scripted Map Event
-DELETE FROM generic_scripts WHERE LENGTH(id) = 6 AND id LIKE '8302%'; -- testing
+DELETE FROM generic_scripts WHERE id = 830201; -- testing
+-- Need to save the encounter state to the map on success.
+INSERT `generic_scripts`
+(  `id`, `delay`, `command`, `datalong`, `datalong2`, `dataint`, `target_param1`, `target_type`, `data_flags`, `comments`) VALUES
+(830201,       0,        37,          0,           3,         0,               0,             0,            0, 'Razorgore Event - Set Instance Data (Encounter Done)'),
+(830201,       4,        39,     176964,           0,       100,               0,             0,         0x00, 'Razorgore Event - Open Portcullis (entrance) (success)'),
+(830201,       4,        39,     176965,           0,       100,               0,             0,         0x00, 'Razorgore Event - Open Portcullis (exit)');
+
+-- Fail Script for Scripted Map Event
+DELETE FROM generic_scripts WHERE id = 830202; -- testing
 INSERT `generic_scripts`
 (  `id`, `delay`, `command`, `datalong`, `dataint`, `target_param1`, `target_type`, `data_flags`, `comments`) VALUES
-(830201,       4,        39,     176964,       100,               0,             0,         0x00, 'Razorgore Event - Open Portcullis (entrance) (success)'),
-(830201,       4,        39,     176965,       100,               0,             0,         0x00, 'Razorgore Event - Open Portcullis (exit)'),
 (830202,       0,        44,          0,         0,           12796,            11,         0x02, 'Razorgore Event - Set phase on Nefarian''s Troops');
 
 -- Spawning Adds
