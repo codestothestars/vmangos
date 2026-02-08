@@ -1146,8 +1146,9 @@ INSERT `creature_ai_events`
 (1243514,         12435,               0,           6,                  0b0111111,          0x00,              0,              0,              0,              0,          1243514, 'Razorgore the Untamed - Death (phase 6)'),
 (1243515,         12435,               0,          11,                  0b0000000,          0x00,              0,              0,              0,              0,          1243510, 'Razorgore the Untamed - Spawned'),
 (1243516,         12435,               0,          37,                  0b0000000,          0x00,          19832,              0,              0,              0,          1243516, 'Razorgore the Untamed - Aura unapply'),
-(1243517,         12435,               0,           8,                  0b0000000,          0x00,          23032,             -1,              0,              0,          1243517, 'Razorgore the Untamed - Hit by spell'),
-(1243518,         12435,               0,           7,                  0b0000000,          0x00,              0,              0,              0,              0,          1243518, 'Razorgore the Untamed - Evade');
+(1243517,         12435,               0,           8,                  0b0000000,          0x00,          23032,             -1,              0,              0,          1243517, 'Razorgore the Untamed - Hit by spell (Nefarian''s Troops Flee)'),
+(1243518,         12435,               0,           7,                  0b0000000,          0x00,              0,              0,              0,              0,          1243518, 'Razorgore the Untamed - Evade'),
+(1243519,         12435,               0,           8,                  0b0000000,          0x00,          23031,             -1,              0,              0,          1243519, 'Razorgore the Untamed - Hit by spell (Cancel Bob Possession)');
 DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '12435%'; -- testing
 INSERT `creature_ai_scripts`
 (   `id`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_type`, `data_flags`, `dataint`,      `o`, `condition_id`, `comments`) VALUES
@@ -1186,7 +1187,8 @@ INSERT `creature_ai_scripts`
 (1243517,          0,        44,          6,           0,           0,           0,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Set phase 6'),
 (1243518,          0,        68,    1243505,           2,       12416,         125,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Evade Blackwing Legionnaire'),
 (1243518,          0,        68,    1243505,           2,       12420,         125,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Evade Blackwing Mage'),
-(1243518,          0,        68,    1243505,           2,       12422,         125,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Evade Deathtalon Dragonspawn');
+(1243518,          0,        68,    1243505,           2,       12422,         125,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Evade Deathtalon Dragonspawn'),
+(1243519,          0,        39,    1243506,           0,           0,           0,               0,             0,         0x00,       100, 0       ,              0, 'Razorgore the Untamed - Cast Warming Flames');
 REPLACE `creature_spells`
 (`entry`, `name`,
                                    `spellId_1`, `castTarget_1`, `targetParam1_1`, `targetParam2_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, 
@@ -1243,7 +1245,8 @@ INSERT `generic_scripts`
 (1243504,      60,          1,        91,      84390,           0,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Load Blackwing Guardsman 1 Spawn'),
 (1243504,      60,          0,        71,        0x2,           0,           0,            11,         0x02,         0,           84391, 'Razorgore the Untamed - Respawn Blackwing Guardsman 2'),
 (1243504,      60,          1,        91,      84391,           0,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Load Blackwing Guardsman 2 Spawn'),
-(1243505,       0,          0,        33,          0,           0,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Enter evade mode');
+(1243505,       0,          0,        33,          0,           0,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Enter evade mode'),
+(1243506,       3,          0,        15,      23040,       0x003,           0,             8,         0x00,         0,               0, 'Razorgore the Untamed - Cast Warming Flames');
 UPDATE `creature_template` SET `ai_name` = 'EventAI', `auras` = '18943', `script_name` = '', `spell_list_id` = 124350 WHERE `entry` = 12435;
 
 -- Events list for Grethok the Controller
@@ -1612,9 +1615,6 @@ CREATE TABLE event_unit_last_point(
 );
 
 INSERT event SELECT unixtimems FROM spell_cast_start WHERE spell_id = @target_spell_id;
-
-
-
 
 INSERT unit SELECT * FROM (
   SELECT 1 unit_type, guid, faction FROM creature
@@ -3269,6 +3269,21 @@ CREATE TABLE higher_delay_count(
   PRIMARY KEY(razorgore_guid, position_x, position_y, unixtimems),
   FOREIGN KEY(razorgore_guid, position_x, position_y, unixtimems) REFERENCES higher_delay(razorgore_guid, position_x, position_y, unixtimems)
 );
+
+-- Razorgore spell delays after flee, to help judge whether his AI is preserved during Possess (which it seems to not be).
+SELECT
+  razorgore_spell.spell_id,
+  razorgore_spell.unixtimems - flee_first_cast_time.unixtimems razorgore_spell_delay,
+  razorgore_spell.*,
+  flee_first_cast_time.*
+FROM spell_cast_go razorgore_spell
+JOIN creature razorgore ON razorgore_spell.caster_guid = razorgore.guid
+JOIN (SELECT spell_id, MIN(unixtimems) unixtimems FROM spell_cast_go GROUP BY spell_id) flee_first_cast_time
+WHERE
+  flee_first_cast_time.spell_id = 23032
+  AND razorgore.id = 12435
+  AND razorgore_spell.unixtimems > flee_first_cast_time.unixtimems
+ORDER BY razorgore_spell.spell_id, razorgore_spell.unixtimems
 
 -- Final movement of adds. Doesn't include Dragonspawn because they despawn immediately.
 SELECT creature_movement_server_combat.*
