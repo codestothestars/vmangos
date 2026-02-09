@@ -1304,7 +1304,13 @@ INSERT `creature_ai_scripts`
 UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry` = 14449;
 
 -- Events list for Orb of Domination
-UPDATE `creature_template` SET `script_name` = '' WHERE `entry` = 14453;
+INSERT `creature_ai_events`
+(   `id`, `creature_id`, `event_type`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
+(1445301,         14453,            8,          20037,             -1,          1445301, 'Orb of Domination - Hit by spell');
+INSERT `creature_ai_scripts`
+(   `id`, `command`, `datalong`, `comments`) VALUES
+(1445301,        15,     20038,  'Orb of Domination - Cast Explosion');
+UPDATE `creature_template` SET `ai_name` = 'EventAI', `script_name` = '' WHERE `entry` = 14453;
 
 -- Events list for Blackwing Guardsman
 DELETE FROM `creature_ai_events` WHERE `creature_id` = 14456;

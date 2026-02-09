@@ -340,13 +340,6 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                         pRanshalla->ForcedDespawn();
                     return;
                 }
-                case 20037: // Explode Orb Effect
-                {
-                    // Make sure 20038 misses the Orbs of Domination and Blackwing Spell Markers.
-                    // Probably need ymir to verify that.
-                    unitTarget->CastSpell(nullptr, 20038, false);
-                    return;
-                }
                 case 23032: // Nefarian's Troops Flee
                 {
                     if (Player* player = unitTarget->ToPlayer())
