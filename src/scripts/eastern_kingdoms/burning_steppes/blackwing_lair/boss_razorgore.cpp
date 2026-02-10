@@ -71,6 +71,10 @@ struct boss_razorgoreAI : public ScriptedAI
 {
     boss_razorgoreAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
+// I think we can conclude that his AI state is not preserved between possessions.
+// There's no example of a spell timer being substantially lower than expected after a possess ends.
+// Also his threat numbers get cleared
+// (aside from the possessing player, who gets a lot of threat, but exactly how much we'll deal with below).
         SetUseAiAtControl(true);
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         m_uiInit = false;
@@ -91,6 +95,7 @@ struct boss_razorgoreAI : public ScriptedAI
 
     void Reset() override
     {
+// codestothestars - Evaluated up to here
         SetCombatMovement(true);
         m_uiCleaveTimer         = 9000; // These times are probably wrong
         m_uiWarStompTimer       = 22000;
@@ -669,9 +674,26 @@ CreatureAI* GetAI_trigger_orb_of_command(Creature* pCreature)
     return new trigger_orb_of_commandAI(pCreature);
 }
 
-// void AddSC_boss_razorgore()
-// {
-//     Script* pNewScript;
+struct NefariansTroopsFleeScript : public SpellScript
+{
+    bool OnEffectExecute(Spell* spell, SpellEffectIndex effIdx) const final
+    {
+        if (Player* player = spell->GetUnitTarget()->ToPlayer())
+            if (Spell* spell = player->GetCurrentSpell(CURRENT_CHANNELED_SPELL))
+                if (spell->m_spellInfo->Id == 19832) // Possess
+                    player->InterruptSpell(CURRENT_CHANNELED_SPELL);
+        return true;
+    }
+};
+
+SpellScript* GetScript_NefariansTroopsFlee(SpellEntry const*)
+{
+    return new NefariansTroopsFleeScript();
+}
+
+void AddSC_boss_razorgore_spell_scripts()
+{
+    Script* pNewScript;
 
 //     pNewScript = new Script;
 //     pNewScript->Name = "boss_razorgore";
@@ -682,4 +704,9 @@ CreatureAI* GetAI_trigger_orb_of_command(Creature* pCreature)
 //     pNewScript->Name = "trigger_orb_of_command";
 //     pNewScript->GetAI = &GetAI_trigger_orb_of_command;
 //     pNewScript->RegisterSelf();
-// }
+
+    pNewScript = new Script;
+    pNewScript->Name = "spell_nefarians_troops_flee";
+    pNewScript->GetSpellScript = &GetScript_NefariansTroopsFlee;
+    pNewScript->RegisterSelf();
+}

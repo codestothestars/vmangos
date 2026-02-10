@@ -340,14 +340,6 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                         pRanshalla->ForcedDespawn();
                     return;
                 }
-                case 23032: // Nefarian's Troops Flee
-                {
-                    if (Player* player = unitTarget->ToPlayer())
-                        if (Spell* spell = player->GetCurrentSpell(CURRENT_CHANNELED_SPELL))
-                            if (spell->m_spellInfo->Id == 19832) // Possess
-                                player->InterruptSpell(CURRENT_CHANNELED_SPELL);
-                    return;
-                }
                 case 23024: // Fireball
                 {
                     // Make sure that the Orb of Domination despawns, and does so with its "falling apart" animation as in sniffs.

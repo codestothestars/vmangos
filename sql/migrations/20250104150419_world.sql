@@ -171,6 +171,8 @@ INSERT `spell_script_target`
 (  23032,      1,         14459),
 (  23032,      1,         16604),
 (  23032,      3,             0);
+-- Spell script for Nefarian's Troops Flee.
+UPDATE `spell_template` SET `script_name` = 'spell_nefarians_troops_flee' WHERE `entry` = 23032;
 
 -- Correct Portcullis values.
 UPDATE `gameobject` SET `orientation` = 3.75246, `rotation2` = -0.953716, `rotation3` = 0.300708 WHERE `id` = 176964;
