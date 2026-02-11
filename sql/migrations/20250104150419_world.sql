@@ -172,7 +172,6 @@ INSERT `spell_script_target`
 (  23032,      1,         16604),
 (  23032,      3,             0);
 -- Spell script for Nefarian's Troops Flee.
-UPDATE `spell_template` SET `script_name` = 'spell_nefarians_troops_flee' WHERE `entry` = 23032;
 
 -- Correct Portcullis values.
 UPDATE `gameobject` SET `orientation` = 3.75246, `rotation2` = -0.953716, `rotation3` = 0.300708 WHERE `id` = 176964;
@@ -1306,12 +1305,16 @@ INSERT `creature_ai_scripts`
 UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry` = 14449;
 
 -- Events list for Orb of Domination
+DELETE FROM creature_ai_events WHERE creature_id = 14453; -- testing
+DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '14453%'; -- testing
 INSERT `creature_ai_events`
-(   `id`, `creature_id`, `event_type`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
-(1445301,         14453,            8,          20037,             -1,          1445301, 'Orb of Domination - Hit by spell');
+(   `id`, `creature_id`, `event_type`, `event_flags`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
+(1445301,         14453,            8,          0x00,          20037,             -1,          1445301, 'Orb of Domination - Hit by spell'),
+(1445302,         14453,           36,          0x01,          23032,             -1,          1445302, 'Orb of Domination - Nefarian''s Troops Flee hit target');
 INSERT `creature_ai_scripts`
-(   `id`, `command`, `datalong`, `comments`) VALUES
-(1445301,        15,     20038,  'Orb of Domination - Cast Explosion');
+(   `id`, `command`, `datalong`, `datalong2`, `data_flags`, `comments`) VALUES
+(1445301,        15,      20038,           0,         0x00, 'Orb of Domination - Cast Explosion'),
+(1445302,         5,          0,       19832,         0x01, 'Blackwing Spell Marker - Interrupt Possess');
 UPDATE `creature_template` SET `ai_name` = 'EventAI', `script_name` = '' WHERE `entry` = 14453;
 
 -- Events list for Blackwing Guardsman
@@ -1350,9 +1353,18 @@ INSERT `generic_scripts`
 UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry` = 14459;
 
 -- Events list for Blackwing Spell Marker
+DELETE FROM creature_ai_events WHERE creature_id = 16604; -- testing
+DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '16604%'; -- testing
+INSERT `creature_ai_events`
+(   `id`, `creature_id`, `event_type`, `event_flags`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
+(1660401,         16604,           36,          0x01,           23032,            -1,          1660401, 'Blackwing Spell Marker - Nefarian''s Troops Flee hit target');
+INSERT `creature_ai_scripts`
+(   `id`, `command`, `datalong`, `datalong2`, `data_flags`, `comments`) VALUES
+(1660401,         5,          0,       19832,         0x01, 'Blackwing Spell Marker - Interrupt Possess');
 REPLACE `generic_scripts`
 (   `id`, `command`, `datalong`, `comments`) VALUES
 (1660401,        15,      23032, 'Blackwing Spell Marker - Cast Nefarian''s Troops Flee');
+UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry` = 16604;
 
 -- Portcullis (Entry: 176964 Guid: 234783) Open Script
 DELETE FROM generic_scripts WHERE id = 176964; -- testing
