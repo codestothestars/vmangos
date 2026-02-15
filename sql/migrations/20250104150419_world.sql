@@ -129,6 +129,7 @@ INSERT `spell_script_target`
 UPDATE `spell_script_target` SET `targetEntry` = 14449, `type` = 1 WHERE `entry` = 23018;
 
 -- Define targets for Fireball.
+DELETE FROM spell_script_target WHERE entry = 23024;
 INSERT `spell_script_target`
 (`entry`, `type`, `targetEntry`) VALUE
 (  23024,      1,         14449);
@@ -1295,13 +1296,15 @@ DELETE FROM `creature_ai_events` WHERE `creature_id` = 14449;
 INSERT `creature_ai_events`
 (   `id`,  `creature_id`, `event_type`, `event_inverse_phase_mask`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
 (1444901,          14449,            8,                       0x10,          23032,             -1,          1444901, 'Blackwing Orb Trigger - Cast Cancel Bob Possession on Hit By Spell Nefarian''s Troops Flee'),
-(1444902,          14449,            6,                       0x00,              0,              0,          1444902, 'Blackwing Orb Trigger - Death');
+(1444902,          14449,            6,                       0x00,              0,              0,          1444902, 'Blackwing Orb Trigger - Death'),
+(1444903,          14449,            8,                       0x00,          23024,             -1,          1444903, 'Blackwing Orb Trigger - Cast Explode Orb Effect on Hit By Spell Fireball');
 DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '14449%'; -- testing
 INSERT `creature_ai_scripts`
 (   `id`, `priority`, `command`, `datalong`, `datalong2`, `comments`) VALUES
 (1444901,          0,        44,          1,           0, 'Blackwing Orb Trigger - Set phase 1'),
 (1444901,          1,        15,      23031,       0x001, 'Blackwing Orb Trigger - Cast Cancel Bob Possession'),
-(1444902,          0,        18,       3000,           0, 'Blackwing Orb Trigger - Despawn');
+(1444902,          0,        18,       3000,           0, 'Blackwing Orb Trigger - Despawn'),
+(1444903,          0,        15,      20037,       0x000, 'Blackwing Orb Trigger - Cast Explode Orb Effect');
 UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry` = 14449;
 
 -- Events list for Orb of Domination
