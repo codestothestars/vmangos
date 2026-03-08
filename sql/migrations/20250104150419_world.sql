@@ -1150,7 +1150,8 @@ INSERT `creature_ai_events`
 (1243516,         12435,               0,          37,                  0b0000000,          0x00,          19832,              0,              0,              0,          1243516, 'Razorgore the Untamed - Aura unapply'),
 (1243517,         12435,               0,           8,                  0b0000000,          0x00,          23032,             -1,              0,              0,          1243517, 'Razorgore the Untamed - Hit by spell (Nefarian''s Troops Flee)'),
 (1243518,         12435,               0,           7,                  0b0000000,          0x00,              0,              0,              0,              0,          1243518, 'Razorgore the Untamed - Evade'),
-(1243519,         12435,               0,           8,                  0b0000000,          0x00,          23031,             -1,              0,              0,          1243519, 'Razorgore the Untamed - Hit by spell (Cancel Bob Possession)');
+(1243519,         12435,               0,           8,                  0b0000000,          0x00,          23031,             -1,              0,              0,          1243519, 'Razorgore the Untamed - Hit by spell (Cancel Bob Possession)'),
+(1243520,         12435,               0,           0,                  0b0000000,          0x01,          10000,          10000,          10000,          10000,          1243520, 'Razorgore the Untamed - In combat (periodic)');
 DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '12435%'; -- testing
 INSERT `creature_ai_scripts`
 (   `id`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_type`, `data_flags`, `dataint`,      `o`, `condition_id`, `comments`) VALUES
@@ -1190,7 +1191,8 @@ INSERT `creature_ai_scripts`
 (1243518,          0,        68,    1243505,           2,       12416,         125,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Evade Blackwing Legionnaire'),
 (1243518,          0,        68,    1243505,           2,       12420,         125,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Evade Blackwing Mage'),
 (1243518,          0,        68,    1243505,           2,       12422,         125,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Evade Deathtalon Dragonspawn'),
-(1243519,          0,        39,    1243506,           0,           0,           0,               0,             0,         0x00,       100, 0       ,              0, 'Razorgore the Untamed - Cast Warming Flames');
+(1243519,          0,        39,    1243506,           0,           0,           0,               0,             0,         0x00,       100, 0       ,              0, 'Razorgore the Untamed - Cast Warming Flames'),
+(1243520,          0,        15,      25104,       0x012,           0,           0,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Cast Summon Player');
 REPLACE `creature_spells`
 (`entry`, `name`,
                                    `spellId_1`, `castTarget_1`, `targetParam1_1`, `targetParam2_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, 
