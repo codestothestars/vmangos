@@ -611,6 +611,11 @@ bool Map::ScriptCommand_RemoveAura(ScriptInfo const& script, WorldObject* source
 // SCRIPT_COMMAND_CAST_SPELL (15)
 bool Map::ScriptCommand_CastSpell(ScriptInfo const& script, WorldObject* source, WorldObject* target)
 {
+    // if (script.id == 1660401)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_CAST_SPELL %u", script.id);
+    // }
+
     SpellCaster* pTarget = ToSpellCaster(target);
 
     if (!source)
@@ -638,11 +643,33 @@ bool Map::ScriptCommand_CastSpell(ScriptInfo const& script, WorldObject* source,
     SpellCastResult result;
 
     if (pCreatureSource && pUnitTarget)
+    {
+        // if (script.id == 1445301 || script.id == 1660401)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_CAST_SPELL %u - TryToCast", script.id);
+        // }
         result = pCreatureSource->TryToCast(pUnitTarget, script.castSpell.spellId, script.castSpell.flags, 0u);
+        // if (script.id == 1445301 || script.id == 1660401)
+        // {
+        //     // result is sometimes SPELL_FAILED_LINE_OF_SIGHT for 16604
+        //     uint32 targetIsPlayer = pUnitTarget->IsPlayer() ? 1 : 0;
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_CAST_SPELL %u - result = %u", script.id, result);
+        //     // 1445301 - pUnitTarget->GetEntry() = 14449
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_CAST_SPELL %u - pUnitTarget->GetEntry() = %u", script.id, pUnitTarget->GetEntry());
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_CAST_SPELL %u - targetIsPlayer = %u", script.id, targetIsPlayer);
+        // }
+    }
     else
     {
-        if (script.id == 1243503 && script.castSpell.spellId == 23024) { sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Cast Fireball - CastSpell"); }
+        // if (script.id == 1445301 || script.id == 1660401)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_CAST_SPELL %u - CastSpell", script.id);
+        // }
         result = pSource->CastSpell(pTarget, script.castSpell.spellId, (script.castSpell.flags & CF_TRIGGERED) != 0);
+        // if (script.id == 1445301 || script.id == 1660401)
+        // {
+        //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_CAST_SPELL %u - result = %u", script.id, result);
+        // }
     }
 
     if (result != SPELL_CAST_OK)

@@ -234,6 +234,14 @@ INSERT `creature`
 ( 12806, 16604,   469,     -7566.78,     -1095.09,      413.465,      4.71239 ,                  0,                  0,                 0,           8),
 ( 12807, 16604,   469,     -7532.15,     -1062.56,      407.282,      4.72984 ,                  0,                  0,                 0,           8);
 
+-- Correct Blackwing Spell Marker values.
+-- Scale is guessed based on...
+-- * Creature 14453, which 16604 apparently replaced in patch 1.10, is scale 5 in 1.8 sniff.
+-- * Spell visual is otherwise too small compared to 14453, and videos from vanilla.
+-- Alternatives
+-- * Use creature 14453 instead of 16604, even for 1.10+.
+UPDATE `creature_template` SET `display_scale1` = 5 WHERE `entry` = 16604;
+
 -- Add missing Nefarian's Troops flags.
 UPDATE `creature_template` SET `static_flags1` = `static_flags1` | 0x00000260 WHERE `entry` = 14459;
 
@@ -1319,7 +1327,7 @@ INSERT `creature_ai_events`
 INSERT `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `datalong2`, `data_flags`, `comments`) VALUES
 (1445301,        15,      20038,           0,         0x00, 'Orb of Domination - Cast Explosion'),
-(1445302,         5,          0,       19832,         0x01, 'Blackwing Spell Marker - Interrupt Possess');
+(1445302,         5,          0,       19832,         0x01, 'Orb of Domination - Interrupt Possess');
 UPDATE `creature_template` SET `ai_name` = 'EventAI', `script_name` = '' WHERE `entry` = 14453;
 
 -- Events list for Blackwing Guardsman
@@ -1359,13 +1367,15 @@ UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry` = 14459;
 
 -- Events list for Blackwing Spell Marker
 DELETE FROM creature_ai_events WHERE creature_id = 16604; -- testing
-DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '16604%'; -- testing
 INSERT `creature_ai_events`
 (   `id`, `creature_id`, `event_type`, `event_flags`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
-(1660401,         16604,           36,          0x01,           23032,            -1,          1660401, 'Blackwing Spell Marker - Nefarian''s Troops Flee hit target');
+(1660401,         16604,            8,          0x00,          20037,             -1,          1660401, 'Blackwing Spell Marker - Hit by spell'),
+(1660402,         16604,           36,          0x01,          23032,             -1,          1660402, 'Blackwing Spell Marker - Nefarian''s Troops Flee hit target');
+DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '16604%'; -- testing
 INSERT `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `datalong2`, `data_flags`, `comments`) VALUES
-(1660401,         5,          0,       19832,         0x01, 'Blackwing Spell Marker - Interrupt Possess');
+(1660401,        15,      20038,       0x002,         0x00, 'Blackwing Spell Marker - Cast Explosion'),
+(1660402,         5,          0,       19832,         0x01, 'Blackwing Spell Marker - Interrupt Possess');
 REPLACE `generic_scripts`
 (   `id`, `command`, `datalong`, `comments`) VALUES
 (1660401,        15,      23032, 'Blackwing Spell Marker - Cast Nefarian''s Troops Flee');

@@ -95,12 +95,12 @@ struct boss_razorgoreAI : public ScriptedAI
 
     void Reset() override
     {
-// codestothestars - Evaluated up to here
         SetCombatMovement(true);
         m_uiCleaveTimer         = 9000; // These times are probably wrong
         m_uiWarStompTimer       = 22000;
         m_uiConflagrationTimer  = 12000;
         m_uiFireballVolleyTimer = 7000;
+// codestothestars - Evaluated up to here
         m_uiOutOfReachTimer     = 10000;
         m_uiInitTimer           = 5000;
 

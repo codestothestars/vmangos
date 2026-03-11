@@ -1716,7 +1716,6 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                         // gives any more hint as to whether it would be done this way
                         target->CastSpell(target, 23014, true); // Possess
                         // trying to resolve IsDeleted crash
-                        uint32 razorgoreGuid = 84388;
 
                         if (CreatureData const* razorgoreData = sObjectMgr.GetCreatureData(84388))
                         {
@@ -1924,7 +1923,6 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
             }
             case 23018:                                     // Use Dragon Orb
             {
-                uint32 razorgoreGuid = 84388;
                 target->InterruptSpell(CURRENT_CHANNELED_SPELL); // Possess
                 if (CreatureData const* razorgoreData = sObjectMgr.GetCreatureData(84388))
                 {

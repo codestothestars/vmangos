@@ -340,12 +340,6 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                         pRanshalla->ForcedDespawn();
                     return;
                 }
-                case 23024: // Fireball
-                {
-                    // Make sure that the Orb of Domination despawns, and does so with its "falling apart" animation as in sniffs.
-                    if (effIdx == 0) unitTarget->CastSpell(nullptr, 20037, false);
-                    return;
-                }
                 case 20863: // Muglash's Brazier Trap
                 {
                     if (unitTarget && unitTarget->IsCreature())
