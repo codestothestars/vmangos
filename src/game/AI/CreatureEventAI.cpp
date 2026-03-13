@@ -755,7 +755,10 @@ void CreatureEventAI::SpellHit(SpellCaster* pCaster, SpellEntry const* pSpellEnt
             }
             case EVENT_T_HIT_BY_AURA:
             {
-                if (!i.Event.hit_by_aura.auraType || pSpellEntry->HasAura(AuraType(i.Event.hit_by_aura.auraType)))
+                if (
+                    !i.Event.hit_by_aura.auraType || pSpellEntry->HasAura(AuraType(i.Event.hit_by_aura.auraType))
+                    && !i.Event.hit_by_aura.spellId || pSpellEntry->Id == i.Event.hit_by_aura.spellId
+                )
                     ProcessEvent(i, pCaster);
                 break;
             }

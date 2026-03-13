@@ -1714,7 +1714,6 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                     {
                         // see if a sniff (even if Cata) that sees the boss's original spawn
                         // gives any more hint as to whether it would be done this way
-                        target->CastSpell(target, 23014, true); // Possess
                         // trying to resolve IsDeleted crash
 
                         if (CreatureData const* razorgoreData = sObjectMgr.GetCreatureData(84388))

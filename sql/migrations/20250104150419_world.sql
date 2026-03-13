@@ -1307,14 +1307,16 @@ INSERT `creature_ai_events`
 (   `id`,  `creature_id`, `event_type`, `event_inverse_phase_mask`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
 (1444901,          14449,            8,                       0x10,          23032,             -1,          1444901, 'Blackwing Orb Trigger - Cast Cancel Bob Possession on Hit By Spell Nefarian''s Troops Flee'),
 (1444902,          14449,            6,                       0x00,              0,              0,          1444902, 'Blackwing Orb Trigger - Death'),
-(1444903,          14449,            8,                       0x00,          23024,             -1,          1444903, 'Blackwing Orb Trigger - Cast Explode Orb Effect on Hit By Spell Fireball');
+(1444903,          14449,            8,                       0x00,          23024,             -1,          1444903, 'Blackwing Orb Trigger - Cast Explode Orb Effect on Hit By Spell Fireball'),
+(1444904,          14449,           34,                       0b00,              0,          23018,          1444904, 'Blackwing Orb Trigger - Cast Possess on aura Use Dragon Orb');
 DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '14449%'; -- testing
 INSERT `creature_ai_scripts`
 (   `id`, `priority`, `command`, `datalong`, `datalong2`, `comments`) VALUES
 (1444901,          0,        44,          1,           0, 'Blackwing Orb Trigger - Set phase 1'),
 (1444901,          1,        15,      23031,       0x001, 'Blackwing Orb Trigger - Cast Cancel Bob Possession'),
 (1444902,          0,        18,       3000,           0, 'Blackwing Orb Trigger - Despawn'),
-(1444903,          0,        15,      20037,       0x000, 'Blackwing Orb Trigger - Cast Explode Orb Effect');
+(1444903,          0,        15,      20037,       0x000, 'Blackwing Orb Trigger - Cast Explode Orb Effect'),
+(1444904,          0,        15,      23014,       0x000, 'Blackwing Orb Trigger - Cast Possess');
 UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry` = 14449;
 
 -- Events list for Orb of Domination

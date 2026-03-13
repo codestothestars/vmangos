@@ -71,7 +71,7 @@ enum EventAI_Type
     EVENT_T_SCRIPT                  = 31,                   // Param1 = EventID, Param2 = Data
     EVENT_T_GROUP_MEMBER_DIED       = 32,                   // Param1 = CreatureId, Param2 = IsLeader
     EVENT_T_VICTIM_ROOTED           = 33,                   // RepeatMin, RepeatMax
-    EVENT_T_HIT_BY_AURA             = 34,                   // AuraType, Unused, RepeatMin, RepeatMax
+    EVENT_T_HIT_BY_AURA             = 34,                   // AuraType, SpellID, RepeatMin, RepeatMax
     EVENT_T_STEALTH_ALERT           = 35,                   // RepeatMin, RepeatMax
     EVENT_T_SPELL_HIT_TARGET        = 36,                   // SpellID, School, RepeatMin, RepeatMax
     EVENT_T_AURA_UNAPPLY            = 37,                   // SpellID
@@ -256,7 +256,7 @@ struct CreatureEventAI_Event
         struct
         {
             uint32 auraType;
-            uint32 unused;
+            uint32 spellId;
             uint32 repeatMin;
             uint32 repeatMax;
         } hit_by_aura;
