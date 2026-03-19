@@ -1159,7 +1159,9 @@ INSERT `creature_ai_events`
 (1243517,         12435,               0,           8,                  0b0000000,          0x00,          23032,             -1,              0,              0,          1243517, 'Razorgore the Untamed - Hit by spell (Nefarian''s Troops Flee)'),
 (1243518,         12435,               0,           7,                  0b0000000,          0x00,              0,              0,              0,              0,          1243518, 'Razorgore the Untamed - Evade'),
 (1243519,         12435,               0,           8,                  0b0000000,          0x00,          23031,             -1,              0,              0,          1243519, 'Razorgore the Untamed - Hit by spell (Cancel Bob Possession)'),
-(1243520,         12435,               0,           0,                  0b0000000,          0x01,          10000,          10000,          10000,          10000,          1243520, 'Razorgore the Untamed - In combat (periodic)');
+(1243520,         12435,               0,           0,                  0b0000000,          0x01,          10000,          10000,          10000,          10000,          1243520, 'Razorgore the Untamed - In combat (periodic)'),
+(1243521,         12435,               0,          34,                  0b0000000,          0x01,              0,          23014,              0,              0,          1243521, 'Razorgore the Untamed - Apply aura Dragon Orb on aura Possess'),
+(1243522,         12435,               0,          37,                  0b0000000,          0x00,          23014,              0,              0,              0,          1243522, 'Razorgore the Untamed - Remove aura Dragon Orb on unapply Possess');
 DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '12435%'; -- testing
 INSERT `creature_ai_scripts`
 (   `id`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_type`, `data_flags`, `dataint`,      `o`, `condition_id`, `comments`) VALUES
@@ -1200,7 +1202,9 @@ INSERT `creature_ai_scripts`
 (1243518,          0,        68,    1243505,           2,       12420,         125,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Evade Blackwing Mage'),
 (1243518,          0,        68,    1243505,           2,       12422,         125,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Evade Deathtalon Dragonspawn'),
 (1243519,          0,        39,    1243506,           0,           0,           0,               0,             0,         0x00,       100, 0       ,              0, 'Razorgore the Untamed - Cast Warming Flames'),
-(1243520,          0,        15,      25104,       0x012,           0,           0,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Cast Summon Player');
+(1243520,          0,        15,      25104,       0x012,           0,           0,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Cast Summon Player'),
+(1243521,          0,        74,      23021,         0x0,           0,           0,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Add aura Dragon Orb'),
+(1243522,          0,        14,      23021,           0,           0,           0,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Remove aura Dragon Orb');
 REPLACE `creature_spells`
 (`entry`, `name`,
                                    `spellId_1`, `castTarget_1`, `targetParam1_1`, `targetParam2_1`, `delayInitialMin_1`, `delayInitialMax_1`, `delayRepeatMin_1`, `delayRepeatMax_1`, 
@@ -1308,7 +1312,8 @@ INSERT `creature_ai_events`
 (1444901,          14449,            8,                       0x10,          23032,             -1,          1444901, 'Blackwing Orb Trigger - Cast Cancel Bob Possession on Hit By Spell Nefarian''s Troops Flee'),
 (1444902,          14449,            6,                       0x00,              0,              0,          1444902, 'Blackwing Orb Trigger - Death'),
 (1444903,          14449,            8,                       0x00,          23024,             -1,          1444903, 'Blackwing Orb Trigger - Cast Explode Orb Effect on Hit By Spell Fireball'),
-(1444904,          14449,           34,                       0b00,              0,          23018,          1444904, 'Blackwing Orb Trigger - Cast Possess on aura Use Dragon Orb');
+(1444904,          14449,           34,                       0b00,              0,          23018,          1444904, 'Blackwing Orb Trigger - Cast Possess on aura Use Dragon Orb'),
+(1444905,          14449,           37,                       0b00,          23018,              0,          1444905, 'Blackwing Orb Trigger - Interrupt Possess on remova aura Use Dragon Orb');
 DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '14449%'; -- testing
 INSERT `creature_ai_scripts`
 (   `id`, `priority`, `command`, `datalong`, `datalong2`, `comments`) VALUES
@@ -1316,7 +1321,8 @@ INSERT `creature_ai_scripts`
 (1444901,          1,        15,      23031,       0x001, 'Blackwing Orb Trigger - Cast Cancel Bob Possession'),
 (1444902,          0,        18,       3000,           0, 'Blackwing Orb Trigger - Despawn'),
 (1444903,          0,        15,      20037,       0x000, 'Blackwing Orb Trigger - Cast Explode Orb Effect'),
-(1444904,          0,        15,      23014,       0x000, 'Blackwing Orb Trigger - Cast Possess');
+(1444904,          0,        15,      23014,       0x002, 'Blackwing Orb Trigger - Cast Possess'),
+(1444905,          0,         5,          1,       23014, 'Blackwing Orb Trigger - Interrupt Possess cast');
 UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry` = 14449;
 
 -- Events list for Orb of Domination

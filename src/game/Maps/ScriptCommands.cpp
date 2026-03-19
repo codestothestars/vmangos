@@ -256,6 +256,10 @@ bool Map::ScriptCommand_ModifyFlags(ScriptInfo const& script, WorldObject* sourc
 // SCRIPT_COMMAND_INTERRUPT_CASTS (5)
 bool Map::ScriptCommand_InterruptCasts(ScriptInfo const& script, WorldObject* source, WorldObject* target)
 {
+    // if (script.id == 1444905)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Map::ScriptCommand_InterruptCasts %u", script.id);
+    // }
     Unit* pSource = ToUnit(source);
 
     if (!pSource)
@@ -611,9 +615,9 @@ bool Map::ScriptCommand_RemoveAura(ScriptInfo const& script, WorldObject* source
 // SCRIPT_COMMAND_CAST_SPELL (15)
 bool Map::ScriptCommand_CastSpell(ScriptInfo const& script, WorldObject* source, WorldObject* target)
 {
-    // if (script.id == 1444904)
+    // if (script.id == 1255701)
     // {
-    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_CAST_SPELL %u", script.id);
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Map::ScriptCommand_CastSpell %u - guid = %u", script.id, source->GetGUIDLow());
     // }
 
     SpellCaster* pTarget = ToSpellCaster(target);
@@ -671,6 +675,11 @@ bool Map::ScriptCommand_CastSpell(ScriptInfo const& script, WorldObject* source,
         //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "SCRIPT_COMMAND_CAST_SPELL %u - result = %u", script.id, result);
         // }
     }
+
+    // if (script.id == 1255701)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Map::ScriptCommand_CastSpell %u - result = %u", script.id, result);
+    // }
 
     if (result != SPELL_CAST_OK)
         return ShouldAbortScript(script);

@@ -4489,6 +4489,11 @@ void Spell::HandleAddTargetTriggerAuras()
 
 void Spell::finish(bool ok)
 {
+    // if (m_spellInfo->Id == 23018)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Spell::finish %u", m_spellInfo->Id);
+    // }
+
     m_successCast = ok;
 
     if (!m_caster)
