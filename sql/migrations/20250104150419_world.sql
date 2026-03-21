@@ -1309,9 +1309,9 @@ UPDATE `creature_template` SET `auras` = '18950' WHERE `entry` = 12557;
 DELETE FROM `creature_ai_events` WHERE `creature_id` = 14449;
 INSERT `creature_ai_events`
 (   `id`,  `creature_id`, `event_type`, `event_inverse_phase_mask`, `event_param1`, `event_param2`, `action1_script`, `comment`) VALUES
-(1444901,          14449,            8,                       0x10,          23032,             -1,          1444901, 'Blackwing Orb Trigger - Cast Cancel Bob Possession on Hit By Spell Nefarian''s Troops Flee'),
-(1444902,          14449,            6,                       0x00,              0,              0,          1444902, 'Blackwing Orb Trigger - Death'),
-(1444903,          14449,            8,                       0x00,          23024,             -1,          1444903, 'Blackwing Orb Trigger - Cast Explode Orb Effect on Hit By Spell Fireball'),
+(1444901,          14449,            8,                       0b10,          23032,             -1,          1444901, 'Blackwing Orb Trigger - Cast Cancel Bob Possession on Hit By Spell Nefarian''s Troops Flee'),
+(1444902,          14449,            6,                       0b00,              0,              0,          1444902, 'Blackwing Orb Trigger - Death'),
+(1444903,          14449,            8,                       0b00,          23024,             -1,          1444903, 'Blackwing Orb Trigger - Cast Explode Orb Effect on Hit By Spell Fireball'),
 (1444904,          14449,           34,                       0b00,              0,          23018,          1444904, 'Blackwing Orb Trigger - Cast Possess on aura Use Dragon Orb'),
 (1444905,          14449,           37,                       0b00,          23018,              0,          1444905, 'Blackwing Orb Trigger - Interrupt Possess on remova aura Use Dragon Orb');
 DELETE FROM creature_ai_scripts WHERE LENGTH(id) = 7 AND id LIKE '14449%'; -- testing
