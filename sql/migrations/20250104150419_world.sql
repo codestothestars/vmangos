@@ -1322,7 +1322,7 @@ INSERT `creature_ai_scripts`
 (1444902,          0,        18,       3000,           0, 'Blackwing Orb Trigger - Despawn'),
 (1444903,          0,        15,      20037,       0x000, 'Blackwing Orb Trigger - Cast Explode Orb Effect'),
 (1444904,          0,        15,      23014,       0x002, 'Blackwing Orb Trigger - Cast Possess'),
-(1444905,          0,         5,          1,       23014, 'Blackwing Orb Trigger - Interrupt Possess cast');
+(1444905,          0,         5,          0,       23014, 'Blackwing Orb Trigger - Interrupt Possess cast');
 UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry` = 14449;
 
 -- Events list for Orb of Domination
