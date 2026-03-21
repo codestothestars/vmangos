@@ -1269,7 +1269,7 @@ UPDATE `creature_template` SET `ai_name` = 'EventAI', `auras` = '18943', `script
 DELETE FROM `creature_ai_events` WHERE `creature_id` = 12557;
 INSERT `creature_ai_events`
 (  `id`,  `creature_id`, `condition_id`, `event_type`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_script`, `comment`) VALUES
-(1255701,         12557,              0,            1,          0x00,              0,              0,              0,              0,          1255701, 'Grethok the Controller - Out of Combat'),
+(1255701,         12557,              0,            1,          0x00,           6000,           6000,              0,              0,          1255701, 'Grethok the Controller - Out of Combat'),
 (1255702,         12557,              0,            0,          0x01,           6000,          14000,          16000,          29000,          1255702, 'Grethok the Controller - Cast Dominate Mind'),
 (1255703,         12557,              0,            4,          0x00,              0,              0,              0,              0,          1255703, 'Grethok the Controller - Aggro'),
 (1255704,         12557,              0,            0,          0x00,           1000,           5000,              0,              0,          1255704, 'Grethok the Controller - In Combat (Summon Monster Generators)'),
