@@ -100,7 +100,6 @@ struct boss_razorgoreAI : public ScriptedAI
         m_uiWarStompTimer       = 22000;
         m_uiConflagrationTimer  = 12000;
         m_uiFireballVolleyTimer = 7000;
-// codestothestars - Evaluated up to here
         m_uiOutOfReachTimer     = 10000;
         m_uiInitTimer           = 5000;
 
@@ -112,6 +111,7 @@ struct boss_razorgoreAI : public ScriptedAI
         if (!pTarget)
             return;
 
+        // no evidence of this in sniffs
         if (pSpell->Id == SPELL_WARSTOMP)
             m_creature->GetThreatManager().modifyThreatPercent(pTarget, -30);
     }
@@ -135,6 +135,7 @@ struct boss_razorgoreAI : public ScriptedAI
             return;
 
         m_pInstance->SetData(TYPE_RAZORGORE, IN_PROGRESS);
+        // codestothestars - Evaluated up to here
         if (Creature* pTrigger = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_TRIGGER_GUID)))
         {
             pTrigger->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, 0);
