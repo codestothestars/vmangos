@@ -135,7 +135,6 @@ struct boss_razorgoreAI : public ScriptedAI
             return;
 
         m_pInstance->SetData(TYPE_RAZORGORE, IN_PROGRESS);
-        // codestothestars - Evaluated up to here
         if (Creature* pTrigger = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_TRIGGER_GUID)))
         {
             pTrigger->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, 0);
@@ -380,6 +379,9 @@ struct trigger_orb_of_commandAI : public ScriptedAI
             {
                 it->MonsterTextEmote(EMOTE_FLEE, it);
                 it->SetHomePosition(-7555.55f, -1025.16f, 408.4914f, 0.65f);
+                // codestothestars - Evaluated up to here
+                // Immune to NPC? Check whether Razorgore ever hits them while fleeing.
+                // Double check all the literal flags too.
                 it->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC | UNIT_FLAG_SPAWNING | UNIT_FLAG_PACIFIED | UNIT_FLAG_SILENCED);
                 it->AI()->EnterEvadeMode();
             }
