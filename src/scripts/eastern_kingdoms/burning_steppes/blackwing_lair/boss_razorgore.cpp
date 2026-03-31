@@ -379,9 +379,7 @@ struct trigger_orb_of_commandAI : public ScriptedAI
             {
                 it->MonsterTextEmote(EMOTE_FLEE, it);
                 it->SetHomePosition(-7555.55f, -1025.16f, 408.4914f, 0.65f);
-                // codestothestars - Evaluated up to here
-                // Immune to NPC? Check whether Razorgore ever hits them while fleeing.
-                // Double check all the literal flags too.
+                // Sniffs show that no flags are added on flee.
                 it->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC | UNIT_FLAG_SPAWNING | UNIT_FLAG_PACIFIED | UNIT_FLAG_SILENCED);
                 it->AI()->EnterEvadeMode();
             }
@@ -392,6 +390,8 @@ struct trigger_orb_of_commandAI : public ScriptedAI
 
         m_uiRazorgorePhase = false;
 
+        // codestothestars - Evaluated up to here
+        // Implemented!
         if (GameObject* pOrb = m_creature->GetMap()->GetGameObject(m_pInstance->GetData64(DATA_ORB_DOMINATION_GUID)))
             pOrb->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NO_INTERACT);
 

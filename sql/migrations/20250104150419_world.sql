@@ -1384,9 +1384,11 @@ INSERT `creature_ai_scripts`
 (   `id`, `command`, `datalong`, `datalong2`, `data_flags`, `comments`) VALUES
 (1660401,        15,      20038,       0x002,         0x00, 'Blackwing Spell Marker - Cast Explosion'),
 (1660402,         5,          0,       19832,         0x01, 'Blackwing Spell Marker - Interrupt Possess');
+DELETE FROM generic_scripts WHERE LENGTH(id) = 7 AND id LIKE '16604%'; -- testing
 REPLACE `generic_scripts`
-(   `id`, `command`, `datalong`, `comments`) VALUES
-(1660401,        15,      23032, 'Blackwing Spell Marker - Cast Nefarian''s Troops Flee');
+(   `id`, `command`, `datalong`, `datalong2`, `datalong3`, `target_param1`, `target_type`, `data_flags`, `comments`) VALUES
+(1660401,        15,      23032,           0,           0,               0,             0,         0x00, 'Blackwing Spell Marker - Cast Nefarian''s Troops Flee'),
+(1660401,         4,          9,        0x10,           1,          234816,            14,         0x02, 'Blackwing Spell Marker - Set GO_FLAG_NO_INTERACT on Orb of Domination');
 UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry` = 16604;
 
 -- Portcullis (Entry: 176964 Guid: 234783) Open Script
