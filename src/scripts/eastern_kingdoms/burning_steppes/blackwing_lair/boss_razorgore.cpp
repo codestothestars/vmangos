@@ -398,10 +398,10 @@ struct trigger_orb_of_commandAI : public ScriptedAI
         {
             // Sniffs show that this does not happen. Threat is retained.
             ((ScriptedAI*)pRazorgore->AI())->DoResetThreat();
-            // codestothestars - Evaluated up to here
             ((ScriptedAI*)pRazorgore->AI())->SetCombatMovement(true);
             if (Unit* pPossesser = m_creature->GetMap()->GetUnit(m_uiPossesseurGuid))
             {
+                // codestothestars - Evaluated up to here
                 pRazorgore->AI()->AttackStart(pPossesser);
                 pRazorgore->GetMotionMaster()->MoveChase(pPossesser);
                 pRazorgore->AddThreat(pPossesser, 1000000.f); // Endless threat
