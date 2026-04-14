@@ -3355,8 +3355,15 @@ void Spell::EffectWeaponDmg(SpellEffectIndex effIdx)
         {
             case SPELL_EFFECT_WEAPON_DAMAGE:
             case SPELL_EFFECT_WEAPON_DAMAGE_NOSCHOOL:
-                bonus += CalculateDamage(SpellEffectIndex(j), unitTarget);
+            {
+                float damage = CalculateDamage(SpellEffectIndex(j), unitTarget);
+
+                if (Creature const* creature = m_casterUnit->ToCreature())
+                    damage *= Creature::_GetSpellDamageMod(creature->GetCreatureInfo()->rank);
+
+                bonus += damage; // bonus is 565
                 break;
+            }
             case SPELL_EFFECT_NORMALIZED_WEAPON_DMG:
                 bonus += CalculateDamage(SpellEffectIndex(j), unitTarget);
                 normalized = true;
@@ -3409,7 +3416,7 @@ void Spell::EffectWeaponDmg(SpellEffectIndex effIdx)
         if (unitTarget->IsImmuneToDamage(GetSchoolMask(m_casterUnit->GetWeaponDamageSchool(m_attackType, i))))
             continue;
 
-        bonus += m_casterUnit->CalculateDamage(m_attackType, normalized, i) * weaponDamagePercentMod;
+        bonus += m_casterUnit->CalculateDamage(m_attackType, normalized, i) * weaponDamagePercentMod; // added 565 for a total of 1134
     }
 
     // Seal of Command
