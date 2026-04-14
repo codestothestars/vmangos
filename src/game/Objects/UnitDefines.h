@@ -828,6 +828,7 @@ enum TeleportToOptions
     TELE_TO_NOT_UNSUMMON_PET    = 0x08,
     TELE_TO_SPELL               = 0x10,
     TELE_TO_FORCE_MAP_CHANGE    = 0x20,
+    TELE_TO_RELATIVE            = 0x40,
 };
 
 #define UNIT_DEFAULT_MELEE_Z_LIMIT 36                                    // vertical range diff limit for melee attacks (no meleeing units that fly too high overhead)

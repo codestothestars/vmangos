@@ -500,7 +500,7 @@ class Map : public GridRefManager<NGridType>
         uint32 GetSummonCountForObject(uint64 guid) const;
         void IncrementSummonCountForObject(uint64 guid);
         void DecrementSummonCountForObject(uint64 guid);
-        Creature* SummonCreature(uint32 entry, float x, float y, float z, float ang, TempSummonType spwtype = TEMPSUMMON_DEAD_DESPAWN, uint32 despwtime = 25000, bool asActiveObject = false);
+        Creature* SummonCreature(uint32 entry, float x, float y, float z, float ang, TempSummonType spwtype = TEMPSUMMON_DEAD_DESPAWN, uint32 despwtime = 25000, bool asActiveObject = false, float scale = 0);
         Creature* LoadCreatureSpawn(uint32 dbGuid, bool delaySpawn = false);
         Creature* LoadCreatureSpawnWithGroup(uint32 leaderDbGuid, bool delaySpawn = false);
         GameObject* LoadGameObjectSpawn(uint32 dbGuid, bool delaySpawn = false);
@@ -863,6 +863,7 @@ class Map : public GridRefManager<NGridType>
         bool ScriptCommand_StartScriptOnGroup(ScriptInfo const& script, WorldObject* source, WorldObject* target);
         bool ScriptCommand_LoadCreatureSpawn(ScriptInfo const& script, WorldObject* source, WorldObject* target);
         bool ScriptCommand_StartScriptOnZone(ScriptInfo const& script, WorldObject* source, WorldObject* target);
+        bool ScriptCommand_SummonMount(ScriptInfo const& script, WorldObject* source, WorldObject* target);
 
         // Add any new script command functions to the array.
         ScriptCommandFunction const m_ScriptCommands[SCRIPT_COMMAND_MAX] =
@@ -960,6 +961,7 @@ class Map : public GridRefManager<NGridType>
             &Map::ScriptCommand_StartScriptOnGroup,     // 90
             &Map::ScriptCommand_LoadCreatureSpawn,      // 91
             &Map::ScriptCommand_StartScriptOnZone,      // 92
+            &Map::ScriptCommand_SummonMount,            // 93
         };
 
     public:

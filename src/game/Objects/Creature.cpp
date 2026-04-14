@@ -268,6 +268,8 @@ void Creature::RemoveFromWorld()
             GetMap()->EraseObject<Creature>(GetObjectGuid());
         if (m_zoneScript)
             m_zoneScript->OnCreatureRemove(this);
+        if (m_mountOwner)
+            m_mountOwner->ClearMountCreature();
     }
     Unit::RemoveFromWorld();
 }
