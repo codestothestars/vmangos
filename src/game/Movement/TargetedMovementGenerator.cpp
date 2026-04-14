@@ -696,6 +696,12 @@ void FollowMovementGenerator<T>::_setTargetLocation(T &owner)
 template<class T>
 bool FollowMovementGenerator<T>::Update(T &owner, uint32 const&  time_diff)
 {
+    if (m_interrupted)
+    {
+        Initialize(owner);
+        m_interrupted = false;
+    }
+
     if (!i_target.isValid() || !i_target->IsInWorld())
     return false;
 
@@ -847,6 +853,8 @@ void FollowMovementGenerator<T>::Interrupt(T &owner)
 {
     owner.ClearUnitState(UNIT_STATE_FOLLOW | UNIT_STATE_FOLLOW_MOVE);
     _updateSpeed(owner);
+
+    if (owner.IsPlayer()) m_interrupted = true;
 }
 
 template<class T>
