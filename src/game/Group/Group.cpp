@@ -2214,6 +2214,8 @@ InstanceGroupBind* Group::GetBoundInstance(uint32 mapid)
 
 InstanceGroupBind* Group::BindToInstance(DungeonPersistentState* state, bool permanent, bool load)
 {
+    permanent = true;
+
     if (state && !isBGGroup())
     {
         ASSERT(state->GetMapId() > 1);
