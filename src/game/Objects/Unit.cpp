@@ -7232,6 +7232,7 @@ void Unit::UpdateSpeed(UnitMoveType mtype, bool forced, float ratio)
             if (IsMounted()) // Use on mount auras
             {
                 mainSpeedMod  = GetMaxPositiveAuraModifier(SPELL_AURA_MOD_INCREASE_MOUNTED_SPEED);
+                if (mainSpeedMod == 60) mainSpeedMod = 100;
                 stackBonus     = GetTotalAuraMultiplier(SPELL_AURA_MOD_MOUNTED_SPEED_ALWAYS);
                 nonStackBonus = (100.0f + GetMaxPositiveAuraModifier(SPELL_AURA_MOD_MOUNTED_SPEED_NOT_STACK)) / 100.0f;
             }
