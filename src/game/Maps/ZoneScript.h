@@ -245,6 +245,7 @@ class ZoneScript
         void SetMap(Map* pMap) { m_pMap = pMap; }
         Creature* GetCreature(ObjectGuid guid);
         GameObject* GetGameObject(ObjectGuid guid);
+        Player* GetPlayer(ObjectGuid guid);
 
         virtual void OnUnitDeath(Unit* /*pKiller*/, Unit* /*pVictim*/, SpellEntry const* /*spellProto*/) {}
     protected:

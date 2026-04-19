@@ -120,9 +120,11 @@ uint8 const* ConditionTargets = &ConditionTargetsInternal[3];
 // Checks if player meets the condition
 bool ConditionEntry::Meets(WorldObject const* target, Map const* map, WorldObject const* source, ConditionSource conditionSourceType) const
 {
-    // if (m_entry == 242)
+    // if (m_entry == 595 || m_entry == 596)
     // {
     //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ConditionEntry::Meets %u", m_entry);
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ConditionEntry::Meets %u - source = %s", m_entry, source->GetName());
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ConditionEntry::Meets %u - target = %s", m_entry, target->GetName());
     // }
     sLog.Out(LOG_BASIC, LOG_LVL_DEBUG, "Condition-System: Check condition %u, type %i - called from %s with params target: %s, map %i, source %s",
               m_entry, m_condition, conditionSourceToStr[conditionSourceType], target ? target->GetGuidStr().c_str() : "<nullptr>", map ? map->GetId() : -1, source ? source->GetGuidStr().c_str() : "<nullptr>");
@@ -148,7 +150,7 @@ bool ConditionEntry::Meets(WorldObject const* target, Map const* map, WorldObjec
     if (m_flags & CONDITION_FLAG_REVERSE_RESULT)
         result = !result;
 
-    // if (m_entry == 242)
+    // if (m_entry == 595 || m_entry == 596)
     // {
     //     uint32 resultInt = result ? 1 : 0;
     //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "ConditionEntry::Meets %u - final result = %u", m_entry, resultInt);
@@ -434,7 +436,9 @@ bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, 
 
             if (InstanceData const* data = pMap->GetInstanceData())
             {
-                auto const value = static_cast<int64>(const_cast<InstanceData*>(data)->GetData(m_value1));
+                auto const value = m_value4
+                    ? const_cast<InstanceData*>(data)->GetData64(m_value1)
+                    : static_cast<int64>(const_cast<InstanceData*>(data)->GetData(m_value1));
 
                 switch (m_value3)
                 {
@@ -736,6 +740,19 @@ bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, 
         {
             if (Creature const* pCreature = source->ToCreature())
                 return pCreature->GetReactState() == m_value1;
+            return false;
+        }
+        case CONDITION_INSTANCE_DATA_GUID:
+        {
+            Map const* pMap = map ? map : (source ? source->GetMap() : target->GetMap());
+
+            if (InstanceData const* data = pMap->GetInstanceData())
+                return source->GetGUID() == (
+                    m_value2
+                        ? const_cast<InstanceData*>(data)->GetData64(m_value1)
+                        : static_cast<int64>(const_cast<InstanceData*>(data)->GetData(m_value1))
+                );
+
             return false;
         }
     }
@@ -1449,6 +1466,7 @@ bool ConditionEntry::IsValid()
         case CONDITION_CREATURE_GROUP_DEAD:
         case CONDITION_CREATURE_FIT_CONDITION:
         case CONDITION_CREATURE_PHASE:
+        case CONDITION_INSTANCE_DATA_GUID:
             break;
         default:
             sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "Condition entry %u has bad type of %d, skipped ", m_entry, m_condition);

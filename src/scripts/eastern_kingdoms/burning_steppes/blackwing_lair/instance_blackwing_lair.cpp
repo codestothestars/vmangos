@@ -849,6 +849,10 @@ struct instance_blackwing_lair : public ScriptedInstance
         }
     }
 
+    void SetData64(uint32 data, uint64 value) {
+        m_auiData[data] = value;
+    }
+
     bool CheckConditionCriteriaMeet(Player const* player, uint32 map_id, WorldObject const* source, uint32 instance_condition_id) const override
     {
         uint64 scepterChampion = m_auiData[DATA_SCEPTER_CHAMPION];

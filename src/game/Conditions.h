@@ -175,6 +175,7 @@ enum ConditionType
                                                             // Value1: index
                                                             // Value2: data
                                                             // Value3: 0, 1 or 2 (0: equal to, 1: equal or higher than, 2: equal or less than)
+                                                            // Value4: source (0=data32, 1=data64)
     CONDITION_MAP_EVENT_DATA        = 35,                   // Gets data from a scripted map event and checks the returned value.
                                                             // Requirement: Map
                                                             // Value1: event_id
@@ -280,6 +281,9 @@ enum ConditionType
                                                             // Value1: enum MovementGeneratorType
     CONDITION_REACT_STATE            = 64,                  // Checks the source creature's current react state.
                                                             // Value1: react_state (see enum ReactStates)
+    CONDITION_INSTANCE_DATA_GUID     = 65,                  // Checks if the source guid is the value stored in instance data.
+                                                            // Value1: instance_data_field
+                                                            // Value2: source (0=data32, 1=data64)
 };
 
 enum ConditionFlags

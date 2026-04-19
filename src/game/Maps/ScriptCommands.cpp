@@ -596,6 +596,10 @@ bool Map::ScriptCommand_ActivateGameObject(ScriptInfo const& script, WorldObject
 // SCRIPT_COMMAND_REMOVE_AURA (14)
 bool Map::ScriptCommand_RemoveAura(ScriptInfo const& script, WorldObject* source, WorldObject* target)
 {
+    // if (script.id == 1243516 || script.id == 1243522)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Map::ScriptCommand_RemoveAura %u", script.id);
+    // }
     Unit* pSource = ToUnit(source);
 
     if (!pSource)
@@ -1071,6 +1075,10 @@ bool Map::ScriptCommand_SetStandState(ScriptInfo const& script, WorldObject* sou
 // SCRIPT_COMMAND_MODIFY_THREAT (29)
 bool Map::ScriptCommand_ModifyThreat(ScriptInfo const& script, WorldObject* source, WorldObject* target)
 {
+    // if (script.id == 1243507)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Map::ScriptCommand_ModifyThreat %u", script.id);
+    // }
     Creature* pSource = ToCreature(source);
 
     if (!pSource)
@@ -1304,6 +1312,14 @@ bool Map::ScriptCommand_SetData(ScriptInfo const& script, WorldObject* source, W
 // SCRIPT_COMMAND_SET_INST_DATA64 (38)
 bool Map::ScriptCommand_SetData64(ScriptInfo const& script, WorldObject* source, WorldObject* target)
 {
+    // if (script.id == 1243508)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Map::ScriptCommand_SetData64 %u", script.id);
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Map::ScriptCommand_SetData64 %u - source = %s", script.id, source->GetName());
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Map::ScriptCommand_SetData64 %u - target = %s", script.id, target->GetName());
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Map::ScriptCommand_SetData64 %u - field = %u", script.id, script.setData64.field);
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Map::ScriptCommand_SetData64 %u - type = %u", script.id, script.setData64.type);
+    // }
     InstanceData* pInst = GetInstanceData();
     
     if (!pInst)
@@ -2289,6 +2305,10 @@ bool Map::ScriptCommand_CombatStop(ScriptInfo const& script, WorldObject* source
 // SCRIPT_COMMAND_ADD_AURA (74)
 bool Map::ScriptCommand_AddAura(ScriptInfo const& script, WorldObject* source, WorldObject* target)
 {
+    // if (script.id == 1243521 || script.id == 1444906)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Map::ScriptCommand_AddAura %u", script.id);
+    // }
     Unit* pSource = ToUnit(source);
 
     if (!pSource)
@@ -2297,6 +2317,11 @@ bool Map::ScriptCommand_AddAura(ScriptInfo const& script, WorldObject* source, W
         return ShouldAbortScript(script);
     }
 
+    // if (script.id == 1243521 || script.id == 1444906)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Map::ScriptCommand_AddAura %u - source = %s", script.id, source->GetName());
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Map::ScriptCommand_AddAura %u - target = %s", script.id, target->GetName());
+    // }
     pSource->AddAura(script.addAura.spellId, script.addAura.flags, ToUnit(target));
 
     return false;
@@ -2305,6 +2330,10 @@ bool Map::ScriptCommand_AddAura(ScriptInfo const& script, WorldObject* source, W
 // SCRIPT_COMMAND_ADD_THREAT (75)
 bool Map::ScriptCommand_AddThreat(ScriptInfo const& script, WorldObject* source, WorldObject* target)
 {
+    // if (script.id == 1243507)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Map::ScriptCommand_AddThreat %u", script.id);
+    // }
     Creature* pSource = ToCreature(source);
 
     if (!pSource)
@@ -2325,7 +2354,7 @@ bool Map::ScriptCommand_AddThreat(ScriptInfo const& script, WorldObject* source,
     }
 
     if (pSource->IsValidAttackTarget(pTarget))
-        pSource->AddThreat(pTarget);
+        pSource->AddThreat(pTarget, script.addThreat.amount);
 
     return false;
 }

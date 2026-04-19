@@ -659,3 +659,9 @@ GameObject* ZoneScript::GetGameObject(ObjectGuid guid)
     ASSERT(m_pMap);
     return m_pMap->GetGameObject(guid);
 }
+
+Player* ZoneScript::GetPlayer(ObjectGuid guid)
+{
+    ASSERT(m_pMap);
+    return m_pMap->GetPlayer(guid);
+}

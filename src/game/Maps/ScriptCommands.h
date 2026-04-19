@@ -297,6 +297,7 @@ enum eScriptCommand
                                                             // datalong2 = flags
     SCRIPT_COMMAND_ADD_THREAT               = 75,           // source = Creature
                                                             // target = Unit
+                                                            // datalong = amount
     SCRIPT_COMMAND_SUMMON_OBJECT            = 76,           // source = WorldObject
                                                             // datalong = gameobject_entry
                                                             // datalong2 = respawn_time
@@ -1026,7 +1027,10 @@ struct ScriptInfo
             uint32 flags;                                   // datalong2
         } addAura;
 
-                                                            // SCRIPT_COMMAND_ADD_THREAT (75)
+        struct                                              // SCRIPT_COMMAND_ADD_THREAT (75)
+        {
+            uint32 amount;
+        } addThreat;
 
         struct                                              // SCRIPT_COMMAND_SUMMON_OBJECT (76)
         {
@@ -1252,6 +1256,9 @@ enum ScriptTarget
     TARGET_T_RANDOM_GAMEOBJECT_WITH_ENTRY   = 29,           //Searches for random nearby gameobject with the given entry.
                                                             //Param1 = gameobject_entry
                                                             //Param2 = search_radius
+
+    TARGET_T_PLAYER_FROM_INSTANCE_DATA      = 30,           //Find player by guid stored in instance data.
+                                                            //Param1 = instance_data_field
     TARGET_T_END
 };
 

@@ -68,6 +68,12 @@ INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `v
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 593, 35,       8302,    2,   0,   0, 0x0);
 --  594: Map event data 2 equal to 1
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 594, 35,       8302,    2,   1,   0, 0x0);
+--  595: Target guid not stored in instance data 27
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 595, 65,         27,    1,   0,   0, 0x3);
+--  596: Instance data64 27 equal or higher than 1
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 596, 34,         27,    1,   1,   1, 0x0);
+--  597: (595: Target guid not stored in instance data 27) And (596: Instance data 27 equal or higher than 1)
+INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 597, -1,        595,  596,   0,   0, 0x0);
 --  612: (241: Black Dragon Egg within 125 yards) And (582: Nearby Razorgore within 90 yards)
 INSERT `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES ( 612, -1,        241,  582,   0,   0, 0x0);
 --  613: (241: Black Dragon Egg within 125 yards) And (583: No nearby Razorgore within 90 yards)
@@ -1155,7 +1161,7 @@ INSERT `creature_ai_events`
 (1243513,         12435,               0,           6,                  0b1011111,          0x00,              0,              0,              0,              0,          1243513, 'Razorgore the Untamed - Death (phase 5)'),
 (1243514,         12435,               0,           6,                  0b0111111,          0x00,              0,              0,              0,              0,          1243514, 'Razorgore the Untamed - Death (phase 6)'),
 (1243515,         12435,               0,          11,                  0b0000000,          0x00,              0,              0,              0,              0,          1243510, 'Razorgore the Untamed - Spawned'),
-(1243516,         12435,               0,          37,                  0b0000000,          0x00,          19832,              0,              0,              0,          1243516, 'Razorgore the Untamed - Aura unapply'),
+(1243516,         12435,               0,          37,                  0b0000000,          0x00,          19832,              0,              0,              0,          1243516, 'Razorgore the Untamed - Unapply aura Possess'),
 (1243517,         12435,               0,           8,                  0b0000000,          0x00,          23032,             -1,              0,              0,          1243517, 'Razorgore the Untamed - Hit by spell (Nefarian''s Troops Flee)'),
 (1243518,         12435,               0,           7,                  0b0000000,          0x00,              0,              0,              0,              0,          1243518, 'Razorgore the Untamed - Evade'),
 (1243519,         12435,               0,           8,                  0b0000000,          0x00,          23031,             -1,              0,              0,          1243519, 'Razorgore the Untamed - Hit by spell (Cancel Bob Possession)'),
@@ -1196,6 +1202,8 @@ INSERT `creature_ai_scripts`
 (1243516,          0,        65,       8302,           1,           0,           0,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Set map event data 1 to 0 (Possess removed)'),
 (1243516,          0,         5,          0,       23014,           0,           0,           12784,            11,         0x02,         0, 0       ,            572, 'Razorgore the Untamed - Interrupt Possess cast on Blackwing Orb Trigger'),
 (1243516,          0,        14,      23021,           0,           0,           0,               0,             0,         0x00,         0, 0       ,            572, 'Razorgore the Untamed - Remove aura Dragon Orb'),
+(1243516,          1,        39,    1243507,           0,           0,           0,               0,             0,         0x00,       100, 0       ,            597, 'Razorgore the Untamed - Set threat on previous possessor'),
+(1243516,          2,        39,    1243508,           0,           0,           0,               0,             0,         0x00,       100, 0       ,              0, 'Razorgore the Untamed - Store last possessor GUID'),
 (1243517,          0,        44,          6,           0,           0,           0,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Set phase 6'),
 (1243518,          0,        68,    1243505,           2,       12416,         125,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Evade Blackwing Legionnaire'),
 (1243518,          0,        68,    1243505,           2,       12420,         125,               0,             0,         0x00,         0, 0       ,              0, 'Razorgore the Untamed - Evade Blackwing Mage'),
@@ -1217,50 +1225,53 @@ REPLACE `creature_spells`
                                          24375,              8,                0,                0,                   8,                  29,                 22,                 43);
 DELETE FROM generic_scripts WHERE LENGTH(id) = 7 AND id LIKE '12435%'; -- testing
 INSERT `generic_scripts`
-(   `id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `target_type`, `data_flags`, `dataint`, `target_param1`, `comments`) VALUES
-(1243502,       0,          0,        44,          1,           1,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Increment phase'),
-(1243503,       0,          0,        15,      23024,       0x002,           0,             8,         0x00,         0,               0, 'Razorgore the Untamed - Cast Fireball'),
-(1243503,       0,          0,        62,       8302,           0,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - End map event (Failure)'),
-(1243503,       1,          0,        39,     176964,           0,           0,             0,         0x00,       100,               0, 'Razorgore the Untamed - Open Portcullis'),
-(1243504,      55,          0,         9,     234786,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 1 (spawn)'),
-(1243504,      55,          0,         9,     234787,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 2 (spawn)'),
-(1243504,      55,          0,         9,     234788,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 3 (spawn)'),
-(1243504,      55,          0,         9,     234789,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 4 (spawn)'),
-(1243504,      55,          0,         9,     234790,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 5 (spawn)'),
-(1243504,      55,          0,         9,     234791,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 6 (spawn)'),
-(1243504,      55,          0,         9,     234792,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 7 (spawn)'),
-(1243504,      55,          0,         9,     234793,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 8 (spawn)'),
-(1243504,      55,          0,         9,     234794,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 9 (spawn)'),
-(1243504,      55,          0,         9,     234795,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 10 (spawn)'),
-(1243504,      55,          0,         9,     234796,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 11 (spawn)'),
-(1243504,      55,          0,         9,     234797,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 12 (spawn)'),
-(1243504,      55,          0,         9,     234798,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 13 (spawn)'),
-(1243504,      55,          0,         9,     234799,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 14 (spawn)'),
-(1243504,      55,          0,         9,     234800,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 15 (spawn)'),
-(1243504,      55,          0,         9,     234801,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 16 (spawn)'),
-(1243504,      55,          0,         9,     234802,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 17 (spawn)'),
-(1243504,      55,          0,         9,     234803,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 18 (spawn)'),
-(1243504,      55,          0,         9,     234804,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 19 (spawn)'),
-(1243504,      55,          0,         9,     234805,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 20 (spawn)'),
-(1243504,      55,          0,         9,     234806,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 21 (spawn)'),
-(1243504,      55,          0,         9,     234807,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 22 (spawn)'),
-(1243504,      55,          0,         9,     234808,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 23 (spawn)'),
-(1243504,      55,          0,         9,     234809,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 24 (spawn)'),
-(1243504,      55,          0,         9,     234810,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 25 (spawn)'),
-(1243504,      55,          0,         9,     234811,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 26 (spawn)'),
-(1243504,      55,          0,         9,     234812,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 27 (spawn)'),
-(1243504,      55,          0,         9,     234813,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 28 (spawn)'),
-(1243504,      55,          0,         9,     234814,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 29 (spawn)'),
-(1243504,      55,          0,         9,     234815,           0,     3600000,             0,         0x00,         0,               0, 'Razorgore the Untamed - Respawn Black Dragon Egg 30 (spawn)'),
-(1243504,      60,          0,         4,          9,  0x00000010,           2,            14,         0x03,         0,          234816, 'Razorgore the Untamed - Remove GAMEOBJECT_FLAGS flag GO_FLAG_NO_INTERACT'),
-(1243504,      60,          0,        71,          0,           0,           0,            11,         0x00,         0,           84388, 'Razorgore the Untamed - Respawn Razorgore the Untamed'),
-(1243504,      60,          1,        71,          0,           0,           0,            11,         0x02,         0,           84389, 'Razorgore the Untamed - Respawn Grethok the Controller'),
-(1243504,      60,          0,        71,        0x2,           0,           0,            11,         0x02,         0,           84390, 'Razorgore the Untamed - Respawn Blackwing Guardsman 1'),
-(1243504,      60,          1,        91,      84390,           0,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Load Blackwing Guardsman 1 Spawn'),
-(1243504,      60,          0,        71,        0x2,           0,           0,            11,         0x02,         0,           84391, 'Razorgore the Untamed - Respawn Blackwing Guardsman 2'),
-(1243504,      60,          1,        91,      84391,           0,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Load Blackwing Guardsman 2 Spawn'),
-(1243505,       0,          0,        33,          0,           0,           0,             0,         0x00,         0,               0, 'Razorgore the Untamed - Enter evade mode'),
-(1243506,       3,          0,        15,      23040,       0x003,           0,             8,         0x00,         0,               0, 'Razorgore the Untamed - Cast Warming Flames');
+(   `id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `target_param1`, `target_type`, `data_flags`, `dataint`,  `x`, `comments`) VALUES
+(1243502,       0,          0,        44,          1,           1,           0,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Increment phase'),
+(1243503,       0,          0,        15,      23024,       0x002,           0,               0,             8,         0x00,         0,    0, 'Razorgore the Untamed - Cast Fireball'),
+(1243503,       0,          0,        62,       8302,           0,           0,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - End map event (Failure)'),
+(1243503,       1,          0,        39,     176964,           0,           0,               0,             0,         0x00,       100,    0, 'Razorgore the Untamed - Open Portcullis'),
+(1243504,      55,          0,         9,     234786,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 1 (spawn)'),
+(1243504,      55,          0,         9,     234787,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 2 (spawn)'),
+(1243504,      55,          0,         9,     234788,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 3 (spawn)'),
+(1243504,      55,          0,         9,     234789,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 4 (spawn)'),
+(1243504,      55,          0,         9,     234790,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 5 (spawn)'),
+(1243504,      55,          0,         9,     234791,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 6 (spawn)'),
+(1243504,      55,          0,         9,     234792,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 7 (spawn)'),
+(1243504,      55,          0,         9,     234793,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 8 (spawn)'),
+(1243504,      55,          0,         9,     234794,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 9 (spawn)'),
+(1243504,      55,          0,         9,     234795,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 10 (spawn)'),
+(1243504,      55,          0,         9,     234796,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 11 (spawn)'),
+(1243504,      55,          0,         9,     234797,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 12 (spawn)'),
+(1243504,      55,          0,         9,     234798,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 13 (spawn)'),
+(1243504,      55,          0,         9,     234799,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 14 (spawn)'),
+(1243504,      55,          0,         9,     234800,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 15 (spawn)'),
+(1243504,      55,          0,         9,     234801,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 16 (spawn)'),
+(1243504,      55,          0,         9,     234802,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 17 (spawn)'),
+(1243504,      55,          0,         9,     234803,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 18 (spawn)'),
+(1243504,      55,          0,         9,     234804,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 19 (spawn)'),
+(1243504,      55,          0,         9,     234805,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 20 (spawn)'),
+(1243504,      55,          0,         9,     234806,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 21 (spawn)'),
+(1243504,      55,          0,         9,     234807,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 22 (spawn)'),
+(1243504,      55,          0,         9,     234808,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 23 (spawn)'),
+(1243504,      55,          0,         9,     234809,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 24 (spawn)'),
+(1243504,      55,          0,         9,     234810,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 25 (spawn)'),
+(1243504,      55,          0,         9,     234811,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 26 (spawn)'),
+(1243504,      55,          0,         9,     234812,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 27 (spawn)'),
+(1243504,      55,          0,         9,     234813,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 28 (spawn)'),
+(1243504,      55,          0,         9,     234814,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 29 (spawn)'),
+(1243504,      55,          0,         9,     234815,           0,     3600000,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Black Dragon Egg 30 (spawn)'),
+(1243504,      60,          0,         4,          9,  0x00000010,           2,          234816,            14,         0x03,         0,    0, 'Razorgore the Untamed - Remove GAMEOBJECT_FLAGS flag GO_FLAG_NO_INTERACT'),
+(1243504,      60,          0,        71,          0,           0,           0,           84388,            11,         0x00,         0,    0, 'Razorgore the Untamed - Respawn Razorgore the Untamed'),
+(1243504,      60,          1,        71,          0,           0,           0,           84389,            11,         0x02,         0,    0, 'Razorgore the Untamed - Respawn Grethok the Controller'),
+(1243504,      60,          0,        71,        0x2,           0,           0,           84390,            11,         0x02,         0,    0, 'Razorgore the Untamed - Respawn Blackwing Guardsman 1'),
+(1243504,      60,          1,        91,      84390,           0,           0,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Load Blackwing Guardsman 1 Spawn'),
+(1243504,      60,          0,        71,        0x2,           0,           0,           84391,            11,         0x02,         0,    0, 'Razorgore the Untamed - Respawn Blackwing Guardsman 2'),
+(1243504,      60,          1,        91,      84391,           0,           0,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Load Blackwing Guardsman 2 Spawn'),
+(1243505,       0,          0,        33,          0,           0,           0,               0,             0,         0x00,         0,    0, 'Razorgore the Untamed - Enter evade mode'),
+(1243506,       3,          0,        15,      23040,       0x003,           0,               0,             8,         0x00,         0,    0, 'Razorgore the Untamed - Cast Warming Flames'),
+(1243507,       0,          0,        29,          0,           0,           0,              27,            30,         0x10,         0, -100, 'Razorgore the Untamed - Reset threat on previous possessor'),
+(1243507,       0,          1,        75,         42,           0,           0,              27,            30,         0x10,         0,    0, 'Razorgore the Untamed - Set threat on previous possessor'),
+(1243508,       1,          0,        38,         27,           0,           1,               0,             0,         0x01,         0,    0, 'Razorgore the Untamed - Store last possessor GUID');
 UPDATE `creature_template` SET `ai_name` = 'EventAI', `auras` = '18943', `script_name` = '', `spell_list_id` = 124350 WHERE `entry` = 12435;
 
 -- Events list for Grethok the Controller

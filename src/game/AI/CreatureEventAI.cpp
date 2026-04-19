@@ -735,6 +735,11 @@ void CreatureEventAI::SpellHit(SpellCaster* pCaster, SpellEntry const* pSpellEnt
 {
     if (m_bEmptyList)
         return;
+    
+    // if (m_creature->GetEntry() == 12435)
+    // {
+    //     sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "CreatureEventAI::SpellHit %u - spell = %u", m_creature->GetEntry(), pSpellEntry->Id);
+    // }
 
     for (auto& i : m_CreatureEventAIList)
     {

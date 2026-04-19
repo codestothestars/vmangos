@@ -401,11 +401,13 @@ struct trigger_orb_of_commandAI : public ScriptedAI
             ((ScriptedAI*)pRazorgore->AI())->SetCombatMovement(true);
             if (Unit* pPossesser = m_creature->GetMap()->GetUnit(m_uiPossesseurGuid))
             {
-                // codestothestars - Evaluated up to here
                 pRazorgore->AI()->AttackStart(pPossesser);
                 pRazorgore->GetMotionMaster()->MoveChase(pPossesser);
+                // Sniffs show that this is wrong.
+                // The amount of threat assigned is the same as for the generic possess mechanic (max HP).
                 pRazorgore->AddThreat(pPossesser, 1000000.f); // Endless threat
             }
+            // codestothestars - Evaluated up to here
             pRazorgore->SetInCombatWithZone();
         }
         m_creature->DeleteLater();

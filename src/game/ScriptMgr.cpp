@@ -3013,6 +3013,12 @@ WorldObject* GetTargetByType(WorldObject* pSource, WorldObject* pTarget, Map* pM
             if (Unit* pUnitSource = ToUnit(pSource))
                 return pUnitSource->FindNearestFriendlyPlayer(param1);
             break;
+        case TARGET_T_PLAYER_FROM_INSTANCE_DATA:
+            if (!pMap)
+                return nullptr;
+            if (InstanceData* pInstanceData = pMap->GetInstanceData())
+                return pInstanceData->GetPlayer(pInstanceData->GetData64(param1));
+            break;
     }
     return nullptr;
 }
