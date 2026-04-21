@@ -396,7 +396,6 @@ struct trigger_orb_of_commandAI : public ScriptedAI
         // Restore Razorgore
         if (Creature* pRazorgore = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_RAZORGORE_GUID)))
         {
-            // Sniffs show that this does not happen. Threat is retained.
             ((ScriptedAI*)pRazorgore->AI())->DoResetThreat();
             ((ScriptedAI*)pRazorgore->AI())->SetCombatMovement(true);
             if (Unit* pPossesser = m_creature->GetMap()->GetUnit(m_uiPossesseurGuid))
