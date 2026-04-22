@@ -406,7 +406,6 @@ struct trigger_orb_of_commandAI : public ScriptedAI
                 // The amount of threat assigned is the same as for the generic possess mechanic (max HP).
                 pRazorgore->AddThreat(pPossesser, 1000000.f); // Endless threat
             }
-            // codestothestars - Evaluated up to here
             pRazorgore->SetInCombatWithZone();
         }
         m_creature->DeleteLater();
