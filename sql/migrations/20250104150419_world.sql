@@ -3305,26 +3305,115 @@ GROUP BY
   higher_delay_count.unixtimems
 ORDER BY unixtimems, position_x;
 
-DROP TABLE IF EXISTS higher_delay_count;
-DROP TABLE IF EXISTS higher_delay;
-CREATE TABLE higher_delay(
-  razorgore_guid INT(10) UNSIGNED NOT NULL,
-  position_x FLOAT NOT NULL,
-  position_y FLOAT NOT NULL,
-  unixtimems BIGINT(20) NOT NULL,
-  delay SMALLINT UNSIGNED NOT NULL,
-  PRIMARY KEY(razorgore_guid, position_x, position_y, unixtimems)
-);
-CREATE TABLE higher_delay_count(
-  razorgore_guid INT(10) UNSIGNED NOT NULL,
-  position_x FLOAT NOT NULL,
-  position_y FLOAT NOT NULL,
-  unixtimems BIGINT(20) NOT NULL,
-  previous_unixtimems BIGINT(20) NOT NULL,
-  delay_count TINYINT UNSIGNED NOT NULL,
-  PRIMARY KEY(razorgore_guid, position_x, position_y, unixtimems),
-  FOREIGN KEY(razorgore_guid, position_x, position_y, unixtimems) REFERENCES higher_delay(razorgore_guid, position_x, position_y, unixtimems)
-);
+-- Index of creature spawn by position and time
+WITH
+creature_create_time AS (
+  SELECT unixtimems, guid, position_x, position_y FROM creature_create1_time
+  UNION ALL
+  SELECT unixtimems, guid, position_x, position_y FROM creature_create2_time
+),
+spawn AS (
+  SELECT
+    creature_first_seen_time.guid,
+    creature_first_seen_time.unixtimems,
+    creature_create_time.position_x,
+    creature_create_time.position_y
+  FROM (
+    SELECT guid, MIN(unixtimems) unixtimems
+    FROM creature_create_time
+    GROUP BY guid
+  ) creature_first_seen_time
+  JOIN creature_create_time
+    ON creature_first_seen_time.guid = creature_create_time.guid
+    AND creature_first_seen_time.unixtimems = creature_create_time.unixtimems
+  JOIN creature
+    ON creature_first_seen_time.guid = creature.guid
+  WHERE creature.id IN (12416, 12420, 12422)
+),
+spawn_time_index AS (
+  SELECT DISTINCT
+    spawn.unixtimems,
+    creature_razorgore_guid.existing_creature_guid razorgore_guid,
+    DENSE_RANK() OVER(
+      PARTITION BY creature_razorgore_guid.existing_creature_guid
+      ORDER BY spawn_time_group_time.group_unixtimems
+    ) spawn_index
+  FROM spawn
+  JOIN (
+    SELECT spawn.unixtimems spawn_unixtimems, MIN(near_spawn.unixtimems) group_unixtimems
+    FROM spawn
+    JOIN spawn near_spawn ON near_spawn.unixtimems BETWEEN spawn.unixtimems - 6500 AND spawn.unixtimems
+    GROUP BY spawn.unixtimems
+  ) spawn_time_group_time
+    ON spawn.unixtimems = spawn_time_group_time.spawn_unixtimems
+  JOIN (
+    SELECT
+      creature.guid creature_guid,
+      existing_creature.id existing_creature_id,
+      MAX(existing_creature.guid) existing_creature_guid
+    FROM creature
+    JOIN creature existing_creature ON creature.guid > existing_creature.guid
+    GROUP BY creature.guid, existing_creature.id
+  ) creature_razorgore_guid
+    ON spawn.guid = creature_razorgore_guid.creature_guid
+  WHERE creature_razorgore_guid.existing_creature_id = 12435
+),
+spawning_position AS (
+  SELECT -7659.81 position_x, -1043.81 position_y
+  UNION
+  SELECT -7643.39, -1064.69
+  UNION
+  SELECT -7623.1, -1094.06
+  UNION
+  SELECT -7607.78, -1116.17
+  UNION
+  SELECT -7583.08, -990.483
+  UNION
+  SELECT -7568.61, -1012.67
+  UNION
+  SELECT -7548.46, -1041.98
+  UNION
+  SELECT -7532.72, -1063.49
+),
+spawning_position_index AS (
+  SELECT DISTINCT
+    spawning_position.position_x,
+    spawning_position.position_y,
+    spawn_time_index.razorgore_guid,
+    spawn_time_index.spawn_index
+  FROM spawning_position
+  JOIN spawn_time_index
+)
+SELECT
+  spawning_position_index.razorgore_guid,
+  spawn_with_index.unixtimems,
+  spawn_with_index.guid,
+  spawn_with_index.id,
+  spawning_position_index.spawn_index,
+  spawning_position_index.position_x,
+  spawning_position_index.position_y
+FROM spawning_position_index
+LEFT JOIN (
+  SELECT
+    spawn_time_index.razorgore_guid,
+    spawn.unixtimems,
+    spawn.guid,
+    creature.id,
+    spawn_time_index.spawn_index,
+    spawning_position.position_x,
+    spawning_position.position_y
+  FROM spawn
+  JOIN spawn_time_index
+    ON spawn.unixtimems = spawn_time_index.unixtimems
+  JOIN spawning_position
+    ON ABS(spawn.position_x - spawning_position.position_x) < 13
+  JOIN creature
+    ON spawn.guid = creature.guid
+) spawn_with_index
+  ON spawning_position_index.razorgore_guid = spawn_with_index.razorgore_guid
+  AND spawning_position_index.spawn_index = spawn_with_index.spawn_index
+  AND spawning_position_index.position_x = spawn_with_index.position_x
+ORDER BY razorgore_guid, position_x, spawn_index
 
 -- Razorgore spell delays after flee, to help judge whether his AI is preserved during Possess (which it seems to not be).
 SELECT
