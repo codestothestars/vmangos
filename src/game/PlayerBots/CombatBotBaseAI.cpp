@@ -22,6 +22,8 @@ enum CombatBotSpells
     SPELL_SANCTITY_AURA = 20218,
     SPELL_SHADOWFORM = 15473,
     SPELL_ELEMENTAL_MASTERY = 16166,
+    SPELL_SHIELD_SPECIALIZATION_1 = 16253,
+    SPELL_SHIELD_SPECIALIZATION_5 = 16301,
     SPELL_STORMSTRIKE = 17364,
     SPELL_MOONKIN_FORM = 24858,
     SPELL_LEADER_OF_THE_PACK = 17007,
@@ -97,7 +99,9 @@ void CombatBotBaseAI::AutoAssignRole()
         }
         case CLASS_SHAMAN:
         {
-            if (me->HasSpell(SPELL_ELEMENTAL_MASTERY))
+            if (me->HasSpell(SPELL_SHIELD_SPECIALIZATION_1) || me->HasSpell(SPELL_SHIELD_SPECIALIZATION_5))
+                m_role = ROLE_TANK;
+            else if (me->HasSpell(SPELL_ELEMENTAL_MASTERY))
                 m_role = ROLE_RANGE_DPS;
             else if (me->HasSpell(SPELL_STORMSTRIKE))
                 m_role = ROLE_MELEE_DPS;
@@ -1699,33 +1703,43 @@ void CombatBotBaseAI::PopulateSpellData()
             if (!airTotems.empty())
                 m_spells.shaman.pAirTotem = SelectRandomContainerElement(airTotems);
 
-            std::vector<SpellEntry const*> earthTotems;
-            if (pEarthbindTotem)
-                earthTotems.push_back(pEarthbindTotem);
-            if (pStoneclawtotem)
-                earthTotems.push_back(pStoneclawtotem);
-            if (pStoneskinTotem)
-                earthTotems.push_back(pStoneskinTotem);
-            if (pStrengthOfEarthTotem)
-                earthTotems.push_back(pStrengthOfEarthTotem);
-            if (pTremorTotem)
-                earthTotems.push_back(pTremorTotem);
-            if (!earthTotems.empty())
-                m_spells.shaman.pEarthTotem = SelectRandomContainerElement(earthTotems);
+            if (pStoneskinTotem && m_role == ROLE_TANK)
+                m_spells.shaman.pEarthTotem = pStoneskinTotem;
+            else
+            {
+                std::vector<SpellEntry const*> earthTotems;
+                if (pStoneskinTotem)
+                    earthTotems.push_back(pStoneskinTotem);
+                if (pEarthbindTotem)
+                    earthTotems.push_back(pEarthbindTotem);
+                if (pStoneclawtotem)
+                    earthTotems.push_back(pStoneclawtotem);
+                if (pStrengthOfEarthTotem)
+                    earthTotems.push_back(pStrengthOfEarthTotem);
+                if (pTremorTotem)
+                    earthTotems.push_back(pTremorTotem);
+                if (!earthTotems.empty())
+                    m_spells.shaman.pEarthTotem = SelectRandomContainerElement(earthTotems);
+            }
 
-            std::vector<SpellEntry const*> fireTotems;
-            if (pFireNovaTotem)
-                fireTotems.push_back(pFireNovaTotem);
-            if (pMagmaTotem)
-                fireTotems.push_back(pMagmaTotem);
-            if (pSearingTotem)
-                fireTotems.push_back(pSearingTotem);
-            if (pFlametongueTotem)
-                fireTotems.push_back(pFlametongueTotem);
-            if (pFrostResistanceTotem)
-                fireTotems.push_back(pFrostResistanceTotem);
-            if (!fireTotems.empty())
-                m_spells.shaman.pFireTotem = SelectRandomContainerElement(fireTotems);
+            if (pFireNovaTotem && m_role == ROLE_TANK)
+                m_spells.shaman.pFireTotem = pFireNovaTotem;
+            else
+            {
+                std::vector<SpellEntry const*> fireTotems;
+                if (pFireNovaTotem)
+                    fireTotems.push_back(pFireNovaTotem);
+                if (pMagmaTotem)
+                    fireTotems.push_back(pMagmaTotem);
+                if (pSearingTotem)
+                    fireTotems.push_back(pSearingTotem);
+                if (pFlametongueTotem)
+                    fireTotems.push_back(pFlametongueTotem);
+                if (pFrostResistanceTotem)
+                    fireTotems.push_back(pFrostResistanceTotem);
+                if (!fireTotems.empty())
+                    m_spells.shaman.pFireTotem = SelectRandomContainerElement(fireTotems);
+            }
 
             std::vector<SpellEntry const*> waterTotems;
             if (pFireResistanceTotem)
@@ -1745,15 +1759,20 @@ void CombatBotBaseAI::PopulateSpellData()
                 m_spells.shaman.pWeaponBuff = pWindfuryWeapon;
             else
             {
-                std::vector<SpellEntry const*> weaponBuffs;
-                if (pWindfuryWeapon)
-                    weaponBuffs.push_back(pWindfuryWeapon);
-                if (pRockbiterWeapon)
-                    weaponBuffs.push_back(pRockbiterWeapon);
-                if (pFrostbrandWeapon)
-                    weaponBuffs.push_back(pFrostbrandWeapon);
-                if (!weaponBuffs.empty())
-                    m_spells.shaman.pWeaponBuff = SelectRandomContainerElement(weaponBuffs);
+                if (pRockbiterWeapon && m_role == ROLE_TANK)
+                    m_spells.shaman.pWeaponBuff = pRockbiterWeapon;
+                else
+                {
+                    std::vector<SpellEntry const*> weaponBuffs;
+                    if (pWindfuryWeapon)
+                        weaponBuffs.push_back(pWindfuryWeapon);
+                    if (pRockbiterWeapon)
+                        weaponBuffs.push_back(pRockbiterWeapon);
+                    if (pFrostbrandWeapon)
+                        weaponBuffs.push_back(pFrostbrandWeapon);
+                    if (!weaponBuffs.empty())
+                        m_spells.shaman.pWeaponBuff = SelectRandomContainerElement(weaponBuffs);
+                }
             }
 
             break;
@@ -2919,7 +2938,12 @@ void CombatBotBaseAI::EquipOrUseNewItem()
                     if (slot != NULL_SLOT)
                     {
                         if (Item* pItem2 = me->GetItemByPos(INVENTORY_SLOT_BAG_0, slot))
-                            me->DestroyItem(INVENTORY_SLOT_BAG_0, slot, true);
+                        {
+                            if (pItem->GetProto()->ItemLevel >= pItem2->GetProto()->ItemLevel)
+                                me->DestroyItem(INVENTORY_SLOT_BAG_0, slot, true);
+                            else
+                                continue;
+                        }
 
                         // Learn required proficiency
                         if (uint32 proficiencySpellId = pItem->GetProto()->GetProficiencySpell())

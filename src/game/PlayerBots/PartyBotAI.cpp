@@ -1291,7 +1291,7 @@ void PartyBotAI::UpdateInCombatAI_Shaman()
             }
 
             if (m_spells.shaman.pEarthShock &&
-                pVictim->IsNonMeleeSpellCasted(false, false, true) &&
+                (pVictim->IsNonMeleeSpellCasted(false, false, true) || pVictim->GetTargetGuid() != me->GetObjectGuid()) &&
                 CanTryToCastSpell(pVictim, m_spells.shaman.pEarthShock))
             {
                 if (DoCastSpell(pVictim, m_spells.shaman.pEarthShock) == SPELL_CAST_OK)
@@ -1329,6 +1329,7 @@ void PartyBotAI::UpdateInCombatAI_Shaman()
             }
 
             if (m_spells.shaman.pFlameShock &&
+                GetRole() != ROLE_TANK &&
                 CanTryToCastSpell(pVictim, m_spells.shaman.pFlameShock))
             {
                 if (DoCastSpell(pVictim, m_spells.shaman.pFlameShock) == SPELL_CAST_OK)
@@ -1340,6 +1341,15 @@ void PartyBotAI::UpdateInCombatAI_Shaman()
                 CanTryToCastSpell(pVictim, m_spells.shaman.pLightningBolt))
             {
                 if (DoCastSpell(pVictim, m_spells.shaman.pLightningBolt) == SPELL_CAST_OK)
+                    return;
+            }
+
+            if (m_spells.shaman.pLightningShield &&
+                m_role == ROLE_TANK &&
+                !me->HasAura(m_spells.shaman.pLightningShield->Id) &&
+                CanTryToCastSpell(me, m_spells.shaman.pLightningShield))
+            {
+                if (DoCastSpell(me, m_spells.shaman.pLightningShield) == SPELL_CAST_OK)
                     return;
             }
         }
@@ -1382,6 +1392,8 @@ void PartyBotAI::UpdateInCombatAI_Shaman()
     }
     else if (me->GetHealthPercent() < 20.0f)
         HealInjuredTarget(me);
+    else if (GetRole() == ROLE_TANK)
+        FindAndHealInjuredAlly(20, 20);
 }
 
 void PartyBotAI::UpdateOutOfCombatAI_Hunter()
