@@ -467,7 +467,12 @@ struct mob_firelordAI : public ScriptedAI
         {
             if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0, nullptr, SELECT_FLAG_PLAYER))
             {
-                if (DoCastSpellIfCan(pTarget, SPELL_SOULBURN, CF_TRIGGERED) == CAST_OK)
+                if (
+                    // only choose healer if there are multiple in the raid,
+                    // as otherwise the healer getting silenced is a guaranteed wipe
+                    (pTarget->GetClass() != CLASS_PRIEST || sWorld.getConfig(CONFIG_UINT32_CODESTOTHESTARS_SCALE_RAID40_HEALERS) > 1)
+                    && DoCastSpellIfCan(pTarget, SPELL_SOULBURN, CF_TRIGGERED) == CAST_OK
+                )
                     m_uiSoulBurnTimer = urand(3000, 4000);
             }
         }
