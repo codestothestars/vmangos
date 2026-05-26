@@ -494,6 +494,27 @@ class Unit : public SpellCaster
 
     private:
         ComboPointHolderSet m_ComboPointHolders;
+
+        uint32 dungeons[7] = {
+            109, // Sunken Temple
+            209, // Zul'Farrak
+            // 229, // Lower Blackrock Spire
+            230, // Blackrock Depths
+            289, // Scholomance
+            329, // Stratholme
+            349, // Maraudon
+            429  // Dire Maul
+        };
+    
+        uint32 tenPersonRaids[1] = {
+            229 // Upper Blackrock Spire
+        };
+    
+        uint32 fortyPersonRaids[2] = {
+            249, // Onyxia's Lair
+            409  // Molten Core
+        };
+    
     public:
         void AddComboPointHolder(uint32 lowguid) { m_ComboPointHolders.insert(lowguid); }
         void RemoveComboPointHolder(uint32 lowguid) { m_ComboPointHolders.erase(lowguid); }
@@ -612,6 +633,10 @@ class Unit : public SpellCaster
         void HandleEmote(uint32 emote_id);                  // auto-select command/state
         void HandleEmoteCommand(uint32 emote_id);
         void HandleEmoteState(uint32 emote_id);
+
+        bool IsInDungeonMap() const;
+        bool IsInRaid10Map() const;
+        bool IsInRaid40Map() const;
 
         /*********************************************************/
         /***                VISIBILITY SYSTEM                  ***/

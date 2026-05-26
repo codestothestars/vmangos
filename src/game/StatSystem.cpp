@@ -170,7 +170,12 @@ void Player::UpdateMaxHealth()
     value += GetModifierValue(unitMod, TOTAL_VALUE) + GetHealthBonusFromStamina(GetStat(STAT_STAMINA));
     value *= GetModifierValue(unitMod, TOTAL_PCT);
 
-    value *= sWorld.getConfig(CONFIG_FLOAT_CODESTOTHESTARS_RATE_PLAYER_HP);
+    if (IsInDungeonMap())
+        value *= sWorld.getConfig(CONFIG_FLOAT_CODESTOTHESTARS_RATE_PLAYER_DUNGEON_HP);
+    else if (IsInRaid10Map())
+        value *= sWorld.getConfig(CONFIG_FLOAT_CODESTOTHESTARS_RATE_PLAYER_RAID10_HP);
+    else if (IsInRaid40Map())
+        value *= sWorld.getConfig(CONFIG_FLOAT_CODESTOTHESTARS_RATE_PLAYER_RAID40_HP);
 
     SetMaxHealth(std::max(1, int(value)));
 }
@@ -775,7 +780,15 @@ void Creature::UpdateMaxHealth()
     {
         value += GetCreateHealth();
 
-        if ((Player*)GetOwner()) value *= sWorld.getConfig(CONFIG_FLOAT_CODESTOTHESTARS_RATE_PLAYER_HP);
+        if ((Player*)GetOwner())
+        {
+            if (IsInDungeonMap())
+                value *= sWorld.getConfig(CONFIG_FLOAT_CODESTOTHESTARS_RATE_PLAYER_DUNGEON_HP);
+            else if (IsInRaid10Map())
+                value *= sWorld.getConfig(CONFIG_FLOAT_CODESTOTHESTARS_RATE_PLAYER_RAID10_HP);
+            else if (IsInRaid40Map())
+                value *= sWorld.getConfig(CONFIG_FLOAT_CODESTOTHESTARS_RATE_PLAYER_RAID40_HP);
+        }
     }
     value *= GetModifierValue(unitMod, BASE_PCT);
     value += GetModifierValue(unitMod, TOTAL_VALUE) + stamina * 10.0f;

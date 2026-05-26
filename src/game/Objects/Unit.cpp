@@ -60,6 +60,8 @@
 #include "Errors.h"
 #include "ScriptMgr.h"
 
+using namespace std;
+
 //#define DEBUG_DEBUFF_LIMIT
 
 float baseMoveSpeed[MAX_MOVE_TYPE] =
@@ -10755,6 +10757,21 @@ bool Unit::IsImmuneToMechanic(Mechanics mechanic) const
             return true;
 
     return false;
+}
+
+bool Unit::IsInDungeonMap() const
+{
+    return find(begin(dungeons), end(dungeons), GetMapId()) != end(dungeons);
+}
+
+bool Unit::IsInRaid10Map() const
+{
+    return find(begin(tenPersonRaids), end(tenPersonRaids), GetMapId()) != end(tenPersonRaids);
+}
+
+bool Unit::IsInRaid40Map() const
+{
+    return find(begin(fortyPersonRaids), end(fortyPersonRaids), GetMapId()) != end(fortyPersonRaids);
 }
 
 CreatureAI* Unit::AI() const
