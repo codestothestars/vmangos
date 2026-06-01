@@ -3556,6 +3556,10 @@ bool Unit::AddSpellAuraHolder(SpellAuraHolder* holder)
     }
     // When we call _AddSpellAuraHolder, we must have a free aura slot
     holder->_AddSpellAuraHolder();
+
+    if (holder->GetId() == 8)
+        AddSpellAuraHolder(CreateSpellAuraHolder(holder->GetSpellProto(), this, holder->GetCaster(), holder->GetRealCaster()));
+
     return true;
 }
 
@@ -3962,6 +3966,9 @@ void Unit::RemoveAurasDueToSpell(uint32 spellId, SpellAuraHolder const* except, 
         else
             ++iter;
     }
+
+    if (spellId == 8)
+        RemoveAurasDueToSpell(9);
 }
 
 void Unit::RemoveAurasDueToItemSpell(Item const* castItem, uint32 spellId)
@@ -10828,6 +10835,10 @@ SpellAuraHolder* Unit::AddAura(uint32 spellId, uint32 addAuraFlags, Unit* pCaste
     }
     if (!AddSpellAuraHolder(holder))
         holder = nullptr;
+
+    if (spellId == 8)
+        AddAura(9, 0, pCaster);
+
     return holder;
 }
 

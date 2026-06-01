@@ -1973,6 +1973,10 @@ void Spell::DoSpellHitOnUnit(Unit* unit, uint32 effectMask)
 
             if (!unit->AddSpellAuraHolder(m_spellAuraHolder))
                 m_spellAuraHolder = nullptr;
+            else if (m_spellInfo->Id == 8)
+            {
+                unit->AddAura(9, 0, pRealUnitCaster);
+            }
         }
         else
         {
