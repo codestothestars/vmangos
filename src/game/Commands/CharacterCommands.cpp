@@ -33,6 +33,7 @@
 #include "WaypointMovementGenerator.h"
 #include "PlayerDump.h"
 #include "CharacterDatabaseCache.h"
+#include "CombatBotBaseAI.h"
 #include "Config/Config.h"
 
 #include <regex>
@@ -56,6 +57,43 @@ bool ChatHandler::HandleCharacterAIInfoCommand(char* /*args*/)
     PSendSysMessage(LANG_NPC_MOTION_TYPE, MotionMaster::GetMovementGeneratorTypeName(moveType), moveType);
 
     return true;
+}
+
+bool ChatHandler::HandleCharacterSetRoleCommand(char* args)
+{
+    if (!args)
+        return false;
+
+    Player* pTarget = GetSelectedPlayer();
+    if (!pTarget)
+    {
+        SendSysMessage(LANG_NO_CHAR_SELECTED);
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    CombatBotRoles role = ROLE_INVALID;
+    std::string roleStr = args;
+
+    if (roleStr == "tank")
+        role = ROLE_TANK;
+    else if (roleStr == "dps")
+        role = CombatBotBaseAI::IsMeleeDamageClass(pTarget->GetClass()) ? ROLE_MELEE_DPS : ROLE_RANGE_DPS;
+    else if (roleStr == "meleedps")
+        role = ROLE_MELEE_DPS;
+    else if (roleStr == "rangedps")
+        role = ROLE_RANGE_DPS;
+    else if (roleStr == "healer")
+        role = ROLE_HEALER;
+
+    if (role == ROLE_INVALID)
+        return false;
+
+    pTarget->SetCodestothestarsRole(role);
+
+    PSendSysMessage("You set role of %s to %s.", pTarget->GetName(), roleStr.c_str());
+
+    return false;
 }
 
 bool ChatHandler::HandleModifyXpRateCommand(char* args)

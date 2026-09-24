@@ -1214,6 +1214,7 @@ ChatCommand * ChatHandler::getCommandTable()
         { "reload",         SEC_DEVELOPER,      true, nullptr,                                         "", reloadCommandTable   },
         { "reset",          SEC_GAMEMASTER,     true, nullptr,                                         "", resetCommandTable    },
         { "server",         SEC_PLAYER,         true, nullptr,                                         "", serverCommandTable   },
+        { "setrole",        SEC_ADMINISTRATOR,  false, &ChatHandler::HandleCharacterSetRoleCommand,    "", nullptr              },
         { "tele",           SEC_TICKETMASTER,   true, nullptr,                                         "", teleCommandTable     },
         { "trigger",        SEC_TICKETMASTER,   false, nullptr,                                        "", triggerCommandTable  },
         { "wp",             SEC_TICKETMASTER,   false, nullptr,                                        "", wpCommandTable       },

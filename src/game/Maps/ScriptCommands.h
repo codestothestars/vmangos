@@ -1211,6 +1211,9 @@ enum ScriptTarget
     TARGET_T_RANDOM_GAMEOBJECT_WITH_ENTRY   = 29,           //Searches for random nearby gameobject with the given entry.
                                                             //Param1 = gameobject_entry
                                                             //Param2 = search_radius
+    TARGET_T_HOSTILE_RANDOM_EXCEPT_ROLE_LAST= 30,           //Any random target on our threat list except the last player of a given role.
+                                                            //Param1 = select_flags
+                                                            //Param2 = role
     TARGET_T_END
 };
 

@@ -2477,6 +2477,15 @@ class Player final: public Unit
         static uint32 GetRankFromDB(ObjectGuid guid);
         int GetGuildIdInvited() const { return m_guildIdInvited; }
         static void RemovePetitionsAndSigns(ObjectGuid guid, uint32 exceptPetitionId = 0);
+
+        /*********************************************************/
+        /***                  SCALING SYSTEM                   ***/
+        /*********************************************************/
+    private:
+        CombatBotRoles m_codestothestarsRole = ROLE_INVALID;
+    public:
+        CombatBotRoles GetCodestothestarsRole() const { return m_codestothestarsRole; }
+        void SetCodestothestarsRole(CombatBotRoles role) { m_codestothestarsRole = role; }
 };
 
 inline Player* Object::ToPlayer()

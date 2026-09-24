@@ -2814,6 +2814,16 @@ WorldObject* GetTargetByType(WorldObject* pSource, WorldObject* pTarget, Map* pM
             if (Creature* pCreatureSource = ToCreature(pSource))
                 return pCreatureSource->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0, pSpellEntry, param1 ? param1 : SELECT_FLAG_NO_TOTEM);
             break;
+        case TARGET_T_HOSTILE_RANDOM_EXCEPT_ROLE_LAST:
+            if (Creature* pCreatureSource = ToCreature(pSource))
+                return pCreatureSource->SelectAttackingTarget(
+                    ATTACKING_TARGET_RANDOM,
+                    0,
+                    pSpellEntry,
+                    param1 ? param1 : SELECT_FLAG_NO_TOTEM,
+                    param2
+                );
+            break;
         case TARGET_T_HOSTILE_RANDOM_NOT_TOP:
             if (Creature* pCreatureSource = ToCreature(pSource))
                 return pCreatureSource->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1, pSpellEntry, param1 ? param1 : SELECT_FLAG_NO_TOTEM);

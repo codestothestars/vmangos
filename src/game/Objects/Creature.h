@@ -32,6 +32,8 @@
 #include <vector>
 #include <list>
 
+using namespace std;
+
 class SpellEntry;
 class CreatureAI;
 class Group;
@@ -409,7 +411,13 @@ class Creature : public Unit
         // Smartlog end
 
         Unit* SelectAttackingTarget(AttackingTarget target, uint32 position, uint32 spellId, uint32 selectFlags = SELECT_FLAG_NO_TOTEM) const;
-        Unit* SelectAttackingTarget(AttackingTarget target, uint32 position, SpellEntry const* pSpellInfo = nullptr, uint32 selectFlags = SELECT_FLAG_NO_TOTEM) const;
+        Unit* SelectAttackingTarget(
+            AttackingTarget target,
+            uint32 position,
+            SpellEntry const* pSpellInfo = nullptr,
+            uint32 selectFlags = SELECT_FLAG_NO_TOTEM,
+            uint32 exceptLastOfRole = ROLE_INVALID
+        ) const;
 
         // AI helpers
         Unit* SelectNearestHostileUnitInAggroRange(bool useLOS, bool ignoreCivilians = false) const;
@@ -602,7 +610,12 @@ class Creature : public Unit
         void SetMountOwner(Player* player) { m_mountOwner = player; }
 
     protected:
-        bool MeetsSelectAttackingRequirement(Unit const* pTarget, SpellEntry const* pSpellInfo, uint32 selectFlags) const;
+        bool MeetsSelectAttackingRequirement(
+            Unit const* pTarget,
+            SpellEntry const* pSpellInfo,
+            uint32 selectFlags,
+            map<CombatBotRoles, Unit const*> lastOfRole
+        ) const;
 
         bool CreateFromProto(uint32 guidlow, CreatureInfo const* cinfo, uint32 firstCreatureId, GameEventCreatureData const* eventData = nullptr);
         bool InitEntry(uint32 entry, GameEventCreatureData const* eventData = nullptr);

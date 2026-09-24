@@ -2913,7 +2913,12 @@ void Creature::SetInCombatWithZone(bool initialPulse)
 }
 
 
-bool Creature::MeetsSelectAttackingRequirement(Unit const* pTarget, SpellEntry const* pSpellInfo, uint32 selectFlags) const
+bool Creature::MeetsSelectAttackingRequirement(
+    Unit const* pTarget,
+    SpellEntry const* pSpellInfo,
+    uint32 selectFlags,
+    map<CombatBotRoles, Unit const*> lastOfRole
+) const
 {
     if (selectFlags)
     {
@@ -2960,6 +2965,10 @@ bool Creature::MeetsSelectAttackingRequirement(Unit const* pTarget, SpellEntry c
         pTarget->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SPAWNING | UNIT_FLAG_NOT_ATTACKABLE_1 | UNIT_FLAG_NON_ATTACKABLE_2 | UNIT_FLAG_TAXI_FLIGHT | UNIT_FLAG_NOT_SELECTABLE) ||
         IsFriendlyTo(pTarget))
         return false;
+
+    if (Player const* player = pTarget->ToPlayer())
+        if (player == lastOfRole[player->GetCodestothestarsRole()])
+            return false;
 
     if (pSpellInfo)
         return pSpellInfo->IsTargetInRange(this, pTarget);
@@ -3071,7 +3080,13 @@ Unit* Creature::SelectAttackingTarget(AttackingTarget target, uint32 position, u
     return SelectAttackingTarget(target, position, sSpellMgr.GetSpellEntry(spellId), selectFlags);
 }
 
-Unit* Creature::SelectAttackingTarget(AttackingTarget target, uint32 position, SpellEntry const* pSpellInfo /*= nullptr*/, uint32 selectFlags/*= SELECT_FLAG_NO_TOTEM*/) const
+Unit* Creature::SelectAttackingTarget(
+    AttackingTarget target,
+    uint32 position,
+    SpellEntry const* pSpellInfo /*= nullptr*/,
+    uint32 selectFlags/*= SELECT_FLAG_NO_TOTEM*/,
+    uint32 exceptLastOfRole
+) const
 {
     if (!CanHaveThreatList())
         return nullptr;
@@ -3080,9 +3095,32 @@ Unit* Creature::SelectAttackingTarget(AttackingTarget target, uint32 position, S
     ThreatList const& threatlist = GetThreatManager().getThreatList();
     ThreatList::const_iterator itr = threatlist.begin();
     ThreatList::const_reverse_iterator ritr = threatlist.rbegin();
+    map<CombatBotRoles, Unit const*> lastOfRole;
+    auto threatlistSize = threatlist.size();
 
     if (position >= threatlist.size() || threatlist.empty())
         return nullptr;
+
+    if (exceptLastOfRole)
+    {
+        set<CombatBotRoles> roleChecked;
+        for (auto lastOfRoleIterator = threatlist.begin(); lastOfRoleIterator != threatlist.end(); ++lastOfRoleIterator)
+            if (Player* player = (*lastOfRoleIterator)->getTarget()->ToPlayer())
+            {
+                auto playerRole = player->GetCodestothestarsRole();
+
+                if (!playerRole || roleChecked.find(playerRole) != roleChecked.end()) continue;
+                
+                if ((1 << (playerRole - 1)) & exceptLastOfRole)
+                    if (lastOfRole.find(playerRole) == lastOfRole.end())
+                        lastOfRole[playerRole] = player;
+                    else
+                    {
+                        lastOfRole[playerRole] = nullptr;
+                        roleChecked.emplace(playerRole);
+                    }
+            }
+    }
 
     switch (target)
     {
@@ -3093,7 +3131,7 @@ Unit* Creature::SelectAttackingTarget(AttackingTarget target, uint32 position, S
             advance(itr, position);
             for (; itr != threatlist.end(); ++itr)
                 if (Unit* pTarget = (*itr)->getTarget())
-                    if (MeetsSelectAttackingRequirement(pTarget, pSpellInfo, selectFlags))
+                    if (MeetsSelectAttackingRequirement(pTarget, pSpellInfo, selectFlags, lastOfRole))
                         suitableUnits.push_back(pTarget);
 
             if (!suitableUnits.empty())
@@ -3106,7 +3144,7 @@ Unit* Creature::SelectAttackingTarget(AttackingTarget target, uint32 position, S
             advance(itr, position);
             for (; itr != threatlist.end(); ++itr)
                 if (Unit* pTarget = (*itr)->getTarget())
-                    if (MeetsSelectAttackingRequirement(pTarget, pSpellInfo, selectFlags))
+                    if (MeetsSelectAttackingRequirement(pTarget, pSpellInfo, selectFlags, lastOfRole))
                         return pTarget;
 
             break;
@@ -3116,7 +3154,7 @@ Unit* Creature::SelectAttackingTarget(AttackingTarget target, uint32 position, S
             advance(ritr, position);
             for (; ritr != threatlist.rend(); ++ritr)
                 if (Unit* pTarget = (*ritr)->getTarget())
-                    if (MeetsSelectAttackingRequirement(pTarget, pSpellInfo, selectFlags))
+                    if (MeetsSelectAttackingRequirement(pTarget, pSpellInfo, selectFlags, lastOfRole))
                         return pTarget;
 
             break;
@@ -3132,7 +3170,7 @@ Unit* Creature::SelectAttackingTarget(AttackingTarget target, uint32 position, S
             for (; itr != threatlist.end(); ++itr)
             {
                 pTarget = (*itr)->getTarget();
-                if (pTarget && MeetsSelectAttackingRequirement(pTarget, pSpellInfo, selectFlags))
+                if (pTarget && MeetsSelectAttackingRequirement(pTarget, pSpellInfo, selectFlags, lastOfRole))
                 {
                     combatDistance = GetDistance3dToCenter(pTarget);
                     if (!suitableTarget || combatDistance < distance)
@@ -3156,7 +3194,7 @@ Unit* Creature::SelectAttackingTarget(AttackingTarget target, uint32 position, S
             for (; itr != threatlist.end(); ++itr)
             {
                 pTarget = (*itr)->getTarget();
-                if (pTarget && MeetsSelectAttackingRequirement(pTarget, pSpellInfo, selectFlags))
+                if (pTarget && MeetsSelectAttackingRequirement(pTarget, pSpellInfo, selectFlags, lastOfRole))
                 {
                     combatDistance = GetCombatDistance(pTarget);
                     if (combatDistance > distance)
