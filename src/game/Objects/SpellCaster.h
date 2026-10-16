@@ -332,8 +332,28 @@ public:
     uint32 GetDefenseSkillValue(SpellCaster const* target = nullptr) const;
 
     Unit* SelectMagnetTarget(Unit* victim, Spell* spell = nullptr, SpellEffectIndex eff = EFFECT_INDEX_0);
-    SpellCastResult CastSpell(SpellCaster* pTarget, uint32 spellId, bool triggered, Item* castItem = nullptr, Aura* triggeredByAura = nullptr, ObjectGuid originalCaster = ObjectGuid(), SpellEntry const* triggeredBy = nullptr, SpellEntry const* triggeredByParent = nullptr);
-    SpellCastResult CastSpell(SpellCaster* pTarget, SpellEntry const* spellInfo, bool triggered, Item* castItem = nullptr, Aura* triggeredByAura = nullptr, ObjectGuid originalCaster = ObjectGuid(), SpellEntry const* triggeredBy = nullptr, SpellEntry const* triggeredByParent = nullptr);
+    SpellCastResult CastSpell(
+        SpellCaster* pTarget,
+        uint32 spellId,
+        bool triggered,
+        Item* castItem = nullptr,
+        Aura* triggeredByAura = nullptr,
+        ObjectGuid originalCaster = ObjectGuid(),
+        SpellEntry const* triggeredBy = nullptr,
+        SpellEntry const* triggeredByParent = nullptr,
+        Unit* const codestothestarsOriginalCaster = nullptr
+    );
+    SpellCastResult CastSpell(
+        SpellCaster* pTarget,
+        SpellEntry const* spellInfo,
+        bool triggered,
+        Item* castItem = nullptr,
+        Aura* triggeredByAura = nullptr,
+        ObjectGuid originalCaster = ObjectGuid(),
+        SpellEntry const* triggeredBy = nullptr,
+        SpellEntry const* triggeredByParent = nullptr,
+        Unit* const codestothestarsOriginalCaster = nullptr
+    );
     void CastCustomSpell(Unit* pTarget, uint32 spellId, optional<int32> bp0, optional<int32> bp1, optional<int32> bp2, bool triggered, Item* castItem = nullptr, Aura* triggeredByAura = nullptr, ObjectGuid originalCaster = ObjectGuid(), SpellEntry const* triggeredBy = nullptr);
     void CastCustomSpell(Unit* pTarget, SpellEntry const* spellInfo, optional<int32> bp0, optional<int32> bp1, optional<int32> bp2, bool triggered, Item* castItem = nullptr, Aura* triggeredByAura = nullptr, ObjectGuid originalCaster = ObjectGuid(), SpellEntry const* triggeredBy = nullptr);
     SpellCastResult CastSpell(float x, float y, float z, uint32 spellId, bool triggered, Item* castItem = nullptr, Aura* triggeredByAura = nullptr, ObjectGuid originalCaster = ObjectGuid(), SpellEntry const* triggeredBy = nullptr);
@@ -379,7 +399,16 @@ public:
     float CalculateSpellEffectValue(Unit const* target, SpellEntry const* spellProto, SpellEffectIndex effect_index, int32 const* basePoints = nullptr, Spell* spell = nullptr) const;
     float SpellBonusWithCoeffs(SpellEntry const* spellProto, SpellEffectIndex effectIndex, float total, float benefit, DamageEffectType damagetype, bool donePart, SpellCaster const* pCaster, Spell* spell = nullptr) const;
     static float CalculateLevelPenalty(SpellEntry const* spellProto);
-    float SpellDamageBonusDone(Unit const* pVictim, SpellEntry const* spellProto, SpellEffectIndex effectIndex, float pdamage, DamageEffectType damagetype, uint32 stack = 1, Spell* spell = nullptr);
+    float SpellDamageBonusDone(
+        Unit const* pVictim,
+        SpellEntry const* spellProto,
+        SpellEffectIndex effectIndex,
+        float pdamage,
+        DamageEffectType damagetype,
+        uint32 stack = 1,
+        Spell* spell = nullptr,
+        Unit* const codestothestarsOriginalCaster = nullptr
+    );
     int32 SpellBaseDamageBonusDone(SpellSchoolMask schoolMask);
     float SpellHealingBonusDone(Unit const* pVictim, SpellEntry const* spellProto, SpellEffectIndex effectIndex, float healamount, DamageEffectType damagetype, uint32 stack = 1, Spell* spell = nullptr);
     float SpellBaseHealingBonusDone(SpellSchoolMask schoolMask);

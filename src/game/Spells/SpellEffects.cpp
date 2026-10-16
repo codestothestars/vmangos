@@ -889,7 +889,17 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                     if (!unitTarget)
                         return;
 
-                    unitTarget->CastSpell(unitTarget, 20494, true);
+                    unitTarget->CastSpell(
+                        unitTarget,
+                        20494,
+                        true,
+                        nullptr,
+                        nullptr,
+                        ObjectGuid(),
+                        nullptr,
+                        nullptr,
+                        m_casterUnit
+                    );
                     return;
                 }
                 case 20474:                                 // Lava Bomb
@@ -897,7 +907,17 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                     if (!unitTarget)
                         return;
 
-                    unitTarget->CastSpell(unitTarget, 20495, true);
+                    unitTarget->CastSpell(
+                        unitTarget,
+                        20495,
+                        true,
+                        nullptr,
+                        nullptr,
+                        ObjectGuid(),
+                        nullptr,
+                        nullptr,
+                        m_casterUnit
+                    );
                     return;
                 }
 #if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_8_4
@@ -3558,6 +3578,8 @@ void Spell::EffectSummonObjectWild(SpellEffectIndex effIdx)
         delete pGameObj;
         return;
     }
+
+    if (m_codestothestarsOriginalCaster) pGameObj->SetCodestothestarsSummoner(m_codestothestarsOriginalCaster);
 
     int32 duration = m_spellInfo->GetDuration();
 

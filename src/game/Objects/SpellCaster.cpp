@@ -1294,7 +1294,16 @@ float SpellCaster:: SpellBaseHealingBonusDone(SpellSchoolMask schoolMask)
  * Calculates caster part of spell damage bonuses,
  * also includes different bonuses dependent from target auras
  */
-float SpellCaster::SpellDamageBonusDone(Unit const* pVictim, SpellEntry const* spellProto, SpellEffectIndex effectIndex, float pdamage, DamageEffectType damagetype, uint32 stack, Spell* spell)
+float SpellCaster::SpellDamageBonusDone(
+    Unit const* pVictim,
+    SpellEntry const* spellProto,
+    SpellEffectIndex effectIndex,
+    float pdamage,
+    DamageEffectType damagetype,
+    uint32 stack,
+    Spell* spell,
+    Unit* const codestothestarsOriginalCaster
+)
 {
     if (!spellProto || !pVictim || damagetype == DIRECT_DAMAGE)
         return pdamage;
@@ -1326,8 +1335,10 @@ float SpellCaster::SpellDamageBonusDone(Unit const* pVictim, SpellEntry const* s
     SpellCaster* creature = nullptr;
     if (GetTypeId() == TYPEID_UNIT)
         creature = this;
-    else if (spell && spell->GetCodestothestarsAuraCaster() && spell->GetCodestothestarsAuraCaster()->GetTypeId() == TYPEID_UNIT)
-        creature = spell->GetCodestothestarsAuraCaster();
+    else if (codestothestarsOriginalCaster)
+        creature = codestothestarsOriginalCaster;
+    else if (spell && spell->GetCodestothestarsOriginalCaster() && spell->GetCodestothestarsOriginalCaster()->GetTypeId() == TYPEID_UNIT)
+        creature = spell->GetCodestothestarsOriginalCaster();
     if (creature && !(IsPet() && ((Creature*)this)->GetOwnerGuid().IsPlayer()))
         DoneTotalMod *= Creature::_GetSpellDamageMod(((Creature*)creature)->GetCreatureInfo()->rank);
 
@@ -1947,7 +1958,17 @@ void SpellCaster::RemoveAllDynObjects()
     m_spellDynObjects.clear();
 }
 
-SpellCastResult SpellCaster::CastSpell(SpellCaster* pTarget, uint32 spellId, bool triggered, Item* castItem, Aura* triggeredByAura, ObjectGuid originalCaster, SpellEntry const* triggeredBy, SpellEntry const* triggeredByParent)
+SpellCastResult SpellCaster::CastSpell(
+    SpellCaster* pTarget,
+    uint32 spellId,
+    bool triggered,
+    Item* castItem,
+    Aura* triggeredByAura,
+    ObjectGuid originalCaster,
+    SpellEntry const* triggeredBy,
+    SpellEntry const* triggeredByParent,
+    Unit* const codestothestarsOriginalCaster
+)
 {
     SpellEntry const* spellInfo = sSpellMgr.GetSpellEntry(spellId);
 
@@ -1960,10 +1981,30 @@ SpellCastResult SpellCaster::CastSpell(SpellCaster* pTarget, uint32 spellId, boo
         return SPELL_FAILED_SPELL_UNAVAILABLE;
     }
 
-    return CastSpell(pTarget, spellInfo, triggered, castItem, triggeredByAura, originalCaster, triggeredBy, triggeredByParent);
+    return CastSpell(
+        pTarget,
+        spellInfo,
+        triggered,
+        castItem,
+        triggeredByAura,
+        originalCaster,
+        triggeredBy,
+        triggeredByParent,
+        codestothestarsOriginalCaster
+    );
 }
 
-SpellCastResult SpellCaster::CastSpell(SpellCaster* pTarget, SpellEntry const* spellInfo, bool triggered, Item* castItem, Aura* triggeredByAura, ObjectGuid originalCaster, SpellEntry const* triggeredBy, SpellEntry const* triggeredByParent)
+SpellCastResult SpellCaster::CastSpell(
+    SpellCaster* pTarget,
+    SpellEntry const* spellInfo,
+    bool triggered,
+    Item* castItem,
+    Aura* triggeredByAura,
+    ObjectGuid originalCaster,
+    SpellEntry const* triggeredBy,
+    SpellEntry const* triggeredByParent,
+    Unit* const codestothestarsOriginalCaster
+)
 {
     if (!spellInfo)
     {
@@ -1988,9 +2029,29 @@ SpellCastResult SpellCaster::CastSpell(SpellCaster* pTarget, SpellEntry const* s
     Spell* spell;
 
     if (Unit* pUnit = ToUnit())
-        spell = new Spell(pUnit, spellInfo, triggered, originalCaster, triggeredBy, nullptr, triggeredByParent, triggeredByAura ? triggeredByAura->GetCaster() : nullptr);
+        spell = new Spell(
+            pUnit,
+            spellInfo,
+            triggered,
+            originalCaster,
+            triggeredBy,
+            nullptr,
+            triggeredByParent,
+            codestothestarsOriginalCaster
+                ? codestothestarsOriginalCaster
+                : triggeredByAura ? triggeredByAura->GetCaster() : nullptr
+        );
     else if (GameObject* pGameObject = ToGameObject())
-        spell = new Spell(pGameObject, spellInfo, triggered, originalCaster, triggeredBy, nullptr, triggeredByParent);
+        spell = new Spell(
+            pGameObject,
+            spellInfo,
+            triggered,
+            originalCaster,
+            triggeredBy,
+            nullptr,
+            triggeredByParent,
+            pGameObject->GetCodestothestarsSummoner()
+        );
     else
         return SPELL_FAILED_ERROR;
 

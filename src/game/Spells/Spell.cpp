@@ -275,7 +275,7 @@ void SpellCastTargets::write(ByteBuffer& data) const
 }
 
 Spell::Spell(Unit* caster, SpellEntry const* info, bool triggered, ObjectGuid originalCasterGUID, SpellEntry const* triggeredBy, Unit* victim, SpellEntry const* triggeredByParent, Unit* const codestothestarsAuraCaster):
-    m_spellInfo(info), m_triggeredBySpellInfo(triggeredBy), m_triggeredByParentSpellInfo(triggeredByParent), m_caster(caster), m_casterUnit(caster), m_IsTriggeredSpell(triggered), m_codestothestarsAuraCaster(codestothestarsAuraCaster)
+    m_spellInfo(info), m_triggeredBySpellInfo(triggeredBy), m_triggeredByParentSpellInfo(triggeredByParent), m_caster(caster), m_casterUnit(caster), m_IsTriggeredSpell(triggered), m_codestothestarsOriginalCaster(codestothestarsAuraCaster)
 {
     MANGOS_ASSERT(caster != nullptr && info != nullptr);
     MANGOS_ASSERT(info == sSpellMgr.GetSpellEntry(info->Id) && "`info` must be pointer to a sSpellMgr element");
@@ -317,8 +317,23 @@ Spell::Spell(Unit* caster, SpellEntry const* info, bool triggered, ObjectGuid or
     }
 }
 
-Spell::Spell(GameObject* caster, SpellEntry const* info, bool triggered, ObjectGuid originalCasterGUID, SpellEntry const* triggeredBy, Unit* victim, SpellEntry const* triggeredByParent):
-    m_spellInfo(info), m_triggeredBySpellInfo(triggeredBy), m_triggeredByParentSpellInfo(triggeredByParent), m_caster(caster), m_casterGo(caster), m_IsTriggeredSpell(triggered)
+Spell::Spell(
+    GameObject* caster,
+    SpellEntry const* info,
+    bool triggered,
+    ObjectGuid originalCasterGUID,
+    SpellEntry const* triggeredBy,
+    Unit* victim,
+    SpellEntry const* triggeredByParent,
+    Unit* const codestothestarsOriginalCaster
+):
+    m_spellInfo(info),
+    m_triggeredBySpellInfo(triggeredBy),
+    m_triggeredByParentSpellInfo(triggeredByParent),
+    m_caster(caster),
+    m_casterGo(caster),
+    m_IsTriggeredSpell(triggered),
+    m_codestothestarsOriginalCaster(codestothestarsOriginalCaster)
 {
     MANGOS_ASSERT(caster != nullptr && info != nullptr);
     MANGOS_ASSERT(info == sSpellMgr.GetSpellEntry(info->Id) && "`info` must be pointer to a sSpellMgr element");

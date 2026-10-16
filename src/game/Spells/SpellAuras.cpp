@@ -4346,9 +4346,24 @@ float Aura::CalculateDotDamage() const
 
     if (m_modifier.m_auraname == SPELL_AURA_PERIODIC_DAMAGE)
     {
+        Unit* codestothestarsOriginalCaster = nullptr;
+
+        if (SpellCaster* realCaster = m_spellAuraHolder->GetRealCaster())
+            if (GameObject* realCasterObject = realCaster->ToGameObject())
+                codestothestarsOriginalCaster = realCasterObject->GetCodestothestarsSummoner();
+
         // SpellDamageBonusDone for magic spells
         if (spellProto->DmgClass == SPELL_DAMAGE_CLASS_NONE || spellProto->DmgClass == SPELL_DAMAGE_CLASS_MAGIC)
-            damage = caster->SpellDamageBonusDone(target, GetSpellProto(), GetEffIndex(), damage, DOT, GetStackAmount());
+            damage = caster->SpellDamageBonusDone(
+                target,
+                GetSpellProto(),
+                GetEffIndex(),
+                damage,
+                DOT,
+                GetStackAmount(),
+                nullptr,
+                codestothestarsOriginalCaster
+            );
         // MeleeDamagebonusDone for weapon based spells
         else
         {

@@ -259,6 +259,9 @@ class GameObject : public SpellCaster
         bool IsAtInteractDistance(Player const* player, uint32 maxRange = 0) const;
 
         SpellEntry const* GetSpellForLock(Player const* player) const;
+
+        Unit* const GetCodestothestarsSummoner() const { return m_codestothestarsSummoner; }
+        void SetCodestothestarsSummoner(Unit* const summoner) { m_codestothestarsSummoner = summoner; }
     protected:
         bool        m_visible;
         uint32      m_spellId;
@@ -293,6 +296,8 @@ class GameObject : public SpellCaster
         void SwitchDoorOrButton(bool activate, bool alternative = false);
 
         GridReference<GameObject> m_gridRef;
+
+        Unit* m_codestothestarsSummoner = nullptr;
 };
 
 inline GameObject* Object::ToGameObject()
