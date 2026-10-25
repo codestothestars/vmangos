@@ -283,14 +283,18 @@ void ThreatContainer::update()
 // return the next best victim
 // could be the current victim
 
-HostileReference* ThreatContainer::selectNextVictim(Creature* pAttacker, HostileReference* pCurrentVictim)
+HostileReference* ThreatContainer::selectNextVictim(
+    Creature* pAttacker,
+    HostileReference* pCurrentVictim,
+    bool allowLowPriorityTargets
+)
 {
     if (!pAttacker)
         return nullptr;
 
     HostileReference* currentRef = nullptr;
     bool found = false;
-    bool allowLowPriorityTargets = false;
+
     bool attackerImmobilized = pAttacker->HasUnitState(UNIT_STATE_CAN_NOT_MOVE);
 
     for (int attempt = 0; attempt < 2 && !found; ++attempt)
@@ -455,10 +459,11 @@ void ThreatManager::modifyThreatPercent(Unit* pVictim, int32 pPercent)
 
 //============================================================
 
-Unit* ThreatManager::getHostileTarget()
+Unit* ThreatManager::getHostileTarget(bool allowLowPriorityTargets)
 {
     iThreatContainer.update();
-    HostileReference* nextVictim = iThreatContainer.selectNextVictim((Creature*) getOwner(), getCurrentVictim());
+    HostileReference* nextVictim =
+        iThreatContainer.selectNextVictim((Creature*) getOwner(), getCurrentVictim(), allowLowPriorityTargets);
     setCurrentVictim(nextVictim);
     return getCurrentVictim() != nullptr ? getCurrentVictim()->getTarget() : nullptr;
 }

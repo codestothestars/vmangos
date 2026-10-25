@@ -7809,7 +7809,12 @@ bool Unit::SelectHostileTarget()
 
     // No taunt aura or taunt aura caster is dead, standard target selection
     if (!target && !m_threatManager.isThreatListEmpty())
-        target = m_threatManager.getHostileTarget();
+    {
+        auto currentTarget = GetVictim();
+        auto currentTargetPlayer = currentTarget ? currentTarget->ToPlayer() : nullptr;
+        auto currentTargetGroup = currentTargetPlayer ? currentTargetPlayer->GetGroup() : nullptr;
+        target = m_threatManager.getHostileTarget(currentTargetGroup && currentTargetGroup->HasLastMemberOfCodestothestarsRole());
+    }
 
     // stick to current target if no threat list
     if (!target && ((Creature*)this)->HasExtraFlag(CREATURE_FLAG_EXTRA_NO_THREAT_LIST))

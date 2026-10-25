@@ -160,7 +160,11 @@ public:
 
     void modifyThreatPercent(Unit* pVictim, int32 percent);
 
-    HostileReference* selectNextVictim(Creature* pAttacker, HostileReference* pCurrentVictim);
+    HostileReference* selectNextVictim(
+        Creature* pAttacker,
+        HostileReference* pCurrentVictim,
+        bool allowLowPriorityTargets
+    );
 
     void setDirty(bool pDirty) { iDirty = pDirty; }
 
@@ -207,7 +211,7 @@ public:
 
     Unit*  getOwner() const { return iOwner; }
 
-    Unit* getHostileTarget();
+    Unit* getHostileTarget(bool allowLowPriorityTargets = false);
 
     void tauntApply(Unit* pTaunter);
     void tauntFadeOut(Unit* pTaunter);

@@ -2529,3 +2529,32 @@ void Group::UpdateLooterGuid(WorldObject* pLootedObject, bool ifneed)
         SendUpdate();
     }
 }
+
+bool Group::HasLastMemberOfCodestothestarsRole()
+{
+    if (m_memberSlots.size() == 1) return false;
+    
+    set<CombatBotRoles> rolesInGroup;
+    set<CombatBotRoles> rolesWithOneMember;
+
+    for (auto iteratorPlayer = m_memberSlots.begin(); iteratorPlayer != m_memberSlots.end(); ++iteratorPlayer)
+    {
+        auto player = sObjectMgr.GetPlayer(iteratorPlayer->guid);
+
+        // e.g. party member is offline
+        if (!player) continue;
+
+        auto role = player->GetCodestothestarsRole();
+
+        if (role == ROLE_INVALID) continue;
+
+        if (rolesInGroup.find(role) == rolesInGroup.end())
+            rolesWithOneMember.emplace(role);
+        else
+            rolesWithOneMember.erase(role);
+
+        rolesInGroup.emplace(role);
+    }
+
+    return !rolesWithOneMember.empty();
+}

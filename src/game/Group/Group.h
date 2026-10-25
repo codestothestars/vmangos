@@ -458,5 +458,11 @@ class Group
         uint8*              m_subGroupsCounts;
         Team                m_groupTeam; // ALLIANCE / HORDE / TEAM_NONE / TEAM_CROSSFACTION
         uint32              m_LFGAreaId;
+
+        /*********************************************************/
+        /***                  SCALING SYSTEM                   ***/
+        /*********************************************************/
+    public:
+        bool HasLastMemberOfCodestothestarsRole();
 };
 #endif
